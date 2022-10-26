@@ -28,11 +28,12 @@ import type { UserState } from '../plugins/store';
 interface Props {
     http: AxiosInstance,
     store: Store<UserState>,
-    router: Router
-    errorHandler: (err: Error | AxiosError) => void
+    router: Router,
+    errorHandler: (err: Error | AxiosError) => void,
+    displayMessage: (message: string) => void
 }
 
-const { http, store, router, errorHandler } = defineProps<Props>()
+const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 // END OF PROPS
 
 

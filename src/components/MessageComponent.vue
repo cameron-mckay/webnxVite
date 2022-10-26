@@ -1,10 +1,13 @@
 <script setup lang="ts">
-interface ErrorProps {
+// Define props
+interface MessageProps {
     messages: Array<string>
 }
 
-const { messages } = defineProps<ErrorProps>()
+// Get messages from app
+const { messages } = defineProps<MessageProps>()
 
+// Delete message from array
 function deleteMessage(message: string) {
     let i = messages.indexOf(message);
     messages.splice(i, 1)
@@ -12,7 +15,7 @@ function deleteMessage(message: string) {
 </script>
 
 <template>
-    <div class="error">
+    <div class="message">
         <div v-on:click="deleteMessage(message)" v-for="message in messages">
             <p>{{ message }}</p>
         </div>
@@ -20,7 +23,7 @@ function deleteMessage(message: string) {
 </template>
 
 <style scoped>
-.error {
+.message {
     display: block;
     color: white;
     font-family: sans-serif;
@@ -30,8 +33,8 @@ function deleteMessage(message: string) {
     text-align: center;
 }
 
-.error p {
-    background-color: #ff424f;
+.message p {
+    background-color: #42ff4f;
     max-width: 800px;
     margin: 1em auto;
     padding: 10px;
@@ -39,7 +42,7 @@ function deleteMessage(message: string) {
     opacity: 95%;
 }
 
-.error p:hover {
+.message p:hover {
     opacity: 50%;
 }
 </style>

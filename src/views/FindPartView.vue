@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, ref, reactive, watch, Ref } from 'vue';
+import { onBeforeMount, ref, watch, Ref } from 'vue';
 import { getPartsByTextSearch } from '../plugins/dbCommands';
 
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
@@ -19,17 +19,16 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState } from '../plugins/store';
-import PartComponent from '../components/PartComponent.vue';
-import { PartSchema } from '../model/part';
 
 interface Props {
     http: AxiosInstance,
     store: Store<UserState>,
-    router: Router
-    errorHandler: (err: Error | AxiosError) => void
+    router: Router,
+    errorHandler: (err: Error | AxiosError) => void,
+    displayMessage: (message: string) => void
 }
 
-const { http, store, router, errorHandler } = defineProps<Props>()
+const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 // END OF PROPS
 
 var searchText = ref("")

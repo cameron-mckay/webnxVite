@@ -2,7 +2,7 @@
 // Get http and store from props
 import { PartSchema } from '../model/part';
 import { createPart } from '../plugins/dbCommands';
-import { inject, reactive, watch } from 'vue';
+import { ref, Ref, watch } from 'vue';
 
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -13,75 +13,99 @@ import type { UserState } from '../plugins/store';
 interface Props {
     http: AxiosInstance,
     store: Store<UserState>,
-    router: Router
-    errorHandler: (err: Error | AxiosError) => void
+    router: Router,
+    errorHandler: (err: Error | AxiosError) => void,
+    displayMessage: (message: string) => void
 }
 
-const { http, store, router, errorHandler } = defineProps<Props>()
+const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 // END OF PROPS
 
-var part: PartSchema = {
+var part: Ref<PartSchema> = ref({
     nxid: '',
     manufacturer: '',
     name: '',
     type: '',
     location: '',
     quantity: 0,
-}
-var state = reactive<PartSchema>(part)
+})
 
 // Clear out fields when part type is changed
-watch(() => state.type, () => {
-    delete part.frequency
-    delete part.chipset
-    delete part.memory_type
-    delete part.peripheral_type
-    delete part.storage_interface
-    delete part.capacity
-    delete part.capacity_unit
-    delete part.num_ports
-    delete part.port_type
-    delete part.cable_end1
-    delete part.cable_end2
+watch(() => part.value.type, () => {
+    delete part.value.frequency
+    delete part.value.chipset
+    delete part.value.memory_type
+    delete part.value.peripheral_type
+    delete part.value.storage_interface
+    delete part.value.capacity
+    delete part.value.capacity_unit
+    delete part.value.num_ports
+    delete part.value.port_type
+    delete part.value.cable_end1
+    delete part.value.cable_end2
 })
 
 // Clear out connector type when storage interface is changed
-watch(() => state.storage_interface, () => {
-    delete part.port_type
+watch(() => part.value.storage_interface, () => {
+    delete part.value.port_type
 })
 
+
+// This is scuffed as fuck but it'll do for now
+function resetForm() {
+    part.value.nxid = ""
+    part.value.manufacturer = ""
+    part.value.name = ""
+    part.value.type = ""
+    part.value.location = ""
+    part.value.quantity = 0
+    delete part.value.frequency
+    delete part.value.chipset
+    delete part.value.memory_type
+    delete part.value.peripheral_type
+    delete part.value.storage_interface
+    delete part.value.capacity
+    delete part.value.capacity_unit
+    delete part.value.num_ports
+    delete part.value.port_type
+    delete part.value.cable_end1
+    delete part.value.cable_end2
+}
+
+// Submit part
 async function submitPart() {
-    createPart(http, part, (data, err) => {
+    // Use create part method from API commands 
+    createPart(http, part.value, (data, err) => {
         if (err) {
             // Fail
             errorHandler(err)
             return
         }
         // Success
-        console.log("success")
+        displayMessage(String(data))
+        // Call our reset form function
+        resetForm()
     })
 }
-
-
-
+// end submit part
 </script>
 
 <template>
     <div class="body">
         <h1>Create a new part:</h1>
-        <form @submit.prevent="submitPart">
+        <form id="form" @submit.prevent="submitPart">
             <label>NXID: </label>
-            <input required v-model="state.nxid" type="text" placeholder="NXID">
+            <input required v-model="part.nxid" type="text" placeholder="NXID">
             <label>Manufacturer: </label>
-            <input required v-model="state.manufacturer" type="text" placeholder="Manufacturer">
+            <input required v-model="part.manufacturer" type="text" placeholder="Manufacturer">
             <label>Part name: </label>
-            <input required v-model="state.name" type="text" placeholder="Part name">
+            <input required v-model="part.name" type="text" placeholder="Part name">
             <label>Quantity: </label>
-            <input required v-model="state.quantity" type="number" placeholder="Quantity">
+            <input required v-model="part.quantity" type="number" placeholder="Quantity">
             <label>Location: </label>
-            <input required v-model="state.location" type="text" placeholder="Location">
+            <input required v-model="part.location" type="text" placeholder="Location">
             <label>Part Type: </label>
-            <select required v-model="state.type">
+            <select required v-model="part.type">
                 <option disabled value="">Part type</option>
                 <option>Motherboard</option>
                 <option>CPU</option>
@@ -95,27 +119,27 @@ async function submitPart() {
             </select>
 
 
-            <div v-if="state.type == 'Motherboard'">
+            <div v-if="part.type == 'Motherboard'">
                 <label>Chipset: </label>
-                <input required v-model="state.chipset" type="number" placeholder="Chipset">
+                <input required v-model="part.chipset" type="number" placeholder="Chipset">
             </div>
 
 
-            <div v-if="state.type == 'CPU'">
+            <div v-if="part.type == 'CPU'">
                 <label>Chipset: </label>
-                <input required v-model="state.chipset" type="number" placeholder="Chipset">
+                <input required v-model="part.chipset" type="number" placeholder="Chipset">
                 <label>Frequency(GHz): </label>
-                <input required v-model="state.frequency" type="number" placeholder="Frequency">
+                <input required v-model="part.frequency" type="number" placeholder="Frequency">
             </div>
 
 
-            <div v-if="state.type == 'Memory'">
+            <div v-if="part.type == 'Memory'">
                 <label>Frequency(MHz): </label>
-                <input required v-model="state.frequency" type="number" placeholder="Frequency">
+                <input required v-model="part.frequency" type="number" placeholder="Frequency">
                 <label>Capacity(GB): </label>
-                <input required v-model="state.capacity" type="number" placeholder="Capacity">
+                <input required v-model="part.capacity" type="number" placeholder="Capacity">
                 <label>Type: </label>
-                <select v-model="state.memory_type">
+                <select v-model="part.memory_type">
                     <option disabled value="">Memory type</option>
                     <option>UDIMM</option>
                     <option>ECC</option>
@@ -124,9 +148,9 @@ async function submitPart() {
             </div>
 
 
-            <div v-if="state.type == 'Peripheral Card'">
+            <div v-if="part.type == 'Peripheral Card'">
                 <label>Card type: </label>
-                <select required v-model="state.peripheral_type">
+                <select required v-model="part.peripheral_type">
                     <option disabled value="">Card type</option>
                     <option>RAID</option>
                     <option>JBOD</option>
@@ -134,8 +158,8 @@ async function submitPart() {
                     <option>Adapter</option>
                 </select>
                 <label>Port Type: </label>
-                <select required v-model="state.port_type">
-                    <optgroup v-if="state.peripheral_type == 'NIC'">
+                <select required v-model="part.port_type">
+                    <optgroup v-if="part.peripheral_type == 'NIC'">
                         <option disabled value="">Port type</option>
                         <option>SFP</option>
                         <option>RJ45</option>
@@ -149,9 +173,9 @@ async function submitPart() {
             </div>
 
 
-            <div v-if="state.type == 'Storage'">
+            <div v-if="part.type == 'Storage'">
                 <label>Storage interface: </label>
-                <select required v-model="state.storage_interface">
+                <select required v-model="part.storage_interface">
                     <option disabled value="">Pick one</option>
                     <option>SATA</option>
                     <option>SAS</option>
@@ -159,16 +183,16 @@ async function submitPart() {
                 </select>
                 <label>Capacity: </label>
                 <div>
-                    <input required v-model="state.capacity" type="number">
-                    <select required v-model="state.capacity_unit">
+                    <input required v-model="part.capacity" type="number">
+                    <select required v-model="part.capacity_unit">
                         <option disabled value="">Pick one</option>
                         <option>GB</option>
                         <option>TB</option>
                     </select>
                 </div>
-                <div v-if="state.storage_interface == 'NVME'">
+                <div v-if="part.storage_interface == 'NVME'">
                     <label>Connector Type: </label>
-                    <select required v-model="state.port_type">
+                    <select required v-model="part.port_type">
                         <option disabled value="">Pick one</option>
                         <option>SAS</option>
                         <option>M.2</option>
@@ -177,32 +201,32 @@ async function submitPart() {
             </div>
 
 
-            <div v-if="state.type == 'GPU'">
+            <div v-if="part.type == 'GPU'">
                 <!-- Placeholder -->
             </div>
 
 
-            <div v-if="state.type == 'Cable'">
+            <div v-if="part.type == 'Cable'">
                 <label>Cable end 1: </label>
-                <input required v-model="state.cable_end1" type="text">
+                <input required v-model="part.cable_end1" type="text">
                 <label>Cable end 2: </label>
-                <input required v-model="state.cable_end2" type="text">
+                <input required v-model="part.cable_end2" type="text">
             </div>
-            <div v-if="state.type == 'Backplane'">
+            <div v-if="part.type == 'Backplane'">
                 <label>Storage interface: </label>
-                <select required v-model="state.storage_interface">
+                <select required v-model="part.storage_interface">
                     <option selected>SATA</option>
                     <option>SAS</option>
                     <option>NVME</option>
                 </select>
                 <label>Ports: </label>
-                <select required v-model="state.port_type">
+                <select required v-model="part.port_type">
                     <option selected>SATA</option>
                     <option>SAS</option>
                     <option>Mini SAS HD</option>
                 </select>
             </div>
-            <div v-if="state.type == 'Misc.'">
+            <div v-if="part.type == 'Misc.'">
                 <!-- Placeholder -->
             </div>
 

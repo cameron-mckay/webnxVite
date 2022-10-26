@@ -1,10 +1,11 @@
 <script setup lang="ts">
 // Vue components
 import HeaderComponent from './components/HeaderComponent.vue'
-import ErrorComponent from './components/ErrorComponent.vue';
+import ErrorComponent from './components/ErrorComponent.vue'
+import MessageComponent from './components/MessageComponent.vue'
 
 // Import dependencies
-import { inject, onBeforeMount, ref } from 'vue';
+import { inject, onBeforeMount, ref, Ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 import type { AxiosInstance, AxiosError } from 'axios';
 import { injectionKey } from './plugins/axios'
@@ -17,17 +18,15 @@ const router = useRouter()
 const route = useRoute()
 const store = useStore()
 
-var errorMessage = ref('')
-var isError = ref(false)
+var messages: Ref<string[]> = ref([])
+var errorMessages: Ref<string[]> = ref([])
 
 // Before app is mounted
 onBeforeMount(() => {
   // Check if user is authenticated
-  console.log("test")
   checkAuth(http, (data, err) => {
     // If not authenticated
     if (err) {
-      console.log("error")
       // set status
       store.commit("deauthenticate")
       // redirect
@@ -37,8 +36,8 @@ onBeforeMount(() => {
       // return
       return
     }
-    console.log("okay")
     // If authenticated, set status
+    displayMessage("Successfully logged in.")
     store.commit("authenticate")
   })
 })
@@ -48,24 +47,35 @@ async function errorHandler(err: AxiosError) {
   // Show message in error component
   if (err.response) {
     var errData = err.response.data
-    errorMessage.value = String(errData)
+    errorMessages.value.push(String(errData))
   }
   else {
-    errorMessage.value = String(err)
+    errorMessages.value.push(String(err))
   }
-  isError.value = true
   // Hide after 5 seconds 
   setTimeout(() => {
-    isError.value = false
+    errorMessages.value.shift()
   }, 5000)
 }
 
+
+// Error handler
+async function displayMessage(message: string) {
+  // Add message to queue
+  messages.value.push(message)
+  // Delete after 5 seconds 
+  setTimeout(() => {
+    messages.value.shift()
+  }, 5000)
+}
 </script>
 
 <template>
   <HeaderComponent v-if="store.state.isAuth" />
-  <ErrorComponent v-if="isError" :message="errorMessage" />
-  <router-view :http='http' :store='store' :errorHandler='errorHandler' :router='router' />
+  <ErrorComponent :messages="errorMessages" />
+  <MessageComponent :messages="messages" />
+  <router-view :http='http' :store='store' :errorHandler='errorHandler' :router='router'
+    :displayMessage='displayMessage' />
 </template>
 
 <style>
