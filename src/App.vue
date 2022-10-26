@@ -43,14 +43,18 @@ onBeforeMount(() => {
 })
 
 // Error handler
-async function errorHandler(err: AxiosError) {
-  // Show message in error component
-  if (err.response) {
-    var errData = err.response.data
-    errorMessages.value.push(String(errData))
-  }
-  else {
-    errorMessages.value.push(String(err))
+async function errorHandler(err: AxiosError | string) {
+  if (typeof err == "string") {
+    errorMessages.value.push(err)
+  } else {
+    // Show message in error component
+    if (err.response) {
+      var errData = err.response.data
+      errorMessages.value.push(String(errData))
+    }
+    else {
+      errorMessages.value.push(String(err))
+    }
   }
   // Hide after 5 seconds 
   setTimeout(() => {
@@ -71,7 +75,7 @@ async function displayMessage(message: string) {
 </script>
 
 <template>
-  <HeaderComponent v-if="store.state.isAuth" />
+  <HeaderComponent v-if="store.state.isAuth" :http="http" />
   <ErrorComponent :messages="errorMessages" />
   <MessageComponent :messages="messages" />
   <router-view :http='http' :store='store' :errorHandler='errorHandler' :router='router'

@@ -93,7 +93,6 @@ async function redirectIfLoggedIn() {
         })
         .catch((err: Error | AxiosError) => {
             // Go to login
-            errorHandler(err)
         });
 }
 
@@ -108,7 +107,7 @@ async function focus() {
 .login {
     font-family: sans-serif;
     background-color: #ebebebeb;
-    margin: auto;
+    margin: 3em auto;
     max-width: 300px;
     padding: 25px;
     border-radius: 20px;

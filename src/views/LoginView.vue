@@ -59,14 +59,7 @@ async function login() {
                 // Save user data to vuex store
                 store.commit("updateUserData")
                 store.commit("authenticate")
-                if (window.history.length > 2) {
-                    // if user was redirected to login
-                    router.go(-1)
-                }
-                else {
-                    // if login was accessed directly
-                    router.push("/")
-                }
+                router.push("/")
             }).catch((err: Error | AxiosError) => {
                 // Error
                 errorHandler(err);
@@ -84,7 +77,6 @@ async function redirectIfLoggedIn() {
         })
         .catch((err: Error | AxiosError) => {
             // Go to login
-            errorHandler(err)
         });
 }
 
@@ -99,7 +91,7 @@ function focus() {
 .login {
     font-family: sans-serif;
     background-color: #ebebebeb;
-    margin: auto;
+    margin: 3em auto;
     max-width: 300px;
     padding: 25px;
     border-radius: 20px;

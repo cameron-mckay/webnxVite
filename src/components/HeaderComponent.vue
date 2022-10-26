@@ -3,9 +3,11 @@
         <div class="links">
             <img alt="WebNX Logo" src="../assets/logo.png">
             <RouterLink to="/parts">Parts</RouterLink>
-            <RouterLink to="/assets">Assets</RouterLink>
+            <!-- <RouterLink to="/assets">Assets</RouterLink> -->
+            <RouterLink to="/cart">Cart</RouterLink>
         </div>
         <div class="user">
+            <a v-on:click="logout" href="#">Logout</a>
             <p>{{ store.state.user.first_name + " " + store.state.user.last_name }}</p>
             <img alt="profile picture" :src="profilePicture">
         </div>
@@ -15,7 +17,13 @@
 <script setup lang="ts">
 import { useStore } from '../plugins/store'
 import { onBeforeMount } from 'vue'
+import type { AxiosInstance } from 'axios';
+import router from '../router';
 const store = useStore();
+interface Props {
+    http: AxiosInstance
+}
+const { http } = defineProps<Props>()
 
 var user = {}
 var profilePicture = "https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
@@ -23,6 +31,11 @@ var profilePicture = "https://st3.depositphotos.com/6672868/13701/v/600/depositp
 onBeforeMount(() => {
     store.commit("updateUserData")
 })
+
+async function logout() {
+    await store.commit("logout", http)
+    router.push("/login")
+}
 
 </script>
 

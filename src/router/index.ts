@@ -5,6 +5,7 @@ import LoginView from '../views/LoginView.vue'
 import NotFound from '../views/NotFound.vue'
 import AssetView from '../views/AssetView.vue'
 import CreatePartView from '../views/CreatePartView.vue'
+import CartView from '../views/CartView.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: LoginView
+  },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: CartView
   },
   {
     path: '/parts',

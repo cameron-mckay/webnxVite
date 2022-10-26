@@ -121,13 +121,13 @@ async function submitPart() {
 
             <div v-if="part.type == 'Motherboard'">
                 <label>Chipset: </label>
-                <input required v-model="part.chipset" type="number" placeholder="Chipset">
+                <input required v-model="part.chipset" type="text" placeholder="Chipset">
             </div>
 
 
             <div v-if="part.type == 'CPU'">
                 <label>Chipset: </label>
-                <input required v-model="part.chipset" type="number" placeholder="Chipset">
+                <input required v-model="part.chipset" type="text" placeholder="Chipset">
                 <label>Frequency(GHz): </label>
                 <input required v-model="part.frequency" type="number" placeholder="Frequency">
             </div>

@@ -1,12 +1,13 @@
 export interface PartSchema {
-    nxid: string
+    _id?: string,
+    nxid: string,
     manufacturer: string,
     name: string,
     type: string,
     location: string,
     quantity: number,
     frequency?: number,
-    chipset?: number,
+    chipset?: string,
     memory_type?: string,
     peripheral_type?: string,
     storage_interface?: string,
@@ -17,4 +18,3 @@ export interface PartSchema {
     cable_end1?: string,
     cable_end2?: string,
 }
-
