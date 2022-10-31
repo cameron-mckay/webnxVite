@@ -1,16 +1,34 @@
 <script setup lang="ts">
 import { PartSchema } from '../model/part'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 interface Props {
     part: PartSchema,
-    img_src: string
+    quantity: number
 }
-const { part, img_src } = defineProps<Props>()
+const { part, quantity } = defineProps<Props>()
 
 onMounted(() => {
     console.log(part)
 })
+
+const emit = defineEmits(['plus', 'minus'])
+
+var item_quantity = ref(quantity)
+
+
+function plus(){
+    if(item_quantity.value < part.quantity)
+    {
+        item_quantity.value = item_quantity.value + 1 
+    }
+    emit('plus')
+}
+
+function minus(){
+    item_quantity.value -= 1
+    emit('minus')
+}
 
 </script>
 
@@ -22,10 +40,14 @@ onMounted(() => {
             <p>{{ part.manufacturer }}</p>
             <p>{{ part.name }}</p>
             <p>{{ part.location }}</p>
-            <p>{{ part.quantity }}</p>
+            <p>{{ `${item_quantity}/${part.quantity}` }}</p>
             <div class="flex justify-center">
-                <img class="h-10 w-10 p-2 hover:bg-green-500 rounded-full transition" src="../assets/plus-solid.svg"
-                    v-on:click="$emit('partAction')">
+                <img class="h-10 w-10 p-2 hover:bg-zinc-500 active:bg-zinc-600 rounded-full transition" src="../assets/plus-solid.svg"
+                    v-on:click="plus">
+                <img class="h-10 w-10 p-2 hover:bg-zinc-500 active:bg-zinc-600 rounded-full transition" src="../assets/minus-solid.svg"
+                v-on:click="minus">
+                <img class="h-10 w-10 p-2 hover:bg-red-500 active:bg-zing-500 rounded-full transition" src="../assets/x-solid.svg"
+                    v-on:click="$emit('delete')">
             </div>
         </div>
         <div

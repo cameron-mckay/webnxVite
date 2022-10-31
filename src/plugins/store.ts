@@ -1,14 +1,18 @@
 import { Store, createStore, useStore as baseUseStore } from 'vuex'
-import { App, InjectionKey } from 'vue'
+import { App, createApp, InjectionKey } from 'vue'
 import { getCurrentUser } from './dbCommands'
 import { Axios, AxiosInstance } from 'axios'
 
 // User state interface
+export interface CartItem {
+    id: string,
+    quantity: number
+}
 export interface UserState {
     isAuth: boolean,
     user: User,
     http: AxiosInstance
-    cart: Array<string>
+    cart: Array<CartItem>
 }
 
 // User schema
@@ -35,6 +39,18 @@ export function createGlobalStore(app: App): Store<UserState> {
             http: app.config.globalProperties.$http,
             cart: []
         }),
+        getters: {
+            getQuantity: (state: UserState) => (id: string) =>{
+                for (var item of state.cart)
+                {
+                    if(item.id == id)
+                    {
+                        return item.quantity;
+                    }
+                }
+                return 0
+            }
+        },
         mutations: {
             // Sets global authentication to true
             authenticate(state: UserState) {
@@ -52,12 +68,55 @@ export function createGlobalStore(app: App): Store<UserState> {
             },
             // Add ID of item to store
             addToCart(state: UserState, id: string) {
-                state.cart.push(id)
+                var found = false;
+                for(var i = 0; i < state.cart.length; i++)
+                {
+                    // Loop through each item and see if it 
+                    // already exists
+                    if(store.state.cart[i].id == id)
+                    {
+                        // Increment item
+                        store.state.cart[i].quantity += 1;
+                        i = store.state.cart.length
+                        found = true;
+                    }
+                }
+                if(!found){
+                    var item:CartItem = { id, quantity: 1}
+                    state.cart.push(item)
+                }
+            },
+            addOne(state: UserState, id: string){
+                for(var i = 0; i < state.cart.length; i++)
+                {
+                    if(state.cart[i].id == id)
+                    {
+                        state.cart[i].quantity += 1;
+                    }
+                }
             },
             // Remove item of ID from 
-            removeFromCart(state: UserState, id: string) {
-                let i = state.cart.indexOf(id);
-                state.cart.splice(i, 1)
+            removeOne(state: UserState, id: string) {
+                for(var i = 0; i < state.cart.length; i++)
+                {
+                    if(state.cart[i].id == id && state.cart[i].quantity == 1)
+                    {
+                        state.cart.splice(i, 1);
+                    }
+                    else if(state.cart[i].id == id)
+                    {
+                        state.cart[i].quantity -= 1;
+                    }
+                }
+            },
+            removeAll(state: UserState, id: string) {
+                for(var i = 0; i < state.cart.length; i++)
+                {
+                    if(state.cart[i].id == id)
+                    {
+                        state.cart.splice(i, 1);
+                    }
+                }
             },
             emptyCart(state: UserState) {
                 state.cart = []

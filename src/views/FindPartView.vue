@@ -58,8 +58,15 @@ onBeforeMount(() => {
 });
 
 async function addToCart(part: PartSchema) {
-    displayMessage(`Added ${part.manufacturer} ${part.name} to cart`)
-    store.commit("addToCart", part._id)
+    if(store.getters.getQuantity(part._id) < part.quantity)
+    {
+        displayMessage(`Added ${part.manufacturer} ${part.name} to cart`)
+        store.commit("addToCart", part._id)
+    }
+    else
+    {
+        errorHandler("Maximum quantity reached.")
+    }
 }
 
 // Search function

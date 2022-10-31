@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PartComponent from '../components/PartComponent.vue';
+import CartItemComponent from '../components/CartItemComponent.vue';
 
 import { onBeforeMount, ref, Ref } from 'vue';
 
@@ -21,7 +21,13 @@ interface Props {
 
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 // END OF PROPS
-var parts: Ref<Array<PartSchema>> = ref([])
+
+interface CartItem {
+    part: PartSchema,
+    quantity: number
+}
+
+var parts: Ref<Array<CartItem>> = ref([])
 
 onBeforeMount(() => {
     loadCart()
@@ -29,23 +35,41 @@ onBeforeMount(() => {
 
 async function loadCart() {
     parts.value = []
-    for (const id of store.state.cart) {
-        console.log(id)
-        getPartByMongoID(http, id, (data, err) => {
+    for (const item of store.state.cart) {
+        getPartByMongoID(http, item.id, (data, err) => {
             if (err) {
                 return errorHandler(err)
             }
-            parts.value.push(data as PartSchema)
+            let part = data as PartSchema
+            parts.value.push({ part, quantity: store.getters.getQuantity(part._id)})
         })
     }
     console.log(parts)
 }
 
-async function removeFromCart(id: string) {
-    store.commit("removeFromCart", id);
+async function deletePart(id: string) {
+    store.commit("removeAll", id);
     loadCart()
-    displayMessage("Removed from cart")
 }
+
+async function addOne(id: string) {
+    getPartByMongoID(http, id, (data, err) => {
+        let part = data as PartSchema
+        if(part.quantity > store.getters.getQuantity(id)){
+            store.commit("addOne", id)
+        } else {
+            errorHandler("Maximum quantity reached.")
+        }
+    })
+}
+
+async function subOne(id: string) {
+    store.commit("removeOne", id)
+    if (store.getters.getQuantity(id) == 0){
+        loadCart()
+    }
+}
+
 </script>
 
 <template>
@@ -59,8 +83,8 @@ async function removeFromCart(id: string) {
             <p>Quantity</p>
             <p></p>
         </div>
-        <PartComponent v-for="part in parts" v-bind:key="part._id" :part="part" :img_src="'/src/assets/x-solid.svg'"
-            @partAction='removeFromCart(part._id!)' />    
+        <CartItemComponent v-for="item in parts" v-bind:key="item.part._id" :part="item.part" :quantity="item.quantity"
+            @plus='addOne(item.part._id!)' @minus='subOne(item.part._id!)' @delete='deletePart(item.part._id!)'/>    
     </div>
     <div v-else>
         <h1 class="text-4xl">Cart</h1>
