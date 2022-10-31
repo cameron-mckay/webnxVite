@@ -1,14 +1,14 @@
 <template>
     <div>
         <form class="flex justify-between" @submit.prevent="search">
-            <input class="textbox w-[calc(80%-0.5rem)]" type="text" v-model="searchText">
+            <input class="textbox w-[calc(80%-0.5rem)]" type="text" v-model="searchText" placeholder="🔍 keywords...">
             <input class="submit w-[calc(20%)] mt-0" type="submit" value="Search">
         </form>
 
         <div v-if="parts.length != 0">
 
             <div
-            class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 rounded-xl transition font-bold">
+            class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 transition font-bold">
                 <p class="md:block hidden">NXID</p>
                 <p >Manufacturer</p>
                 <p>Name</p>
@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import PartComponent from '../components/PartComponent.vue';
-import { onBeforeMount, ref, watch, Ref } from 'vue';
+import { onBeforeMount, ref, Ref } from 'vue';
 import { getPartsByTextSearch, getPartsByData } from '../plugins/dbCommands';
 
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????

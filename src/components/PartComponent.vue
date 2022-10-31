@@ -15,21 +15,23 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="group">
+    <div class="group group-hover:shadow-xl">
         <div
-            class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl group-hover:rounded-bl-none group-hover:shadow-lg">
+            class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 
+            p-2 group-hover:rounded-xl group-hover:rounded-bl-none border-t-2 border-gray-800">
             <p class="md:block hidden">{{ part.nxid }}</p>
             <p>{{ part.manufacturer }}</p>
             <p>{{ part.name }}</p>
             <p>{{ part.location }}</p>
             <p>{{ part.quantity }}</p>
             <div class="flex justify-center">
-                <img class="h-10 w-10 p-2 hover:bg-green-500 rounded-full transition" src="../assets/plus-solid.svg"
-                    v-on:click="$emit('partAction')">
+                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-full transition"
+                    src="../assets/plus-solid.svg" v-on:click="$emit('partAction')">
             </div>
         </div>
         <div
-            class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-xl group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
+            class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-xl 
+            group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
             <p class="md:hidden block">{{ `NXID: ${part.nxid}` }}</p>
             <p>{{ `Type: ${part.type}` }}</p>
             <div v-if="part.type == 'Motherboard'">

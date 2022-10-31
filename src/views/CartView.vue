@@ -74,7 +74,7 @@ async function subOne(id: string) {
 
 <template>
     <div v-if="parts.length != 0">
-        <h1 class="text-4xl">Cart</h1>
+        <h1 class="text-4xl mb-4">Cart</h1>
         <div class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 rounded-xl transition font-bold">
             <p class="md:block hidden">NXID</p>
             <p >Manufacturer</p>
@@ -87,7 +87,7 @@ async function subOne(id: string) {
             @plus='addOne(item.part._id!)' @minus='subOne(item.part._id!)' @delete='deletePart(item.part._id!)'/>    
     </div>
     <div v-else>
-        <h1 class="text-4xl">Cart</h1>
+        <h1 class="text-4xl mb-4">Cart</h1>
         <p>is empty...</p>
     </div>
 </template>

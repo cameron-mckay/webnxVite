@@ -92,8 +92,8 @@ async function submitPart() {
 
 <template>
     <div class="body">
-        <h1>Create a new part:</h1>
-        <form id="form" @submit.prevent="submitPart">
+        <h1 class="text-4xl mb-4">Create a new part:</h1>
+        <form id="form" @submit.prevent="submitPart" @reset.prevent="resetForm" class="grid grid-cols-2">
             <label>NXID: </label>
             <input required v-model="part.nxid" type="text" placeholder="NXID">
             <label>Manufacturer: </label>
@@ -119,13 +119,13 @@ async function submitPart() {
             </select>
 
 
-            <div v-if="part.type == 'Motherboard'">
-                <label>Chipset: </label>
-                <input required v-model="part.chipset" type="text" placeholder="Chipset">
+            <div v-if="part.type == 'Motherboard'" class="col-span-2 grid grid-cols-2">
+                <label class="col-span-1">Chipset: </label>
+                <input class="col-span-1" required v-model="part.chipset" type="text" placeholder="Chipset">
             </div>
 
 
-            <div v-if="part.type == 'CPU'">
+            <div v-if="part.type == 'CPU'" class="col-span-2 grid grid-cols-2">
                 <label>Chipset: </label>
                 <input required v-model="part.chipset" type="text" placeholder="Chipset">
                 <label>Frequency(GHz): </label>
@@ -133,7 +133,7 @@ async function submitPart() {
             </div>
 
 
-            <div v-if="part.type == 'Memory'">
+            <div v-if="part.type == 'Memory'" class="col-span-2 grid grid-cols-2">
                 <label>Frequency(MHz): </label>
                 <input required v-model="part.frequency" type="number" placeholder="Frequency">
                 <label>Capacity(GB): </label>
@@ -148,7 +148,7 @@ async function submitPart() {
             </div>
 
 
-            <div v-if="part.type == 'Peripheral Card'">
+            <div v-if="part.type == 'Peripheral Card'" class="col-span-2 grid grid-cols-2">
                 <label>Card type: </label>
                 <select required v-model="part.peripheral_type">
                     <option disabled value="">Card type</option>
@@ -173,7 +173,7 @@ async function submitPart() {
             </div>
 
 
-            <div v-if="part.type == 'Storage'">
+            <div v-if="part.type == 'Storage'" class="col-span-2 grid grid-cols-2">
                 <label>Storage interface: </label>
                 <select required v-model="part.storage_interface">
                     <option disabled value="">Pick one</option>
@@ -182,7 +182,7 @@ async function submitPart() {
                     <option>NVME</option>
                 </select>
                 <label>Capacity: </label>
-                <div>
+                <div class="flex justify-between">
                     <input required v-model="part.capacity" type="number">
                     <select required v-model="part.capacity_unit">
                         <option disabled value="">Pick one</option>
@@ -201,18 +201,18 @@ async function submitPart() {
             </div>
 
 
-            <div v-if="part.type == 'GPU'">
+            <div v-if="part.type == 'GPU'" class="col-span-2 grid grid-cols-2">
                 <!-- Placeholder -->
             </div>
 
 
-            <div v-if="part.type == 'Cable'">
+            <div v-if="part.type == 'Cable'" class="col-span-2 grid grid-cols-2">
                 <label>Cable end 1: </label>
                 <input required v-model="part.cable_end1" type="text">
                 <label>Cable end 2: </label>
                 <input required v-model="part.cable_end2" type="text">
             </div>
-            <div v-if="part.type == 'Backplane'">
+            <div v-if="part.type == 'Backplane'" class="col-span-2 grid grid-cols-2">
                 <label>Storage interface: </label>
                 <select required v-model="part.storage_interface">
                     <option selected>SATA</option>
@@ -229,41 +229,17 @@ async function submitPart() {
             <div v-if="part.type == 'Misc.'">
                 <!-- Placeholder -->
             </div>
-
-            <input id="submit" type="submit">
+            <input class="col-span-2 submit bg-red-500 hover:bg-red-600 active:bg-red-700" type="reset" value="Reset">
+            <input class="col-span-2 submit" type="submit" value="Create Part">
         </form>
     </div>
 </template>
 
+
+
 <style scoped>
-h1 {
-    text-align: left;
+input, select {
+    @apply textbox;
 }
 
-form {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-}
-
-label {
-    grid-column: 1;
-    text-align: right;
-    padding-right: 20px;
-}
-
-form>div {
-    grid-column: 1/3;
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-}
-
-input,
-select {
-    grid-column: 2;
-}
-
-#submit {
-    grid-column: 1/3;
-    background-color: greenyellow;
-}
 </style>

@@ -35,6 +35,7 @@ onBeforeMount(() => {
   // Check if user is authenticated
   checkAuth(http, (data, err) => {
     // If not authenticated
+    console.log("test")
     if (err) {
       // set status
       store.commit("deauthenticate")
