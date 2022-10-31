@@ -3,11 +3,12 @@ import App from './App.vue'
 import router from './router/index'
 import { key, createGlobalStore } from './plugins/store'
 import axios from './plugins/axios'
+import './style.css'
 
 // Create root app instance
 const app = createApp(App)
 // Set up axios instance
-app.use(axios,{});
+app.use(axios, {});
 // Create global store
 app.use(createGlobalStore(app), key)
 // Add router and mount app

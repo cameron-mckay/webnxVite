@@ -10,17 +10,17 @@ import CartView from '../views/CartView.vue'
 const routes = [
   {
     path: '/',
-    name: 'home',
+    name: 'Home',
     component: FindPartView
   },
   {
     path: '/register',
-    name: 'register',
+    name: 'Register',
     component: RegisterView
   },
   {
     path: '/login',
-    name: 'login',
+    name: 'Login',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -28,22 +28,22 @@ const routes = [
   },
   {
     path: '/cart',
-    name: 'cart',
+    name: 'Cart',
     component: CartView
   },
   {
     path: '/parts',
-    name: 'parts',
+    name: 'Parts',
     component: FindPartView
   },
-  {
-    path: '/assets',
-    name: 'assets',
-    component: AssetView
-  },
+  // {
+  //   path: '/assets',
+  //   name: 'assets',
+  //   component: AssetView
+  // },
   {
     path: '/admin/createpart',
-    name: 'createPart',
+    name: 'Create Part',
     component: CreatePartView
   },
   {
@@ -57,5 +57,17 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
+
+
+// This callback runs before every route change, including on page load.
+router.beforeEach((to, from, next) => {
+  // This goes through the matched routes from last to first, finding the closest route with a title.
+  // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
+  // `/nested`'s will be chosen.
+  document.title = `WebNX - ${to.name?.toString()}`
+
+  next();
+});
+
 
 export default router

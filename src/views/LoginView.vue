@@ -1,11 +1,11 @@
 <template>
-    <div class="login" v-on:keyup.enter="login">
-        <div class="card">
-            <img alt="WebNX logo" src="../assets/logo.png">
-            <input type="email" id="email" v-model="form.email" placeholder="Email" required>
-            <input type="password" v-model="form.password" placeholder="Password" required>
-            <button v-on:click="login" type="submit">Login</button>
-        </div>
+    <div class="card max-w-sm">
+        <img class="mx-auto mb-4" alt="WebNX logo" src="../assets/logo.png">
+        <form class="text-center" @submit.prevent="login">
+            <input class="textbox" type="email" id="email" v-model="form.email" placeholder="Email" required autofocus>
+            <input class="textbox" type="password" v-model="form.password" placeholder="Password" required>
+            <input class="submit" type="submit" value="Login">
+        </form>
     </div>
 </template>
 
@@ -38,7 +38,6 @@ var form = {
 
 // Lifecycle hook
 onMounted(() => {
-    focus();
     redirectIfLoggedIn()
 })
 
@@ -79,54 +78,4 @@ async function redirectIfLoggedIn() {
             // Go to login
         });
 }
-
-// Auto focus email box
-function focus() {
-    // Focus email entry field
-    document.getElementById("email")!.focus();
-}
 </script>
-
-<style scoped>
-.login {
-    font-family: sans-serif;
-    background-color: #ebebebeb;
-    margin: 3em auto;
-    max-width: 300px;
-    padding: 25px;
-    border-radius: 20px;
-}
-
-.login {
-    display: flex;
-    justify-content: center;
-}
-
-.login input {
-    display: block;
-    margin: 10px 0;
-    border-radius: 20px;
-    border: 2px solid grey;
-    padding: 5px;
-    width: calc(100% - 14px);
-}
-
-.login input:focus {
-    border-color: #8ebd00;
-    outline: none;
-}
-
-.login button {
-    background-color: #8ebd00;
-    border: none;
-    padding: 5px 10px;
-    color: white;
-    border-radius: 5px;
-    transition: ease-in .1s;
-}
-
-.login button:hover {
-    transition: ease-in .1s;
-    background-color: #668800;
-}
-</style>

@@ -1,15 +1,17 @@
 <template>
-    <div class="header">
-        <div class="links">
-            <img alt="WebNX Logo" src="../assets/logo.png">
-            <RouterLink to="/parts">Parts</RouterLink>
+    <div class="flex fixed w-full top-0 justify-between bg-zinc-300 shadow-lg z-40">
+        <div class="flex justify-center">
+            <img class="h-10 p-2" alt="WebNX Logo" src="../assets/logo.png">
+            <RouterLink class="transiton leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/parts">Parts
+            </RouterLink>
             <!-- <RouterLink to="/assets">Assets</RouterLink> -->
-            <RouterLink to="/cart">Cart</RouterLink>
+            <RouterLink class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/cart">Cart
+            </RouterLink>
         </div>
-        <div class="user">
-            <a v-on:click="logout" href="#">Logout</a>
-            <p>{{ store.state.user.first_name + " " + store.state.user.last_name }}</p>
-            <img alt="profile picture" :src="profilePicture">
+        <div class="flex justify-center">
+            <p class="leading-10">{{ store.state.user.first_name + " " + store.state.user.last_name }}</p>
+            <img class="h-10 rounded-full p-1" alt="profile picture" :src="profilePicture">
+            <a class="leading-10" v-on:click="logout" href="#">Logout</a>
         </div>
     </div>
 </template>
@@ -25,7 +27,6 @@ interface Props {
 }
 const { http } = defineProps<Props>()
 
-var user = {}
 var profilePicture = "https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
 
 onBeforeMount(() => {
@@ -38,55 +39,3 @@ async function logout() {
 }
 
 </script>
-
-<style scoped>
-.header {
-    display: flex;
-    justify-content: space-between;
-    height: 40px;
-    background-color: #ebebebeb;
-}
-
-.links img {
-    height: 30px;
-    padding: 5px 0;
-    margin: 0 20px;
-}
-
-.links {
-    display: inline-block;
-}
-
-.links a {
-    display: inline-block;
-    text-decoration: none;
-    height: 20px;
-    line-height: 20px;
-    vertical-align: top;
-    padding: 10px 20px;
-    color: black;
-}
-
-.links a:hover {
-    background-color: #dededede;
-}
-
-.user {
-    display: flex;
-    height: 40px;
-}
-
-.user img {
-    height: 30px;
-    width: 30px;
-    padding: 5px;
-    border-radius: 20px;
-}
-
-.user p {
-    margin: 0 20px;
-    line-height: 40px;
-    color: black;
-}
-</style>
-

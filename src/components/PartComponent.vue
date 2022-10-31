@@ -15,49 +15,60 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="part">
-        <div class="grid">
-            <p>{{ part.nxid }}</p>
-            <p>{{ `${part.manufacturer} ${part.name}` }}</p>
-            <p>{{ part.type }}</p>
+    <div class="group">
+        <div
+            class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl group-hover:rounded-bl-none group-hover:shadow-lg">
+            <p class="md:block hidden">{{ part.nxid }}</p>
+            <p>{{ part.manufacturer }}</p>
+            <p>{{ part.name }}</p>
             <p>{{ part.location }}</p>
             <p>{{ part.quantity }}</p>
-            <img :src="img_src" v-on:click="$emit('partAction')">
+            <div class="flex justify-center">
+                <img class="h-10 w-10 p-2 hover:bg-red-500 rounded-full transition" :src="img_src"
+                    v-on:click="$emit('partAction')">
+            </div>
         </div>
-        <div class="hover">
-            <p>test</p>
-            <p>test 2</p>
+        <div
+            class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-xl group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
+            <p class="md:hidden block">{{ `NXID: ${part.nxid}` }}</p>
+            <p>{{ `Type: ${part.type}` }}</p>
+            <div v-if="part.type == 'Motherboard'">
+                <p>{{ `Chipset: ${part.chipset}` }}</p>
+            </div>
+            <div v-if="part.type == 'CPU'">
+                <p>{{ `Chipset: ${part.chipset}` }}</p>
+                <p>{{ `Frequency: ${part.frequency}GHz` }}</p>
+            </div>
+            <div v-if="part.type == 'Memory'">
+                <p>{{ `Frequency: ${part.frequency}MHz` }}</p>
+                <p>{{ `Capacity: ${part.capacity}GB` }}</p>
+                <p>{{ `Mem Type: ${part.memory_type}` }}</p>
+            </div>
+            <div v-if="part.type == 'Peripheral Card'">
+                <p>{{ `Card type: ${part.peripheral_type}` }}</p>
+                <p>{{ `Port type: ${part.port_type}` }}</p>
+            </div>
+            <div v-if="part.type == 'Storage'">
+                <p>{{ `Interface: ${part.storage_interface}` }}</p>
+                <p>{{ `Capacity: ${part.capacity}${part.capacity_unit}` }}</p>
+                <div v-if="part.storage_interface == 'NVME'">
+                    <p>{{ `Connector: ${part.port_type}` }}</p>
+                </div>
+            </div>
+            <div v-if="part.type == 'GPU'">
+                <!-- Placeholder -->
+            </div>
+            <div v-if="part.type == 'Cable'">
+                <p>{{ `End 1: ${part.cable_end1}` }}</p>
+                <p>{{ `End 2: ${part.cable_end2}` }}</p>
+            </div>
+            <div v-if="part.type == 'Backplane'">
+                <p>{{ `Interface: ${part.storage_interface}` }}</p>
+                <p>{{ `Ports: ${part.port_type}` }}</p>
+            </div>
+            <div v-if="part.type == 'Misc.'">
+                <!-- Placeholder -->
+            </div>
         </div>
     </div>
 </template>
-
-<style scoped>
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
-    position: relative;
-}
-
-.grid>p {
-    padding: 10px;
-    border: 1px solid grey;
-    margin: 0 -1px -1px 0;
-}
-
-.hover {
-    display: none;
-}
-
-.part:hover>.hover {
-    display: block;
-    position: absolute;
-}
-
-.part:hover>.hover>p {
-    margin: 0;
-}
-
-.grid img {
-    width: 50px;
-}
-</style>

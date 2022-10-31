@@ -15,34 +15,9 @@ function deleteMessage(message: string) {
 </script>
 
 <template>
-    <div class="message">
-        <div v-on:click="deleteMessage(message)" v-for="message in messages">
+    <div class="fixed z-50 text-white text-center mx-auto block w-full">
+        <div class="bg-green-400 max-w-3xl mb-1 mx-auto p-2 rounded-full hover:bg-green-500 transition" v-on:click="deleteMessage(message)" v-for="message in messages">
             <p>{{ message }}</p>
         </div>
     </div>
 </template>
-
-<style scoped>
-.message {
-    display: block;
-    color: white;
-    font-family: sans-serif;
-    width: 100%;
-    margin: 0 auto;
-    position: fixed;
-    text-align: center;
-}
-
-.message p {
-    background-color: #42ff4f;
-    max-width: 800px;
-    margin: 1em auto;
-    padding: 10px;
-    border-radius: 25px;
-    opacity: 95%;
-}
-
-.message p:hover {
-    opacity: 50%;
-}
-</style>

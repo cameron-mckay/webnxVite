@@ -1,17 +1,15 @@
 <template>
-    <div class="login" v-on:keyup.enter="register">
-        <div class="card">
-
-            <img alt="WebNX logo" src="../assets/logo.png">
-            <form @submit.prevent="register">
-                <input type="first_name" id="first_name" v-model="form.first_name" placeholder="First name" required>
-                <input type="last_name" v-model="form.last_name" placeholder="Last name" required>
-                <input type="email" v-model="form.email" placeholder="Email" required>
-                <input type="password" v-model="form.password" placeholder="Password" required>
-                <input type="password" v-model="form.password2" placeholder="Confirm password" required>
-                <button v-on:click="register" type="submit">Register</button>
-            </form>
-        </div>
+    <div class="card max-w-sm" v-on:keyup.enter="register">
+        <img class="mx-auto mb-4" alt="WebNX logo" src="../assets/logo.png">
+        <form class="text-center" @submit.prevent="register">
+            <input class="textbox" type="first_name" id="first_name" v-model="form.first_name" placeholder="First name"
+                required>
+            <input class="textbox" type="last_name" v-model="form.last_name" placeholder="Last name" required>
+            <input class="textbox" type="email" v-model="form.email" placeholder="Email" required>
+            <input class="textbox" type="password" v-model="form.password" placeholder="Password" required>
+            <input class="textbox" type="password" v-model="form.password2" placeholder="Confirm password" required>
+            <input class="submit" type="submit" value="Register">
+        </form>
     </div>
 </template>
 
@@ -102,47 +100,3 @@ async function focus() {
 }
 
 </script>
-
-<style scoped>
-.login {
-    font-family: sans-serif;
-    background-color: #ebebebeb;
-    margin: 3em auto;
-    max-width: 300px;
-    padding: 25px;
-    border-radius: 20px;
-}
-
-.login {
-    display: flex;
-    justify-content: center;
-}
-
-.login input {
-    display: block;
-    margin: 10px 0;
-    border-radius: 20px;
-    border: 2px solid grey;
-    padding: 5px;
-    width: calc(100% - 14px);
-}
-
-.login input:focus {
-    border-color: #8ebd00;
-    outline: none;
-}
-
-.login button {
-    background-color: #8ebd00;
-    border: none;
-    padding: 5px 10px;
-    color: white;
-    border-radius: 5px;
-    transition: ease-in .1s;
-}
-
-.login button:hover {
-    transition: ease-in .1s;
-    background-color: #668800;
-}
-</style>

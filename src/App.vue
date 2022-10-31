@@ -1,3 +1,12 @@
+<template>
+  <HeaderComponent v-if="store.state.isAuth" :http="http" />
+  <ErrorComponent :messages="errorMessages" />
+  <MessageComponent :messages="messages" />
+  <router-view class="max-w-3xl mx-auto bg-zinc-300 p-4 rounded-2xl mt-16 shadow-xl" :http='http' :store='store' :errorHandler='errorHandler' :router='router'
+    :displayMessage='displayMessage' />
+</template>
+
+
 <script setup lang="ts">
 // Vue components
 import HeaderComponent from './components/HeaderComponent.vue'
@@ -73,46 +82,3 @@ async function displayMessage(message: string) {
   }, 5000)
 }
 </script>
-
-<template>
-  <HeaderComponent v-if="store.state.isAuth" :http="http" />
-  <ErrorComponent :messages="errorMessages" />
-  <MessageComponent :messages="messages" />
-  <router-view :http='http' :store='store' :errorHandler='errorHandler' :router='router'
-    :displayMessage='displayMessage' />
-</template>
-
-<style>
-body {
-  margin: 0;
-}
-
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-nav {
-  padding: 30px;
-}
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-
-.body {
-  padding: 2em;
-  border-radius: 20px;
-  margin: 1em auto;
-  max-width: 800px;
-  background-color: #ebebebeb;
-}
-</style>

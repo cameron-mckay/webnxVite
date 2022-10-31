@@ -1,12 +1,26 @@
 <template>
-    <div class="body">
-        <form @submit.prevent="search">
-            <input type="text" v-model="searchText">
-            <input type="submit">
+    <div>
+        <form class="flex justify-between" @submit.prevent="search">
+            <input class="textbox w-[calc(80%-0.5rem)]" type="text" v-model="searchText">
+            <input class="submit w-[calc(20%)] mt-0" type="submit" value="Search">
         </form>
-        <div class="parts">
-            <PartComponent v-for="part in parts" v-bind:key="part._id" :img_src="'../assets/plus-solid.svg'"
-                @partAction="addToCart(part)" :part="part" />
+
+        <div v-if="parts.length != 0">
+
+            <div
+            class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 rounded-xl transition font-bold">
+                <p class="md:block hidden">NXID</p>
+                <p >Manufacturer</p>
+                <p>Name</p>
+                <p>Location</p>
+                <p>Quantity</p>
+                <p></p>
+            </div>
+            <PartComponent v-for="part in parts" v-bind:key="part._id" :img_src="'/src/assets/plus-solid.svg'"
+            @partAction="addToCart(part)" :part="part" />
+        </div>
+        <div v-else>
+            <p>No results...</p>
         </div>
     </div>
 </template>
