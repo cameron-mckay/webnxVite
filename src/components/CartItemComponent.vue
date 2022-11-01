@@ -12,13 +12,13 @@ onMounted(() => {
     console.log(part)
 })
 
-const emit = defineEmits(['plus', 'minus'])
+const emit = defineEmits(['plus', 'minus', 'delete'])
 
-var item_quantity = ref(quantity)
+let item_quantity = ref(quantity)
 
 
 function plus(){
-    if(item_quantity.value < part.quantity)
+    if(item_quantity.value < part.quantity!)
     {
         item_quantity.value = item_quantity.value + 1 
     }

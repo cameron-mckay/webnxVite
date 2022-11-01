@@ -70,9 +70,9 @@ export async function getPartsByTextSearch(http: AxiosInstance, searchString: st
  * @param id 
  * @param callback 
  */
-export async function getPartByMongoID(http: AxiosInstance, id: string, callback: apiResponse) {
+export async function getPartByID(http: AxiosInstance, id: string, callback: apiResponse) {
     // Request part using ID in query string
-    await http.get("/api/part", {
+    await http.get("/api/part/id", {
         params: {
             id
         }
@@ -94,7 +94,7 @@ export async function getPartByMongoID(http: AxiosInstance, id: string, callback
  * @param part 
  * @param callback 
  */
-export async function getPartsByData(http: AxiosInstance, part: Object, callback: apiResponse) {
+export async function getPartsByData(http: AxiosInstance, part: PartSchema, callback: apiResponse) {
     await http.get("/api/part", { params: part })
         .then((res: AxiosResponse) => {
             // Success - send results to callback

@@ -9,7 +9,7 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState } from '../plugins/store';
 import { PartSchema } from '../model/part';
-import { getPartByMongoID } from '../plugins/dbCommands';
+import { getPartByID } from '../plugins/dbCommands';
 
 interface Props {
     http: AxiosInstance,
@@ -27,7 +27,7 @@ interface CartItem {
     quantity: number
 }
 
-var parts: Ref<Array<CartItem>> = ref([])
+let parts: Ref<Array<CartItem>> = ref([])
 
 onBeforeMount(() => {
     loadCart()
@@ -36,7 +36,7 @@ onBeforeMount(() => {
 async function loadCart() {
     parts.value = []
     for (const item of store.state.cart) {
-        getPartByMongoID(http, item.id, (data, err) => {
+        getPartByID(http, item.id, (data, err) => {
             if (err) {
                 return errorHandler(err)
             }
@@ -53,9 +53,9 @@ async function deletePart(id: string) {
 }
 
 async function addOne(id: string) {
-    getPartByMongoID(http, id, (data, err) => {
+    getPartByID(http, id, (data, err) => {
         let part = data as PartSchema
-        if(part.quantity > store.getters.getQuantity(id)){
+        if(part.quantity! > store.getters.getQuantity(id)){
             store.commit("addOne", id)
         } else {
             errorHandler("Maximum quantity reached.")

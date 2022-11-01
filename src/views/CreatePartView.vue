@@ -21,7 +21,7 @@ interface Props {
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 // END OF PROPS
 
-var part: Ref<PartSchema> = ref({
+let part: Ref<PartSchema> = ref({
     nxid: '',
     manufacturer: '',
     name: '',
@@ -235,11 +235,8 @@ async function submitPart() {
     </div>
 </template>
 
-
-
 <style scoped>
 input, select {
     @apply textbox;
 }
-
 </style>

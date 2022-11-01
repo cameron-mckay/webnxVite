@@ -3,10 +3,10 @@ import { PartSchema } from '../model/part'
 import { onMounted } from 'vue'
 
 interface Props {
-    part: PartSchema,
-    img_src: string
+    part: PartSchema
 }
-const { part, img_src } = defineProps<Props>()
+
+const { part } = defineProps<Props>()
 
 onMounted(() => {
     console.log(part)
