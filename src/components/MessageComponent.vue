@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Message } from '../App.vue';
+import type { Message } from '../plugins/interfaces';
 
 // Define props
 interface MessageProps {

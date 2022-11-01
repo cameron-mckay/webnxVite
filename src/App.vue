@@ -7,13 +7,8 @@
 
 
 <script setup lang="ts">
-export interface Message {
-  text: string,
-  quantity: number
-}
 // Vue components
 import HeaderComponent from './components/HeaderComponent.vue'
-import ErrorComponent from './components/ErrorComponent.vue'
 import MessageComponent from './components/MessageComponent.vue'
 
 // Import dependencies
@@ -23,6 +18,7 @@ import type { AxiosInstance, AxiosError } from 'axios';
 import { injectionKey } from './plugins/axios'
 import { useStore } from './plugins/store'
 import { checkAuth } from './plugins/dbCommands'
+import type { Message } from './plugins/interfaces'
 
 // Global instances passed through props
 const http = inject<AxiosInstance>(injectionKey)!

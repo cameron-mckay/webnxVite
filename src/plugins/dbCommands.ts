@@ -1,10 +1,6 @@
-import type { AxiosResponse, AxiosError, AxiosInstance, Axios } from "axios"
-import type { PartSchema } from "../model/part"
-import type { CartItem } from "../plugins/store"
-
-interface apiResponse {
-    (data: object | Array<object>, err: Error | AxiosError | null): void;
-}
+import type { AxiosResponse, AxiosError, AxiosInstance } from "axios"
+import type { CartItem, PartSchema } from "../plugins/interfaces"
+import type { apiResponse } from "./interfaces"
 
 // Gets user data from API using the user's token
 export async function getCurrentUser(http: AxiosInstance, callback: apiResponse) {

@@ -1,10 +1,6 @@
 import axios, { AxiosInstance } from 'axios'
 import { App } from 'vue'
-
-interface AxiosOptions {
-    baseUrl?: string
-    token?: string
-}
+import type { AxiosOptions } from './interfaces'
 
 export const injectionKey = Symbol('http')
 

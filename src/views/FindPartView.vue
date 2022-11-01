@@ -37,8 +37,7 @@ import { getPartsByTextSearch, getPartByID, getPartsByData,  } from '../plugins/
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import type { UserState } from '../plugins/store';
-import { PartSchema } from '../model/part';
+import type { UserState, PartSchema } from '../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,

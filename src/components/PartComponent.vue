@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PartSchema } from '../model/part'
+import { PartSchema } from '../plugins/interfaces'
 import { onMounted } from 'vue'
 
 interface Props {

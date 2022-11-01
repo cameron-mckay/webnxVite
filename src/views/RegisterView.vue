@@ -21,7 +21,7 @@ import { onMounted } from 'vue';
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import type { UserState } from '../plugins/store';
+import type { UserState } from '../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,
@@ -36,7 +36,7 @@ const { http, store, router, errorHandler, displayMessage } = defineProps<Props>
 
 
 // Bound to form data
-var form = {
+let form = {
     first_name: "",
     last_name: "",
     email: "",

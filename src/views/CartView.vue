@@ -7,8 +7,7 @@ import { onBeforeMount, ref, Ref } from 'vue';
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import type { UserState } from '../plugins/store';
-import { PartSchema } from '../model/part';
+import type { UserState, PartSchema, LoadedCartItem } from '../plugins/interfaces';
 import { getPartByID } from '../plugins/dbCommands';
 
 interface Props {
@@ -22,12 +21,9 @@ interface Props {
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 // END OF PROPS
 
-interface CartItem {
-    part: PartSchema,
-    quantity: number
-}
 
-let parts: Ref<Array<CartItem>> = ref([])
+
+let parts: Ref<Array<LoadedCartItem>> = ref([])
 
 onBeforeMount(() => {
     loadCart()

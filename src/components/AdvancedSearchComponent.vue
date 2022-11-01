@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PartSchema } from '../model/part';
+import type { PartSchema } from '../plugins/interfaces';
 import { watch, ref, Ref } from 'vue';
 
 let part: Ref<PartSchema> = ref({})

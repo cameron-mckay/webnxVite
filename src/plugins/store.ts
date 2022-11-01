@@ -1,31 +1,8 @@
 import { Store, createStore, useStore as baseUseStore } from 'vuex'
-import { App, createApp, InjectionKey } from 'vue'
+import { App, InjectionKey } from 'vue'
 import { getCurrentUser } from './dbCommands'
-import { Axios, AxiosInstance } from 'axios'
-
-// User state interface
-export interface CartItem {
-    id: string,
-    quantity: number
-}
-export interface UserState {
-    isAuth: boolean,
-    user: User,
-    http: AxiosInstance
-    cart: Array<CartItem>
-}
-
-// User schema
-export interface User {
-    admin?: boolean,
-    date_created?: string,
-    email?: string,
-    first_name?: string,
-    last_name?: string,
-    _v?: number,
-    _id?: string
-}
-
+import { AxiosInstance } from 'axios'
+import type { UserState, User, CartItem } from './interfaces'
 // Injection key
 export const key: InjectionKey<Store<UserState>> = Symbol()
 
@@ -41,7 +18,7 @@ export function createGlobalStore(app: App): Store<UserState> {
         }),
         getters: {
             getQuantity: (state: UserState) => (id: string) =>{
-                for (var item of state.cart)
+                for (let item of state.cart)
                 {
                     if(item.id == id)
                     {
@@ -52,7 +29,7 @@ export function createGlobalStore(app: App): Store<UserState> {
             },
             getTotalNumItems: (state: UserState) => {
                 let num = 0
-                for (var item of state.cart){
+                for (let item of state.cart){
                     num += item.quantity
                 }
                 return num
@@ -75,8 +52,8 @@ export function createGlobalStore(app: App): Store<UserState> {
             },
             // Add ID of item to store
             addToCart(state: UserState, id: string) {
-                var found = false;
-                for(var i = 0; i < state.cart.length; i++)
+                let found = false;
+                for(let i = 0; i < state.cart.length; i++)
                 {
                     // Loop through each item and see if it 
                     // already exists
@@ -89,12 +66,12 @@ export function createGlobalStore(app: App): Store<UserState> {
                     }
                 }
                 if(!found){
-                    var item:CartItem = { id, quantity: 1}
+                    let item:CartItem = { id, quantity: 1}
                     state.cart.push(item)
                 }
             },
             addOne(state: UserState, id: string){
-                for(var i = 0; i < state.cart.length; i++)
+                for(let i = 0; i < state.cart.length; i++)
                 {
                     if(state.cart[i].id == id)
                     {
@@ -104,7 +81,7 @@ export function createGlobalStore(app: App): Store<UserState> {
             },
             // Remove item of ID from 
             removeOne(state: UserState, id: string) {
-                for(var i = 0; i < state.cart.length; i++)
+                for(let i = 0; i < state.cart.length; i++)
                 {
                     if(state.cart[i].id == id && state.cart[i].quantity == 1)
                     {
@@ -117,7 +94,7 @@ export function createGlobalStore(app: App): Store<UserState> {
                 }
             },
             removeAll(state: UserState, id: string) {
-                for(var i = 0; i < state.cart.length; i++)
+                for(let i = 0; i < state.cart.length; i++)
                 {
                     if(state.cart[i].id == id)
                     {
