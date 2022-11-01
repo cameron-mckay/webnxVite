@@ -21,14 +21,7 @@ interface Props {
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 // END OF PROPS
 
-let part: Ref<PartSchema> = ref({
-    nxid: '',
-    manufacturer: '',
-    name: '',
-    type: '',
-    location: '',
-    quantity: 0,
-})
+let part: Ref<PartSchema> = ref({})
 
 // Clear out fields when part type is changed
 watch(() => part.value.type, () => {
@@ -53,12 +46,12 @@ watch(() => part.value.storage_interface, () => {
 
 // This is scuffed as fuck but it'll do for now
 function resetForm() {
-    part.value.nxid = ""
-    part.value.manufacturer = ""
-    part.value.name = ""
-    part.value.type = ""
-    part.value.location = ""
-    part.value.quantity = 0
+    delete part.value.nxid
+    delete part.value.manufacturer
+    delete part.value.name
+    delete part.value.type
+    delete part.value.location
+    delete part.value.quantity
     delete part.value.frequency
     delete part.value.chipset
     delete part.value.memory_type

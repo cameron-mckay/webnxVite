@@ -27,29 +27,13 @@ watch(() => part.value.storage_interface, () => {
 
 // This is scuffed as fuck but it'll do for now
 function resetForm() {
-    delete part.value.nxid
-    delete part.value.manufacturer
-    delete part.value.name
-    delete part.value.type
-    delete part.value.location
-    delete part.value.quantity
-    delete part.value.frequency
-    delete part.value.chipset
-    delete part.value.memory_type
-    delete part.value.peripheral_type
-    delete part.value.storage_interface
-    delete part.value.capacity
-    delete part.value.capacity_unit
-    delete part.value.num_ports
-    delete part.value.port_type
-    delete part.value.cable_end1
-    delete part.value.cable_end2
+    part.value = {}
 }
 </script>
 
 <template>
     <div class="w-full h-full top-0 left-0 absolute z-50 pointer-events-none">
-        <div class="p-4 rounded-xl block bg-zinc-500 top-40 mx-auto mt-32 max-w-xl shadow-lg z-50 pointer-events-auto" @click="">
+        <div class="p-4 rounded-xl block bg-zinc-300 top-40 mx-auto mt-32 max-w-xl shadow-lg z-50 pointer-events-auto" @click="">
             <h1 class="text-4xl mb-4">Advanced search:</h1>
             <form id="form" @submit.prevent="$emit('advancedSearch', part)" @reset.prevent="resetForm" class="grid grid-cols-2">
                 <label>NXID: </label>

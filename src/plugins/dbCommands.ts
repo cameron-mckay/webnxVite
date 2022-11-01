@@ -1,5 +1,6 @@
 import type { AxiosResponse, AxiosError, AxiosInstance, Axios } from "axios"
 import type { PartSchema } from "../model/part"
+import type { CartItem } from "../plugins/store"
 
 interface apiResponse {
     (data: object | Array<object>, err: Error | AxiosError | null): void;
@@ -125,4 +126,9 @@ export async function createPart(http: AxiosInstance, part: PartSchema, callback
             // Error - send error to callback
             callback({}, err)
         })
+}
+
+
+export async function checkout(http: AxiosInstance, cart: Array<CartItem>, callback: apiResponse) {
+    //
 }

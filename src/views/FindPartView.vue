@@ -4,7 +4,7 @@
             <input class="textbox w-[ calc(80%-0.5rem)]" type="text" v-model="searchText" placeholder="🔍 keywords...">
             <img class="w-5" @click="toggleAdvanced" src="../assets/sliders-solid.svg">
             <input class="submit w-[calc(20%)] mt-0" type="submit" value="Search">
-            <div v-if="showAdvanced" class="w-full h-full absolute top-0 left-0 z-40 bg-gray-400 opacity-50" @click="toggleAdvanced"></div>
+            <div v-if="showAdvanced" class="w-full h-full absolute top-0 left-0 z-40 bg-zinc-700 opacity-50" @click="toggleAdvanced"></div>
             <AdvancedSearchComponent v-if="showAdvanced" @advancedSearch="advancedSearch" @close="toggleAdvanced"/>
         </form>
         <div v-if="parts.length != 0">
@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import PartComponent from '../components/PartComponent.vue';
-import AdvancedSearchComponentVue  from '../components/AdvancedSearchComponent.vue';
+import AdvancedSearchComponent  from '../components/AdvancedSearchComponent.vue';
 import { onBeforeMount, ref, Ref } from 'vue';
 import { getPartsByTextSearch, getPartByID, getPartsByData,  } from '../plugins/dbCommands';
 
@@ -39,7 +39,6 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState } from '../plugins/store';
 import { PartSchema } from '../model/part';
-import AdvancedSearchComponent from '../components/AdvancedSearchComponent.vue';
 
 interface Props {
     http: AxiosInstance,

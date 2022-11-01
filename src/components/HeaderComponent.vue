@@ -5,11 +5,11 @@
             <RouterLink class="transiton leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/parts">Parts
             </RouterLink>
             <!-- <RouterLink to="/assets">Assets</RouterLink> -->
-            <RouterLink class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/cart">Cart
-            </RouterLink>
+            <RouterLink v-if="store.state.cart.length > 0" class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/cart">{{ `Cart(${store.getters.getTotalNumItems})` }}</RouterLink>
+            <RouterLink v-else class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/cart">Cart</RouterLink>
         </div>
         <div class="flex justify-center">
-            <p class="leading-10">{{ store.state.user.first_name + " " + store.state.user.last_name }}</p>
+            <p class="leading-10">{{ store.state.user.first_name + " " + store.state.user.last_name }}</p> 
             <img class="h-10 rounded-full p-1" alt="profile picture" :src="profilePicture">
             <a class="leading-10" v-on:click="logout" href="#">Logout</a>
         </div>

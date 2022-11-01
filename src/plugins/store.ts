@@ -49,6 +49,13 @@ export function createGlobalStore(app: App): Store<UserState> {
                     }
                 }
                 return 0
+            },
+            getTotalNumItems: (state: UserState) => {
+                let num = 0
+                for (var item of state.cart){
+                    num += item.quantity
+                }
+                return num
             }
         },
         mutations: {
