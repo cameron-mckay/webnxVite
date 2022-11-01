@@ -4,11 +4,11 @@ import CartItemComponent from '../components/CartItemComponent.vue';
 import { onBeforeMount, ref, Ref } from 'vue';
 
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
-import type { AxiosError, AxiosInstance } from 'axios';
+import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState, PartSchema, LoadedCartItem } from '../plugins/interfaces';
-import { getPartByID } from '../plugins/dbCommands';
+import { checkout, getPartByID } from '../plugins/dbCommands';
 
 interface Props {
     http: AxiosInstance,
@@ -54,7 +54,7 @@ async function addOne(id: string) {
         if(part.quantity! > store.getters.getQuantity(id)){
             store.commit("addOne", id)
         } else {
-            errorHandler("Maximum quantity reached.")
+            errorHandler("Not enough stock.")
         }
     })
 }
@@ -64,6 +64,17 @@ async function subOne(id: string) {
     if (store.getters.getQuantity(id) == 0){
         loadCart()
     }
+}
+
+function localCheckout() {
+    checkout(http, store.state.cart, (data, err) => {
+        if(err) {
+            return errorHandler(err)
+        }
+        displayMessage("Successfully checked out.")
+        store.commit("emptyCart")
+        loadCart()
+    })
 }
 
 </script>
@@ -81,6 +92,9 @@ async function subOne(id: string) {
         </div>
         <CartItemComponent v-for="item in parts" v-bind:key="item.part._id" :part="item.part" :quantity="item.quantity"
             @plus='addOne(item.part._id!)' @minus='subOne(item.part._id!)' @delete='deletePart(item.part._id!)'/>    
+        <form class="flex justify-center" @submit.prevent="localCheckout">
+            <input type="submit" class="submit" value="Checkout">
+        </form>
     </div>
     <div v-else>
         <h1 class="text-4xl mb-4">Cart</h1>

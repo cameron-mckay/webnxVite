@@ -126,5 +126,13 @@ export async function createPart(http: AxiosInstance, part: PartSchema, callback
 
 
 export async function checkout(http: AxiosInstance, cart: Array<CartItem>, callback: apiResponse) {
-    //
+    await http.post("/api/checkout", { cart })
+        .then((res: AxiosResponse) => {
+            // Authenticated - send null error to callback
+            callback(res, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Unauthenticated - send error to callback
+            callback({}, err)
+        })
 }

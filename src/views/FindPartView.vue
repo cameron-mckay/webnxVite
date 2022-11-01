@@ -79,7 +79,7 @@ async function addToCart(part: PartSchema) {
     }
     else
     {
-        errorHandler("Maximum quantity reached.")
+        errorHandler("Not enough stock.")
     }
 }
 async function advancedSearch(part: PartSchema) {
