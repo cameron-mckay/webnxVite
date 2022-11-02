@@ -1,10 +1,8 @@
 <script setup lang="ts">
 // Get http and store from props
 import type { PartSchema } from '../plugins/interfaces';
-import { ref, watch, Ref, onMounted } from 'vue';
-import type { AxiosInstance, AxiosError } from 'axios';
-import { getPartByID } from '../plugins/dbCommands';
-import type { Router } from 'vue-router';
+import { ref, watch, Ref } from 'vue';
+import type { AxiosError } from 'axios';
 
 interface Props {
     title: string,

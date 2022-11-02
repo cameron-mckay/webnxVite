@@ -1,5 +1,5 @@
 import type { AxiosResponse, AxiosError, AxiosInstance, Axios } from "axios"
-import type { CartItem, PartSchema } from "../plugins/interfaces"
+import type { CartItem, PartSchema, User } from "../plugins/interfaces"
 import type { apiResponse } from "./interfaces"
 
 // Gets user data from API using the user's token
@@ -144,6 +144,18 @@ export async function createPart(http: AxiosInstance, part: PartSchema, callback
 
 export async function updatePart(http: AxiosInstance, part: PartSchema, callback: apiResponse) {
     await http.put("/api/part", { part })
+        .then((res: AxiosResponse) => {
+            // Success - send response to callback
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err)
+        })
+}
+
+export async function updateUser(http:AxiosInstance, user: User, callback: apiResponse) {
+    await http.put("/api/user", { user })
         .then((res: AxiosResponse) => {
             // Success - send response to callback
             callback(res.data, null)
