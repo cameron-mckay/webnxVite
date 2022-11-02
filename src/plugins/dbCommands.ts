@@ -1,4 +1,4 @@
-import type { AxiosResponse, AxiosError, AxiosInstance } from "axios"
+import type { AxiosResponse, AxiosError, AxiosInstance, Axios } from "axios"
 import type { CartItem, PartSchema } from "../plugins/interfaces"
 import type { apiResponse } from "./interfaces"
 
@@ -16,6 +16,24 @@ export async function getCurrentUser(http: AxiosInstance, callback: apiResponse)
         })
 }
 
+export async function getUserByID(http: AxiosInstance, id: string, callback: apiResponse) {
+    // Send request to API
+    await http.get("/api/user", {
+        params: {
+            id
+        }
+    })
+        .then((res: AxiosResponse) => {
+            // Success - send response data to callback
+            callback(res.data, null);
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err);
+        })
+}
+
+
 /**
  * @name checkAuth
  * 
@@ -32,7 +50,7 @@ export async function checkAuth(http: AxiosInstance, callback: apiResponse) {
     await http.post("/api/auth")
         .then((res: AxiosResponse) => {
             // Authenticated - send null error to callback
-            callback({}, null)
+            callback(res.data, null)
         })
         .catch((err: Error | AxiosError) => {
             // Unauthenticated - send error to callback
@@ -124,6 +142,18 @@ export async function createPart(http: AxiosInstance, part: PartSchema, callback
         })
 }
 
+export async function updatePart(http: AxiosInstance, part: PartSchema, callback: apiResponse) {
+    await http.put("/api/part", { part })
+        .then((res: AxiosResponse) => {
+            // Success - send response to callback
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err)
+        })
+}
+
 
 export async function checkout(http: AxiosInstance, cart: Array<CartItem>, callback: apiResponse) {
     await http.post("/api/checkout", { cart })
@@ -133,6 +163,28 @@ export async function checkout(http: AxiosInstance, cart: Array<CartItem>, callb
         })
         .catch((err: Error | AxiosError) => {
             // Unauthenticated - send error to callback
+            callback({}, err)
+        })
+}
+
+export async function checkin(http: AxiosInstance, cart: Array<CartItem>, callback: apiResponse) {
+    await http.post("/api/checkin", { cart })
+        .then((res: AxiosResponse) => {
+            // Authenticated - send null error to callback
+            callback(res, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Unauthenticated - send error to callback
+            callback({}, err)
+        })
+}
+
+export async function getAllUsers(http: AxiosInstance, callback: apiResponse) {
+    await http.get("/api/user/all")
+        .then((res: AxiosResponse) => {
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
             callback({}, err)
         })
 }

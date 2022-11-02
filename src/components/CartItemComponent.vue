@@ -42,11 +42,11 @@ function minus(){
             <p>{{ part.location }}</p>
             <p>{{ `${item_quantity}/${part.quantity}` }}</p>
             <div class="flex justify-center">
-                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-full shadow-lg transition" src="../assets/plus-solid.svg"
+                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/plus-solid.svg"
                     v-on:click="plus">
-                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-full shadow-lg transition" src="../assets/minus-solid.svg"
+                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/minus-solid.svg"
                 v-on:click="minus">
-                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-red-500 active:bg-red-600 rounded-full shadow-lg transition" src="../assets/x-solid.svg"
+                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-red-500 active:bg-red-600 rounded-lg shadow-lg transition" src="../assets/x-solid.svg"
                     v-on:click="$emit('delete')">
             </div>
         </div>

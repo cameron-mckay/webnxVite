@@ -3,9 +3,12 @@ import FindPartView from '../views/FindPartView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import LoginView from '../views/LoginView.vue'
 import NotFound from '../views/NotFound.vue'
-import AssetView from '../views/AssetView.vue'
 import CreatePartView from '../views/CreatePartView.vue'
 import CartView from '../views/CartView.vue'
+import AdminDashboardView from '../views/AdminDashboardView.vue'
+import AdminPartSearchView from '../views/AdminPartSearchView.vue'
+import EditPartView from '../views/EditPartView.vue'
+import AdminUserView from '../views/AdminUserView.vue'
 
 const routes = [
   {
@@ -36,15 +39,25 @@ const routes = [
     name: 'Parts',
     component: FindPartView
   },
-  // {
-  //   path: '/assets',
-  //   name: 'assets',
-  //   component: AssetView
-  // },
   {
-    path: '/admin/createpart',
+    path: '/admin',
+    name: 'Admin Dashboard',
+    component:AdminDashboardView
+  },
+  {
+    path: '/admin/parts/create',
     name: 'Create Part',
     component: CreatePartView
+  },
+  {
+    path: '/admin/parts/manage',
+    name: 'Manage Parts',
+    component: AdminPartSearchView
+  },
+  {
+    path: '/admin/users',
+    name: 'Manage Users',
+    component: AdminUserView
   },
   {
     path: '/:catchall(.*)',
@@ -57,17 +70,5 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
 })
-
-
-// This callback runs before every route change, including on page load.
-router.beforeEach((to, from, next) => {
-  // This goes through the matched routes from last to first, finding the closest route with a title.
-  // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
-  // `/nested`'s will be chosen.
-  document.title = `WebNX - ${to.name?.toString()}`
-
-  next();
-});
-
 
 export default router

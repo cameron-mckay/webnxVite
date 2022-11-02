@@ -1,8 +1,8 @@
 <template>
-  <HeaderComponent v-if="store.state.isAuth" :http="http" />
+  <HeaderComponent v-if="store.state.isAuth" :http="http" :store="store"/>
   <MessageComponent :messages="messages" :errors="errorMessages"/>
-  <router-view class="max-w-3xl mx-auto bg-zinc-300 p-4 rounded-2xl mt-16 shadow-xl" :http='http' :store='store' :errorHandler='errorHandler' :router='router'
-    :displayMessage='displayMessage' />
+  <router-view class="max-w-3xl mx-auto bg-zinc-300 p-4 rounded-lg mt-16 shadow-xl" :http='http' :store='store' :errorHandler='errorHandler' :router='router'
+    :displayMessage='displayMessage' :routeLocation="route" />
 </template>
 
 
@@ -18,7 +18,7 @@ import type { AxiosInstance, AxiosError } from 'axios';
 import { injectionKey } from './plugins/axios'
 import { useStore } from './plugins/store'
 import { checkAuth } from './plugins/dbCommands'
-import type { Message } from './plugins/interfaces'
+import type { Message, User } from './plugins/interfaces'
 
 // Global instances passed through props
 const http = inject<AxiosInstance>(injectionKey)!
@@ -32,14 +32,14 @@ var errorMessages: Ref<Message[]> = ref([])
 // Before app is mounted
 onBeforeMount(() => {
   // Check if user is authenticated
-  checkAuth(http, (data, err) => {
+  checkAuth(http, async (data, err) => {
     // If not authenticated
     console.log("test")
     if (err) {
       // set status
       store.commit("deauthenticate")
       // redirect
-      if (route.name != "register") {
+      if (route.name != "Register") {
         router.push("login")
       }
       // return
@@ -48,8 +48,28 @@ onBeforeMount(() => {
     // If authenticated, set status
     displayMessage("Successfully logged in.")
     store.commit("authenticate")
+    const user = data as User;
+    // Check if user is a non admin trying to access admin route
+    if(!user.admin && /\/admin\/*/.test(route.path)) {
+      errorHandler("You are not authorized to access this page.")
+      router.push("parts")
+    }
   })
 })
+
+// Runs every time the route changes
+router.beforeEach((to, from, next) => {
+  // Make sure they are admin for admin routes
+  if((store.state.user.admin == false) && (/\/admin\/*/.test(to.path))) {
+    router.push("parts")
+    errorHandler("You are not authorized to access this page.")
+  }
+  // This goes through the matched routes from last to first, finding the closest route with a title.
+  // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
+  // `/nested`'s will be chosen.
+  document.title = `WebNX - ${to.name?.toString()}`
+  next();
+});
 
 // Error handler
 async function errorHandler(err: AxiosError | string) {

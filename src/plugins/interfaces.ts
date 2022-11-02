@@ -2,7 +2,7 @@ import type { AxiosError, AxiosInstance } from "axios";
 
 // For db commands
 export interface apiResponse {
-    (data: object | Array<object>, err: Error | AxiosError | null): void;
+    (data: object | Array<object> | string, err: Error | AxiosError | null): void;
 }
 
 // For axios.ts

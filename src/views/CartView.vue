@@ -8,7 +8,7 @@ import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState, PartSchema, LoadedCartItem } from '../plugins/interfaces';
-import { checkout, getPartByID } from '../plugins/dbCommands';
+import { checkin, checkout, getPartByID } from '../plugins/dbCommands';
 
 interface Props {
     http: AxiosInstance,
@@ -77,6 +77,17 @@ function localCheckout() {
     })
 }
 
+function localCheckin() {
+    checkin(http, store.state.cart, (data, err) => {
+        if(err) {
+            return errorHandler(err)
+        }
+        displayMessage("Successfully checked in.")
+        store.commit("emptyCart")
+        loadCart()
+    })
+}
+
 </script>
 
 <template>
@@ -92,9 +103,10 @@ function localCheckout() {
         </div>
         <CartItemComponent v-for="item in parts" v-bind:key="item.part._id" :part="item.part" :quantity="item.quantity"
             @plus='addOne(item.part._id!)' @minus='subOne(item.part._id!)' @delete='deletePart(item.part._id!)'/>    
-        <form class="flex justify-center" @submit.prevent="localCheckout">
-            <input type="submit" class="submit" value="Checkout">
-        </form>
+        <div class="flex justify-center">
+            <input type="button" @click="localCheckout" class="submit mx-1" value="Check Out">
+            <input type="button" @click="localCheckin" class="submit mx-1" value="Check In">
+        </div>
     </div>
     <div v-else>
         <h1 class="text-4xl mb-4">Cart</h1>

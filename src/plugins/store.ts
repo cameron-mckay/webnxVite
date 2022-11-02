@@ -33,7 +33,7 @@ export function createGlobalStore(app: App): Store<UserState> {
                     num += item.quantity
                 }
                 return num
-            }
+            },
         },
         mutations: {
             // Sets global authentication to true

@@ -68,14 +68,7 @@ async function register() {
             // Save user data to vuex store
             store.commit("updateUserData")
             store.commit("authenticate")
-            if (window.history.length > 2) {
-                // if user was redirected to login
-                router.go(-1)
-            }
-            else {
-                // if login was accessed directly
-                router.push("/")
-            }
+            router.push("/")
         }).catch((err: Error | AxiosError) => {
             // Error
             errorHandler(err)
