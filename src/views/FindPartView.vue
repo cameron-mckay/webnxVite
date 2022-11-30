@@ -3,7 +3,7 @@
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import SearchComponent from '../components/SearchComponent.vue';
+import SearchComponent from '../components/PartSearchComponent.vue';
 import type { UserState, PartSchema } from '../plugins/interfaces';
 
 interface Props {
@@ -24,5 +24,5 @@ function addToCart(part: PartSchema) {
 
 </script>
 <template>
-    <SearchComponent :http="http" :errorHandler="errorHandler" :displayMessage="displayMessage" @partAction="addToCart"/>
+    <SearchComponent :http="http" :errorHandler="errorHandler" :location="'Parts Room'" :displayMessage="displayMessage" @partAction="addToCart"/>
 </template>
