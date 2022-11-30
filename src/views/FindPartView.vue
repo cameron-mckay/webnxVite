@@ -24,5 +24,5 @@ function addToCart(part: PartSchema) {
 
 </script>
 <template>
-    <SearchComponent :http="http" :imgUrl="'/src/assets/plus-solid.svg'" :errorHandler="errorHandler" :displayMessage="displayMessage" @partAction="addToCart"/>
+    <SearchComponent :http="http" :errorHandler="errorHandler" :displayMessage="displayMessage" @partAction="addToCart"/>
 </template>

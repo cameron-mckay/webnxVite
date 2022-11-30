@@ -17,7 +17,7 @@
                 <p>Quantity</p>
                 <p></p>
             </div>
-            <PartComponent v-for="part in parts" v-bind:key="part._id" :imgUrl="imgUrl"
+            <PartComponent v-for="part in parts" v-bind:key="part._id"
             @partAction="$emit('partAction', part)" :part="part" />
         </div>
         <div v-else>
@@ -40,11 +40,12 @@ interface Props {
     http: AxiosInstance,
     errorHandler: (err: Error | AxiosError | string) => void,
     displayMessage: (message: string) => void,
-    imgUrl: string
 }
 
 const { http, errorHandler, displayMessage } = defineProps<Props>()
 // END OF PROPS
+
+const emit = defineEmits(['partAction'])
 
 let searchText = ref("")
 let pageNum = 1
@@ -62,7 +63,7 @@ function toggleAdvanced() {
 }
 
 async function partAction(part: PartSchema) {
-    
+    emit("partAction", part)    
 }
 
 async function advancedSearch(part: PartSchema) {

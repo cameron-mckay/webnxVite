@@ -3,8 +3,7 @@ import { PartSchema } from '../plugins/interfaces'
 import { onMounted } from 'vue'
 
 interface Props {
-    part: PartSchema,
-    imgUrl: string
+    part: PartSchema
 }
 
 const { part } = defineProps<Props>()
@@ -27,7 +26,7 @@ onMounted(() => {
             <p>{{ part.quantity }}</p>
             <div class="flex justify-center">
                 <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
-                    :src="imgUrl" v-on:click="$emit('partAction')">
+                    src="../assets/plus-solid.svg" v-on:click="$emit('partAction')">
             </div>
         </div>
         <div

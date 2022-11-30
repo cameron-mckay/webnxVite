@@ -14,15 +14,14 @@ export default {
     }
 }
 
-
-// 
-export function newAxiosInstance(options: AxiosOptions):AxiosInstance {
+// Returns a new Axios instance
+function newAxiosInstance(options: AxiosOptions):AxiosInstance {
     const http = axios.create({
-        baseURL: options.baseUrl ? options.baseUrl : import.meta.env.VITE_API_URL,
+        baseURL: window.location.origin/*options.baseUrl ? options.baseUrl : import.meta.env.VITE_API_URL,*/,
         headers: {
             common: {
                 Authorization: options.token ? options.token : '',
-                "Access-Control-Allow-Origin": import.meta.env.VITE_BASE_URL ? import.meta.env.VITE_BASE_URL : ''
+                "Access-Control-Allow-Origin": window.location.origin/*import.meta.env.VITE_BASE_URL ? import.meta.env.VITE_BASE_URL : ''*/
             },
         },
         withCredentials: true

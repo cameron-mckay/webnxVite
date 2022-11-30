@@ -22,7 +22,7 @@ user.value = props.user
             <label>First Name:</label>
             <input type="text" v-model="user.first_name">
             <label>Last Name:</label>
-            <input type="text" v-model="user.first_name">
+            <input type="text" v-model="user.last_name">
             <label>Admin:</label>
             <select v-model="user.admin">
                 <option :value="true">true</option>

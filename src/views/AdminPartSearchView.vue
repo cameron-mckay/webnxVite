@@ -46,7 +46,7 @@ function update(part: PartSchema) {
 </script>
 <template>
     <div>
-        <SearchComponent :http="http" :imgUrl="'/src/assets/pencil-solid.svg'" :errorHandler="errorHandler" :displayMessage="displayMessage" @partAction="toggleEdit"/>
+        <SearchComponent :http="http" :imgUrl="'/assets/pencil-solid.svg'" :errorHandler="errorHandler" :displayMessage="displayMessage" @partAction="toggleEdit"/>
         <div v-if="editPart" class="w-full h-full absolute top-0 left-0 z-40 bg-zinc-700 opacity-50" @click="toggleEdit"></div>
         <div v-if="editPart" class="w-full h-full absolute top-0 left-0 z-50 pointer-events-none">
             <div class="p-4 rounded-xl block bg-zinc-300 top-40 mx-auto mt-32 max-w-xl shadow-lg z-50 pointer-events-auto">

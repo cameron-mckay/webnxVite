@@ -156,7 +156,7 @@ function resetForm() {
                 </div>
             </div>
             <div v-if="part.type == 'GPU'" class="col-span-2 grid grid-cols-2">
-                <!-- Placeholder -->
+                <!--   -->
             </div>
             <div v-if="part.type == 'Cable'" class="col-span-2 grid grid-cols-2">
                 <label>Cable end 1: </label>

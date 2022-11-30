@@ -39,6 +39,34 @@ export interface PartSchema {
     cable_end2?: string,
 }
 
+export interface AssetSchema {
+    _id?: string,
+    building?: number,
+    asset_type?: string,
+    chassis_type?: string,
+    manufacturer?: string,
+    model?: string,
+    serial?: string,
+    rails?: boolean,
+    live?: boolean,
+    location?: string,
+    by?: string,
+    parts?: Array<string>,
+    date_created?: Date
+}
+
+export interface PartRecord {
+    _id?: string,
+    nxid?: string,
+    prev?: string,
+    next?: string,
+    building?: Number,
+    location?: string,
+    asset_tag?: string,
+    owner?: string,
+    by?: string,
+    date_created?: Date
+}
 
 // User state interface
 export interface CartItem {
