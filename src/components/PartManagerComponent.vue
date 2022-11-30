@@ -60,12 +60,12 @@ function resetForm() {
             <input :required="strict" v-model="part.nxid" type="text" placeholder="NXID">
             <label>Manufacturer: </label>
             <input :required="strict" v-model="part.manufacturer" type="text" placeholder="Manufacturer">
-            <label>Part name: </label>
-            <input :required="strict" v-model="part.name" type="text" placeholder="Part name">
-            <label>Quantity: </label>
-            <input :required="strict" v-model="part.quantity" type="number" placeholder="Quantity">
-            <label>Location: </label>
-            <input :required="strict" v-model="part.location" type="text" placeholder="Location">
+            <label>Part Name: </label>
+            <input :required="strict" v-model="part.name" type="text" placeholder="Part Name">
+            <label v-if="(strict&&!oldPart)">Quantity: </label>
+            <input :required="strict" v-if="(strict&&!oldPart)" v-model="part.quantity" type="number" placeholder="Quantity">
+            <label>Shelf Location: </label>
+            <input :required="strict" v-model="part.shelf_location" type="text" placeholder="Shelf Location">
             <label>Part Type: </label>
             <select :required="strict" v-model="part.type">
                 <option disabled value="">Part type</option>

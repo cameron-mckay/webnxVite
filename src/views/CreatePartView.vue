@@ -5,7 +5,7 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PartManagerComponent from '../components/PartManagerComponent.vue';
 import type { UserState, PartSchema } from '../plugins/interfaces';
-import { createPart } from '../plugins/dbCommands'
+import { createPart } from '../plugins/dbCommands/partManager'
 
 interface Props {
     http: AxiosInstance,
@@ -20,7 +20,7 @@ const { http, store, router, errorHandler, displayMessage } = defineProps<Props>
 
 async function submitPart(part: PartSchema) {
     // Use create part method from API commands 
-    createPart(http, part, (data, err) => {
+    createPart(http, part, 3, "Parts Room", (data, err) => {
         if (err) {
             // Fail
             errorHandler(err)

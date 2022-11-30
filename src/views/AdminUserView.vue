@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, Ref, ref } from 'vue';
 import { User } from '../plugins/interfaces';
-import { getAllUsers, updateUser } from '../plugins/dbCommands'
+import { getAllUsers, updateUser } from '../plugins/dbCommands/userManager'
 import UserComponent from '../components/UserComponent.vue';
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';

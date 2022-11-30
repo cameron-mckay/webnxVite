@@ -24,8 +24,9 @@ export interface PartSchema {
     manufacturer?: string,
     name?: string,
     type?: string,
-    location?: string,
     quantity?: number,
+    total_quantity?: number,
+    shelf_location?: string,
     frequency?: number,
     chipset?: string,
     memory_type?: string,
@@ -41,6 +42,7 @@ export interface PartSchema {
 
 export interface AssetSchema {
     _id?: string,
+    asset_tag?: string,
     building?: number,
     asset_type?: string,
     chassis_type?: string,
@@ -52,7 +54,8 @@ export interface AssetSchema {
     location?: string,
     by?: string,
     parts?: Array<string>,
-    date_created?: Date
+    date_created?: Date,
+    date_updated?: Date
 }
 
 export interface PartRecord {

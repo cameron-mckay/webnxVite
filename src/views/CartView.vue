@@ -8,7 +8,7 @@ import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState, PartSchema, LoadedCartItem } from '../plugins/interfaces';
-import { checkin, checkout, getPartByID } from '../plugins/dbCommands';
+import { checkin, checkout, getPartByID } from '../plugins/dbCommands/partManager';
 
 interface Props {
     http: AxiosInstance,
@@ -32,7 +32,7 @@ onBeforeMount(() => {
 async function loadCart() {
     parts.value = []
     for (const item of store.state.cart) {
-        getPartByID(http, item.id, (data, err) => {
+        getPartByID(http, item.id, 3, "Parts Room", (data, err) => {
             if (err) {
                 return errorHandler(err)
             }
@@ -49,7 +49,7 @@ async function deletePart(id: string) {
 }
 
 async function addOne(id: string) {
-    getPartByID(http, id, (data, err) => {
+    getPartByID(http, id, 3, "Parts Room", (data, err) => {
         let part = data as PartSchema
         if(part.quantity! > store.getters.getQuantity(id)){
             store.commit("addOne", id)
@@ -67,7 +67,7 @@ async function subOne(id: string) {
 }
 
 function localCheckout() {
-    checkout(http, store.state.cart, (data, err) => {
+    checkout(http, store.state.cart, 3, (data, err) => {
         if(err) {
             return errorHandler(err)
         }
@@ -78,7 +78,7 @@ function localCheckout() {
 }
 
 function localCheckin() {
-    checkin(http, store.state.cart, (data, err) => {
+    checkin(http, store.state.cart, 3, (data, err) => {
         if(err) {
             return errorHandler(err)
         }

@@ -1,13 +1,15 @@
 import type { AxiosResponse, AxiosError, AxiosInstance } from "axios"
 import type { CartItem, PartSchema, apiResponse } from "../interfaces"
 
-export async function getPartsByTextSearch(http: AxiosInstance, searchString: string, pageNum: number, callback: apiResponse) {
+export async function getPartsByTextSearch(http: AxiosInstance, searchString: string, pageNum: number, building: number, location: string, callback: apiResponse) {
     // Send string query to API
     await http.get("/api/part/search", {
         params: {
             searchString,
             pageNum,
-            pageSize: 50
+            pageSize: 50,
+            building,
+            location
         }
     })
         .then((res: AxiosResponse) => {
@@ -20,27 +22,13 @@ export async function getPartsByTextSearch(http: AxiosInstance, searchString: st
         })
 }
 
-export async function getPartQuantities(http: AxiosInstance, parts: Array<string>, callback: apiResponse, building?: number, location?: string) {
-    await http.post("/api/part/search", {
-        parts,
-        building,
-        location
-    })
-        .then((res: AxiosResponse) => {
-            // Success and send back results
-            callback(res.data, null)
-        })
-        .catch((err: Error | AxiosError) => {
-            // Send error to callback
-            callback({}, err)
-        })
-}
-
-export async function getPartByID(http: AxiosInstance, id: string, callback: apiResponse) {
+export async function getPartByID(http: AxiosInstance, id: string, building: number, location: string, callback: apiResponse) {
     // Request part using ID in query string
     await http.get("/api/part/id", {
         params: {
-            id
+            id,
+            building,
+            location
         }
     })
         .then((res: AxiosResponse) => {
@@ -53,8 +41,14 @@ export async function getPartByID(http: AxiosInstance, id: string, callback: api
         })
 }
 
-export async function getPartsByData(http: AxiosInstance, part: PartSchema, callback: apiResponse) {
-    await http.get("/api/part", { params: part })
+export async function getPartsByData(http: AxiosInstance, part: PartSchema, building: number, location: string, callback: apiResponse) {
+    await http.get("/api/part", {
+        params: { 
+            part,
+            building,
+            location
+        }
+    })
         .then((res: AxiosResponse) => {
             // Success - send results to callback
             callback(res.data, null)
@@ -65,9 +59,13 @@ export async function getPartsByData(http: AxiosInstance, part: PartSchema, call
         })
 }
 
-export async function createPart(http: AxiosInstance, part: PartSchema, callback: apiResponse) {
+export async function createPart(http: AxiosInstance, part: PartSchema, building: number, location: string, callback: apiResponse) {
     // Send new part to API
-    await http.post("/api/part", { part })
+    await http.post("/api/part", {
+        part, 
+        building,
+        location
+    })
         .then((res: AxiosResponse) => {
             // Success - send response to callback
             callback(res.data, null)
@@ -90,8 +88,11 @@ export async function updatePart(http: AxiosInstance, part: PartSchema, callback
         })
 }
 
-export async function checkout(http: AxiosInstance, cart: Array<CartItem>, callback: apiResponse) {
-    await http.post("/api/checkout", { cart })
+export async function checkout(http: AxiosInstance, cart: Array<CartItem>, building: number, callback: apiResponse) {
+    await http.post("/api/checkout", {
+        cart,
+        building
+    })
         .then((res: AxiosResponse) => {
             // Authenticated - send null error to callback
             callback(res, null)
@@ -102,8 +103,11 @@ export async function checkout(http: AxiosInstance, cart: Array<CartItem>, callb
         })
 }
 
-export async function checkin(http: AxiosInstance, cart: Array<CartItem>, callback: apiResponse) {
-    await http.post("/api/checkin", { cart })
+export async function checkin(http: AxiosInstance, cart: Array<CartItem>, building: number, callback: apiResponse) {
+    await http.post("/api/checkin", {
+        cart,
+        building
+    })
         .then((res: AxiosResponse) => {
             // Authenticated - send null error to callback
             callback(res, null)

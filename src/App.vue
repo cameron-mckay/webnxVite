@@ -17,7 +17,7 @@ import { useRouter, useRoute } from 'vue-router'
 import type { AxiosInstance, AxiosError } from 'axios';
 import { injectionKey } from './plugins/axios'
 import { useStore } from './plugins/store'
-import { checkAuth } from './plugins/dbCommands'
+import { checkAuth } from './plugins/dbCommands/userManager'
 import type { Message, User } from './plugins/interfaces'
 
 // Global instances passed through props
@@ -34,7 +34,6 @@ onBeforeMount(() => {
   // Check if user is authenticated
   checkAuth(http, async (data, err) => {
     // If not authenticated
-    console.log("test")
     if (err) {
       // set status
       store.commit("deauthenticate")

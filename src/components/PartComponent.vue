@@ -1,17 +1,11 @@
 <script setup lang="ts">
 import { PartSchema } from '../plugins/interfaces'
-import { onMounted } from 'vue'
 
 interface Props {
     part: PartSchema
 }
 
 const { part } = defineProps<Props>()
-
-onMounted(() => {
-    console.log(part)
-})
-
 </script>
 
 <template>
@@ -22,8 +16,8 @@ onMounted(() => {
             <p class="md:block hidden">{{ part.nxid }}</p>
             <p>{{ part.manufacturer }}</p>
             <p>{{ part.name }}</p>
-            <p>{{ part.location }}</p>
-            <p>{{ part.quantity }}</p>
+            <p>{{ part.shelf_location }}</p>
+            <p>{{ part.quantity+"/"+part.total_quantity }}</p>
             <div class="flex justify-center">
                 <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
                     src="../assets/plus-solid.svg" v-on:click="$emit('partAction')">

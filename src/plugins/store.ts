@@ -1,6 +1,6 @@
 import { Store, createStore, useStore as baseUseStore } from 'vuex'
 import { App, InjectionKey } from 'vue'
-import { getCurrentUser } from './dbCommands'
+import { getCurrentUser } from './dbCommands/userManager'
 import { AxiosInstance } from 'axios'
 import type { UserState, User, CartItem } from './interfaces'
 // Injection key
