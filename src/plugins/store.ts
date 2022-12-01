@@ -66,7 +66,7 @@ export function createGlobalStore(app: App): Store<UserState> {
                     }
                 }
                 if(!found){
-                    let item:CartItem = { id, quantity: 1}
+                    let item:CartItem = { id, quantity: 1, building: store.state.user.building!, location: "Parts Room"}
                     state.cart.push(item)
                 }
             },

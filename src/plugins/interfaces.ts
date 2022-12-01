@@ -66,6 +66,7 @@ export interface PartRecord {
     building?: Number,
     location?: string,
     asset_tag?: string,
+    serial?: string,
     owner?: string,
     by?: string,
     date_created?: Date
@@ -74,7 +75,9 @@ export interface PartRecord {
 // User state interface
 export interface CartItem {
     id: string,
-    quantity: number
+    quantity: number,
+    location: string,
+    building: number
 }
 
 // Contains all part data
@@ -98,6 +101,7 @@ export interface User {
     email?: string,
     first_name?: string,
     last_name?: string,
+    building?: number,
     _v?: number,
     _id?: string
 }

@@ -21,8 +21,9 @@
                 <p>Quantity</p>
                 <p></p>
             </div>
-            <PartComponent v-for="part in parts" v-bind:key="part._id"
-            @partAction="$emit('partAction', part)" :part="part" />
+            <PartComponent :add="add" :edit="edit" :view="view" v-for="part in parts" v-bind:key="part._id"
+            @editPartAction="$emit('editPartAction', part)" @addPartAction='$emit("addPartAction", part)' @viewPartAction="$emit('viewPartAction', part)"
+            :part="part" />
         </div>
         <div v-else>
             <p>No results...</p>
@@ -43,18 +44,21 @@ import type { PartSchema } from '../plugins/interfaces';
 interface Props {
     http: AxiosInstance,
     location: string,
+    building: number,
     errorHandler: (err: Error | AxiosError | string) => void,
     displayMessage: (message: string) => void,
+    edit?: boolean,
+    add?: boolean,
+    view?: boolean
 }
 
-const { http, location, errorHandler, displayMessage } = defineProps<Props>()
+const { http, location, building, errorHandler, displayMessage, edit, add, view } = defineProps<Props>()
 // END OF PROPS
 
-const emit = defineEmits(['partAction'])
+const emit = defineEmits(['addPartAction', 'editPartAction', 'viewPartAction'])
 
 let searchText = ref("")
 let pageNum = 1
-let building = 3
 let parts: Ref<PartSchema[]> = ref([])
 let showAdvanced = ref(false);
 
@@ -65,26 +69,26 @@ onBeforeMount(() => {
 
 function toggleAdvanced() {
     showAdvanced.value = !showAdvanced.value
-    console.log("test")
-}
-
-async function partAction(part: PartSchema) {
-    emit("partAction", part)    
 }
 
 function advancedSearch(part: PartSchema) {
+    // Query the API
     getPartsByData(http, part, building, location, (data, err) => {
+        // Hide advanced search
         showAdvanced.value = false
+        // Error
         if (err) {
+            // Handle the error
             return errorHandler(err)
         } else if(data) {
+            // Set parts list to API response
             parts.value = data as PartSchema[];
         }
     })
 }
 
 // Search function
-async function search() {
+function search() {
     // Check for webnx regex
     if (/WNX([0-9]{7})+/.test(searchText.value)) {
         // temp value
@@ -102,8 +106,14 @@ async function search() {
                 // If no part was found
                 return errorHandler("Part not found.")
             }
-            // Add to cart
-            partAction(part)
+            // Emit actions
+            if (add===true) {
+                emit("addPartAction", part)
+            } else if(view===true) {
+                emit("viewPartAction", part)
+            } else if(edit==true) {
+                emit("viewPartAction", part)
+            }
         })
     }
     else {
@@ -111,7 +121,6 @@ async function search() {
         getPartsByTextSearch(http, searchText.value, pageNum, building, location, (data: any, err) => {
             if (err) {
                 // Send error to error handler
-                console.log(err)
                 return errorHandler(err)
             }
             // typecast 

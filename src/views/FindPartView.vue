@@ -24,5 +24,5 @@ function addToCart(part: PartSchema) {
 
 </script>
 <template>
-    <SearchComponent :http="http" :errorHandler="errorHandler" :location="'Parts Room'" :displayMessage="displayMessage" @partAction="addToCart"/>
+    <SearchComponent :add="true" :http="http" :errorHandler="errorHandler" :location="'Parts Room'" :building="store.state.user.building!" :displayMessage="displayMessage" @addPartAction="addToCart"/>
 </template>
