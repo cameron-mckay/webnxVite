@@ -29,38 +29,36 @@ const store = useStore()
 var messages: Ref<Message[]> = ref([])
 var errorMessages: Ref<Message[]> = ref([])
 
-// Before app is mounted
-onBeforeMount(() => {
-  // Check if user is authenticated
-  checkAuth(http, async (data, err) => {
-    // If not authenticated
-    if (err) {
-      // set status
-      store.commit("deauthenticate")
-      // redirect
-      if (route.name != "Register") {
-        router.push("login")
-      }
-      // return
-      return
+// Before app is created
+checkAuth(http, (data, err) => {
+  // If not authenticated
+  if (err) {
+    // set status
+    store.commit("deauthenticate")
+    // redirect
+    if (route.name != "Register") {
+      router.push({name: "Login"})
     }
-    // If authenticated, set status
-    displayMessage("Successfully logged in.")
-    store.commit("authenticate")
-    const user = data as User;
-    // Check if user is a non admin trying to access admin route
-    if(!user.admin && /\/admin\/*/.test(route.path)) {
-      errorHandler("You are not authorized to access this page.")
-      router.push("parts")
-    }
-  })
+    // return
+    return
+  }
+  // If authenticated, set status
+  displayMessage("Successfully logged in.")
+  store.commit("authenticate")
+  store.commit("updateUserData")
+  // Check if user is a non admin trying to access admin route
+  let user_data = data as User;
+  if(!user_data.admin && (/\/admin\/*/.test(route.path)||route.path=="/admin")) {
+    errorHandler("You are not authorized to access this page.")
+    router.push({name: "Parts"})
+  }
 })
 
 // Runs every time the route changes
 router.beforeEach((to, from, next) => {
   // Make sure they are admin for admin routes
   if((store.state.user.admin == false) && (/\/admin\/*/.test(to.path))) {
-    router.push("parts")
+    router.push({name: "Parts"})
     errorHandler("You are not authorized to access this page.")
   }
   // This goes through the matched routes from last to first, finding the closest route with a title.

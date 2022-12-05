@@ -2,17 +2,15 @@
 // Get http and store from props
 import type { PartSchema } from '../plugins/interfaces';
 import { ref, watch, Ref } from 'vue';
-import type { AxiosError } from 'axios';
 
 interface Props {
     title: string,
     submitText: string,
     strict: boolean,
     oldPart?: PartSchema,
-    errorHandler?: (err: Error | AxiosError | string) => void, 
 }
 
-const { title, submitText, strict, oldPart, errorHandler} = defineProps<Props>()
+const { title, submitText, strict, oldPart } = defineProps<Props>()
 // END OF PROPS
 let part:Ref<PartSchema> = ref({} as PartSchema)
 let firstLoad = false

@@ -32,15 +32,14 @@ onBeforeMount(() => {
 async function loadCart() {
     parts.value = []
     for (const item of store.state.cart) {
-        getPartByID(http, item.id, 3, "Parts Room", (data, err) => {
+        getPartByID(http, item.nxid, 3, "Parts Room", (data, err) => {
             if (err) {
                 return errorHandler(err)
             }
             let part = data as PartSchema
-            parts.value.push({ part, quantity: store.getters.getQuantity(part._id)})
+            parts.value.push({ part, quantity: store.getters.getQuantity(part.nxid)})
         })
     }
-    console.log(parts)
 }
 
 async function deletePart(id: string) {

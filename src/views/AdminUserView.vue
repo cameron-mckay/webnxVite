@@ -63,6 +63,7 @@ function localUpdateUser(user: User){
 </script>
 <template>
     <div>
+        <h1 class="text-4xl mb-4">User Manager</h1>
         <div class="grid grid-cols-5 relative leading-10 text-center p-2 transition text-sm font-bold">
             <p>Email</p>
             <p>First Name</p>
@@ -70,11 +71,6 @@ function localUpdateUser(user: User){
             <p>Admin</p>
         </div>
         <UserComponent class="grid grid-cols-5 relative leading-10 text-center p-2 transition text-sm" v-for="user in users" :user="user" @edit="toggleEdit(user)"/>
-        <div v-if="editUser" class="w-full h-full absolute top-0 left-0 z-40 bg-zinc-700 opacity-50" @click="toggleEdit({})"></div>
-        <div v-if="editUser" class="w-full h-full absolute top-0 left-0 z-50 pointer-events-none">
-            <div class="p-4 rounded-xl block bg-zinc-300 top-40 mx-auto mt-32 max-w-xl shadow-lg z-50 pointer-events-auto">
-                <UserManagerComponent class="pointer-events-auto" :user="currentUser" @update="localUpdateUser"/>
-            </div>
-        </div>
+        <UserManagerComponent class="pointer-events-auto" :user="currentUser" :show="editUser" @toggle="toggleEdit" @update="localUpdateUser"/>
     </div>
 </template>

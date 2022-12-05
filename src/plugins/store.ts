@@ -20,7 +20,7 @@ export function createGlobalStore(app: App): Store<UserState> {
             getQuantity: (state: UserState) => (id: string) =>{
                 for (let item of state.cart)
                 {
-                    if(item.id == id)
+                    if(item.nxid == id)
                     {
                         return item.quantity;
                     }
@@ -45,7 +45,7 @@ export function createGlobalStore(app: App): Store<UserState> {
                 state.isAuth = false;
             },
             // Logout user
-            async logout(state: UserState, http: AxiosInstance) {
+            logout(state: UserState, http: AxiosInstance) {
                 localStorage.removeItem("token")
                 state.isAuth = false;
                 http.defaults.headers["Authorization"] = ""
@@ -57,7 +57,7 @@ export function createGlobalStore(app: App): Store<UserState> {
                 {
                     // Loop through each item and see if it 
                     // already exists
-                    if(store.state.cart[i].id == id)
+                    if(store.state.cart[i].nxid == id)
                     {
                         // Increment item
                         store.state.cart[i].quantity += 1;
@@ -66,14 +66,14 @@ export function createGlobalStore(app: App): Store<UserState> {
                     }
                 }
                 if(!found){
-                    let item:CartItem = { id, quantity: 1, building: store.state.user.building!, location: "Parts Room"}
+                    let item:CartItem = { nxid: id, quantity: 1, building: store.state.user.building!, location: "Parts Room"}
                     state.cart.push(item)
                 }
             },
             addOne(state: UserState, id: string){
                 for(let i = 0; i < state.cart.length; i++)
                 {
-                    if(state.cart[i].id == id)
+                    if(state.cart[i].nxid == id)
                     {
                         state.cart[i].quantity += 1;
                     }
@@ -83,11 +83,11 @@ export function createGlobalStore(app: App): Store<UserState> {
             removeOne(state: UserState, id: string) {
                 for(let i = 0; i < state.cart.length; i++)
                 {
-                    if(state.cart[i].id == id && state.cart[i].quantity == 1)
+                    if(state.cart[i].nxid == id && state.cart[i].quantity == 1)
                     {
                         state.cart.splice(i, 1);
                     }
-                    else if(state.cart[i].id == id)
+                    else if(state.cart[i].nxid == id)
                     {
                         state.cart[i].quantity -= 1;
                     }
@@ -96,7 +96,7 @@ export function createGlobalStore(app: App): Store<UserState> {
             removeAll(state: UserState, id: string) {
                 for(let i = 0; i < state.cart.length; i++)
                 {
-                    if(state.cart[i].id == id)
+                    if(state.cart[i].nxid == id)
                     {
                         state.cart.splice(i, 1);
                     }
@@ -106,7 +106,7 @@ export function createGlobalStore(app: App): Store<UserState> {
                 state.cart = []
             },
             // Uses token to fetch user data from the API
-            async updateUserData(state: UserState, user: object) {
+            updateUserData(state: UserState, user: object) {
                 getCurrentUser(app.config.globalProperties.$http, (data, err) => {
                     if (err) {
                         // Error occured - update nothing

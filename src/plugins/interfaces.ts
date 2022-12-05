@@ -74,7 +74,7 @@ export interface PartRecord {
 
 // User state interface
 export interface CartItem {
-    id: string,
+    nxid: string,
     quantity: number,
     location: string,
     building: number

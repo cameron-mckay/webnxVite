@@ -1,14 +1,14 @@
 <script setup lang="ts">
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
-import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import PartManagerComponent from '../components/PartManagerComponent.vue';
 import SearchComponent from '../components/PartSearchComponent.vue';
-import { ref, Ref, onBeforeMount } from 'vue'
+import { ref, Ref, onActivated } from 'vue'
+import { Router } from 'vue-router';
 import type { UserState, PartSchema, CartItem } from '../plugins/interfaces';
 import { updatePart, createNewPartRecords, getUniqueOnPartRecord } from '../plugins/dbCommands/partManager';
 import AddInventoryComponent from '../components/AddInventoryComponent.vue';
+import EditPartComponent from '../components/EditPartComponent.vue';
 
 interface Props {
     http: AxiosInstance,
@@ -17,31 +17,31 @@ interface Props {
     errorHandler: (err: Error | AxiosError | string) => void,
     displayMessage: (message: string) => void
 }
+let buildings:Ref<Array<number>> = ref([]);
+let locations:Ref<Array<string>> = ref([]);
 let editPart = ref(false)
 let addPart = ref(false)
-let partID = ref("")
+let currentBuilding = ref(3);
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
+getBuildingsAndLocations()
 // END OF PROPS
 let currentPart:Ref<PartSchema> = ref({})
-    
+
+// Wait for store to init
+onActivated(()=>{
+    currentBuilding.value = store.state.user.building!;
+})
+
+// Toggle editing parts menu
 function toggleEdit(part: PartSchema) {
     currentPart.value = part
-    if(editPart.value){
-        editPart.value = false
-    } else {
-        currentPart.value = part
-        editPart.value = true
-    }
+    editPart.value = !editPart.value
 }
 
+// Toggle add parts menu
 function toggleAdd(part: PartSchema) {
-    displayMessage("ADD ACTION")
-    if(addPart.value){
-        addPart.value = false
-    } else {
-        addPart.value = true
-        partID.value = part._id!;
-    }
+    currentPart.value = part;
+    addPart.value = !addPart.value;
 }
 
 function viewPart(part: PartSchema) {
@@ -49,6 +49,7 @@ function viewPart(part: PartSchema) {
 }
 
 function update(part: PartSchema) {
+    // Update part info
     updatePart(http, part, (data, err) => {
         if(err) {
             return errorHandler(err)
@@ -59,59 +60,45 @@ function update(part: PartSchema) {
     })
 }
 
-
-onBeforeMount(()=>{
-    getBuildingsAndLocations()
-})
-
 function submitAddToInventory(request: CartItem) {
+    console.log(request)
     createNewPartRecords(http, request, (records, err) => {
         if (err) {
-            errorHandler(err)
+            return errorHandler(err)
         }
         displayMessage("Succesfully added to inventory")
+        toggleAdd({});
     })
 }
 
-let buildings:Ref<Array<number>> = ref([]);
-let locations:Ref<Array<string>> = ref([]);
-
 function getBuildingsAndLocations() {
+    // Get all unique buildings
     getUniqueOnPartRecord(http, "building", (unique_buildings, err) => {
         if (err) {
             errorHandler(err)
         }
-        console.log(unique_buildings)
         buildings.value = unique_buildings as Array<number>
     })
+    // Get all unique locations
     getUniqueOnPartRecord(http, "location", (unique_locations, err) => {
         if (err) {
             errorHandler(err)
         }
-        console.log(unique_locations)
         locations.value = unique_locations as Array<string>
     })
 }
 
-
-
 </script>
 <template>
     <div>
-        <SearchComponent :building="store.state.user.building!" :edit="true" :add="true" :view="true" :http="http" 
-        :errorHandler="errorHandler" location="'Parts Room'" :displayMessage="displayMessage" 
-        @editPartAction="toggleEdit" @addPartAction="toggleAdd" @viewPartAction="viewPart"/>
-        <div v-if="editPart" class="w-full h-full absolute top-0 left-0 z-40 bg-zinc-700 opacity-50" @click="toggleEdit"></div>
-        <div v-if="editPart" class="w-full h-full absolute top-0 left-0 z-50 pointer-events-none">
-            <div class="p-4 rounded-xl block bg-zinc-300 top-40 mx-auto mt-32 max-w-xl shadow-lg z-50 pointer-events-auto">
-                <PartManagerComponent class="pointer-events-auto" :title="'Edit Part: '" :submitText="'Update'" :strict="true" :oldPart="currentPart" @partSubmit="update"/>
-            </div>
-        </div>
-        <div v-if="addPart" class="w-full h-full absolute top-0 left-0 z-40 bg-zinc-700 opacity-50 pointer-events-auto" @click="toggleAdd"></div>
-        
-            
-                <AddInventoryComponent v-if="addPart" class="z-50 pointer-events-auto" :toggleAdd="toggleAdd" :locations="locations" :buildings="buildings" :id="partID" @submitRequest="submitAddToInventory"/>
-        
-        
+        <h1 class="text-4xl mb-4">Part Manager</h1>
+        <SearchComponent :building="currentBuilding" :edit="true" :add="true" :view="true" :http="http" 
+        :errorHandler="errorHandler" :location="'Parts Room'" :displayMessage="displayMessage" :changeBuilding="true"
+        @editPartAction="toggleEdit" @addPartAction="toggleAdd" @viewPartAction="viewPart" :router="router"/>
+
+        <EditPartComponent v-if="editPart" @toggle="toggleEdit" @updatePart="update" :show="editPart" :oldPart="currentPart"/>
+
+        <AddInventoryComponent v-if="addPart" @toggle="toggleAdd" @submitRequest="submitAddToInventory" 
+        :locations="locations" :buildings="buildings" :part="currentPart"/>
     </div>
 </template>

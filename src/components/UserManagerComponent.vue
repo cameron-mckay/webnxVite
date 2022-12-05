@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { Ref, ref } from 'vue';
 import { User } from '../plugins/interfaces';
+import FullScreenPopupComponent from './FullScreenPopupComponent.vue';
 
 
 interface Props {
-    user: User
+    user: User,
+    show: boolean
 }
 
 const props = defineProps<Props>()
@@ -14,7 +16,7 @@ user.value = props.user
 
 </script>
 <template>
-    <div>
+    <FullScreenPopupComponent :show="props.show" @toggle="$emit('toggle')">
         <h1>Edit User:</h1>
         <form @submit.prevent="$emit('update', user)" class="grid grid-cols-2">
             <label>Email</label>
@@ -31,10 +33,8 @@ user.value = props.user
             <input class="col-span-2 submit bg-red-500 hover:bg-red-600 active:bg-red-700" type="reset" value="Reset">
             <input class="col-span-2 submit" type="submit" value="Update">
         </form>
-    </div>
+    </FullScreenPopupComponent>
 </template>
 <style scoped>
-input, select {
-    @apply textbox
-}
+
 </style>
