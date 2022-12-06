@@ -69,7 +69,6 @@ defineExpose({
 
 // component variables
 let { http, router, errorHandler, displayMessage, edit, add, view, changeBuilding } = props
-let location = props.location
 let building = ref(props.building)
 let searchText = ref("")
 let pageNum = ref(1)
@@ -83,9 +82,6 @@ onBeforeMount(() => {
     let { query } = router.currentRoute.value
     if(query.building) {
         building.value = parseInt(query.building as string)
-    }
-    if(query.location) {
-        location = query.location as string
     }
     // Check for advanced search
     if(query.advanced === "true"){

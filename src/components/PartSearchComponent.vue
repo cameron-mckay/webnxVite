@@ -61,13 +61,13 @@ interface Props {
 
 // Define shit
 let props = defineProps<Props>()
+let { http, router, errorHandler, displayMessage, edit, add, view, changeBuilding } = props
 const emit = defineEmits(['addPartAction', 'editPartAction', 'viewPartAction'])
 defineExpose({
     search
 })
 
 // component variables
-let { http, router, errorHandler, displayMessage, edit, add, view, changeBuilding } = props
 let location = props.location
 let building = ref(props.building)
 let searchText = ref("")

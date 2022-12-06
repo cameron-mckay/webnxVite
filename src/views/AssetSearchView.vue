@@ -14,13 +14,14 @@ interface Props {
     errorHandler: (err: Error | AxiosError | string) => void,
     displayMessage: (message: string) => void
 }
+const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
+
 let currentBuilding = ref(3);
 
 onActivated(()=>{
     currentBuilding.value = store.state.user.building!;
 })
 
-const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 // END OF PROPS
 
 </script>

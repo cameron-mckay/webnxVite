@@ -3,6 +3,7 @@ import { CartItem, PartSchema } from '../plugins/interfaces';
 import { Ref, ref, onMounted } from 'vue';
 import FullScreenPopupComponent from './FullScreenPopupComponent.vue';
 
+// Start props
 interface Props {
     locations: Array<string>,
     buildings: Array<number>,
@@ -10,6 +11,9 @@ interface Props {
 }
 
 const { locations, buildings, part } = defineProps<Props>()
+// End props
+
+// Request as cart item
 let request:Ref<CartItem> = ref({
     nxid: part.nxid!,
     quantity: 0,
@@ -17,12 +21,14 @@ let request:Ref<CartItem> = ref({
     location: "Parts Room"
 })
 
+// Reset form
 function resetForm() {
     request.value.quantity = 0
     request.value.building = 3
     request.value.location = "Parts Room"
 }
 
+// When component mounted
 onMounted(()=>{
     request.value.nxid = part.nxid!
 })

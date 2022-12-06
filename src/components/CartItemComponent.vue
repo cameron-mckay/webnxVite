@@ -7,15 +7,9 @@ interface Props {
     quantity: number
 }
 const { part, quantity } = defineProps<Props>()
-
-onMounted(() => {
-    console.log(part)
-})
-
 const emit = defineEmits(['plus', 'minus', 'delete'])
 
 let item_quantity = ref(quantity)
-
 
 function plus(){
     if(item_quantity.value < part.quantity!)
@@ -30,6 +24,9 @@ function minus(){
     emit('minus')
 }
 
+onMounted(() => {
+    console.log(part)
+})
 </script>
 
 <template>

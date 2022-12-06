@@ -13,32 +13,24 @@ const { title, submitText, strict, oldAsset } = defineProps<Props>()
 
 let asset:Ref<AssetSchema> = ref(JSON.parse(JSON.stringify(oldAsset)) as AssetSchema)
 let assetCopy = JSON.parse(JSON.stringify(oldAsset))
-let firstLoad = false
 let inRack = ref(false)
 
 // Clear out fields when part type is changed
-watch(() => asset.value.type, () => {
-    if(!firstLoad) {
-        delete asset.value.frequency
-        delete asset.value.chipset
-        delete asset.value.memory_type
-        delete asset.value.peripheral_type
-        delete asset.value.storage_interface
-        delete asset.value.capacity
-        delete asset.value.capacity_unit
-        delete asset.value.num_ports
-        delete asset.value.port_type
-        delete asset.value.cable_end1
-        delete asset.value.cable_end2
-    }else {
-        firstLoad = false
-    }
+watch(() => asset.value.asset_type, () => {
+    delete asset.value.rails
+    delete asset.value.live
+    delete asset.value.public_port
+    delete asset.value.private_port
+    delete asset.value.ipmi_port
+    delete asset.value.power_port
+    delete asset.value.sid
 })
 
-// Clear out connector type when storage interface is changed
-watch(() => asset.value.storage_interface, () => {
-    if(asset.value.storage_interface != 'NVME') {
-        delete asset.value.port_type
+watch(() => asset.value.live, () => {
+    if (asset.value.asset_type == "Server"&&asset.value.live) {
+        asset.value.rails = true
+    } else {
+        delete asset.value.rails
     }
 })
 

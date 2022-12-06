@@ -16,13 +16,12 @@
 <script setup lang="ts">
 import { AxiosResponse } from 'axios';
 import { onMounted } from 'vue';
-
-// PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState } from '../plugins/interfaces';
 
+// PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 interface Props {
     http: AxiosInstance,
     store: Store<UserState>,

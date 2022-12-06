@@ -17,6 +17,11 @@ let part:Ref<PartSchema> = ref(JSON.parse(JSON.stringify(oldPart)) as PartSchema
 let partCopy = JSON.parse(JSON.stringify(oldPart))
 let firstLoad = false
 
+// Reset form
+function resetForm() {
+    part.value = JSON.parse(JSON.stringify(partCopy))
+}
+
 // Clear out fields when part type is changed
 watch(() => part.value.type, () => {
     if(!firstLoad) {
@@ -43,10 +48,6 @@ watch(() => part.value.storage_interface, () => {
     }
 })
 
-// Reset form
-function resetForm() {
-    part.value = JSON.parse(JSON.stringify(partCopy))
-}
 </script>
 
 <template>

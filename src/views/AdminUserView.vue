@@ -34,10 +34,6 @@ function getUsers() {
     })
 }
 
-onMounted(()=>{
-    getUsers()
-})
-
 function toggleEdit(user: User) {
     if(!editUser.value) {
         currentUser.value = user
@@ -60,6 +56,9 @@ function localUpdateUser(user: User){
     })
 }
 
+onMounted(()=>{
+    getUsers()
+})
 </script>
 <template>
     <div>
