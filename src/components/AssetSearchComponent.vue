@@ -6,23 +6,24 @@
                 <option :value="3" selected>3 - Ogden</option>
                 <option :value="1">1 - LA</option>
             </select>
-            <img class="w-10 h-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition" @click="toggleAdvanced" src="../assets/sliders-solid.svg">
+            <img class="w-10 h-10 p-2 mx-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition" @click="toggleAdvanced" src="../assets/sliders-solid.svg">
+            <img class="w-10 h-10 p-2 mx-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition" @click="addUntrackedAsset" src="../assets/plus-solid.svg">
             <input class="submit w-[calc(20%)] mt-0" type="submit" value="Search">
             <AdvancedSearchComponent v-if="showAdvanced" @partSearch="advancedSearch" @toggle="toggleAdvanced"/>
         </form>
-        <div v-if="parts.length != 0">
+        <div v-if="assets.length != 0">
             <div
             class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 transition font-bold">
                 <p class="md:block hidden">NXID</p>
-                <p >Manufacturer</p>
-                <p>Name</p>
-                <p>Location</p>
-                <p>Quantity</p>
+                <p>Building</p>
+                <p>Type</p>
+                <p>Chassis</p>
+                <p>Status</p>
                 <p></p>
             </div>
-            <PartComponent :add="add" :edit="edit" :view="view" v-for="part in parts" v-bind:key="part._id"
-            @editPartAction="$emit('editPartAction', part)" @addPartAction='$emit("addPartAction", part)' @viewPartAction="$emit('viewPartAction', part)"
-            :part="part" />
+            <AssetComponent :add="add" :edit="edit" :view="view" v-for="asset in assets" v-bind:key="asset._id"
+            @editPartAction="$emit('editAssetAction', asset)" @addPartAction='$emit("addAssetAction", asset)' @viewPartAction="$emit('viewAssetAction', asset)"
+            :asset="asset" />
         </div>
         <div v-else>
             <p>No results...</p>
@@ -37,13 +38,13 @@
     </div>
 </template>
 <script setup lang="ts">
-import PartComponent from './PartComponent.vue';
-import AdvancedSearchComponent  from './PartAdvancedSearchComponent.vue';
+import AssetComponent from './AssetComponent.vue';
+import AdvancedSearchComponent  from './AssetAdvancedSearchComponent.vue';
 import { onBeforeMount, ref, Ref } from 'vue';
-import { getPartsByTextSearch, getPartByID, getPartsByData } from '../plugins/dbCommands/partManager';
 import type { AxiosError, AxiosInstance } from 'axios';
-import type { PartSchema } from '../plugins/interfaces';
+import type { AssetSchema } from '../plugins/interfaces';
 import { Router } from 'vue-router';
+import { getAssetByID, getAssetsByData, getAssetsByTextSearch } from '../plugins/dbCommands/assetManager';
 
 // Props interface
 interface Props {
@@ -61,7 +62,7 @@ interface Props {
 
 // Define shit
 let props = defineProps<Props>()
-const emit = defineEmits(['addPartAction', 'editPartAction', 'viewPartAction'])
+const emit = defineEmits(['addAssetAction', 'editAssetAction', 'viewAssetAction'])
 defineExpose({
     search
 })
@@ -72,7 +73,7 @@ let location = props.location
 let building = ref(props.building)
 let searchText = ref("")
 let pageNum = ref(1)
-let parts: Ref<PartSchema[]> = ref([])
+let assets: Ref<AssetSchema[]> = ref([])
 let showAdvanced = ref(false);
 let multiplePages = ref(false);
 
@@ -88,14 +89,14 @@ onBeforeMount(() => {
     }
     // Check for advanced search
     if(query.advanced === "true"){
-        let searchPart = {} as PartSchema
+        let searchAsset = {} as AssetSchema
         // Loop through query to create part object
         for (const key in query) {
             // Copy
-            searchPart[key] = query[key]
+            searchAsset[key] = query[key]
         }
         // Search
-        advancedSearch(searchPart)
+        advancedSearch(searchAsset)
     }
     else {
         // Check for search text
@@ -133,13 +134,12 @@ function toggleAdvanced() {
 }
 
 // Advanced search
-function advancedSearch(part: PartSchema) {
-    part['advanced'] = 'true'
-    part['location'] = location
-    part['building'] = building.value.toString()
-    router.push({query:part})
+function advancedSearch(asset: AssetSchema) {
+    asset['advanced'] = 'true'
+    
+    router.push({query:asset})
     // Query the API
-    getPartsByData(http, part, building.value, location, (data, err) => {
+    getAssetsByData(http, asset, (data, err) => {
         // Hide advanced search
         showAdvanced.value = false
         // Error
@@ -148,7 +148,7 @@ function advancedSearch(part: PartSchema) {
             return errorHandler(err)
         } else if(data) {
             // Set parts list to API response
-            parts.value = data as PartSchema[];
+            assets.value = data as AssetSchema[];
         }
     })
 }
@@ -161,46 +161,51 @@ function search() {
         let query = searchText.value
         searchText.value = ""
         // Search and add to cart
-        getPartByID(http, query, building.value, location, (data, err) => {
+        getAssetByID(http, query, (data, err) => {
             if (err) {
                 // Part not found
                 return errorHandler(err)
             }
             // Typecast data
-            let part = data as PartSchema
-            if (part == null) {
+            let asset = data as AssetSchema
+            if (asset == null) {
                 // If no part was found
-                return errorHandler("Part not found.")
+                return errorHandler("Asset not found.")
             }
             // Emit actions
             if (add===true) {
-                emit("addPartAction", part)
+                emit("addAssetAction", asset)
             } else if(view===true) {
-                emit("viewPartAction", part)
+                emit("viewAssetAction", asset)
             } else if(edit==true) {
-                emit("viewPartAction", part)
+                emit("viewAssetAction", asset)
             }
         })
     }
     else {
         multiplePages.value = false;
         // Text search
-        router.push({query:{text: searchText.value, pageNum: pageNum.value, building: building.value, location }})
-        getPartsByTextSearch(http, searchText.value, pageNum.value, building.value, location, (data: any, err) => {
+        router.push({query:{text: searchText.value, pageNum: pageNum.value }})
+        getAssetsByTextSearch(http, searchText.value, pageNum.value, (data: any, err) => {
             if (err) {
                 // Send error to error handler
                 return errorHandler(err)
             }
             // typecast 
-            parts.value = data as PartSchema[];
-            if(parts.value.length > 50) {
-                parts.value.pop;
+            assets.value = data as AssetSchema[];
+            if(assets.value.length > 50) {
+                assets.value.pop;
                 multiplePages.value = true;
-            } else if(parts.value.length === 0 && pageNum.value != 1) {
+            } else if(assets.value.length === 0 && pageNum.value != 1) {
                 pageNum.value = 1
                 search()
             }
         })
     }
 }
+
+function addUntrackedAsset () {
+    router.push({name: 'Add Untracked Asset'})
+}
+
 </script>

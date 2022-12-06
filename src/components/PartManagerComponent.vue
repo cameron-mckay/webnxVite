@@ -1,8 +1,9 @@
 <script setup lang="ts">
 // Get http and store from props
 import type { PartSchema } from '../plugins/interfaces';
-import { ref, watch, Ref } from 'vue';
+import { ref, watch, Ref, onBeforeUnmount } from 'vue';
 
+// Props interface
 interface Props {
     title: string,
     submitText: string,
@@ -12,12 +13,9 @@ interface Props {
 
 const { title, submitText, strict, oldPart } = defineProps<Props>()
 // END OF PROPS
-let part:Ref<PartSchema> = ref({} as PartSchema)
+let part:Ref<PartSchema> = ref(JSON.parse(JSON.stringify(oldPart)) as PartSchema)
+let partCopy = JSON.parse(JSON.stringify(oldPart))
 let firstLoad = false
-if(oldPart){
-    // If editing part, get part data
-    part.value = oldPart;
-}
 
 // Clear out fields when part type is changed
 watch(() => part.value.type, () => {
@@ -45,15 +43,16 @@ watch(() => part.value.storage_interface, () => {
     }
 })
 
+// Reset form
 function resetForm() {
-    part.value = {}
+    part.value = JSON.parse(JSON.stringify(partCopy))
 }
 </script>
 
 <template>
     <div class="body">
         <h1 class="text-4xl mb-4">{{ title }}</h1>
-        <form id="form" @submit.prevent="$emit('partSubmit', part)" @reset.prevent="resetForm" class="grid grid-cols-2">
+        <form id="form" @submit.prevent="$emit('partSubmit',part)" @reset.prevent="resetForm" class="grid grid-cols-2">
             <label>NXID: </label>
             <input :required="strict" v-model="part.nxid" type="text" placeholder="NXID">
             <label>Manufacturer: </label>
@@ -184,8 +183,3 @@ function resetForm() {
         </form>
     </div>
 </template>
-<style scoped>
-input, select {
-    @apply textbox;
-}
-</style>

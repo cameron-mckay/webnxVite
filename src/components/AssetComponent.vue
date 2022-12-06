@@ -8,7 +8,7 @@ interface Props {
     view?: boolean
 }
 
-const { asset } = defineProps<Props>()
+const { asset, edit, add, view } = defineProps<Props>()
 </script>
 
 <template>

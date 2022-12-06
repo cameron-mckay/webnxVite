@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { emit } from 'process';
 import type { PartSchema } from '../plugins/interfaces';
 import FullScreenPopupComponent from './FullScreenPopupComponent.vue';
 import PartManagerComponent from './PartManagerComponent.vue';

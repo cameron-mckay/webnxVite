@@ -12,11 +12,6 @@ function search(part: PartSchema) {
 
 <template>
     <FullScreenPopupComponent>
-        <PartManagerComponent :title="'Advanced Search'" :submitText="'Search'" @partSubmit="search" :strict="false"/>
+        <PartManagerComponent :oldPart="{}" :title="'Advanced Search'" :submitText="'Search'" @partSubmit="search" :strict="false"/>
     </FullScreenPopupComponent>
 </template>
-<style scoped>
-input, select {
-    @apply textbox;
-}
-</style>

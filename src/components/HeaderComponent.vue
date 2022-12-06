@@ -1,9 +1,9 @@
 <template>
-    <div class="flex fixed w-full top-0 justify-between bg-zinc-300 shadow-lg z-50">
+    <div class="flex fixed w-full top-0 justify-between bg-zinc-300 shadow-lg z-10">
         <div class="flex justify-center">
             <img class="h-10 p-2" alt="WebNX Logo" src="../assets/logo.png">
-            <RouterLink class="transiton leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/parts">Parts
-            </RouterLink>
+            <RouterLink class="transiton leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/parts">Parts</RouterLink>
+            <RouterLink class="transiton leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/assets">Assets</RouterLink>
             <!-- <RouterLink to="/assets">Assets</RouterLink> -->
             <RouterLink v-if="store.state.cart.length > 0" class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/cart">{{ `Cart(${store.getters.getTotalNumItems})` }}</RouterLink>
             <RouterLink v-else class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/cart">Cart</RouterLink>

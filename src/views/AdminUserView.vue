@@ -71,6 +71,6 @@ function localUpdateUser(user: User){
             <p>Admin</p>
         </div>
         <UserComponent class="grid grid-cols-5 relative leading-10 text-center p-2 transition text-sm" v-for="user in users" :user="user" @edit="toggleEdit(user)"/>
-        <UserManagerComponent class="pointer-events-auto" :user="currentUser" :show="editUser" @toggle="toggleEdit" @update="localUpdateUser"/>
+        <UserManagerComponent v-if="editUser" class="pointer-events-auto" :user="currentUser" :show="editUser" @toggle="toggleEdit" @update="localUpdateUser"/>
     </div>
 </template>

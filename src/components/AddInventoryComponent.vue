@@ -48,8 +48,3 @@ onMounted(()=>{
         </form>
     </FullScreenPopupComponent>
 </template>
-<style scoped>
-input, select {
-    @apply textbox;
-}
-</style>

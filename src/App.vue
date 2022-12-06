@@ -12,7 +12,7 @@ import HeaderComponent from './components/HeaderComponent.vue'
 import MessageComponent from './components/MessageComponent.vue'
 
 // Import dependencies
-import { inject, onBeforeMount, ref, Ref } from 'vue';
+import { inject, ref, Ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 import type { AxiosInstance, AxiosError } from 'axios';
 import { injectionKey } from './plugins/axios'

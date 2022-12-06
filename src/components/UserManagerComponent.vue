@@ -35,6 +35,3 @@ user.value = props.user
         </form>
     </FullScreenPopupComponent>
 </template>
-<style scoped>
-
-</style>

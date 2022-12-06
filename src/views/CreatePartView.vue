@@ -34,5 +34,5 @@ async function submitPart(part: PartSchema) {
 
 </script>
 <template>
-    <PartManagerComponent :strict="true" :submitText="`Create Part`" :title="'Create a new part: '" @partSubmit="submitPart" />
+    <PartManagerComponent :oldPart="{}" :strict="true" :submitText="`Create Part`" :title="'Create a new part: '" @partSubmit="submitPart" />
 </template>

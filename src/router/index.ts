@@ -7,8 +7,9 @@ import CreatePartView from '../views/CreatePartView.vue'
 import CartView from '../views/CartView.vue'
 import AdminDashboardView from '../views/AdminDashboardView.vue'
 import AdminPartSearchView from '../views/AdminPartSearchView.vue'
-import EditPartView from '../views/EditPartView.vue'
+import AssetSearchView from '../views/AssetSearchView.vue'
 import AdminUserView from '../views/AdminUserView.vue'
+import AddUntrackedAsset from '../views/AddUntrackedAssetView.vue'
 
 const routes = [
   {
@@ -40,6 +41,16 @@ const routes = [
     component: FindPartView
   },
   {
+    path: '/assets',
+    name: 'Assets',
+    component: AssetSearchView
+  },
+  {
+    path: '/assets/add',
+    name: 'Add Untracked Asset',
+    component: AddUntrackedAsset
+  },
+  {
     path: '/admin',
     name: 'Admin Dashboard',
     component:AdminDashboardView
@@ -51,12 +62,12 @@ const routes = [
   },
   {
     path: '/admin/parts/manage',
-    name: 'Manage Parts',
+    name: 'Part Manager',
     component: AdminPartSearchView
   },
   {
     path: '/admin/users',
-    name: 'Manage Users',
+    name: 'User Manager',
     component: AdminUserView
   },
   {

@@ -19,6 +19,7 @@ export interface Message {
 
 // Database part schema
 export interface PartSchema {
+    [index: string]: any,
     _id?: string,
     nxid?: string,
     manufacturer?: string,
@@ -41,6 +42,7 @@ export interface PartSchema {
 }
 
 export interface AssetSchema {
+    [index: string]: any,
     _id?: string,
     asset_tag?: string,
     building?: number,

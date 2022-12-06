@@ -38,7 +38,7 @@ export async function getAssetByID(http: AxiosInstance, id: string, callback: ap
 }
 
 export async function getAssetsByData(http: AxiosInstance, asset: AssetSchema, callback: apiResponse) {
-    await http.get("/api/part", { params: asset })
+    await http.get("/api/asset", { params: asset })
         .then((res: AxiosResponse) => {
             // Success - send results to callback
             callback(res.data, null)
