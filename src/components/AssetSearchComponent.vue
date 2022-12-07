@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-smooth-resize="{delay: 50, transition: 800, fineTune: 27}">
         <form class="flex justify-between" @submit.prevent="search">
             <input class="textbox" type="text" v-model="searchText" placeholder="🔍 keywords...">
             <select v-if="changeBuilding===true" v-model="building" class="w-32">
@@ -77,7 +77,7 @@ let showAdvanced = ref(false);
 let multiplePages = ref(false);
 
 // Before component is mounted
-onBeforeMount(() => {
+onBeforeMount(async () => {
     // Fuck this
     let { query } = router.currentRoute.value
     if(query.building) {
@@ -130,7 +130,7 @@ function toggleAdvanced() {
 }
 
 // Advanced search
-function advancedSearch(asset: AssetSchema) {
+async function advancedSearch(asset: AssetSchema) {
     asset['advanced'] = 'true'
     
     router.push({query:asset})
@@ -150,7 +150,7 @@ function advancedSearch(asset: AssetSchema) {
 }
 
 // Search function
-function search() {
+async function search() {
     // Check for webnx regex
     if (/WNX([0-9]{7})+/.test(searchText.value)) {
         // temp value
@@ -203,5 +203,4 @@ function search() {
 function addUntrackedAsset () {
     router.push({name: 'Add Untracked Asset'})
 }
-
 </script>

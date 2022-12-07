@@ -1,5 +1,5 @@
 import type { AxiosResponse, AxiosError, AxiosInstance } from "axios"
-import type { CartItem, PartSchema, apiResponse } from "../interfaces"
+import type { CartItem, PartSchema, apiResponse, PartRecord } from "../interfaces"
 
 export async function getPartsByTextSearch(http: AxiosInstance, searchString: string, pageNum: number, building: number, location: string, callback: apiResponse) {
     // Send string query to API
@@ -118,35 +118,37 @@ export async function checkin(http: AxiosInstance, cart: Array<CartItem>, buildi
     })
 }
 
-export async function getUniqueOnPartInfo(http: AxiosInstance, key: string, callback: apiResponse) {
-    await http.get("/api/part/distinct", {
+export function getUniqueOnPartInfo(http: AxiosInstance, key: string, where: PartSchema) {
+    http.get("/api/part/distinct", {
         params: { 
-            key
+            key,
+            where
         }
     })
     .then((res: AxiosResponse) => {
         // Success - send results to callback
-        callback(res.data, null)
+        return res.data as string[]
     })
     .catch((err: Error | AxiosError) => {
         // Error - send error to callback
-        callback({}, err)
+        return []
     })
 }
 
-export async function getUniqueOnPartRecord(http: AxiosInstance, key: string, callback: apiResponse) {
-    await http.get("/api/partRecord/distinct", {
+export function getUniqueOnPartRecord(http: AxiosInstance, key: string, where: PartRecord) {
+    http.get("/api/partRecord/distinct", {
         params: { 
-            key
+            key,
+            where
         }
     })
     .then((res: AxiosResponse) => {
         // Success - send results to callback
-        callback(res.data, null)
+        return res.data as string[]
     })
     .catch((err: Error | AxiosError) => {
         // Error - send error to callback
-        callback({}, err)
+        return []
     })
 }
 

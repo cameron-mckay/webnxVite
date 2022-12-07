@@ -100,8 +100,8 @@ function localCheckin() {
             <p>Quantity</p>
             <p></p>
         </div>
-        <CartItemComponent v-for="item in parts" v-bind:key="item.part._id" :part="item.part" :quantity="item.quantity"
-            @plus='addOne(item.part._id!)' @minus='subOne(item.part._id!)' @delete='deletePart(item.part._id!)'/>    
+        <CartItemComponent v-for="item in parts" v-bind:key="item.part.nxid" :part="item.part" :quantity="item.quantity"
+            @plus='addOne(item.part._id!)' @minus='subOne(item.part.nxid!)' @delete='deletePart(item.part.nxid!)'/>    
         <div class="flex justify-center">
             <input type="button" @click="localCheckout" class="submit mx-1" value="Check Out">
             <input type="button" @click="localCheckin" class="submit mx-1" value="Check In">

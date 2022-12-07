@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { AssetSchema } from '../plugins/interfaces';
 import { ref, watch, Ref } from 'vue';
+import CustomDropdownCompononent from './CustomDropdownCompononent.vue';
 
 // Props interface
 interface Props {
@@ -14,7 +15,7 @@ const { title, submitText, strict, oldAsset } = defineProps<Props>()
 let asset:Ref<AssetSchema> = ref(JSON.parse(JSON.stringify(oldAsset)) as AssetSchema)
 let assetCopy = JSON.parse(JSON.stringify(oldAsset))
 let inRack = ref(false)
-
+asset.value.asset_type = asset.value.asset_type ? asset.value.asset_type : ""
 // Clear out fields when part type is changed
 watch(() => asset.value.asset_type, () => {
     delete asset.value.rails
@@ -41,7 +42,7 @@ function resetForm() {
 </script>
 
 <template>
-    <div class="body">
+    <div class="body" v-smooth-resize="{delay: 50, transition: 800, fineTune: 27}">
         <h1 class="text-4xl mb-4">{{ title }}</h1>
         <form id="form" @submit.prevent="$emit('assetSubmit',asset)" @reset.prevent="resetForm" class="grid grid-cols-2">
             <label>Asset Tag: </label>
@@ -55,15 +56,8 @@ function resetForm() {
             <label>Serial Number: </label>
             <input :required="strict" v-model="asset.serial" type="text" placeholder="Serial Number">
             <label>Asset Type: </label>
-            <select :required="strict" v-model="asset.asset_type">
-                <option disabled selected value="">Asset type</option>
-                <option>Server</option>
-                <option>Laptop</option>
-                <option>PDU</option>
-                <option>Switch</option>
-            </select>
-            
-            <div v-if="(asset.asset_type != 'Laptop'&&asset.asset_type!=undefined)" class="col-span-2 grid grid-cols-2">
+            <CustomDropdownCompononent :required="strict" :options="['Server','Laptop', 'Switch', 'PDU']" @updateValue="(value)=>{asset.asset_type = value}"/>
+            <div v-if="(asset.asset_type == 'Server'|| asset.asset_type == 'Switch' || asset.asset_type == 'PDU')" class="col-span-2 grid grid-cols-2">
                 <label>Status: </label>
                 <select :required="strict" v-model="asset.live">
                     <option selected :value="true">Live</option>

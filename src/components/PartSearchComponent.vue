@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-smooth-resize="{delay: 50, transition: 800, fineTune: 27}">
         <form class="flex justify-between" @submit.prevent="search">
             <input class="textbox" type="text" v-model="searchText" placeholder="🔍 keywords...">
             <select v-if="changeBuilding===true" v-model="building" class="w-32">
@@ -8,7 +8,7 @@
             </select>
             <img class="w-10 h-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition" @click="toggleAdvanced" src="../assets/sliders-solid.svg">
             <input class="submit w-[calc(20%)] mt-0" type="submit" value="Search">
-            <AdvancedSearchComponent v-if="showAdvanced" @partSearch="advancedSearch" @toggle="toggleAdvanced"/>
+            <AdvancedSearchComponent :http="http" v-show="showAdvanced" @partSearch="advancedSearch" @toggle="toggleAdvanced"/>
         </form>
         <div v-if="parts.length != 0">
             <div
@@ -29,9 +29,9 @@
         </div>
         <div class="text-right">
             <p class="inline-block mr-3">{{`Page: ${pageNum}`}}</p>
-            <img v-if="multiplePages||pageNum>1"  class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition"
+            <img v-show="multiplePages||pageNum>1"  class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition"
                 src="../assets/caret-left-solid.svg" v-on:click="prevPage">
-            <img v-if="multiplePages||pageNum>1"  class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition"
+            <img v-show="multiplePages||pageNum>1"  class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition"
                 src="../assets/caret-right-solid.svg" v-on:click="nextPage">
         </div>
     </div>
@@ -77,7 +77,7 @@ let showAdvanced = ref(false);
 let multiplePages = ref(false);
 
 // Before component is mounted
-onBeforeMount(() => {
+onBeforeMount(async() => {
     // Fuck this
     let { query } = router.currentRoute.value
     if(query.building) {
@@ -133,7 +133,7 @@ function toggleAdvanced() {
 }
 
 // Advanced search
-function advancedSearch(part: PartSchema) {
+async function advancedSearch(part: PartSchema) {
     part['advanced'] = 'true'
     part['location'] = location
     part['building'] = building.value.toString()
@@ -154,7 +154,7 @@ function advancedSearch(part: PartSchema) {
 }
 
 // Search function
-function search() {
+async function search() {
     // Check for webnx regex
     if (/WNX([0-9]{7})+/.test(searchText.value)) {
         // temp value

@@ -1,8 +1,10 @@
 <template>
-  <HeaderComponent v-if="store.state.isAuth" :http="http" :store="store"/>
-  <MessageComponent :messages="messages" :errors="errorMessages"/>
-  <router-view class="max-w-3xl mx-auto bg-zinc-300 p-4 rounded-lg mt-16 shadow-xl" :http='http' :store='store' :errorHandler='errorHandler' :router='router'
-    :displayMessage='displayMessage' :routeLocation="route" />
+  <div>
+    <HeaderComponent v-if="store.state.isAuth" :http="http" :store="store"/>
+    <MessageComponent :messages="messages" :errors="errorMessages"/>
+    <router-view class="max-w-3xl mx-auto bg-zinc-300 p-4 rounded-lg my-16 shadow-xl" :http='http' :store='store' :errorHandler='errorHandler' :router='router'
+    :displayMessage='displayMessage' :routeLocation="route"/>
+  </div>
 </template>
 
 
@@ -165,4 +167,5 @@ async function displayMessage(message: string) {
     }
   }, 5000)
 }
+
 </script>
