@@ -78,8 +78,8 @@ export interface PartRecord {
 export interface CartItem {
     nxid: string,
     quantity: number,
-    location: string,
-    building: number
+    location?: string,
+    building?: number
 }
 
 // Contains all part data

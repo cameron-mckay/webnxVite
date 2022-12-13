@@ -14,7 +14,12 @@ export default {
     }
 }
 
-// Returns a new Axios instance
+/**
+ * @brief Creates a new http instance
+ * 
+ * @param options 
+ * @returns AxiosInsance
+ */
 function newAxiosInstance(options: AxiosOptions):AxiosInstance {
     const http = axios.create({
         baseURL: options.baseUrl ? options.baseUrl : import.meta.env.VITE_API_URL, /* window.location.origin */

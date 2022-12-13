@@ -3,7 +3,7 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetManagerComponent from '../components/AssetManagerComponent.vue';
-import type { UserState, AssetSchema } from '../plugins/interfaces';
+import type { UserState, AssetSchema, LoadedCartItem, CartItem } from '../plugins/interfaces';
 import { createAsset } from '../plugins/dbCommands/assetManager'
 
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
@@ -18,9 +18,16 @@ interface Props {
 const { http, router, errorHandler, displayMessage } = defineProps<Props>()
 // END OF PROPS
 
-async function submitAsset(asset: AssetSchema) {
-    // Use create part method from API commands 
-    createAsset(http, asset, (data, err) => {
+// Submit asset function
+async function submitAsset(asset: AssetSchema, parts: Array<LoadedCartItem>) {
+    // Use create part method from API commands
+    let unloadedParts = [] as CartItem[]
+    // Iterate through list of parts and strip only the NXID and quantity
+    for (const part of parts) {
+        unloadedParts.push({nxid: part.part.nxid as string, quantity: part.quantity})
+    }
+    // Create an asset using asset object and array of cart items
+    createAsset(http, asset, unloadedParts, (data, err) => {
         if (err) {
             // Fail
             errorHandler(err)
@@ -35,5 +42,5 @@ async function submitAsset(asset: AssetSchema) {
 
 </script>
 <template>
-    <AssetManagerComponent :oldAsset="{}" :strict="true" :submitText="`Create Asset`" :title="'Add untracked asset: '" @assetSubmit="submitAsset" />
+    <AssetManagerComponent :http="http" :router="router" :displayMessage="displayMessage" :errorHandler="errorHandler" :oldAsset="{}" :strict="true" :submitText="`Create Asset`" :title="'Add untracked asset: '" @assetSubmit="submitAsset" />
 </template>

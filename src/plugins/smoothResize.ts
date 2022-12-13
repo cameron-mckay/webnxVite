@@ -1,3 +1,6 @@
+/**
+ * This code was taken from CodePen
+ */
 import type { VueElement, VNode } from "vue"
 
 const checkHeightForChangeAndUpdate = (el: VueElement, oldHeight: any, delay: any, transitionTime: any, fineTune: any) => {

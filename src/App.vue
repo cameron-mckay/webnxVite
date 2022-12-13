@@ -28,6 +28,7 @@ const router = useRouter()
 const route = useRoute()
 const store = useStore()
 
+// Global list of messages for the MessageComponent to render
 var messages: Ref<Message[]> = ref([])
 var errorMessages: Ref<Message[]> = ref([])
 
@@ -70,7 +71,12 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
-// Error handler
+
+/**
+ * @brief Briefly print an error to an on screen popup
+ * 
+ * @param err 
+ */
 async function errorHandler(err: AxiosError | string) {
   // string variable for message text
   let message:string
@@ -129,7 +135,11 @@ async function errorHandler(err: AxiosError | string) {
 }
 
 
-// Error handler
+/**
+ * @brief Briefly display a message in an on screen popup
+ * 
+ * @param message 
+ */
 async function displayMessage(message: string) {
   // Sentinel value
   let match = false

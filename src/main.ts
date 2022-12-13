@@ -12,13 +12,13 @@ app.use(axios, {});
 // Create global store
 app.use(createGlobalStore(app), key)
 
+// Add the v-smooth-resize directive for all components
 app.directive('smooth-resize', {
     beforeUpdate (el, binding, vnode) {
         smoothResize(el, binding, vnode)
     },
     
 })
-
 
 // Add router and mount app
 app.use(router).mount('#app')

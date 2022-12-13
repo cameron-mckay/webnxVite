@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Get http and store from props
-import CustomDropdownCompononent from './CustomDropdownCompononent.vue';
+import CustomDropdownCompononent from './CustomDropdownComponent.vue';
 import { getUniqueOnPartInfo } from '../plugins/dbCommands/partManager';
 import type { PartSchema } from '../plugins/interfaces';
 import { ref, watch, Ref, onBeforeMount } from 'vue';

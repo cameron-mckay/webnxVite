@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 
 interface Props {
     required: boolean,
     options: Array<string>,
+    defaultValue?: string
 }
 
-const { required, options } = defineProps<Props>()
+const { required, options, defaultValue } = defineProps<Props>()
 const emit = defineEmits(['updateValue'])
 
 let custom = ref(false)
@@ -23,6 +24,15 @@ watch(textValue, () => {
         custom.value = true
     }
     emit('updateValue', textValue.value)
+})
+
+onMounted(()=>{
+    if(defaultValue) {
+        if(options.indexOf(defaultValue)==-1) {
+            custom.value = true
+        }
+        textValue.value = defaultValue
+    }
 })
 </script>
 <template>
