@@ -6,7 +6,9 @@
                 <option :value="3" selected>3 - Ogden</option>
                 <option :value="1">1 - LA</option>
             </select>
-            <img class="w-10 h-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition" @click="toggleAdvanced" src="../assets/sliders-solid.svg">
+            <TooltipComponent class="w-12" :text="'Advanced Search'">
+                <img class="w-10 h-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition" @click="toggleAdvanced" src="../assets/sliders-solid.svg">
+            </TooltipComponent>
             <input class="submit w-[calc(20%)] mt-0" type="submit" value="Search">
             <AdvancedSearchComponent :http="http" v-show="showAdvanced" @partSearch="advancedSearch" @toggle="toggleAdvanced"/>
         </form>
@@ -44,6 +46,7 @@ import { getPartsByTextSearch, getPartByID, getPartsByData } from '../plugins/db
 import type { AxiosError, AxiosInstance } from 'axios';
 import type { PartSchema } from '../plugins/interfaces';
 import { Router } from 'vue-router';
+import TooltipComponent from './TooltipComponent.vue';
 
 // Props interface
 interface Props {

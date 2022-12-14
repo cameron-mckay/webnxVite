@@ -1,36 +1,45 @@
 <script setup lang="ts">
 import { PartSchema } from '../plugins/interfaces'
-import { ref } from 'vue'
+import TooltipComponent from './TooltipComponent.vue';
 
 interface Props {
     part: PartSchema,
-    quantity: number
+    quantity: number,
+    isCurrentUser: boolean
 }
-const { part, quantity } = defineProps<Props>()
-const emit = defineEmits(['plus', 'minus', 'delete'])
+const { part, quantity, isCurrentUser } = defineProps<Props>()
 
-let item_quantity = ref(quantity)
-
-function minus(){
-    item_quantity.value -= 1
-    emit('minus')
-}
+console.log(part)
 </script>
 
 <template>
-    <div class="group">
+    <div>
         <div
             class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl group-hover:rounded-bl-none group-hover:shadow-lg">
             <p class="md:block hidden">{{ part.nxid }}</p>
             <p>{{ part.manufacturer }}</p>
             <p>{{ part.name }}</p>
             <p>{{ part.shelf_location }}</p>
-            <p>{{ item_quantity }}</p>
-            <div class="flex justify-center">
-                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/plus-solid.svg"
-                    v-on:click="plus">
-                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/minus-solid.svg"
-                v-on:click="minus">
+            <p>{{ quantity }}</p>
+            <div v-if="isCurrentUser" class="flex justify-center">
+                <TooltipComponent class="w-12 h-12" :text="'Move one'">
+                    <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/1arrowUp.png"
+                    v-on:click="$emit('moveOne')">
+                </TooltipComponent>
+                <TooltipComponent class="w-12 h-12" :text="'Move all'">
+                    <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/2arrowsUp.png"
+                    v-on:click="$emit('moveAll')">
+                </TooltipComponent>
+            </div>
+            <div v-else class="flex justify-center">
+                <TooltipComponent class="w-12 h-12" :text="'Move one'">
+                    <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/1arrowDown.png"
+                    v-on:click="$emit('moveOne')">
+                </TooltipComponent>
+                <TooltipComponent class="w-12 h-12" :text="'Move all'">
+                    <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/2arrowsDown.png"
+                    v-on:click="$emit('moveAll')">
+                </TooltipComponent>
             </div>
         </div>
         <div

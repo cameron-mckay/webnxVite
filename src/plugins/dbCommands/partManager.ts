@@ -185,7 +185,7 @@ export async function checkin(http: AxiosInstance, cart: Array<CartItem>, buildi
  * @param key - attribute to get list of i.e. "manufacturer" or "chipset"
  * @param where - partial part object to restrict results of info search (pass {} for no restrictions)
  */
-export function getUniqueOnPartInfo(http: AxiosInstance, key: string, where: PartSchema) {
+export function getUniqueOnPartInfo(http: AxiosInstance, key: string, where: PartSchema , callback: apiResponse) {
     http.get("/api/part/distinct", {
         params: { 
             key,
@@ -194,11 +194,11 @@ export function getUniqueOnPartInfo(http: AxiosInstance, key: string, where: Par
     })
     .then((res: AxiosResponse) => {
         // Success - send results to callback
-        return res.data as string[]
+        callback(res, null)
     })
     .catch((err: Error | AxiosError) => {
         // Error - send error to callback
-        return []
+        callback({}, err)
     })
 }
 
@@ -209,7 +209,7 @@ export function getUniqueOnPartInfo(http: AxiosInstance, key: string, where: Par
  * @param key - attribute to get list of i.e. "location" or "owner"
  * @param where - partial part record object to restrict results of info search (pass {} for no restrictions)
  */
-export function getUniqueOnPartRecord(http: AxiosInstance, key: string, where: PartRecord) {
+export function getUniqueOnPartRecord(http: AxiosInstance, key: string, where: PartRecord, callback: apiResponse) {
     http.get("/api/partRecord/distinct", {
         params: { 
             key,
@@ -218,11 +218,11 @@ export function getUniqueOnPartRecord(http: AxiosInstance, key: string, where: P
     })
     .then((res: AxiosResponse) => {
         // Success - send results to callback
-        return res.data as string[]
+        callback(res, null)
     })
     .catch((err: Error | AxiosError) => {
         // Error - send error to callback
-        return []
+        callback({}, err)
     })
 }
 

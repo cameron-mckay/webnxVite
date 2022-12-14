@@ -140,3 +140,19 @@ export async function getUserInventoryByID(http: AxiosInstance, user_id: string,
             callback({}, err)
         })
 }
+
+export async function getAllTechsInventory(http: AxiosInstance, callback: apiResponse) {
+    await http.get("/api/user/inventory", {
+        params: {
+            user_id: "all"
+        }
+    })
+        .then((res: AxiosResponse) => {
+            // Success - send response to callback
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err)
+        })
+}

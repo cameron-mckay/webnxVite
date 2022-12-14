@@ -35,14 +35,14 @@ onActivated(()=>{
 // Get unique buildings and locations
 function getBuildingsAndLocations() {
     // Get all unique buildings
-    getUniqueOnPartRecord(http, "building", (unique_buildings, err) => {
+    getUniqueOnPartRecord(http, "building", {}, (unique_buildings, err) => {
         if (err) {
             errorHandler(err)
         }
         buildings.value = unique_buildings as Array<number>
     })
     // Get all unique locations
-    getUniqueOnPartRecord(http, "location", (unique_locations, err) => {
+    getUniqueOnPartRecord(http, "location", {}, (unique_locations, err) => {
         if (err) {
             errorHandler(err)
         }

@@ -10,6 +10,7 @@ import AdminPartSearchView from '../views/AdminPartSearchView.vue'
 import AssetSearchView from '../views/AssetSearchView.vue'
 import AdminUserView from '../views/AdminUserView.vue'
 import AddUntrackedAsset from '../views/AddUntrackedAssetView.vue'
+import InventoryView from '../views/InventoryView.vue'
 
 const routes = [
   {
@@ -71,10 +72,15 @@ const routes = [
     component: AdminUserView
   },
   {
+    path: '/inventory',
+    name: 'Inventory',
+    component: InventoryView
+  },
+  {
     path: '/:catchall(.*)',
     name: '404',
     component: NotFound
-  }
+  },
 ]
 
 const router = createRouter({
