@@ -73,6 +73,15 @@ watch(currentUser, ()=>{
                 <option v-if="store.state.user.admin" v-for="user in users" :value="user">{{ `${user.first_name} ${user.last_name} `}}</option>
             </select>
         </div>
-        <InventoryPartComponent :isCurrentUser="currentUser._id == store.state.user._id? true : false " v-for="item in items" :part="item.part" :quantity="item.quantity"/>
+        <div v-if="items.length > 0" class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 rounded-xl transition font-bold">
+            <p class="md:block hidden">NXID</p>
+            <p >Manufacturer</p>
+            <p>Name</p>
+            <p>Location</p>
+            <p>Quantity</p>
+            <p></p>
+        </div>
+        <InventoryPartComponent :isCurrentUser="currentUser._id == store.state.user._id? true : false " 
+            v-for="item in items" :part="item.part" :quantity="item.quantity"/>
     </div>
 </template>

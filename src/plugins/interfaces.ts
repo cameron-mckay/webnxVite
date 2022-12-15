@@ -17,6 +17,12 @@ export interface Message {
     quantity: number
 }
 
+export interface LoadedPartRecord {
+    record: PartRecord,
+    by: User,
+    owner?: User
+}
+
 // Database part schema
 export interface PartSchema {
     [index: string]: any,
@@ -71,7 +77,7 @@ export interface PartRecord {
     serial?: string,
     owner?: string,
     by?: string,
-    date_created?: Date
+    date_created?: string
 }
 
 // User state interface

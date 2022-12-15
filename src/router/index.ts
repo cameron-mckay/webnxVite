@@ -11,6 +11,9 @@ import AssetSearchView from '../views/AssetSearchView.vue'
 import AdminUserView from '../views/AdminUserView.vue'
 import AddUntrackedAsset from '../views/AddUntrackedAssetView.vue'
 import InventoryView from '../views/InventoryView.vue'
+import PartView from '../views/PartView.vue'
+import PartHistoryView from '../views/PartHistoryView.vue'
+import AssetView from '../views/AssetView.vue'
 
 const routes = [
   {
@@ -42,6 +45,16 @@ const routes = [
     component: FindPartView
   },
   {
+    path: '/parts/view',
+    name: 'Part View',
+    component: PartView
+  },
+  {
+    path: '/parts/view/history',
+    name: 'Part History',
+    component: PartHistoryView
+  },
+  {
     path: '/assets',
     name: 'Assets',
     component: AssetSearchView
@@ -50,6 +63,11 @@ const routes = [
     path: '/assets/add',
     name: 'Add Untracked Asset',
     component: AddUntrackedAsset
+  },
+  {
+    path: '/assets/edit',
+    name: 'Edit Asset',
+    component: AssetView
   },
   {
     path: '/admin',

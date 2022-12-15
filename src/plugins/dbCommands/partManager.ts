@@ -194,7 +194,7 @@ export function getUniqueOnPartInfo(http: AxiosInstance, key: string, where: Par
     })
     .then((res: AxiosResponse) => {
         // Success - send results to callback
-        callback(res, null)
+        callback(res.data, null)
     })
     .catch((err: Error | AxiosError) => {
         // Error - send error to callback
@@ -218,7 +218,7 @@ export function getUniqueOnPartRecord(http: AxiosInstance, key: string, where: P
     })
     .then((res: AxiosResponse) => {
         // Success - send results to callback
-        callback(res, null)
+        callback(res.data, null)
     })
     .catch((err: Error | AxiosError) => {
         // Error - send error to callback
@@ -236,6 +236,52 @@ export function getUniqueOnPartRecord(http: AxiosInstance, key: string, where: P
 export async function createNewPartRecords(http: AxiosInstance, part: CartItem, callback: apiResponse) {
     await http.post("/api/part/add", {
         part
+    })
+    .then((res: AxiosResponse) => {
+        // Success - send results to callback
+        callback(res.data, null)
+    })
+    .catch((err: Error | AxiosError) => {
+        // Error - send error to callback
+        callback({}, err)
+    })
+}
+
+/**
+ * @brief Get current part records from a part info ID
+ * 
+ * @param http 
+ * @param nxid 
+ * @param callback 
+ */
+export function getPartRecordsByID(http: AxiosInstance, nxid: string, callback: apiResponse) {
+    http.get("/api/part/records", {
+        params: { 
+            nxid
+        }
+    })
+    .then((res: AxiosResponse) => {
+        // Success - send results to callback
+        callback(res.data, null)
+    })
+    .catch((err: Error | AxiosError) => {
+        // Error - send error to callback
+        callback({}, err)
+    })
+}
+
+/**
+ * @brief Get history of a part record by ID
+ * 
+ * @param http 
+ * @param id 
+ * @param callback 
+ */
+ export function getPartHistoryByID(http: AxiosInstance, id: string, callback: apiResponse) {
+    http.get("/api/partRecord/history", {
+        params: { 
+            id
+        }
     })
     .then((res: AxiosResponse) => {
         // Success - send results to callback

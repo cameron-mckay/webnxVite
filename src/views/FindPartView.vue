@@ -28,11 +28,17 @@ function addToCart(part: PartSchema) {
     store.commit("addToCart", part.nxid)
 }
 
+function viewPart(part: PartSchema) {
+    router.push({ name: 'Part View', query: { nxid: part.nxid } })
+}
+
 </script>
 <template>
     <div>
         <h1 class="text-4xl mb-4">Part Search</h1>
-        <SearchComponent :router="router" :add="true" :http="http" :errorHandler="errorHandler" 
-        :location="'Parts Room'" :building="currentBuilding" :displayMessage="displayMessage" @addPartAction="addToCart"/>
+        <SearchComponent :router="router" :add="true" :view="true" :http="http" 
+        :errorHandler="errorHandler" @viewPartAction="viewPart"
+        :location="'Parts Room'" :building="currentBuilding" :displayMessage="displayMessage" 
+        @addPartAction="addToCart"/>
     </div>
 </template>
