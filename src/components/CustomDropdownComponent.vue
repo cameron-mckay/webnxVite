@@ -7,7 +7,8 @@ interface Props {
     defaultValue?: string
 }
 
-const { required, options, defaultValue } = defineProps<Props>()
+const props = defineProps<Props>()
+const { required, options, defaultValue } = props
 const emit = defineEmits(['updateValue'])
 
 let custom = ref(false)
@@ -25,9 +26,15 @@ watch(textValue, () => {
     }
     emit('updateValue', textValue.value)
 })
+watch(props, ()=> {
+    if(props.defaultValue) {
+        textValue.value = props.defaultValue
+    }
+})
 
-onMounted(()=>{
+onMounted(async ()=>{
     if(defaultValue) {
+        console.log("THIS SHOULD SHOW 3")
         if(options.indexOf(defaultValue)==-1) {
             custom.value = true
         }

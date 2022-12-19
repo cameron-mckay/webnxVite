@@ -292,3 +292,27 @@ export function getPartRecordsByID(http: AxiosInstance, nxid: string, callback: 
         callback({}, err)
     })
 }
+
+/**
+ * @brief Move ownership and location of a part record
+ * 
+ * @param http 
+ * @param to 
+ * @param from 
+ * @param callback 
+ */
+export function movePart(http: AxiosInstance, to: PartRecord, from: PartRecord, quantity: number, callback: apiResponse) {
+    http.post("/api/part/move", {
+        to,
+        from,
+        quantity
+    })
+    .then((res: AxiosResponse) => {
+        // Success - send results to callback
+        callback(res.data, null)
+    })
+    .catch((err: Error | AxiosError) => {
+        // Error - send error to callback
+        callback({}, err)
+    })
+}

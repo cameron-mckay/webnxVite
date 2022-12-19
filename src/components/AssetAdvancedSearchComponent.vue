@@ -1,17 +1,20 @@
 <script setup lang="ts">
+import type { AssetSchema, LoadedCartItem, PartSchema } from '../plugins/interfaces';
+import { ref, watch, Ref, onBeforeMount } from 'vue';
 import FullScreenPopupComponent from './FullScreenPopupComponent.vue';
+import { AxiosInstance, AxiosError } from 'axios';
 import AssetManagerComponent from './AssetManagerComponent.vue';
-import type { PartSchema } from '../plugins/interfaces';
 
-const emit = defineEmits(['assetSearch'])
+// Props interface
+let partsOnAsset = [] as LoadedCartItem[]
+let oldAsset = ref({} as AssetSchema)
 
-function search(part: PartSchema) {
-    emit("assetSearch", part)
-}
 </script>
 
 <template>
     <FullScreenPopupComponent>
-        <AssetManagerComponent :oldAsset="{}" :title="'Advanced Search'" :submitText="'Search'" @assetSubmit="search" :strict="false"/>
+        <AssetManagerComponent :title="'Advanced Search:'" :submitText="'Search'"
+        :strict="false" :oldAsset="oldAsset" :parts="partsOnAsset"
+        @assetSubmit="$emit('assetSearch', oldAsset)"/>
     </FullScreenPopupComponent>
 </template>

@@ -9,7 +9,7 @@
             <img class="w-10 h-10 p-2 mx-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition" @click="toggleAdvanced" src="../assets/sliders-solid.svg">
             <img class="w-10 h-10 p-2 mx-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition" @click="addUntrackedAsset" src="../assets/plus-solid.svg">
             <input class="submit w-[calc(20%)] mt-0" type="submit" value="Search">
-            <AdvancedSearchComponent v-if="showAdvanced" @partSearch="advancedSearch" @toggle="toggleAdvanced"/>
+            <AdvancedSearchComponent v-if="showAdvanced" @assetSearch="advancedSearch" @toggle="toggleAdvanced"/>
         </form>
         <div v-if="assets.length != 0">
             <div

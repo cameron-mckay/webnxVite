@@ -24,21 +24,21 @@ console.log(part)
             <div v-if="isCurrentUser" class="flex justify-center">
                 <TooltipComponent class="w-12 h-12" :text="'Move one'">
                     <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/1arrowUp.png"
-                    v-on:click="$emit('moveOne')">
+                    v-on:click="$emit('movePart', part, 1)">
                 </TooltipComponent>
                 <TooltipComponent class="w-12 h-12" :text="'Move all'">
                     <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/2arrowsUp.png"
-                    v-on:click="$emit('moveAll')">
+                    v-on:click="$emit('movePart', part, quantity)">
                 </TooltipComponent>
             </div>
             <div v-else class="flex justify-center">
                 <TooltipComponent class="w-12 h-12" :text="'Move one'">
                     <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/1arrowDown.png"
-                    v-on:click="$emit('moveOne')">
+                    v-on:click="$emit('movePart', part, 1)">
                 </TooltipComponent>
                 <TooltipComponent class="w-12 h-12" :text="'Move all'">
                     <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/2arrowsDown.png"
-                    v-on:click="$emit('moveAll')">
+                    v-on:click="$emit('movePart', part, quantity)">
                 </TooltipComponent>
             </div>
         </div>
