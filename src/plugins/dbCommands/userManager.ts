@@ -1,5 +1,5 @@
-import type { AxiosResponse, AxiosError, AxiosInstance, Axios } from "axios"
-import type { User, apiResponse } from "../interfaces"
+import type { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import type { User, apiResponse } from "../interfaces";
 
 /**
  * @brief Get the current user's object from the API
@@ -88,7 +88,7 @@ export async function getAllUsers(http: AxiosInstance, callback: apiResponse) {
  * @param user 
  * @param callback 
  */
-export async function updateUser(http:AxiosInstance, user: User, callback: apiResponse) {
+export async function updateUser(http: AxiosInstance, user: User, callback: apiResponse) {
     await http.put("/api/user", { user })
         .then((res: AxiosResponse) => {
             // Success - send response to callback

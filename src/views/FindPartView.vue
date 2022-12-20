@@ -1,11 +1,11 @@
 <script setup lang="ts">
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
-import { onActivated, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import SearchComponent from '../components/PartSearchComponent.vue';
-import type { UserState, PartSchema } from '../plugins/interfaces';
+import type { PartSchema, UserState } from '../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,
@@ -15,9 +15,13 @@ interface Props {
     displayMessage: (message: string) => void
 }
 let currentBuilding = ref(3);
+let add = ref({ show: false })
 
-onActivated(()=>{
-    currentBuilding.value = store.state.user.building!;
+onMounted(() => {
+    setTimeout(() => {
+        currentBuilding.value = store.state.user.building!;
+        add.value.show = store.state.user.role == 'kiosk'
+    }, 500)
 })
 
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
@@ -36,9 +40,8 @@ function viewPart(part: PartSchema) {
 <template>
     <div>
         <h1 class="text-4xl mb-4">Part Search</h1>
-        <SearchComponent :router="router" :add="true" :view="true" :http="http" 
-        :errorHandler="errorHandler" @viewPartAction="viewPart"
-        :location="'Parts Room'" :building="currentBuilding" :displayMessage="displayMessage" 
-        @addPartAction="addToCart"/>
+        <SearchComponent :router="router" :add_object="add" :view="true" :http="http" :errorHandler="errorHandler"
+            @viewPartAction="viewPart" :location="'Parts Room'" :building="currentBuilding"
+            :displayMessage="displayMessage" @addPartAction="addToCart" />
     </div>
 </template>

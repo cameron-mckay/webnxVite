@@ -1,8 +1,8 @@
-import { Store, createStore, useStore as baseUseStore } from 'vuex'
-import { App, InjectionKey } from 'vue'
-import { getCurrentUser } from './dbCommands/userManager'
 import { AxiosInstance } from 'axios'
-import type { UserState, User, CartItem } from './interfaces'
+import { App, InjectionKey } from 'vue'
+import { Store, useStore as baseUseStore, createStore } from 'vuex'
+import { getCurrentUser } from './dbCommands/userManager'
+import type { CartItem, User, UserState } from './interfaces'
 // Injection key
 export const key: InjectionKey<Store<UserState>> = Symbol()
 
@@ -17,11 +17,9 @@ export function createGlobalStore(app: App): Store<UserState> {
             cart: []
         }),
         getters: {
-            getQuantity: (state: UserState) => (id: string) =>{
-                for (let item of state.cart)
-                {
-                    if(item.nxid == id)
-                    {
+            getQuantity: (state: UserState) => (id: string) => {
+                for (let item of state.cart) {
+                    if (item.nxid == id) {
                         return item.quantity;
                     }
                 }
@@ -29,7 +27,7 @@ export function createGlobalStore(app: App): Store<UserState> {
             },
             getTotalNumItems: (state: UserState) => {
                 let num = 0
-                for (let item of state.cart){
+                for (let item of state.cart) {
                     num += item.quantity
                 }
                 return num
@@ -53,51 +51,42 @@ export function createGlobalStore(app: App): Store<UserState> {
             // Add ID of item to store
             addToCart(state: UserState, id: string) {
                 let found = false;
-                for(let i = 0; i < state.cart.length; i++)
-                {
+                for (let i = 0; i < state.cart.length; i++) {
                     // Loop through each item and see if it 
                     // already exists
-                    if(store.state.cart[i].nxid == id)
-                    {
+                    if (store.state.cart[i].nxid == id) {
                         // Increment item
                         store.state.cart[i].quantity += 1;
                         i = store.state.cart.length
                         found = true;
                     }
                 }
-                if(!found){
-                    let item:CartItem = { nxid: id, quantity: 1, building: store.state.user.building!, location: "Parts Room"}
+                if (!found) {
+                    let item: CartItem = { nxid: id, quantity: 1, building: store.state.user.building!, location: "Parts Room" }
                     state.cart.push(item)
                 }
             },
-            addOne(state: UserState, id: string){
-                for(let i = 0; i < state.cart.length; i++)
-                {
-                    if(state.cart[i].nxid == id)
-                    {
+            addOne(state: UserState, id: string) {
+                for (let i = 0; i < state.cart.length; i++) {
+                    if (state.cart[i].nxid == id) {
                         state.cart[i].quantity += 1;
                     }
                 }
             },
             // Remove item of ID from 
             removeOne(state: UserState, id: string) {
-                for(let i = 0; i < state.cart.length; i++)
-                {
-                    if(state.cart[i].nxid == id && state.cart[i].quantity == 1)
-                    {
+                for (let i = 0; i < state.cart.length; i++) {
+                    if (state.cart[i].nxid == id && state.cart[i].quantity == 1) {
                         state.cart.splice(i, 1);
                     }
-                    else if(state.cart[i].nxid == id)
-                    {
+                    else if (state.cart[i].nxid == id) {
                         state.cart[i].quantity -= 1;
                     }
                 }
             },
             removeAll(state: UserState, id: string) {
-                for(let i = 0; i < state.cart.length; i++)
-                {
-                    if(state.cart[i].nxid == id)
-                    {
+                for (let i = 0; i < state.cart.length; i++) {
+                    if (state.cart[i].nxid == id) {
                         state.cart.splice(i, 1);
                     }
                 }

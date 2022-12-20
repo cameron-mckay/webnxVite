@@ -57,8 +57,8 @@ export interface AssetSchema {
     manufacturer?: string,
     model?: string,
     serial?: string,
-    rails?: boolean,
-    live?: boolean,
+    rails?: Boolean,
+    live?: Boolean,
     location?: string,
     by?: string,
     parts?: Array<string>,
@@ -104,7 +104,7 @@ export interface UserState {
 
 // User schema
 export interface User {
-    admin?: boolean,
+    role?: string,
     date_created?: string,
     email?: string,
     first_name?: string,

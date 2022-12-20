@@ -4,8 +4,8 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PartManagerComponent from '../components/PartManagerComponent.vue';
-import type { UserState, PartSchema } from '../plugins/interfaces';
-import { createPart } from '../plugins/dbCommands/partManager'
+import { createPart } from '../plugins/dbCommands/partManager';
+import type { PartSchema, UserState } from '../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,
@@ -34,5 +34,6 @@ async function submitPart(part: PartSchema) {
 
 </script>
 <template>
-    <PartManagerComponent :oldPart="{}" :strict="true" :submitText="`Create Part`" :title="'Create a new part: '" @partSubmit="submitPart" />
+    <PartManagerComponent :oldPart="{}" :strict="true" :submitText="`Create Part`" :title="'Create a new part: '"
+        @partSubmit="submitPart" />
 </template>

@@ -1,5 +1,5 @@
-import type { AxiosResponse, AxiosError, AxiosInstance } from "axios"
-import type { AssetSchema, apiResponse, CartItem } from "../interfaces"
+import type { AxiosError, AxiosInstance, AxiosResponse } from "axios"
+import type { AssetSchema, CartItem, apiResponse } from "../interfaces"
 
 /**
  * @brief Get a list of 50 assets from a keyword search string
@@ -99,7 +99,7 @@ export async function createAsset(http: AxiosInstance, asset: AssetSchema, parts
  * @param asset 
  * @param callback 
  */
-export async function updateAsset(http: AxiosInstance, asset: AssetSchema, parts: Array<CartItem>,callback: apiResponse) {
+export async function updateAsset(http: AxiosInstance, asset: AssetSchema, parts: Array<CartItem>, callback: apiResponse) {
     await http.put("/api/asset", { asset, parts: parts })
         .then((res: AxiosResponse) => {
             // Success - send response to callback
@@ -119,7 +119,7 @@ export async function updateAsset(http: AxiosInstance, asset: AssetSchema, parts
  * @param callback 
  */
 export async function getPartsOnAsset(http: AxiosInstance, asset_tag: string, callback: apiResponse) {
-    await http.get("/api/asset/parts", { params: {asset_tag} })
+    await http.get("/api/asset/parts", { params: { asset_tag } })
         .then((res: AxiosResponse) => {
             // Success - send results to callback
             callback(res.data, null)

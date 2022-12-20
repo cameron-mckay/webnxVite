@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import { AxiosInstance } from 'axios';
+import type { PartSchema } from '../plugins/interfaces';
 import FullScreenPopupComponent from './FullScreenPopupComponent.vue';
 import PartManagerComponent from './PartManagerComponent.vue';
-import type { PartSchema } from '../plugins/interfaces';
-import { AxiosInstance } from 'axios';
 
 interface Props {
     http: AxiosInstance
@@ -18,6 +18,7 @@ function search(part: PartSchema) {
 
 <template>
     <FullScreenPopupComponent>
-        <PartManagerComponent :http="http" :oldPart="{}" :title="'Advanced Search'" :submitText="'Search'" @partSubmit="search" :strict="false"/>
+        <PartManagerComponent :http="http" :oldPart="{}" :title="'Advanced Search'" :submitText="'Search'"
+            @partSubmit="search" :strict="false" />
     </FullScreenPopupComponent>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PartSchema } from '../plugins/interfaces'
+import { PartSchema } from '../plugins/interfaces';
 
 interface Props {
     part: PartSchema
@@ -10,8 +10,7 @@ const { part } = defineProps<Props>()
 
 <template>
     <div class="group my-1">
-        <div
-            class="grid grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 
+        <div class="grid grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 
             p-2 rounded-lg group-hover:rounded-bl-none">
             <p class="md:block hidden">{{ part.nxid }}</p>
             <p>{{ part.manufacturer }}</p>
@@ -21,8 +20,7 @@ const { part } = defineProps<Props>()
                     src="../assets/plus-solid.svg" v-on:click="$emit('addPartAction')">
             </div>
         </div>
-        <div
-            class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-lg 
+        <div class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-lg 
             group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
             <p class="md:hidden block">{{ `NXID: ${part.nxid}` }}</p>
             <p>{{ `Type: ${part.type}` }}</p>

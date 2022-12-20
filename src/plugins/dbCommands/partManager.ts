@@ -1,5 +1,5 @@
-import type { AxiosResponse, AxiosError, AxiosInstance } from "axios"
-import type { CartItem, PartSchema, apiResponse, PartRecord } from "../interfaces"
+import type { AxiosError, AxiosInstance, AxiosResponse } from "axios"
+import type { CartItem, PartRecord, PartSchema, apiResponse } from "../interfaces"
 
 /**
  * @brief Get a list of 50 parts from a keyword search string
@@ -22,14 +22,14 @@ export async function getPartsByTextSearch(http: AxiosInstance, searchString: st
             location
         }
     })
-    .then((res: AxiosResponse) => {
-        // Success and send back results
-        callback(res.data, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Send error to callback
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Success and send back results
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Send error to callback
+            callback({}, err)
+        })
 }
 
 /**
@@ -50,14 +50,14 @@ export async function getPartByID(http: AxiosInstance, id: string, building: num
             location
         }
     })
-    .then((res: AxiosResponse) => {
-        // Success and send back results
-        callback(res.data, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Send error to callback function
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Success and send back results
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Send error to callback function
+            callback({}, err)
+        })
 }
 
 /**
@@ -71,20 +71,20 @@ export async function getPartByID(http: AxiosInstance, id: string, building: num
  */
 export async function getPartsByData(http: AxiosInstance, part: PartSchema, building: number, location: string, callback: apiResponse) {
     await http.get("/api/part", {
-        params: { 
+        params: {
             part,
             building,
             location
         }
     })
-    .then((res: AxiosResponse) => {
-        // Success - send results to callback
-        callback(res.data, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Error - send error to callback
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Success - send results to callback
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err)
+        })
 }
 
 /**
@@ -99,18 +99,18 @@ export async function getPartsByData(http: AxiosInstance, part: PartSchema, buil
 export async function createPart(http: AxiosInstance, part: PartSchema, building: number, location: string, callback: apiResponse) {
     // Send new part to API
     await http.post("/api/part", {
-        part, 
+        part,
         building,
         location
     })
-    .then((res: AxiosResponse) => {
-        // Success - send response to callback
-        callback(res.data, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Error - send error to callback
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Success - send response to callback
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err)
+        })
 }
 
 /**
@@ -122,14 +122,14 @@ export async function createPart(http: AxiosInstance, part: PartSchema, building
  */
 export async function updatePart(http: AxiosInstance, part: PartSchema, callback: apiResponse) {
     await http.put("/api/part", { part })
-    .then((res: AxiosResponse) => {
-        // Success - send response to callback
-        callback(res.data, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Error - send error to callback
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Success - send response to callback
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err)
+        })
 }
 
 /**
@@ -137,22 +137,22 @@ export async function updatePart(http: AxiosInstance, part: PartSchema, callback
  * 
  * @param http 
  * @param cart 
- * @param building 
+ * @param user_id
  * @param callback 
  */
-export async function checkout(http: AxiosInstance, cart: Array<CartItem>, building: number, callback: apiResponse) {
+export async function checkout(http: AxiosInstance, cart: Array<CartItem>, user_id: string, callback: apiResponse) {
     await http.post("/api/checkout", {
         cart,
-        building
+        user_id
     })
-    .then((res: AxiosResponse) => {
-        // Authenticated - send null error to callback
-        callback(res, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Unauthenticated - send error to callback
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Authenticated - send null error to callback
+            callback(res, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Unauthenticated - send error to callback
+            callback({}, err)
+        })
 }
 
 /**
@@ -168,14 +168,14 @@ export async function checkin(http: AxiosInstance, cart: Array<CartItem>, buildi
         cart,
         building
     })
-    .then((res: AxiosResponse) => {
-        // Authenticated - send null error to callback
-        callback(res, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Unauthenticated - send error to callback
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Authenticated - send null error to callback
+            callback(res, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Unauthenticated - send error to callback
+            callback({}, err)
+        })
 }
 
 /**
@@ -185,21 +185,21 @@ export async function checkin(http: AxiosInstance, cart: Array<CartItem>, buildi
  * @param key - attribute to get list of i.e. "manufacturer" or "chipset"
  * @param where - partial part object to restrict results of info search (pass {} for no restrictions)
  */
-export function getUniqueOnPartInfo(http: AxiosInstance, key: string, where: PartSchema , callback: apiResponse) {
+export function getUniqueOnPartInfo(http: AxiosInstance, key: string, where: PartSchema, callback: apiResponse) {
     http.get("/api/part/distinct", {
-        params: { 
+        params: {
             key,
             where
         }
     })
-    .then((res: AxiosResponse) => {
-        // Success - send results to callback
-        callback(res.data, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Error - send error to callback
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Success - send results to callback
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err)
+        })
 }
 
 /**
@@ -211,19 +211,19 @@ export function getUniqueOnPartInfo(http: AxiosInstance, key: string, where: Par
  */
 export function getUniqueOnPartRecord(http: AxiosInstance, key: string, where: PartRecord, callback: apiResponse) {
     http.get("/api/partRecord/distinct", {
-        params: { 
+        params: {
             key,
             where
         }
     })
-    .then((res: AxiosResponse) => {
-        // Success - send results to callback
-        callback(res.data, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Error - send error to callback
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Success - send results to callback
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err)
+        })
 }
 
 /**
@@ -237,14 +237,14 @@ export async function createNewPartRecords(http: AxiosInstance, part: CartItem, 
     await http.post("/api/part/add", {
         part
     })
-    .then((res: AxiosResponse) => {
-        // Success - send results to callback
-        callback(res.data, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Error - send error to callback
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Success - send results to callback
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err)
+        })
 }
 
 /**
@@ -256,18 +256,18 @@ export async function createNewPartRecords(http: AxiosInstance, part: CartItem, 
  */
 export function getPartRecordsByID(http: AxiosInstance, nxid: string, callback: apiResponse) {
     http.get("/api/part/records", {
-        params: { 
+        params: {
             nxid
         }
     })
-    .then((res: AxiosResponse) => {
-        // Success - send results to callback
-        callback(res.data, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Error - send error to callback
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Success - send results to callback
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err)
+        })
 }
 
 /**
@@ -277,20 +277,20 @@ export function getPartRecordsByID(http: AxiosInstance, nxid: string, callback: 
  * @param id 
  * @param callback 
  */
- export function getPartHistoryByID(http: AxiosInstance, id: string, callback: apiResponse) {
+export function getPartHistoryByID(http: AxiosInstance, id: string, callback: apiResponse) {
     http.get("/api/partRecord/history", {
-        params: { 
+        params: {
             id
         }
     })
-    .then((res: AxiosResponse) => {
-        // Success - send results to callback
-        callback(res.data, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Error - send error to callback
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Success - send results to callback
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err)
+        })
 }
 
 /**
@@ -307,12 +307,12 @@ export function movePart(http: AxiosInstance, to: PartRecord, from: PartRecord, 
         from,
         quantity
     })
-    .then((res: AxiosResponse) => {
-        // Success - send results to callback
-        callback(res.data, null)
-    })
-    .catch((err: Error | AxiosError) => {
-        // Error - send error to callback
-        callback({}, err)
-    })
+        .then((res: AxiosResponse) => {
+            // Success - send results to callback
+            callback(res.data, null)
+        })
+        .catch((err: Error | AxiosError) => {
+            // Error - send error to callback
+            callback({}, err)
+        })
 }

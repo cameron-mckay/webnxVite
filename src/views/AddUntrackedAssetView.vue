@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { createAsset } from '../plugins/dbCommands/assetManager';
 import type { AxiosError, AxiosInstance } from 'axios';
-import type { Store } from 'vuex';
-import type { UserState, AssetSchema, LoadedCartItem, CartItem, PartSchema } from '../plugins/interfaces';
+import { ref, watch } from 'vue';
 import type { Router } from 'vue-router';
+import type { Store } from 'vuex';
 import AssetManagerComponent from '../components/AssetManagerComponent.vue';
+import { createAsset } from '../plugins/dbCommands/assetManager';
+import type { AssetSchema, CartItem, LoadedCartItem, UserState } from '../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,
@@ -24,7 +24,7 @@ function assetSubmit() {
     let unloadedParts = [] as CartItem[]
     // Iterate through list of parts and strip only the NXID and quantity
     for (const part of partsOnAsset.value) {
-        unloadedParts.push({nxid: part.part.nxid as string, quantity: part.quantity})
+        unloadedParts.push({ nxid: part.part.nxid as string, quantity: part.quantity })
     }
     createAsset(http, oldAsset.value, unloadedParts, (data, err) => {
         if (err) {
@@ -33,9 +33,6 @@ function assetSubmit() {
         router.back()
     })
 }
-
-let PartPopUp = ref(false)
-let inRack = ref(false)
 
 // Clear out fields when part type is changed
 watch(() => oldAsset.value.asset_type, () => {
@@ -49,7 +46,7 @@ watch(() => oldAsset.value.asset_type, () => {
 })
 
 watch(() => oldAsset.value.live, () => {
-    if (oldAsset.value.asset_type == "Server"&&oldAsset.value.live) {
+    if (oldAsset.value.asset_type == "Server" && oldAsset.value.live) {
         oldAsset.value.rails = true
     } else {
         delete oldAsset.value.rails
@@ -58,9 +55,9 @@ watch(() => oldAsset.value.live, () => {
 
 function plusPart(part: LoadedCartItem) {
     let index = partsOnAsset.value.indexOf(part)
-    if(index==-1) {
+    if (index == -1) {
         let found = false
-        for(let i = 0; i < partsOnAsset.value.length; i++) {
+        for (let i = 0; i < partsOnAsset.value.length; i++) {
             if (partsOnAsset.value[i].part._id == part.part._id) {
                 found = true
                 partsOnAsset.value[i].quantity += 1
@@ -68,7 +65,7 @@ function plusPart(part: LoadedCartItem) {
             }
         }
         if (!found) {
-            partsOnAsset.value.push({part: part.part, quantity: 1})
+            partsOnAsset.value.push({ part: part.part, quantity: 1 })
             displayMessage(`Added ${part.part.manufacturer} ${part.part.name} to asset`)
         }
     } else {
@@ -81,15 +78,15 @@ function minusPart(part: LoadedCartItem) {
         partsOnAsset.value.splice(partsOnAsset.value.indexOf(part), 1)
     }
 }
- 
+
 function deletePart(part: LoadedCartItem) {
     partsOnAsset.value.splice(partsOnAsset.value.indexOf(part), 1)
 }
 </script>
 
 <template>
-    <AssetManagerComponent :http="http" :title="'Add Untracked Asset:'" :submitText="'Create Asset'"
-    :strict="true" :oldAsset="oldAsset" :parts="partsOnAsset" :errorHandler="errorHandler" 
-    :displayMessage="displayMessage" :partSearch="true" @assetSubmit="assetSubmit"
-    @plusPart="plusPart" @minusPart="minusPart" @deletePart="deletePart"/>
+    <AssetManagerComponent :http="http" :title="'Add Untracked Asset:'" :submitText="'Create Asset'" :strict="true"
+        :oldAsset="oldAsset" :parts="partsOnAsset" :errorHandler="errorHandler" :displayMessage="displayMessage"
+        :partSearch="true" @assetSubmit="assetSubmit" @plusPart="plusPart" @minusPart="minusPart"
+        @deletePart="deletePart" />
 </template>

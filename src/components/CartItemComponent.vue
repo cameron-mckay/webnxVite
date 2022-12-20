@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { PartSchema } from '../plugins/interfaces'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue';
+import { PartSchema } from '../plugins/interfaces';
 
 interface Props {
     part: PartSchema,
@@ -11,15 +11,14 @@ const emit = defineEmits(['plus', 'minus', 'delete'])
 
 let item_quantity = ref(quantity)
 
-function plus(){
-    if(item_quantity.value < part.quantity!)
-    {
-        item_quantity.value = item_quantity.value + 1 
+function plus() {
+    if (item_quantity.value < part.quantity!) {
+        item_quantity.value = item_quantity.value + 1
     }
     emit('plus')
 }
 
-function minus(){
+function minus() {
     item_quantity.value -= 1
     emit('minus')
 }
@@ -39,12 +38,12 @@ onMounted(() => {
             <p>{{ part.shelf_location }}</p>
             <p>{{ `${item_quantity}/${part.quantity}` }}</p>
             <div class="flex justify-center">
-                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/plus-solid.svg"
-                    v-on:click="plus">
-                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition" src="../assets/minus-solid.svg"
-                v-on:click="minus">
-                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-red-500 active:bg-red-600 rounded-lg shadow-lg transition" src="../assets/x-solid.svg"
-                    v-on:click="$emit('delete')">
+                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition"
+                    src="../assets/plus-solid.svg" v-on:click="plus">
+                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition"
+                    src="../assets/minus-solid.svg" v-on:click="minus">
+                <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-red-500 active:bg-red-600 rounded-lg shadow-lg transition"
+                    src="../assets/x-solid.svg" v-on:click="$emit('delete')">
             </div>
         </div>
         <div

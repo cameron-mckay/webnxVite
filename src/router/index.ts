@@ -1,19 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import FindPartView from '../views/FindPartView.vue'
-import RegisterView from '../views/RegisterView.vue'
-import LoginView from '../views/LoginView.vue'
-import NotFound from '../views/NotFound.vue'
-import CreatePartView from '../views/CreatePartView.vue'
-import CartView from '../views/CartView.vue'
+import AddUntrackedAsset from '../views/AddUntrackedAssetView.vue'
 import AdminDashboardView from '../views/AdminDashboardView.vue'
 import AdminPartSearchView from '../views/AdminPartSearchView.vue'
-import AssetSearchView from '../views/AssetSearchView.vue'
 import AdminUserView from '../views/AdminUserView.vue'
-import AddUntrackedAsset from '../views/AddUntrackedAssetView.vue'
-import InventoryView from '../views/InventoryView.vue'
-import PartView from '../views/PartView.vue'
-import PartHistoryView from '../views/PartHistoryView.vue'
+import AssetSearchView from '../views/AssetSearchView.vue'
 import AssetView from '../views/AssetView.vue'
+import CartView from '../views/CartView.vue'
+import CreatePartView from '../views/CreatePartView.vue'
+import FindPartView from '../views/FindPartView.vue'
+import InventoryManagerDashboardView from '../views/InventoryManagerDashboardView.vue'
+import InventoryView from '../views/InventoryView.vue'
+import LoginView from '../views/LoginView.vue'
+import NotFound from '../views/NotFound.vue'
+import PartHistoryView from '../views/PartHistoryView.vue'
+import PartView from '../views/PartView.vue'
+import RegisterView from '../views/RegisterView.vue'
 
 const routes = [
   {
@@ -70,18 +71,33 @@ const routes = [
     component: AssetView
   },
   {
-    path: '/admin',
-    name: 'Admin Dashboard',
-    component:AdminDashboardView
+    path: '/manage',
+    name: 'Inventory Manager Dashboard',
+    component: InventoryManagerDashboardView
   },
   {
-    path: '/admin/parts/create',
+    path: '/manage/parts',
+    name: 'Part Manager',
+    component: AdminPartSearchView
+  },
+  {
+    path: '/manage/parts/create',
     name: 'Create Part',
     component: CreatePartView
   },
   {
-    path: '/admin/parts/manage',
-    name: 'Part Manager',
+    path: '/admin',
+    name: 'Admin Dashboard',
+    component: AdminDashboardView
+  },
+  {
+    path: '/admin/parts/create',
+    name: 'Create Part Admin',
+    component: CreatePartView
+  },
+  {
+    path: '/admin/parts',
+    name: 'Part Manager Admin',
     component: AdminPartSearchView
   },
   {

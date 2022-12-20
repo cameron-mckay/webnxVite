@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LoadedCartItem } from '../plugins/interfaces'
+import { LoadedCartItem } from '../plugins/interfaces';
 
 interface Props {
     item: LoadedCartItem
@@ -16,8 +16,8 @@ const { item } = defineProps<Props>()
             <p>{{ item.part.name }}</p>
             <p>{{ item.quantity }}</p>
             <div class="flex justify-center">
-                <img class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition" src="../assets/plus-solid.svg"
-                    v-on:click="$emit('plus')">
+                <img class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
+                    src="../assets/plus-solid.svg" v-on:click="$emit('plus')">
             </div>
         </div>
         <div

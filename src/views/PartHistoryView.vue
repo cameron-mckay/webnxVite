@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import type { AxiosError, AxiosInstance } from 'axios';
 import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
-import { getPartHistoryByID, getPartByID } from '../plugins/dbCommands/partManager'
-import type { AxiosError, AxiosInstance } from 'axios';
 import type { Store } from 'vuex';
-import type { UserState, PartSchema, PartRecord, User } from '../plugins/interfaces';
-import { getUserByID } from '../plugins/dbCommands/userManager';
 import PartRecordComponent from '../components/PartRecordComponent.vue';
+import { getPartByID, getPartHistoryByID } from '../plugins/dbCommands/partManager';
+import { getUserByID } from '../plugins/dbCommands/userManager';
+import type { PartRecord, PartSchema, User, UserState } from '../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,

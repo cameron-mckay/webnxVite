@@ -1,14 +1,14 @@
 <script setup lang="ts">
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
-import type { Store } from 'vuex';
-import SearchComponent from '../components/PartSearchComponent.vue';
-import { ref, Ref, onActivated, computed } from 'vue'
+import { Ref, onActivated, ref } from 'vue';
 import { Router } from 'vue-router';
-import type { UserState, PartSchema, CartItem } from '../plugins/interfaces';
-import { updatePart, createNewPartRecords, getUniqueOnPartRecord } from '../plugins/dbCommands/partManager';
+import type { Store } from 'vuex';
 import AddInventoryComponent from '../components/AddInventoryComponent.vue';
 import EditPartComponent from '../components/EditPartComponent.vue';
+import SearchComponent from '../components/PartSearchComponent.vue';
+import { createNewPartRecords, getUniqueOnPartRecord, updatePart } from '../plugins/dbCommands/partManager';
+import type { CartItem, PartSchema, UserState } from '../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,
@@ -19,16 +19,16 @@ interface Props {
 }
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 
-let buildings:Ref<Array<number>> = ref([]);
-let locations:Ref<Array<string>> = ref([]);
+let buildings: Ref<Array<number>> = ref([]);
+let locations: Ref<Array<string>> = ref([]);
 let editPart = ref(false)
 let addPart = ref(false)
-let currentPart:Ref<PartSchema> = ref({})
+let currentPart: Ref<PartSchema> = ref({})
 let currentBuilding = ref(3);
 getBuildingsAndLocations()
 
 // Wait for store to init
-onActivated(()=>{
+onActivated(() => {
     currentBuilding.value = store.state.user.building!;
 })
 
@@ -75,7 +75,7 @@ function viewPart(part: PartSchema) {
 function updatePartInfo(part: PartSchema) {
     // Update part info
     updatePart(http, part, (data, err) => {
-        if(err) {
+        if (err) {
             return errorHandler(err)
         }
         // Display confirmation
@@ -105,13 +105,15 @@ function submitAddToInventory(request: CartItem) {
 <template>
     <div>
         <h1 class="text-4xl mb-4">Part Manager</h1>
-        <SearchComponent ref="searchRef" :building="currentBuilding" :edit="true" :add="true" :view="true" :http="http" 
-        :errorHandler="errorHandler" :location="'Parts Room'" :displayMessage="displayMessage" :changeBuilding="true"
-        @editPartAction="toggleEdit" @addPartAction="toggleAdd" @viewPartAction="viewPart" :router="router"/>
+        <SearchComponent ref="searchRef" :building="currentBuilding" :edit="true" :add="true" :view="true" :http="http"
+            :errorHandler="errorHandler" :location="'Parts Room'" :displayMessage="displayMessage"
+            :changeBuilding="true" @editPartAction="toggleEdit" @addPartAction="toggleAdd" @viewPartAction="viewPart"
+            :router="router" />
 
-        <EditPartComponent v-if="editPart" @toggle="toggleEdit" @updatePart="updatePartInfo" :show="editPart" :oldPart="currentPart"/>
+        <EditPartComponent v-if="editPart" @toggle="toggleEdit" @updatePart="updatePartInfo" :show="editPart"
+            :oldPart="currentPart" />
 
-        <AddInventoryComponent v-if="addPart" @toggle="toggleAdd" @submitRequest="submitAddToInventory" 
-        :locations="locations" :buildings="buildings" :part="currentPart"/>
+        <AddInventoryComponent v-if="addPart" @toggle="toggleAdd" @submitRequest="submitAddToInventory"
+            :locations="locations" :buildings="buildings" :part="currentPart" />
     </div>
 </template>

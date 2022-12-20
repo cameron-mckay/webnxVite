@@ -14,9 +14,9 @@
 </template>
 
 <script setup lang="ts">
+import type { AxiosError, AxiosInstance } from 'axios';
 import { AxiosResponse } from 'axios';
 import { onMounted } from 'vue';
-import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState } from '../plugins/interfaces';

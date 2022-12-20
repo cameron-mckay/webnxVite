@@ -13,8 +13,7 @@ const { asset, edit, add, view } = defineProps<Props>()
 
 <template>
     <div class="group my-1">
-        <div
-        class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 
+        <div class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 
             p-2 rounded-lg group-hover:rounded-bl-none">
             <p>{{ asset.asset_tag }}</p>
             <p>{{ asset.building }}</p>
@@ -23,11 +22,14 @@ const { asset, edit, add, view } = defineProps<Props>()
             <p v-if="asset.live">Live</p>
             <p v-else>Inactive</p>
             <div class="flex justify-center">
-                <img v-if="(edit===true)" class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
+                <img v-if="(edit === true)"
+                    class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
                     src="../assets/pencil-solid.svg" v-on:click="$emit('editPartAction')">
-                <img v-if="(add===true)" class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
+                <img v-if="(add === true)"
+                    class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
                     src="../assets/plus-solid.svg" v-on:click="$emit('addPartAction')">
-                <img v-if="(view===true)" class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
+                <img v-if="(view === true)"
+                    class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
                     src="../assets/eye-solid.svg" v-on:click="$emit('viewPartAction')">
             </div>
         </div>

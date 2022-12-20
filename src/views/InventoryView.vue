@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { onMounted, ref, watch } from 'vue';
 import InventoryPartComponent from '../components/InventoryPartComponent.vue';
-import { getAllUsers, getUserInventoryByID } from '../plugins/dbCommands/userManager';
 import { movePart } from '../plugins/dbCommands/partManager';
+import { getAllUsers, getUserInventoryByID } from '../plugins/dbCommands/userManager';
 import { LoadedCartItem, PartRecord, PartSchema, User } from '../plugins/interfaces';
-import { ref, onMounted, watch } from 'vue'
 
-import type { AxiosInstance, AxiosError } from 'axios';
-import type { Store } from 'vuex'
+import type { AxiosError, AxiosInstance } from 'axios';
 import type { Router } from 'vue-router';
+import type { Store } from 'vuex';
 import type { UserState } from '../plugins/interfaces';
 
 interface Props {
@@ -27,19 +27,17 @@ let users = ref([] as User[])
 let processingMove = false
 
 function loadInventory() {
-    getUserInventoryByID(http, currentUser.value._id!, (data, err)=>{
-        if(err) {
+    getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
+        if (err) {
             return errorHandler(err)
         }
-        console.log("ITEMS")
-        console.log(data)
         items.value = data as LoadedCartItem[]
     })
 }
 
-onMounted(async ()=>{
+onMounted(async () => {
     // Check if store is loaded
-    if(store.state.user._id == undefined) {
+    if (store.state.user._id == undefined) {
         // Wait .5 seconds if not loaded
         setTimeout(firstLoad, 500)
     } else {
@@ -54,19 +52,25 @@ function firstLoad() {
     // Load inventory
     loadInventory()
     // If admin - get other users
-    if(store.state.user.admin) {
+    if (store.state.user.role == 'admin') {
         getAllUsers(http, (data, err) => {
-            if(err) {
+            if (err) {
                 return errorHandler(err)
             }
             users.value = data as User[]
+            for (let user of users.value) {
+                if (user._id == store.state.user._id) {
+                    users.value.splice(users.value.indexOf(user), 1)
+                    break
+                }
+            }
         })
     }
 }
 
 function move(part: PartSchema, quantity: number) {
     // If request is not already in progress - continue
-    if(!processingMove) {
+    if (!processingMove) {
         // set flag
         processingMove = true
         // Create from record
@@ -76,8 +80,8 @@ function move(part: PartSchema, quantity: number) {
             nxid: part.nxid
         } as PartRecord
         // create to record
-        let to  = {} as PartRecord
-        if(isCurrentUser.value) {
+        let to = {} as PartRecord
+        if (isCurrentUser.value) {
             // Move to all techs
             to = {
                 owner: 'all',
@@ -97,21 +101,21 @@ function move(part: PartSchema, quantity: number) {
         }
         // Send request to API
         movePart(http, to, from, quantity, (data, err) => {
-            if(err) {
+            if (err) {
                 // Handle errors
                 errorHandler(err)
                 processingMove = false
             }
             // Search every inventory item
-            for(let i = 0; i < items.value.length; i++) {
+            for (let i = 0; i < items.value.length; i++) {
                 // If updated part
                 if (items.value[i].part._id === part._id) {
                     // Update quantity
                     items.value[i].quantity -= quantity
                     // If quantity is less than 1
-                    if(items.value[i].quantity < 1) {
+                    if (items.value[i].quantity < 1) {
                         // Remove item from array
-                        items.value.splice(i,1)
+                        items.value.splice(i, 1)
                     }
                     // Break from loop
                     break;
@@ -119,39 +123,42 @@ function move(part: PartSchema, quantity: number) {
             }
             // Update flag
             processingMove = false
-            displayMessage("Moved "+quantity+" parts")
+            displayMessage("Moved " + quantity + " parts")
         })
     }
 }
-watch(currentUser, ()=>{
-    isCurrentUser.value = currentUser.value._id === store.state.user._id? true:false
+watch(currentUser, () => {
+    isCurrentUser.value = currentUser.value._id === store.state.user._id ? true : false
     loadInventory()
 })
 
-setInterval(()=>{
+setInterval(() => {
     loadInventory()
 }, 10000)
 </script>
 <template>
     <div>
         <div class="flex justify-between">
-            <h1 class="text-4xl mb-4 inline-block" v-if="currentUser._id != 'all'">{{ currentUser.first_name }}'s Inventory</h1>
+            <h1 class="text-4xl mb-4 inline-block" v-if="currentUser._id != 'all'">{{ currentUser.first_name }}'s
+                Inventory</h1>
             <h1 class="text-4xl mb-4 inline-block" v-else>All Tech's Inventory</h1>
             <select v-model="currentUser" class="inline-block w-40">
-                <option :value="store.state.user" selected>My Inventory</option>
+                <option :value="store.state.user" selected>Your Inventory</option>
                 <option :value="{_id: 'all'}">All Tech's</option>
-                <option v-if="store.state.user.admin" v-for="user in users" :value="user">{{ `${user.first_name} ${user.last_name} `}}</option>
+                <option v-if="store.state.user.role == 'admin'" v-for="user in users" :value="user">{{
+                    `${user.first_name} ${user.last_name} `}}</option>
             </select>
         </div>
-        <div v-if="items.length > 0" class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 rounded-xl transition font-bold">
+        <div v-if="items.length > 0"
+            class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 rounded-xl transition font-bold">
             <p class="md:block hidden">NXID</p>
-            <p >Manufacturer</p>
+            <p>Manufacturer</p>
             <p>Name</p>
             <p>Location</p>
             <p>Quantity</p>
             <p></p>
         </div>
-        <InventoryPartComponent :isCurrentUser="currentUser._id == store.state.user._id? true : false " 
-            v-for="item in items" :part="item.part" :quantity="item.quantity" @movePart="move"/>
+        <InventoryPartComponent :isCurrentUser="currentUser._id == store.state.user._id? true : false "
+            v-for="item in items" :part="item.part" :quantity="item.quantity" @movePart="move" />
     </div>
 </template>

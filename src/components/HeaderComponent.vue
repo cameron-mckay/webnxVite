@@ -2,16 +2,31 @@
     <div class="flex fixed w-full top-0 justify-between bg-zinc-300 shadow-lg z-10">
         <div class="flex justify-center">
             <img class="h-10 p-2" alt="WebNX Logo" src="../assets/logo.png">
-            <RouterLink class="transiton leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/parts">Parts</RouterLink>
-            <RouterLink class="transiton leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/assets">Assets</RouterLink>
+            <RouterLink class="transiton leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/parts">
+                Parts</RouterLink>
+            <RouterLink v-if="store.state.user.role != 'kiosk'"
+                class="transiton leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/assets">Assets
+            </RouterLink>
             <!-- <RouterLink to="/assets">Assets</RouterLink> -->
-            <RouterLink v-if="store.state.cart.length > 0" class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/cart">{{ `Cart(${store.getters.getTotalNumItems})` }}</RouterLink>
-            <RouterLink v-else class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/cart">Cart</RouterLink>
-            <RouterLink class="transiton leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/inventory">Inventory</RouterLink>
-            <RouterLink v-if="store.state.user.admin" class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/admin">Admin</RouterLink>
+            <RouterLink v-if="store.state.user.role == 'kiosk'" v-show="store.state.cart.length > 0"
+                class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/cart">{{
+                        `Cart(${store.getters.getTotalNumItems})`
+                }}</RouterLink>
+            <RouterLink v-if="store.state.user.role == 'kiosk'" v-show="store.state.cart.length < 1"
+                class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/cart">Cart
+            </RouterLink>
+            <RouterLink v-if="store.state.user.role != 'kiosk'"
+                class="transiton leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/inventory">
+                Inventory</RouterLink>
+            <RouterLink v-if="store.state.user.role == 'inventory' || store.state.user.role == 'admin'"
+                class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/manage">Manage
+            </RouterLink>
+            <RouterLink v-if="store.state.user.role == 'admin'"
+                class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/admin">Admin
+            </RouterLink>
         </div>
         <div class="flex justify-center">
-            <p class="leading-10">{{ store.state.user.first_name + " " + store.state.user.last_name }}</p> 
+            <p class="leading-10">{{ store.state.user.first_name + " " + store.state.user.last_name }}</p>
             <img class="h-10 rounded-full p-1" alt="profile picture" :src="profilePicture">
             <a class="leading-10" v-on:click="logout" href="#">Logout</a>
         </div>
@@ -19,11 +34,11 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount } from 'vue'
 import type { AxiosInstance } from 'axios';
-import router from '../router';
+import { onBeforeMount } from 'vue';
 import { Store } from 'vuex';
 import { UserState } from '../plugins/interfaces';
+import router from '../router';
 
 interface Props {
     http: AxiosInstance,

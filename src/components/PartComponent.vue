@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PartSchema } from '../plugins/interfaces'
+import { PartSchema } from '../plugins/interfaces';
 
 interface Props {
     part: PartSchema,
@@ -13,25 +13,26 @@ const { part } = defineProps<Props>()
 
 <template>
     <div class="group my-1">
-        <div
-            class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 
+        <div class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 
             p-2 rounded-lg group-hover:rounded-bl-none">
             <p class="md:block hidden">{{ part.nxid }}</p>
             <p>{{ part.manufacturer }}</p>
             <p>{{ part.name }}</p>
             <p>{{ part.shelf_location }}</p>
-            <p>{{ part.quantity+"/"+part.total_quantity }}</p>
+            <p>{{ part.quantity + "/" + part.total_quantity }}</p>
             <div class="flex justify-center">
-                <img v-if="(edit===true)" class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
+                <img v-if="(edit === true)"
+                    class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
                     src="../assets/pencil-solid.svg" v-on:click="$emit('editPartAction')">
-                <img v-if="(add===true)" class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
+                <img v-if="(add === true)"
+                    class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
                     src="../assets/plus-solid.svg" v-on:click="$emit('addPartAction')">
-                <img v-if="(view===true)" class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
+                <img v-if="(view === true)"
+                    class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
                     src="../assets/eye-solid.svg" v-on:click="$emit('viewPartAction')">
             </div>
         </div>
-        <div
-            class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-lg 
+        <div class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-lg 
             group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
             <p class="md:hidden block">{{ `NXID: ${part.nxid}` }}</p>
             <p>{{ `Type: ${part.type}` }}</p>

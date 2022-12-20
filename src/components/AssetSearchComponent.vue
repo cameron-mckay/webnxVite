@@ -1,19 +1,20 @@
 <template>
-    <div v-smooth-resize="{delay: 50, transition: 800, fineTune: 27}">
+    <div v-smooth-resize="{ delay: 50, transition: 800, fineTune: 27 }">
         <form class="flex justify-between" @submit.prevent="search">
             <input class="textbox" type="text" v-model="searchText" placeholder="🔍 keywords...">
-            <select v-if="changeBuilding===true" v-model="building" class="w-32">
+            <select v-if="changeBuilding === true" v-model="building" class="w-32">
                 <option :value="3" selected>3 - Ogden</option>
                 <option :value="1">1 - LA</option>
             </select>
-            <img class="w-10 h-10 p-2 mx-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition" @click="toggleAdvanced" src="../assets/sliders-solid.svg">
-            <img class="w-10 h-10 p-2 mx-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition" @click="addUntrackedAsset" src="../assets/plus-solid.svg">
+            <img class="w-10 h-10 p-2 mx-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition"
+                @click="toggleAdvanced" src="../assets/sliders-solid.svg">
+            <img class="w-10 h-10 p-2 mx-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition"
+                @click="addUntrackedAsset" src="../assets/plus-solid.svg">
             <input class="submit w-[calc(20%)] mt-0" type="submit" value="Search">
-            <AdvancedSearchComponent v-if="showAdvanced" @assetSearch="advancedSearch" @toggle="toggleAdvanced"/>
+            <AdvancedSearchComponent v-if="showAdvanced" @assetSearch="advancedSearch" @toggle="toggleAdvanced" />
         </form>
         <div v-if="assets.length != 0">
-            <div
-            class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 transition font-bold">
+            <div class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 transition font-bold">
                 <p class="md:block hidden">NXID</p>
                 <p>Building</p>
                 <p>Type</p>
@@ -22,29 +23,31 @@
                 <p></p>
             </div>
             <AssetComponent :add="add" :edit="edit" :view="view" v-for="asset in assets" v-bind:key="asset._id"
-            @editPartAction="$emit('editAssetAction', asset)" @addPartAction='$emit("addAssetAction", asset)' @viewPartAction="$emit('viewAssetAction', asset)"
-            :asset="asset" />
+                @editPartAction="$emit('editAssetAction', asset)" @addPartAction='$emit("addAssetAction", asset)'
+                @viewPartAction="$emit('viewAssetAction', asset)" :asset="asset" />
         </div>
         <div v-else>
             <p>No results...</p>
         </div>
         <div class="text-right">
-            <p class="inline-block mr-3">{{`Page: ${pageNum}`}}</p>
-            <img v-if="multiplePages||pageNum>1"  class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition"
+            <p class="inline-block mr-3">{{ `Page: ${pageNum}` }}</p>
+            <img v-if="multiplePages || pageNum > 1"
+                class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition"
                 src="../assets/caret-left-solid.svg" v-on:click="prevPage">
-            <img v-if="multiplePages||pageNum>1"  class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition"
+            <img v-if="multiplePages || pageNum > 1"
+                class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition"
                 src="../assets/caret-right-solid.svg" v-on:click="nextPage">
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import AssetComponent from './AssetComponent.vue';
-import AdvancedSearchComponent  from './AssetAdvancedSearchComponent.vue';
-import { onBeforeMount, ref, Ref } from 'vue';
 import type { AxiosError, AxiosInstance } from 'axios';
-import type { AssetSchema } from '../plugins/interfaces';
+import { Ref, onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import { getAssetByID, getAssetsByData, getAssetsByTextSearch } from '../plugins/dbCommands/assetManager';
+import type { AssetSchema } from '../plugins/interfaces';
+import AdvancedSearchComponent from './AssetAdvancedSearchComponent.vue';
+import AssetComponent from './AssetComponent.vue';
 
 // Props interface
 interface Props {
@@ -80,11 +83,11 @@ let multiplePages = ref(false);
 onBeforeMount(async () => {
     // Fuck this
     let { query } = router.currentRoute.value
-    if(query.building) {
+    if (query.building) {
         building.value = parseInt(query.building as string)
     }
     // Check for advanced search
-    if(query.advanced === "true"){
+    if (query.advanced === "true") {
         let searchAsset = {} as AssetSchema
         // Loop through query to create part object
         for (const key in query) {
@@ -96,10 +99,10 @@ onBeforeMount(async () => {
     }
     else {
         // Check for search text
-        if(query.text) {
+        if (query.text) {
             searchText.value = query.text as string
         }
-        if(query.pageNum) {
+        if (query.pageNum) {
             console.log("test")
             pageNum.value = parseInt(query.pageNum as string)
             console.log(pageNum)
@@ -119,7 +122,7 @@ function prevPage() {
 // Next search page
 function nextPage() {
     if (multiplePages) {
-        pageNum.value+=1
+        pageNum.value += 1
         search()
     }
 }
@@ -132,8 +135,8 @@ function toggleAdvanced() {
 // Advanced search
 async function advancedSearch(asset: AssetSchema) {
     asset['advanced'] = 'true'
-    
-    router.push({query:asset})
+
+    router.push({ query: asset })
     // Query the API
     getAssetsByData(http, asset, (data, err) => {
         // Hide advanced search
@@ -142,7 +145,7 @@ async function advancedSearch(asset: AssetSchema) {
         if (err) {
             // Handle the error
             return errorHandler(err)
-        } else if(data) {
+        } else if (data) {
             // Set parts list to API response
             assets.value = data as AssetSchema[];
         }
@@ -169,11 +172,11 @@ async function search() {
                 return errorHandler("Asset not found.")
             }
             // Emit actions
-            if (add===true) {
+            if (add === true) {
                 emit("addAssetAction", asset)
-            } else if(view===true) {
+            } else if (view === true) {
                 emit("viewAssetAction", asset)
-            } else if(edit==true) {
+            } else if (edit == true) {
                 emit("viewAssetAction", asset)
             }
         })
@@ -181,7 +184,7 @@ async function search() {
     else {
         multiplePages.value = false;
         // Text search
-        router.push({query:{text: searchText.value, pageNum: pageNum.value }})
+        router.push({ query: { text: searchText.value, pageNum: pageNum.value } })
         getAssetsByTextSearch(http, searchText.value, pageNum.value, (data: any, err) => {
             if (err) {
                 // Send error to error handler
@@ -189,10 +192,10 @@ async function search() {
             }
             // typecast 
             assets.value = data as AssetSchema[];
-            if(assets.value.length > 50) {
+            if (assets.value.length > 50) {
                 assets.value.pop;
                 multiplePages.value = true;
-            } else if(assets.value.length === 0 && pageNum.value != 1) {
+            } else if (assets.value.length === 0 && pageNum.value != 1) {
                 pageNum.value = 1
                 search()
             }
@@ -200,7 +203,7 @@ async function search() {
     }
 }
 
-function addUntrackedAsset () {
-    router.push({name: 'Add Untracked Asset'})
+function addUntrackedAsset() {
+    router.push({ name: 'Add Untracked Asset' })
 }
 </script>

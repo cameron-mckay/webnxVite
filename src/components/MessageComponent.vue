@@ -24,11 +24,13 @@ function deleteError(error: Message) {
 
 <template>
     <div class="fixed z-50 text-white text-center mx-auto block w-full top-12 left-0 ">
-        <div class="bg-red-400 max-w-3xl mb-1 mx-auto p-2 rounded-lg hover:bg-red-500 transition" v-on:click="deleteError(error)" v-for="error in errors">
+        <div class="bg-red-400 max-w-3xl mb-1 mx-auto p-2 rounded-lg hover:bg-red-500 transition"
+            v-on:click="deleteError(error)" v-for="error in errors">
             <p v-if="error.quantity > 1">{{ `${error.text}(${error.quantity})` }}</p>
             <p v-else>{{ error.text }}</p>
         </div>
-        <div class="bg-green-400 max-w-3xl mb-1 mx-auto p-2 rounded-lg hover:bg-green-500 transition" v-on:click="deleteMessage(message)" v-for="message in messages">
+        <div class="bg-green-400 max-w-3xl mb-1 mx-auto p-2 rounded-lg hover:bg-green-500 transition"
+            v-on:click="deleteMessage(message)" v-for="message in messages">
             <p v-if="message.quantity > 1">{{ `${message.text}(${message.quantity})` }}</p>
             <p v-else>{{ message.text }}</p>
         </div>

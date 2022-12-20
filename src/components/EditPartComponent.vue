@@ -12,12 +12,13 @@ const { oldPart } = defineProps<Props>()
 const emit = defineEmits(['updatePart'])
 
 function submit(part: PartSchema) {
-    emit("updatePart",part)
+    emit("updatePart", part)
 }
 
 </script>
 <template>
     <FullScreenPopupComponent :show="show">
-        <PartManagerComponent class="pointer-events-auto" :title="'Edit Part: '" @partSubmit="submit" :submitText="'Update'" :strict="true" :oldPart="oldPart"/>
+        <PartManagerComponent class="pointer-events-auto" :title="'Edit Part: '" @partSubmit="submit"
+            :submitText="'Update'" :strict="true" :oldPart="oldPart" />
     </FullScreenPopupComponent>
 </template>

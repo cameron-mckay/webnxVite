@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import type { AxiosError, AxiosInstance } from 'axios';
 import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
-import { getPartRecordsByID, getPartByID } from '../plugins/dbCommands/partManager'
-import type { AxiosError, AxiosInstance } from 'axios';
 import type { Store } from 'vuex';
-import type { UserState, PartSchema, PartRecord, User } from '../plugins/interfaces';
-import { getUserByID } from '../plugins/dbCommands/userManager';
 import PartRecordComponent from '../components/PartRecordComponent.vue';
+import { getPartByID, getPartRecordsByID } from '../plugins/dbCommands/partManager';
+import { getUserByID } from '../plugins/dbCommands/userManager';
+import type { PartRecord, PartSchema, User, UserState } from '../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,
@@ -19,37 +19,37 @@ const { http, store, router, errorHandler, displayMessage } = defineProps<Props>
 
 let part = ref({} as PartSchema)
 let partRecords = ref([] as PartRecord[])
-let users = ref([{_id: 'all', first_name: 'All', last_name: 'Techs'}] as User[])
+let users = ref([{ _id: 'all', first_name: 'All', last_name: 'Techs' }] as User[])
 
-onBeforeMount(()=>{
-    if(router.currentRoute.value.query.nxid) {
+onBeforeMount(() => {
+    if (router.currentRoute.value.query.nxid) {
         let nxid = router.currentRoute.value.query.nxid as string
         getPartByID(http, nxid, 3, "Parts Room", (res, err) => {
-            if(err) {
+            if (err) {
                 errorHandler(err)
             }
             part.value = res as PartSchema
         })
         getPartRecordsByID(http, nxid, async (res, err) => {
-            if(err) {
+            if (err) {
                 errorHandler(err)
             }
             partRecords.value = res as PartRecord[]
             partRecords.value = partRecords.value.reverse()
             for (const record of res as PartRecord[]) {
                 // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
-                if(record.owner&&record.owner!='all'&&users.value.find(e => e._id == record.owner)===undefined) {
+                if (record.owner && record.owner != 'all' && users.value.find(e => e._id == record.owner) === undefined) {
                     await getUserByID(http, record.owner, (res, err) => {
-                        if(err) {
+                        if (err) {
                             errorHandler(err)
                         }
                         users.value.push(res as User)
                     })
                 }
                 // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
-                if(record.by&& users.value.find(e => e._id == record.by)===undefined) {
+                if (record.by && users.value.find(e => e._id == record.by) === undefined) {
                     await getUserByID(http, record.by, (res, err) => {
-                        if(err) {
+                        if (err) {
                             errorHandler(err)
                         }
                         users.value.push(res as User)
@@ -62,7 +62,7 @@ onBeforeMount(()=>{
 })
 
 function viewHistory(id: string) {
-    router.push({name: 'Part History', query: { id, nxid: part.value.nxid }})
+    router.push({ name: 'Part History', query: { id, nxid: part.value.nxid } })
 }
 </script>
 <template>
@@ -133,13 +133,15 @@ function viewHistory(id: string) {
             </div>
         </div>
         <!-- PART RECORDS GO HERE -->
-        <div v-if="partRecords.length > 0" class="grid grid-cols-6 relative leading-10 text-center p-2 rounded-xl transition font-bold my-2">
+        <div v-if="partRecords.length > 0"
+            class="grid grid-cols-6 relative leading-10 text-center p-2 rounded-xl transition font-bold my-2">
             <p>Building</p>
             <p>Location</p>
             <p class="col-span-2">Owner</p>
             <p>Date Updated</p>
             <p></p>
         </div>
-        <PartRecordComponent v-for="record in partRecords" :users="users" :record="record" :view="true" @viewPartAction="viewHistory"/>
+        <PartRecordComponent v-for="record in partRecords" :users="users" :record="record" :view="true"
+            @viewPartAction="viewHistory" />
     </div>
 </template>
