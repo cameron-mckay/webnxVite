@@ -15,6 +15,10 @@
             <RouterLink v-if="store.state.user.role == 'kiosk'" v-show="store.state.cart.length < 1"
                 class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/cart">Cart
             </RouterLink>
+            <RouterLink v-if="store.state.user.role == 'kiosk'"
+                class="transition leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/checkin">Check
+                In
+            </RouterLink>
             <RouterLink v-if="store.state.user.role != 'kiosk'"
                 class="transiton leading-10 hover:bg-zinc-400 active:bg-zinc-500 w-20 text-center" to="/inventory">
                 Inventory</RouterLink>

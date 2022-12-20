@@ -6,6 +6,7 @@ import AdminUserView from '../views/AdminUserView.vue'
 import AssetSearchView from '../views/AssetSearchView.vue'
 import AssetView from '../views/AssetView.vue'
 import CartView from '../views/CartView.vue'
+import CheckInView from '../views/CheckInView.vue'
 import CreatePartView from '../views/CreatePartView.vue'
 import FindPartView from '../views/FindPartView.vue'
 import InventoryManagerDashboardView from '../views/InventoryManagerDashboardView.vue'
@@ -39,6 +40,11 @@ const routes = [
     path: '/cart',
     name: 'Cart',
     component: CartView
+  },
+  {
+    path: '/checkin',
+    name: 'Cart',
+    component: CheckInView
   },
   {
     path: '/parts',
