@@ -7,8 +7,9 @@ import type { Store } from 'vuex';
 import AddInventoryComponent from '../components/AddInventoryComponent.vue';
 import EditPartComponent from '../components/EditPartComponent.vue';
 import SearchComponent from '../components/PartSearchComponent.vue';
-import { createNewPartRecords, getUniqueOnPartRecord, updatePart } from '../plugins/dbCommands/partManager';
-import type { CartItem, PartSchema, UserState } from '../plugins/interfaces';
+import { createNewPartRecords, updatePart } from '../plugins/dbCommands/partManager';
+import { getAllUsers } from '../plugins/dbCommands/userManager';
+import type { CartItem, PartSchema, User, UserState } from '../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,
@@ -20,33 +21,25 @@ interface Props {
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 
 let buildings: Ref<Array<number>> = ref([]);
-let locations: Ref<Array<string>> = ref([]);
 let editPart = ref(false)
 let addPart = ref(false)
 let currentPart: Ref<PartSchema> = ref({})
 let currentBuilding = ref(3);
-getBuildingsAndLocations()
+let users = ref([] as User[])
+getUsers()
 
 // Wait for store to init
 onActivated(() => {
     currentBuilding.value = store.state.user.building!;
 })
 
-// Get unique buildings and locations
-function getBuildingsAndLocations() {
-    // Get all unique buildings
-    getUniqueOnPartRecord(http, "building", {}, (unique_buildings, err) => {
+// Get all users
+function getUsers() {
+    getAllUsers(http, (data, err) => {
         if (err) {
-            errorHandler(err)
+            return errorHandler(err)
         }
-        buildings.value = unique_buildings as Array<number>
-    })
-    // Get all unique locations
-    getUniqueOnPartRecord(http, "location", {}, (unique_locations, err) => {
-        if (err) {
-            errorHandler(err)
-        }
-        locations.value = unique_locations as Array<string>
+        users.value = data as User[]
     })
 }
 
@@ -87,14 +80,14 @@ function updatePartInfo(part: PartSchema) {
     })
 }
 
-function submitAddToInventory(request: CartItem) {
+function submitAddToInventory(request: CartItem, owner: User) {
     // Send creation details to API
-    createNewPartRecords(http, request, (records, err) => {
+    createNewPartRecords(http, request, owner, (records, err) => {
         if (err) {
             return errorHandler(err)
         }
-        // Display confimation
-        displayMessage("Succesfully added to inventory")
+        // Display confirmation
+        displayMessage("Successfully added to inventory")
         // Reset
         toggleAdd({});
         // Refresh parts list
@@ -113,7 +106,7 @@ function submitAddToInventory(request: CartItem) {
         <EditPartComponent v-if="editPart" @toggle="toggleEdit" @updatePart="updatePartInfo" :show="editPart"
             :oldPart="currentPart" />
 
-        <AddInventoryComponent v-if="addPart" @toggle="toggleAdd" @submitRequest="submitAddToInventory"
-            :locations="locations" :buildings="buildings" :part="currentPart" />
+        <AddInventoryComponent v-if="addPart" @toggle="toggleAdd" @submitRequest="submitAddToInventory" :users="users"
+            :buildings="buildings" :part="currentPart" />
     </div>
 </template>

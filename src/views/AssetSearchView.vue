@@ -28,6 +28,11 @@ onActivated(() => {
 function toggleEdit(asset: AssetSchema) {
     router.push({ name: 'Edit Asset', query: { asset_tag: asset.asset_tag } })
 }
+
+function viewAsset(asset: AssetSchema) {
+    router.push({ name: 'View Asset', query: { asset_tag: asset.asset_tag } })
+}
+
 </script>
 <template>
     <div>
@@ -36,7 +41,7 @@ function toggleEdit(asset: AssetSchema) {
         <!-- Search menu -->
         <AssetSearchComponent :http="http" :router="router" :edit="true" :view="true" :errorHandler="errorHandler"
             :location="'Parts Room'" :building="currentBuilding" :displayMessage="displayMessage"
-            @editAssetAction="toggleEdit" />
+            @editAssetAction="toggleEdit" @viewAssetAction="viewAsset" />
         <!-- Asset editing popup menu -->
     </div>
 </template>

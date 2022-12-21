@@ -31,6 +31,12 @@ user.value = props.user
                 <option>inventory</option>
                 <option>admin</option>
             </select>
+            <label>Building</label>
+            <select v-model="user.building">
+                <option>1</option>
+                <option>3</option>
+                <option>4</option>
+            </select>
             <input class="col-span-2 submit bg-red-500 hover:bg-red-600 active:bg-red-700" type="reset" value="Reset">
             <input class="col-span-2 submit" type="submit" value="Update">
         </form>

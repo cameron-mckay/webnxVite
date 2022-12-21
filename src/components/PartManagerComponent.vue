@@ -60,9 +60,9 @@ watch(() => part.value.storage_interface, () => {
             <input :required="strict" v-model="part.manufacturer" type="text" placeholder="Manufacturer">
             <label>Part Name: </label>
             <input :required="strict" v-model="part.name" type="text" placeholder="Part Name">
-            <label v-if="(strict && !oldPart)">Quantity: </label>
-            <input :required="strict" v-if="(strict && !oldPart)" v-model="part.quantity" type="number"
-                placeholder="Quantity">
+            <label v-if="(strict && (JSON.stringify(oldPart)) == JSON.stringify({}))">Quantity: </label>
+            <input :required="strict" v-if="(strict && (JSON.stringify(oldPart)) == JSON.stringify({}))"
+                v-model="part.quantity" type="number" placeholder="Quantity">
             <label>Shelf Location: </label>
             <input :required="strict" v-model="part.shelf_location" type="text" placeholder="Shelf Location">
             <label>Part Type: </label>

@@ -7,8 +7,9 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import InventoryPartComponent from '../components/InventoryPartComponent.vue';
+import { checkin } from '../plugins/dbCommands/partManager';
 import { getAllUsers, getUserInventoryByID } from '../plugins/dbCommands/userManager';
-import type { LoadedCartItem, PartSchema, User, UserState } from '../plugins/interfaces';
+import type { CartItem, LoadedCartItem, PartSchema, User, UserState } from '../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,
@@ -56,14 +57,19 @@ async function loadInventory() {
 
 
 function localCheckin() {
-    // checkin(http, store.state.cart, 3, (data, err) => {
-    //     if (err) {
-    //         return errorHandler(err)
-    //     }
-    //     displayMessage("Successfully checked in.")
-    //     store.commit("emptyCart")
-    //     // loadCart()
-    // })
+    let unloadedParts = [] as CartItem[]
+    for (let item of checkInList.value) {
+        unloadedParts.push({ nxid: item.part.nxid!, quantity: item.quantity })
+    }
+    checkin(http, unloadedParts, currentUser.value._id!, (data, err) => {
+        if (err) {
+            return errorHandler(err)
+        }
+        setTimeout(() => {
+            displayMessage("Successfully checked in.")
+            loadInventory()
+        }, 500)
+    })
 }
 
 function moveToInventory(part: PartSchema, quantity: number) {

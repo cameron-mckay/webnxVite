@@ -59,11 +59,14 @@ export interface AssetSchema {
     serial?: string,
     rails?: Boolean,
     live?: Boolean,
-    location?: string,
+    bay?: string,
+    power_port?: string,
+    public_port?: string,
+    private_port?: string,
+    ipmi_port?: string,
     by?: string,
-    parts?: Array<string>,
-    date_created?: Date,
-    date_updated?: Date
+    date_created?: string,
+    date_updated?: string
 }
 
 export interface PartRecord {

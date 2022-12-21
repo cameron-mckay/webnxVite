@@ -93,17 +93,6 @@ function localCheckout() {
     })
 }
 
-// function localCheckin() {
-//     checkin(http, store.state.cart, 3, (data, err) => {
-//         if(err) {
-//             return errorHandler(err)
-//         }
-//         displayMessage("Successfully checked in.")
-//         store.commit("emptyCart")
-//         loadCart()
-//     })
-// }
-
 </script>
 
 <template>
@@ -111,7 +100,7 @@ function localCheckout() {
         <div v-if="parts.length != 0">
 
             <div class="flex justify-between">
-                <h1 class="text-4xl mb-4">Cart</h1>
+                <h1 class="text-4xl mb-4">Check Out:</h1>
                 <div class="flex">
                     <p class="leading-[4] mr-2">User: </p>
                     <select required v-model="currentUser" class=" w-60">
@@ -139,8 +128,8 @@ function localCheckout() {
             </div>
         </div>
         <div v-else>
-            <h1 class="text-4xl mb-4">Cart</h1>
-            <p>is empty...</p>
+            <h1 class="text-4xl mb-4">Check Out:</h1>
+            <p>List is empty...</p>
         </div>
     </form>
 </template>

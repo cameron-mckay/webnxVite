@@ -4,7 +4,7 @@ import AdminDashboardView from '../views/AdminDashboardView.vue'
 import AdminPartSearchView from '../views/AdminPartSearchView.vue'
 import AdminUserView from '../views/AdminUserView.vue'
 import AssetSearchView from '../views/AssetSearchView.vue'
-import AssetView from '../views/AssetView.vue'
+import EditAssetView from '../views/EditAssetView.vue'
 import CartView from '../views/CartView.vue'
 import CheckInView from '../views/CheckInView.vue'
 import CreatePartView from '../views/CreatePartView.vue'
@@ -16,6 +16,7 @@ import NotFound from '../views/NotFound.vue'
 import PartHistoryView from '../views/PartHistoryView.vue'
 import PartView from '../views/PartView.vue'
 import RegisterView from '../views/RegisterView.vue'
+import AssetView from '../views/AssetView.vue'
 
 const routes = [
   {
@@ -38,12 +39,12 @@ const routes = [
   },
   {
     path: '/cart',
-    name: 'Cart',
+    name: 'Check Out',
     component: CartView
   },
   {
     path: '/checkin',
-    name: 'Cart',
+    name: 'Check In',
     component: CheckInView
   },
   {
@@ -74,6 +75,11 @@ const routes = [
   {
     path: '/assets/edit',
     name: 'Edit Asset',
+    component: EditAssetView
+  },
+  {
+    path: '/assets/view',
+    name: 'View Asset',
     component: AssetView
   },
   {

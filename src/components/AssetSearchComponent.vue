@@ -158,7 +158,6 @@ async function search() {
     if (/WNX([0-9]{7})+/.test(searchText.value)) {
         // temp value
         let query = searchText.value
-        searchText.value = ""
         // Search and add to cart
         getAssetByID(http, query, (data, err) => {
             if (err) {

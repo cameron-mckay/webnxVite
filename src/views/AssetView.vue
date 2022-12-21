@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
-import { onBeforeMount, ref, watch } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import AssetManagerComponent from '../components/AssetManagerComponent.vue';
-import { getAssetByID, getPartsOnAsset, updateAsset } from '../plugins/dbCommands/assetManager';
-import { getUserInventory } from '../plugins/dbCommands/userManager';
-import type { AssetSchema, CartItem, LoadedCartItem, UserState } from '../plugins/interfaces';
+import AssetCartItemComponent from '../components/AssetCartItemComponent.vue';
+import { getAssetByID, getPartsOnAsset } from '../plugins/dbCommands/assetManager';
+import type { AssetSchema, LoadedCartItem, UserState } from '../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,
@@ -17,13 +16,8 @@ interface Props {
 }
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 
-let oldAsset = ref({} as AssetSchema)
-let partsOnAsset = ref([] as LoadedCartItem[])
-let inventory = ref([] as LoadedCartItem[])
-
-// RAILS AND LIVE GET CLEARED ON LOAD WITHOUT THIS
-let firstLoad = true
-let secondLoad = true
+let asset = ref({} as AssetSchema)
+let parts = ref([] as LoadedCartItem[])
 
 onBeforeMount(() => {
     if (router.currentRoute.value.query.asset_tag) {
@@ -33,134 +27,77 @@ onBeforeMount(() => {
             if (err) {
                 errorHandler(err)
             }
-            let rawRes = JSON.parse(JSON.stringify(res)) as AssetSchema
-            console.log(rawRes)
-            oldAsset.value = JSON.parse(JSON.stringify(rawRes))
-            oldAsset.value.rails = rawRes.rails
-            console.log(oldAsset.value.rails)
-            oldAsset.value.live = rawRes.live
-            console.log(rawRes.live)
-            console.log(typeof (JSON.parse(JSON.stringify(res)).live))
-            getPartsOnAsset(http, oldAsset.value.asset_tag!, (res, err) => {
+            asset.value = res as AssetSchema
+            getPartsOnAsset(http, asset.value.asset_tag!, (res, err) => {
                 if (err) {
                     errorHandler(err)
                 }
-                partsOnAsset.value = res as LoadedCartItem[]
+                parts.value = res as LoadedCartItem[]
             })
         })
-        getUserInventory(http, (res, err) => {
-            if (err) {
-                errorHandler(err)
-            }
-            inventory.value = res as LoadedCartItem[]
-        })
-
     }
 })
 
-function assetSubmit() {
-    // Use create part method from API commands
-    let unloadedParts = [] as CartItem[]
-    // Iterate through list of parts and strip only the NXID and quantity
-    for (const part of partsOnAsset.value) {
-        unloadedParts.push({ nxid: part.part.nxid as string, quantity: part.quantity })
-    }
-    updateAsset(http, oldAsset.value, unloadedParts, (data, err) => {
-        if (err) {
-            return errorHandler(err)
-        }
-        router.back()
-    })
+function edit() {
+    router.push({ name: 'Edit Asset', query: { asset_tag: asset.value.asset_tag } })
 }
-
-function addToAsset(item: LoadedCartItem) {
-    console.log()
-    let found = false
-    if (item.quantity >= 1) {
-        item.quantity -= 1
-        for (let existingItem of partsOnAsset.value) {
-            if (existingItem.part.nxid == item.part.nxid) {
-                found = true
-                existingItem.quantity += 1;
-            }
-        }
-        if (!found) {
-            displayMessage(`Added ${item.part.manufacturer} ${item.part.name} to asset`)
-            partsOnAsset.value.push(item)
-        }
-        if (item.quantity < 1) {
-            inventory.value.splice(inventory.value.indexOf(item), 1)
-        }
-    } else {
-        errorHandler("Not enough in inventory")
-    }
-}
-
-function minusPart(item: LoadedCartItem) {
-    if (item.quantity > 1) {
-        item.quantity -= 1
-    } else {
-        partsOnAsset.value.splice(partsOnAsset.value.indexOf(item), 1)
-    }
-    let found = false
-    for (let inventoryItem of inventory.value) {
-        if (item.part._id == inventoryItem.part._id) {
-            inventoryItem.quantity += 1
-            found = true
-            break
-        }
-    }
-    if (!found) {
-        inventory.value.push({ part: item.part, quantity: 1 })
-    }
-}
-
-function deletePart(part: LoadedCartItem) {
-    for (let i = 0; i < partsOnAsset.value.length; i++) {
-        if (part.part._id == partsOnAsset.value[i].part._id) {
-            partsOnAsset.value.splice(i, 1)
-            break;
-        }
-    }
-}
-
-// Clear out fields when part type is changed
-watch(() => oldAsset.value.asset_type, () => {
-    // RAILS AND LIVE GET CLEARED ON LOAD WITHOUT THIS
-    if (!firstLoad && !secondLoad) {
-        delete oldAsset.value.rails
-        delete oldAsset.value.live
-        delete oldAsset.value.public_port
-        delete oldAsset.value.private_port
-        delete oldAsset.value.ipmi_port
-        delete oldAsset.value.power_port
-        delete oldAsset.value.sid
-    }
-    if (!firstLoad) {
-        secondLoad = false
-    }
-    firstLoad = false
-})
-
-watch(() => oldAsset.value.live, () => {
-    // RAILS AND LIVE GET CLEARED ON LOAD WITHOUT THIS
-    if (!firstLoad && !secondLoad) {
-        if (oldAsset.value.asset_type == "Server" && oldAsset.value.live) {
-            oldAsset.value.rails = true
-        } else {
-            delete oldAsset.value.rails
-        }
-    }
-    if (!firstLoad) {
-        secondLoad = false
-    }
-    firstLoad = false
-})
 </script>
 
 <template>
-    <AssetManagerComponent :http="http" :title="'Edit Asset:'" :submitText="'Update Asset'" :strict="true"
-        :oldAsset="oldAsset" :parts="partsOnAsset" :errorHandler="errorHandler" :inventory="inventory"
-        :displayMessage="displayMessage" :inventorySearch="true" @assetSubmit="assetSubmit" @plusPart="addToAsset"
-        @minusPart="minusPart" @deletePart="deletePart" />
+    <div class="body">
+        <div class="grid grid-cols-4 relative leading-10 group-hover:bg-zinc-400 
+            p-2 rounded-lg group-hover:rounded-bl-none">
+            <div class="flex justify-between col-span-4">
+                <h1 class="text-4xl mb-4">{{ asset.asset_tag + ":" }}</h1>
+                <img class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
+                    src="../assets/pencil-solid.svg" v-on:click="edit">
+            </div>
+            <p>Building:</p>
+            <p class="col-span-3">{{ asset.building }}</p>
+            <p>Asset Type:</p>
+            <p class="col-span-3">{{ asset.asset_type }}</p>
+            <p v-if="asset.chassis_type">Chassis Type</p>
+            <p class="col-span-3" v-if="asset.chassis_type">{{ asset.chassis_type }}</p>
+            <p v-if="asset.manufacturer">Manufacturer:</p>
+            <p class="col-span-3" v-if="asset.manufacturer">{{ asset.manufacturer }}</p>
+            <p v-if="asset.model">Model:</p>
+            <p class="col-span-3" v-if="asset.model">{{ asset.model }}</p>
+            <p v-if="asset.serial">Serial:</p>
+            <p class="col-span-3" v-if="asset.serial">{{ asset.serial }}</p>
+            <p v-if="asset.live != undefined">Status:</p>
+            <p class="col-span-3" v-if="asset.live">Live</p>
+            <p class="col-span-3" v-else-if="asset.live != undefined">Inactive</p>
+            <p v-if="asset.rails != undefined">Rails:</p>
+            <p class="col-span-3" v-if="asset.rails">Yes</p>
+            <p class="col-span-3" v-else-if="asset.rails != undefined">No</p>
+            <p v-if="asset.bay">Bay:</p>
+            <p class="col-span-3" v-if="asset.bay">{{ asset.bay }}</p>
+            <p v-if="asset.power_port">Power Port:</p>
+            <p class="col-span-3" v-if="asset.power_port">{{ asset.power_port }}</p>
+            <p v-if="asset.public_port">Public Port:</p>
+            <p class="col-span-3" v-if="asset.public_port">{{ asset.public_port }}</p>
+            <p v-if="asset.private_port">Private Port:</p>
+            <p class="col-span-3" v-if="asset.private_port">{{ asset.private_port }}</p>
+            <p v-if="asset.ipmi_port">IPMI Port:</p>
+            <p class="col-span-3" v-if="asset.ipmi_port">{{ asset.ipmi_port }}</p>
+            <p>Date Updated:</p>
+            <p class="col-span-3">{{ "Date Updated: " + new Date(Date.parse(asset.date_updated!)).toDateString() }}</p>
+            <p>Date Created:</p>
+            <p class="col-span-3">{{ "Date Created: " + new Date(Date.parse(asset.date_created!)).toDateString() }}</p>
+        </div>
+        <div v-if="parts.length > 0">
+            <h1 class="text-4xl mb-4 col-span-2">Parts</h1>
+            <div v-if="(parts!.length > 0)" class="grid font-bold grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl 
+                    group-hover:rounded-bl-none group-hover:shadow-lg">
+                <p>NXID</p>
+                <p>Manufacturer</p>
+                <p>Name</p>
+                <p>Quantity</p>
+                <p></p>
+            </div>
+            <AssetCartItemComponent class="col-span-2" v-for="part in parts" :item="part"
+                @plus="$emit('plusPart', part)" @minus="$emit('minusPart', part)" @delete="$emit('deletePart', part)"
+                :hideButtons="true" />
+        </div>
+    </div>
 </template>

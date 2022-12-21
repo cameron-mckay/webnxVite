@@ -1,5 +1,5 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from "axios"
-import type { CartItem, PartRecord, PartSchema, apiResponse } from "../interfaces"
+import type { CartItem, PartRecord, PartSchema, User, apiResponse } from "../interfaces"
 
 /**
  * @brief Get a list of 50 parts from a keyword search string
@@ -163,10 +163,10 @@ export async function checkout(http: AxiosInstance, cart: Array<CartItem>, user_
  * @param building 
  * @param callback 
  */
-export async function checkin(http: AxiosInstance, cart: Array<CartItem>, building: number, callback: apiResponse) {
+export async function checkin(http: AxiosInstance, inventory: Array<CartItem>, user_id: string, callback: apiResponse) {
     await http.post("/api/checkin", {
-        cart,
-        building
+        inventory,
+        user_id
     })
         .then((res: AxiosResponse) => {
             // Authenticated - send null error to callback
@@ -233,9 +233,10 @@ export function getUniqueOnPartRecord(http: AxiosInstance, key: string, where: P
  * @param part 
  * @param callback 
  */
-export async function createNewPartRecords(http: AxiosInstance, part: CartItem, callback: apiResponse) {
+export async function createNewPartRecords(http: AxiosInstance, part: CartItem, owner: User, callback: apiResponse) {
     await http.post("/api/part/add", {
-        part
+        part,
+        owner
     })
         .then((res: AxiosResponse) => {
             // Success - send results to callback

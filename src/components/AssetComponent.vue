@@ -23,22 +23,22 @@ const { asset, edit, add, view } = defineProps<Props>()
             <p v-else>Inactive</p>
             <div class="flex justify-center">
                 <img v-if="(edit === true)"
-                    class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
+                    class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
                     src="../assets/pencil-solid.svg" v-on:click="$emit('editPartAction')">
                 <img v-if="(add === true)"
-                    class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
+                    class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
                     src="../assets/plus-solid.svg" v-on:click="$emit('addPartAction')">
                 <img v-if="(view === true)"
-                    class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
+                    class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
                     src="../assets/eye-solid.svg" v-on:click="$emit('viewPartAction')">
             </div>
         </div>
         <div class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-lg 
             group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
-            <p>{{ asset.manufacturer }}</p>
-            <p>{{ asset.model }}</p>
-            <p>{{ asset.date_updated }}</p>
-            <p>{{ asset.date_created }}</p>
+            <p>{{ "Manufacturer: " + asset.manufacturer }}</p>
+            <p>{{ "Model: " + asset.model }}</p>
+            <p>{{ "Date Updated: " + new Date(Date.parse(asset.date_updated!)).toDateString() }}</p>
+            <p>{{ "Date Created: " + new Date(Date.parse(asset.date_created!)).toDateString() }}</p>
         </div>
     </div>
 </template>
