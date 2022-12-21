@@ -128,3 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*;
+env_local.txt
+.gitignore
+env_server.txt
