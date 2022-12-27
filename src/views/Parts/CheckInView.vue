@@ -6,10 +6,10 @@ import { onBeforeMount, ref, watch } from 'vue';
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import InventoryPartComponent from '../components/InventoryPartComponent.vue';
-import { checkin } from '../plugins/dbCommands/partManager';
-import { getAllUsers, getUserInventoryByID } from '../plugins/dbCommands/userManager';
-import type { CartItem, LoadedCartItem, PartSchema, User, UserState } from '../plugins/interfaces';
+import InventoryPartComponent from '../../components/InventoryPartComponent.vue';
+import { checkin } from '../../plugins/dbCommands/partManager';
+import { getAllUsers, getUserInventoryByID } from '../../plugins/dbCommands/userManager';
+import type { CartItem, LoadedCartItem, PartSchema, User, UserState } from '../../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,

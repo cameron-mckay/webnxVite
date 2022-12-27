@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
-import UserComponent from '../components/UserComponent.vue';
-import { getAllUsers, updateUser } from '../plugins/dbCommands/userManager';
-import { User } from '../plugins/interfaces';
+import UserComponent from '../../components/UserComponent.vue';
+import { getAllUsers, updateUser } from '../../plugins/dbCommands/userManager';
+import { User } from '../../plugins/interfaces';
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import UserManagerComponent from '../components/UserManagerComponent.vue';
-import type { UserState } from '../plugins/interfaces';
+import UserManagerComponent from '../../components/UserManagerComponent.vue';
+import type { UserState } from '../../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,

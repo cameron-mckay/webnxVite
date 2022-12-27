@@ -62,7 +62,7 @@ watch(() => part.value.storage_interface, () => {
             <input :required="strict" v-model="part.name" type="text" placeholder="Part Name">
             <label v-if="(strict && (JSON.stringify(oldPart)) == JSON.stringify({}))">Quantity: </label>
             <input :required="strict" v-if="(strict && (JSON.stringify(oldPart)) == JSON.stringify({}))"
-                v-model="part.quantity" type="number" placeholder="Quantity">
+                v-model="part.quantity" type="number" min="0" placeholder="Quantity">
             <label>Shelf Location: </label>
             <input :required="strict" v-model="part.shelf_location" type="text" placeholder="Shelf Location">
             <label>Part Type: </label>
@@ -80,13 +80,16 @@ watch(() => part.value.storage_interface, () => {
                 <label>Chipset: </label>
                 <input :required="strict" v-model="part.chipset" type="text" placeholder="Chipset">
                 <label>Frequency(GHz): </label>
-                <input :required="strict" v-model="part.frequency" type="number" placeholder="Frequency">
+                <input :required="strict" v-model="part.frequency" type="number" step="any" min="0"
+                    placeholder="Frequency">
             </div>
             <div v-if="part.type == 'Memory'" class="col-span-2 grid grid-cols-2">
                 <label>Frequency(MHz): </label>
-                <input :required="strict" v-model="part.frequency" type="number" placeholder="Frequency">
+                <input :required="strict" v-model="part.frequency" type="number" step="any" min="0"
+                    placeholder="Frequency">
                 <label>Capacity(GB): </label>
-                <input :required="strict" v-model="part.capacity" type="number" placeholder="Capacity">
+                <input :required="strict" v-model="part.capacity" type="number" step="any" min="0"
+                    placeholder="Capacity">
                 <label>Type: </label>
                 <select v-model="part.memory_type">
                     <option disabled value="">Memory type</option>
@@ -101,10 +104,9 @@ watch(() => part.value.storage_interface, () => {
                     @updateValue="(value) => { part.peripheral_type = value }" />
                 <label>Port Type: </label>
                 <CustomDropdownCompononent v-if="part.port_type == 'NIC'" :required="strict" :options="['SFP', 'RJ45']"
-                    @updateValue="(value) => { part.peripheral_type = value }" />
+                    @updateValue="(value) => { part.port_type = value }" />
                 <CustomDropdownCompononent v-else :required="strict" :options="['SAS', 'Mini SAS HD']"
-                    @updateValue="(value) => { part.peripheral_type = value }" />
-
+                    @updateValue="(value) => { part.port_type = value }" />
             </div>
             <div v-if="part.type == 'Storage'" class="col-span-2 grid grid-cols-2">
                 <label>Storage interface: </label>
@@ -116,12 +118,12 @@ watch(() => part.value.storage_interface, () => {
                 </select>
                 <label>Capacity: </label>
                 <div class="flex justify-between">
-                    <input :required="strict" v-model="part.capacity" type="number">
+                    <input :required="strict" v-model="part.capacity" step="any" min="0" type="number">
                     <CustomDropdownCompononent :required="strict" :options="['GB', 'TB']"
                         @updateValue="(value) => { part.capacity_unit = value }" />
 
                 </div>
-                <div v-if="part.storage_interface == 'NVME'">
+                <div v-if="part.storage_interface == 'NVME'" class="col-span-2 grid grid-cols-2">
                     <label>Connector Type: </label>
                     <CustomDropdownCompononent :required="strict" :options="['SAS', 'M.2']"
                         @updateValue="(value) => { part.port_type = value }" />

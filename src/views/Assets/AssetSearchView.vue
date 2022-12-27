@@ -3,8 +3,8 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { onActivated, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import AssetSearchComponent from '../components/AssetSearchComponent.vue';
-import type { AssetSchema, UserState } from '../plugins/interfaces';
+import AssetSearchComponent from '../../components/AssetSearchComponent.vue';
+import type { AssetSchema, UserState } from '../../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,

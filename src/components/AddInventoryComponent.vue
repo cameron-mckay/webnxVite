@@ -6,11 +6,10 @@ import FullScreenPopupComponent from './FullScreenPopupComponent.vue';
 // Start props
 interface Props {
     users: User[],
-    buildings: Array<number>,
     part: PartSchema,
 }
 
-const { users, buildings, part } = defineProps<Props>()
+const { users, part } = defineProps<Props>()
 // End props
 
 // Request as cart item
@@ -43,18 +42,23 @@ onMounted(() => {
 
 watch(request, () => {
     switch (request.value.location) {
+        // If all techs, set owner to arbitrary data
         case "All Techs":
             owner.value = { _id: 'all', first_name: 'All', last_name: 'Techs', building: request.value.building }
             break;
+        // If parts room, remove owner
         case "Parts Room":
             owner.value = {}
             break;
+        // If asset, set location
         case "Asset":
-            owner.value = { building: request.value.building }
+            owner.value = { _id: owner.value._id, building: request.value.building }
             break;
+        // If tech inventory, set current building to current user
         case "Tech Inventory":
             request.value.building = owner.value.building
             break;
+        // Default case - do nothing
         default:
             break;
     }
@@ -67,7 +71,7 @@ watch(request, () => {
         <form id="form" @submit.prevent="$emit('submitRequest', request, owner)" @reset.prevent="resetForm"
             class="grid grid-cols-2">
             <label>Quantity: </label>
-            <input required v-model="request.quantity" type="number" placeholder="Quantity">
+            <input required v-model="request.quantity" type="number" min="0" placeholder="Quantity">
             <label>Building: </label>
             <select required v-model="request.building">
                 <option>3</option>

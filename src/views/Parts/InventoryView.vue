@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import InventoryPartComponent from '../components/InventoryPartComponent.vue';
-import { movePart } from '../plugins/dbCommands/partManager';
-import { getAllUsers, getUserInventoryByID } from '../plugins/dbCommands/userManager';
-import { LoadedCartItem, PartRecord, PartSchema, User } from '../plugins/interfaces';
+import InventoryPartComponent from '../../components/InventoryPartComponent.vue';
+import { movePart } from '../../plugins/dbCommands/partManager';
+import { getAllUsers, getUserInventoryByID } from '../../plugins/dbCommands/userManager';
+import { LoadedCartItem, PartRecord, PartSchema, User } from '../../plugins/interfaces';
 
 import type { AxiosError, AxiosInstance } from 'axios';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import type { UserState } from '../plugins/interfaces';
+import type { UserState } from '../../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,
@@ -27,10 +27,12 @@ let users = ref([] as User[])
 let processingMove = false
 
 function loadInventory() {
+    // Get user inventory
     getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
         if (err) {
             return errorHandler(err)
         }
+        // Push to reactive var
         items.value = data as LoadedCartItem[]
     })
 }
@@ -53,16 +55,18 @@ function firstLoad() {
     loadInventory()
     // If admin - get other users
     if (store.state.user.role == 'admin') {
+        // Get all userse
         getAllUsers(http, (data, err) => {
             if (err) {
                 return errorHandler(err)
             }
+            // Push to reactive var
             users.value = data as User[]
+            // Find and remove current user or kiosks
             for (let user of users.value) {
-                if (user._id == store.state.user._id) {
+                // Delete
+                if (user._id == store.state.user._id || user.role == 'kiosk')
                     users.value.splice(users.value.indexOf(user), 1)
-                    break
-                }
             }
         })
     }
@@ -135,6 +139,7 @@ watch(currentUser, () => {
 setInterval(() => {
     loadInventory()
 }, 10000)
+
 </script>
 <template>
     <div>
@@ -144,9 +149,10 @@ setInterval(() => {
             <h1 class="text-4xl mb-4 inline-block" v-else>All Tech's Inventory</h1>
             <select v-model="currentUser" class="inline-block w-40">
                 <option :value="store.state.user" selected>Your Inventory</option>
-                <option :value="{_id: 'all'}">All Tech's</option>
+                <option :value="{ _id: 'all' }">All Tech's</option>
                 <option v-if="store.state.user.role == 'admin'" v-for="user in users" :value="user">{{
-                    `${user.first_name} ${user.last_name} `}}</option>
+        `${user.first_name} ${user.last_name} `
+}}</option>
             </select>
         </div>
         <div v-if="items.length > 0"
@@ -158,7 +164,7 @@ setInterval(() => {
             <p>Quantity</p>
             <p></p>
         </div>
-        <InventoryPartComponent :isCurrentUser="currentUser._id == store.state.user._id? true : false "
+        <InventoryPartComponent :isCurrentUser="currentUser._id == store.state.user._id ? true : false"
             v-for="item in items" :part="item.part" :quantity="item.quantity" @movePart="move" />
     </div>
 </template>

@@ -4,9 +4,9 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import SearchComponent from '../components/PartSearchComponent.vue';
-import { updatePart } from '../plugins/dbCommands/partManager';
-import type { PartSchema, UserState } from '../plugins/interfaces';
+import SearchComponent from '../../components/PartSearchComponent.vue';
+import { updatePart } from '../../plugins/dbCommands/partManager';
+import type { PartSchema, UserState } from '../../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,

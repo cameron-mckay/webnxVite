@@ -32,19 +32,18 @@ let inventorySearchPopup = ref(false)
 
 let emit = defineEmits(['assetSubmit', 'plusPart', 'minusPart', 'deletePart'])
 
+// Emit add part to asset as new record
 function addToAsset(part: PartSchema) {
     emit('plusPart', { part, quantity: 1 })
 }
-function togglePartPopUp(part: PartSchema) {
-    partSearchPopup.value = !partSearchPopup.value
-}
-function toggleInventoryPopUp(part: PartSchema) {
-    inventorySearchPopup.value = !inventorySearchPopup.value
-}
+
+// Toggle popup menus
 function togglePopup() {
     partSearchPopup.value = !partSearchPopup.value
     inventorySearchPopup.value = !inventorySearchPopup.value
 }
+
+// Add Part from user inventory
 function addPartFromInventory(item: LoadedCartItem) {
     emit('plusPart', item)
 }
@@ -125,12 +124,12 @@ function addPartFromInventory(item: LoadedCartItem) {
                     <img class="w-10 h-10 p-2 mx-1 bg-zinc-400 hover:bg-green-500 
                     shadow-lg rounded-lg inline-block transition" @click="togglePopup" src="../assets/plus-solid.svg">
                 </div>
-                <FullScreenPopupComponent v-if="partSearch" v-show="partSearchPopup" @toggle="togglePartPopUp">
+                <FullScreenPopupComponent v-if="partSearch" v-show="partSearchPopup" @toggle="togglePopup">
                     <AssetPartSearchComponent :http="http" :errorHandler="errorHandler!"
                         :displayMessage="displayMessage!" @addPartAction="addToAsset" />
                 </FullScreenPopupComponent>
                 <FullScreenPopupComponent v-if="inventorySearch && inventory" v-show="inventorySearchPopup"
-                    @toggle="toggleInventoryPopUp">
+                    @toggle="togglePopup">
                     <InventoryPopup @addPartAction="addPartFromInventory" :inventory="inventory" />
                 </FullScreenPopupComponent>
                 <div v-if="(parts!.length > 0)" class="grid font-bold grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl 

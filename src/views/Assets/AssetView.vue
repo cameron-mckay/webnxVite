@@ -3,9 +3,9 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { onBeforeMount, ref } from 'vue';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import AssetCartItemComponent from '../components/AssetCartItemComponent.vue';
-import { getAssetByID, getPartsOnAsset } from '../plugins/dbCommands/assetManager';
-import type { AssetSchema, LoadedCartItem, UserState } from '../plugins/interfaces';
+import AssetCartItemComponent from '../../components/AssetCartItemComponent.vue';
+import { getAssetByID, getPartsOnAsset } from '../../plugins/dbCommands/assetManager';
+import type { AssetSchema, LoadedCartItem, UserState } from '../../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,

@@ -1,5 +1,5 @@
 <template>
-    <div class="card max-w-sm">
+    <div class="card max-w-sm md:max-w-sm">
         <img class="mx-auto mb-4" alt="WebNX logo" src="../assets/logo.png">
         <form class="text-center" @submit.prevent="login">
             <input class="textbox" type="email" id="email" v-model="form.email" placeholder="Email" required autofocus>

@@ -3,10 +3,10 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import PartRecordComponent from '../components/PartRecordComponent.vue';
-import { getPartByID, getPartHistoryByID } from '../plugins/dbCommands/partManager';
-import { getUserByID } from '../plugins/dbCommands/userManager';
-import type { PartRecord, PartSchema, User, UserState } from '../plugins/interfaces';
+import PartRecordComponent from '../../components/PartRecordComponent.vue';
+import { getPartByID, getPartHistoryByID } from '../../plugins/dbCommands/partManager';
+import { getUserByID } from '../../plugins/dbCommands/userManager';
+import type { PartRecord, PartSchema, User, UserState } from '../../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,
@@ -19,37 +19,37 @@ const { http, store, router, errorHandler, displayMessage } = defineProps<Props>
 
 let part = ref({} as PartSchema)
 let partRecords = ref([] as PartRecord[])
-let users = ref([{_id: 'all', first_name: 'All', last_name: 'Techs'}] as User[])
+let users = ref([{ _id: 'all', first_name: 'All', last_name: 'Techs' }] as User[])
 
-onBeforeMount(()=>{
-    if(router.currentRoute.value.query.id) {
+onBeforeMount(() => {
+    if (router.currentRoute.value.query.id) {
         let nxid = router.currentRoute.value.query.nxid as string
         let id = router.currentRoute.value.query.id as string
         getPartByID(http, nxid, 3, "Parts Room", (res, err) => {
-            if(err) {
+            if (err) {
                 errorHandler(err)
             }
             part.value = res as PartSchema
         })
         getPartHistoryByID(http, id, async (res, err) => {
-            if(err) {
+            if (err) {
                 errorHandler(err)
             }
             partRecords.value = res as PartRecord[]
             for (const record of res as PartRecord[]) {
                 // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
-                if(record.owner&&record.owner!='all'&&users.value.find(e => e._id == record.owner)===undefined) {
+                if (record.owner && record.owner != 'all' && users.value.find(e => e._id == record.owner) === undefined) {
                     await getUserByID(http, record.owner, (res, err) => {
-                        if(err) {
+                        if (err) {
                             errorHandler(err)
                         }
                         users.value.push(res as User)
                     })
                 }
                 // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
-                if(record.by&& users.value.find(e => e._id == record.by)===undefined) {
+                if (record.by && users.value.find(e => e._id == record.by) === undefined) {
                     await getUserByID(http, record.by, (res, err) => {
-                        if(err) {
+                        if (err) {
                             errorHandler(err)
                         }
                         users.value.push(res as User)
@@ -62,7 +62,7 @@ onBeforeMount(()=>{
 })
 
 function viewHistory(id: string) {
-    router.push({name: 'Part History', query: { id }})
+    router.push({ name: 'Part History', query: { id } })
 }
 </script>
 <template>
@@ -79,7 +79,7 @@ function viewHistory(id: string) {
             <p class="my-2 col-span-3">{{ part.total_quantity }}</p>
             <p class="font-bold my-2">Type:</p>
             <p class="my-2 col-span-3">{{ part.type }}</p>
-            <div class="col-span-2 grid grid-cols-2" v-if="part.type == 'Motherboard'">
+            <div class="col-span-4 grid grid-cols-4" v-if="part.type == 'Motherboard'">
                 <p class="font-bold my-2">Chipset</p>
                 <p class="my-2 col-span-3">{{ part.chipset }}</p>
             </div>
@@ -87,13 +87,13 @@ function viewHistory(id: string) {
                 <p class="font-bold my-2">Chipset:</p>
                 <p class="my-2 col-span-3">{{ part.chipset }}</p>
                 <p class="font-bold my-2">Frequency: </p>
-                <p class="my-2 col-span-3">{{ part.frequency+"GHz" }}</p>
+                <p class="my-2 col-span-3">{{ part.frequency + "GHz" }}</p>
             </div>
             <div v-if="part.type == 'Memory'" class="col-span-4 grid grid-cols-4">
                 <p class="font-bold my-2">Frequency: </p>
-                <p class="my-2 col-span-3">{{ part.frequency+"MHz" }}</p>
+                <p class="my-2 col-span-3">{{ part.frequency + "MHz" }}</p>
                 <p class="font-bold my-2">Capacity: </p>
-                <p class="my-2 col-span-3">{{ part.capacity+"GB" }}</p>
+                <p class="my-2 col-span-3">{{ part.capacity + "GB" }}</p>
                 <p class="font-bold my-2">Memory Type:</p>
                 <p class="my-2 col-span-3">{{ part.memory_type }}</p>
             </div>
@@ -133,13 +133,14 @@ function viewHistory(id: string) {
             </div>
         </div>
         <!-- PART RECORDS GO HERE -->
-        <div v-if="partRecords.length > 0" class="grid grid-cols-6 relative leading-10 text-center p-2 rounded-xl transition font-bold my-2">
+        <div v-if="partRecords.length > 0"
+            class="grid grid-cols-6 relative leading-10 text-center p-2 rounded-xl transition font-bold my-2">
             <p>Building</p>
             <p>Location</p>
             <p class="col-span-2">Owner</p>
             <p>Date Created</p>
             <p></p>
         </div>
-        <PartRecordComponent v-for="record in partRecords" :users="users" :record="record"/>
+        <PartRecordComponent v-for="record in partRecords" :users="users" :record="record" />
     </div>
 </template>

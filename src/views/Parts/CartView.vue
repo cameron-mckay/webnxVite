@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CartItemComponent from '../components/CartItemComponent.vue';
+import CartItemComponent from '../../components/CartItemComponent.vue';
 
 import { onBeforeMount, ref, Ref } from 'vue';
 
@@ -7,9 +7,9 @@ import { onBeforeMount, ref, Ref } from 'vue';
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import { checkout, getPartByID } from '../plugins/dbCommands/partManager';
-import { getAllUsers } from '../plugins/dbCommands/userManager';
-import type { LoadedCartItem, PartSchema, User, UserState } from '../plugins/interfaces';
+import { checkout, getPartByID } from '../../plugins/dbCommands/partManager';
+import { getAllUsers } from '../../plugins/dbCommands/userManager';
+import type { LoadedCartItem, PartSchema, User, UserState } from '../../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,

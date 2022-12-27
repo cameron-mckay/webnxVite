@@ -3,10 +3,10 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import PartRecordComponent from '../components/PartRecordComponent.vue';
-import { getPartByID, getPartRecordsByID } from '../plugins/dbCommands/partManager';
-import { getUserByID } from '../plugins/dbCommands/userManager';
-import type { PartRecord, PartSchema, User, UserState } from '../plugins/interfaces';
+import PartRecordComponent from '../../components/PartRecordComponent.vue';
+import { getPartByID, getPartRecordsByID } from '../../plugins/dbCommands/partManager';
+import { getUserByID } from '../../plugins/dbCommands/userManager';
+import type { PartRecord, PartSchema, User, UserState } from '../../plugins/interfaces';
 
 interface Props {
     http: AxiosInstance,
@@ -87,13 +87,13 @@ function viewHistory(id: string) {
                 <p class="font-bold my-2">Chipset:</p>
                 <p class="my-2 col-span-3">{{ part.chipset }}</p>
                 <p class="font-bold my-2">Frequency: </p>
-                <p class="my-2 col-span-3">{{ part.frequency+"GHz" }}</p>
+                <p class="my-2 col-span-3">{{ part.frequency + "GHz" }}</p>
             </div>
             <div v-if="part.type == 'Memory'" class="col-span-4 grid grid-cols-4">
                 <p class="font-bold my-2">Frequency: </p>
-                <p class="my-2 col-span-3">{{ part.frequency+"MHz" }}</p>
+                <p class="my-2 col-span-3">{{ part.frequency + "MHz" }}</p>
                 <p class="font-bold my-2">Capacity: </p>
-                <p class="my-2 col-span-3">{{ part.capacity+"GB" }}</p>
+                <p class="my-2 col-span-3">{{ part.capacity + "GB" }}</p>
                 <p class="font-bold my-2">Memory Type:</p>
                 <p class="my-2 col-span-3">{{ part.memory_type }}</p>
             </div>
