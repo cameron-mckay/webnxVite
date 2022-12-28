@@ -23,10 +23,7 @@ let partsOnAsset = ref([] as LoadedCartItem[])
 let partsOnAssetCopy = [] as AssetSchema[]
 let inventory = ref([] as LoadedCartItem[])
 let inventoryCopy = [] as LoadedCartItem[]
-
-// RAILS AND LIVE GET CLEARED ON LOAD WITHOUT THIS
-let firstLoad = true
-let secondLoad = true
+let resetting = false
 
 onBeforeMount(() => {
     if (router.currentRoute.value.query.asset_tag) {
@@ -39,14 +36,42 @@ onBeforeMount(() => {
             }
             // Set asset to res
             oldAsset.value = res as AssetSchema
+            // Save a copy for reset value
             assetCopy = JSON.parse(JSON.stringify(oldAsset.value))
+            // Register watchers
+            watch(() => oldAsset.value.asset_type, () => {
+                if (!resetting) {
+                    delete oldAsset.value.rails
+                    delete oldAsset.value.live
+                    delete oldAsset.value.public_port
+                    delete oldAsset.value.private_port
+                    delete oldAsset.value.ipmi_port
+                    delete oldAsset.value.power_port
+                    delete oldAsset.value.sid
+                } else {
+                    resetting = false
+                }
+            })
+            watch(() => oldAsset.value.live, () => {
+                if (!resetting) {
+                    // If server and live, asset has rails
+                    if (oldAsset.value.asset_type == "Server" && oldAsset.value.live) {
+                        oldAsset.value.rails = true
+                    } else {
+                        delete oldAsset.value.rails
+                    }
+                }
+            })
             // Get parts from api
             getPartsOnAsset(http, oldAsset.value.asset_tag!, (res, err) => {
                 if (err) {
                     errorHandler(err)
                 }
+                // Set reactive array to API response
                 partsOnAsset.value = res as LoadedCartItem[]
+                // Save a copy for reset value
                 partsOnAssetCopy = JSON.parse(JSON.stringify(partsOnAsset.value))
+
             })
         })
         // Get user inventory from api
@@ -64,6 +89,7 @@ onBeforeMount(() => {
 function assetSubmit() {
     // Use create part method from API commands
     let unloadedParts = [] as CartItem[]
+    console.log(oldAsset.value)
     // Iterate through list of parts and strip only the NXID and quantity
     for (const part of partsOnAsset.value) {
         unloadedParts.push({ nxid: part.part.nxid as string, quantity: part.quantity })
@@ -77,9 +103,13 @@ function assetSubmit() {
 }
 
 function plusPart(item: LoadedCartItem) {
+    // If part is not already in array (checks by reference not by value)
     if (partsOnAsset.value.indexOf(item) == -1) {
+        // Set sentinel value
         let found = false
+        // Loop through all parts on asset
         for (let existingItem of partsOnAsset.value) {
+            // Check if part matches by value
             if (item.part._id == existingItem.part._id) {
                 found = true
                 item.quantity -= 1
@@ -87,21 +117,31 @@ function plusPart(item: LoadedCartItem) {
                 break
             }
         }
+        // If part isn't found, push it to the array
         if (!found) {
             partsOnAsset.value.push({ part: JSON.parse(JSON.stringify(item.part)), quantity: 1 });
+            // Decrement quantity
             item.quantity -= 1
         }
+        // If item quantity is now less than 1, splice it from the inventory array
         if (item.quantity < 1)
             inventory.value.splice(inventory.value.indexOf(item), 1)
     } else {
+        // Set sentinel value
         let found = false
+        // loop through inventory
         for (let existingItem of inventory.value) {
+            // Find part that matches by value
             if (item.part._id == existingItem.part._id) {
                 found = true
+                // Increment item on asset
                 item.quantity += 1
+                // Decrement item in inventory
                 existingItem.quantity -= 1
+                // If inventory quanity is less than 1, splice it from the array
                 if (existingItem.quantity < 1)
                     inventory.value.splice(inventory.value.indexOf(existingItem), 1)
+                // Exit the loop
                 break
             }
         }
@@ -136,45 +176,11 @@ function deletePart(part: LoadedCartItem) {
 }
 
 function reset() {
-    firstLoad = true
-    secondLoad = true
+    resetting = true
     oldAsset.value = JSON.parse(JSON.stringify(assetCopy))
     partsOnAsset.value = JSON.parse(JSON.stringify(partsOnAssetCopy))
     inventory.value = JSON.parse(JSON.stringify(inventoryCopy))
 }
-
-// Clear out fields when part type is changed
-watch(() => oldAsset.value.asset_type, () => {
-    // RAILS AND LIVE GET CLEARED ON LOAD WITHOUT THIS
-    if (!firstLoad && !secondLoad) {
-        delete oldAsset.value.rails
-        delete oldAsset.value.live
-        delete oldAsset.value.public_port
-        delete oldAsset.value.private_port
-        delete oldAsset.value.ipmi_port
-        delete oldAsset.value.power_port
-        delete oldAsset.value.sid
-    }
-    if (!firstLoad) {
-        secondLoad = false
-    }
-    firstLoad = false
-})
-
-watch(() => oldAsset.value.live, () => {
-    // RAILS AND LIVE GET CLEARED ON LOAD WITHOUT THIS
-    if (!firstLoad && !secondLoad) {
-        if (oldAsset.value.asset_type == "Server" && oldAsset.value.live) {
-            oldAsset.value.rails = true
-        } else {
-            delete oldAsset.value.rails
-        }
-    }
-    if (!firstLoad) {
-        secondLoad = false
-    }
-    firstLoad = false
-})
 </script>
 
 <template>

@@ -11,8 +11,8 @@ interface Props {
 
 const { record, users, view } = defineProps<Props>()
 
-let by = ref({} as User)
-let owner = ref({} as User)
+let by = ref({ first_name: "", last_name: "" } as User)
+let owner = ref({ first_name: "", last_name: "" } as User)
 let date = new Date(Date.parse(record.date_created!))
 
 onMounted(() => {

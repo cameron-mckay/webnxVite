@@ -65,6 +65,7 @@ export interface AssetSchema {
     private_port?: string,
     ipmi_port?: string,
     by?: string,
+    sid?: number,
     date_created?: string,
     date_updated?: string
 }

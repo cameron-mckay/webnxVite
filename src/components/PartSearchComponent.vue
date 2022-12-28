@@ -44,7 +44,7 @@
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
-import { getPartByID, getPartsByData, getPartsByTextSearch } from '../plugins/dbCommands/partManager';
+import { getPartsByData, getPartsByTextSearch } from '../plugins/dbCommands/partManager';
 import type { PartSchema } from '../plugins/interfaces';
 import AdvancedSearchComponent from './PartAdvancedSearchComponent.vue';
 import PartComponent from './PartComponent.vue';
@@ -162,51 +162,51 @@ async function advancedSearch(part: PartSchema) {
 // Search function
 async function search() {
     // Check for webnx regex
-    if (/WNX([0-9]{7})+/.test(searchText.value)) {
-        // temp value
-        let query = searchText.value
-        searchText.value = ""
-        // Search and add to cart
-        getPartByID(http, query, building.value, location, (data, err) => {
-            if (err) {
-                // Part not found
-                return errorHandler(err)
-            }
-            // Typecast data
-            let part = data as PartSchema
-            if (part == null) {
-                // If no part was found
-                return errorHandler("Part not found.")
-            }
-            // Emit actions
-            if (add === true) {
-                emit("addPartAction", part)
-            } else if (view === true) {
-                emit("viewPartAction", part)
-            } else if (edit == true) {
-                emit("viewPartAction", part)
-            }
-        })
-    }
-    else {
-        multiplePages.value = false;
-        // Text search
-        router.push({ query: { text: searchText.value, pageNum: pageNum.value, building: building.value, location } })
-        getPartsByTextSearch(http, searchText.value, pageNum.value, building.value, location, (data: any, err) => {
-            if (err) {
-                // Send error to error handler
-                return errorHandler(err)
-            }
-            // typecast 
-            parts.value = data as PartSchema[];
-            if (parts.value.length > 50) {
-                parts.value.pop;
-                multiplePages.value = true;
-            } else if (parts.value.length === 0 && pageNum.value != 1) {
-                pageNum.value = 1
-                search()
-            }
-        })
-    }
+    // if (/WNX([0-9]{7})+/.test(searchText.value)) {
+    //     // temp value
+    //     let query = searchText.value
+    //     searchText.value = ""
+    //     // Search and add to cart
+    //     getPartByID(http, query, building.value, location, (data, err) => {
+    //         if (err) {
+    //             // Part not found
+    //             return errorHandler(err)
+    //         }
+    //         // Typecast data
+    //         let part = data as PartSchema
+    //         if (part == null) {
+    //             // If no part was found
+    //             return errorHandler("Part not found.")
+    //         }
+    //         // Emit actions
+    //         if (add === true) {
+    //             emit("addPartAction", part)
+    //         } else if (view === true) {
+    //             emit("viewPartAction", part)
+    //         } else if (edit == true) {
+    //             emit("viewPartAction", part)
+    //         }
+    //     })
+    // }
+    // else {
+    multiplePages.value = false;
+    // Text search
+    router.push({ query: { text: searchText.value, pageNum: pageNum.value, building: building.value, location } })
+    getPartsByTextSearch(http, searchText.value, pageNum.value, building.value, location, (data: any, err) => {
+        if (err) {
+            // Send error to error handler
+            return errorHandler(err)
+        }
+        // typecast 
+        parts.value = data as PartSchema[];
+        if (parts.value.length > 50) {
+            parts.value.pop;
+            multiplePages.value = true;
+        } else if (parts.value.length === 0 && pageNum.value != 1) {
+            pageNum.value = 1
+            search()
+        }
+    })
+    // }
 }
 </script>
