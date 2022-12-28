@@ -62,7 +62,7 @@ function toggleAdd(part: PartSchema) {
 }
 
 function viewPart(part: PartSchema) {
-    displayMessage("VIEW ACTION")
+    router.push({ name: 'Part View', query: { nxid: part.nxid } })
 }
 
 function updatePartInfo(part: PartSchema) {
