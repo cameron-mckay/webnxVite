@@ -51,7 +51,8 @@ function addPartFromInventory(item: LoadedCartItem) {
 <template>
     <div class="body" v-smooth-resize="{ delay: 50, transition: 800, fineTune: 27 }">
         <h1 class="text-4xl mb-4">{{ title }}</h1>
-        <form id="form" @submit.prevent="$emit('assetSubmit')" @reset.prevent="$emit('reset')" class="grid grid-cols-2">
+        <form id="form" @submit.prevent="$emit('assetSubmit')" @reset.prevent="$emit('assetReset')"
+            class="grid grid-cols-2">
             <label>Asset Tag: </label>
             <input :required="strict" v-model="oldAsset.asset_tag" type="text" placeholder="Asset Tag">
             <label>Manufacturer: </label>

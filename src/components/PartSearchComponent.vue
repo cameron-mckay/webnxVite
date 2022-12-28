@@ -6,20 +6,18 @@
                 <option :value="3" selected>3 - Ogden</option>
                 <option :value="1">1 - LA</option>
             </select>
-            <TooltipComponent class="w-12" :text="'Advanced Search'">
-                <img class="w-10 h-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition"
-                    @click="toggleAdvanced" src="../assets/sliders-solid.svg">
-            </TooltipComponent>
+            <img class="w-10 h-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition"
+                @click="toggleAdvanced" src="../assets/sliders-solid.svg">
             <input class="submit w-[calc(20%)] mt-0" type="submit" value="Search">
             <AdvancedSearchComponent :http="http" v-show="showAdvanced" @partSearch="advancedSearch"
                 @toggle="toggleAdvanced" />
         </form>
         <div v-if="parts.length != 0">
-            <div class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 transition font-bold">
+            <div class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center p-2 transition font-bold">
                 <p class="md:block hidden">NXID</p>
                 <p>Manufacturer</p>
                 <p>Name</p>
-                <p>Location</p>
+                <p class="md:block hidden">Location</p>
                 <p>Quantity</p>
                 <p></p>
             </div>
@@ -50,7 +48,6 @@ import { getPartByID, getPartsByData, getPartsByTextSearch } from '../plugins/db
 import type { PartSchema } from '../plugins/interfaces';
 import AdvancedSearchComponent from './PartAdvancedSearchComponent.vue';
 import PartComponent from './PartComponent.vue';
-import TooltipComponent from './TooltipComponent.vue';
 
 interface AddObject {
     show: boolean
@@ -114,9 +111,7 @@ onBeforeMount(async () => {
             searchText.value = query.text as string
         }
         if (query.pageNum) {
-            console.log("test")
             pageNum.value = parseInt(query.pageNum as string)
-            console.log(pageNum)
         }
         search()
     }

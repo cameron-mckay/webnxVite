@@ -14,11 +14,11 @@
             <AdvancedSearchComponent v-if="showAdvanced" @assetSearch="advancedSearch" @toggle="toggleAdvanced" />
         </form>
         <div v-if="assets.length != 0">
-            <div class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 transition font-bold">
-                <p class="md:block hidden">NXID</p>
+            <div class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center p-2 transition font-bold">
+                <p>NXID</p>
                 <p>Building</p>
-                <p>Type</p>
-                <p>Chassis</p>
+                <p class="md:block hidden">Type</p>
+                <p class="md:block hidden">Chassis</p>
                 <p>Status</p>
                 <p></p>
             </div>
@@ -103,9 +103,7 @@ onBeforeMount(async () => {
             searchText.value = query.text as string
         }
         if (query.pageNum) {
-            console.log("test")
             pageNum.value = parseInt(query.pageNum as string)
-            console.log(pageNum)
         }
         search()
     }

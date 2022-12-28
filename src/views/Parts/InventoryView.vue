@@ -63,10 +63,14 @@ function firstLoad() {
             // Push to reactive var
             users.value = data as User[]
             // Find and remove current user or kiosks
-            for (let user of users.value) {
+            for (let i = 0; i < users.value.length; i++) {
                 // Delete
-                if (user._id == store.state.user._id || user.role == 'kiosk')
-                    users.value.splice(users.value.indexOf(user), 1)
+                if (users.value[i]._id == store.state.user._id || users.value[i].role == "kiosk") {
+                    // remove current user and kiosk
+                    users.value.splice(i, 1)
+                    // Change the index since array size has changed
+                    i--
+                }
             }
         })
     }
@@ -147,7 +151,7 @@ setInterval(() => {
             <h1 class="text-4xl mb-4 inline-block" v-if="currentUser._id != 'all'">{{ currentUser.first_name }}'s
                 Inventory</h1>
             <h1 class="text-4xl mb-4 inline-block" v-else>All Tech's Inventory</h1>
-            <select v-model="currentUser" class="inline-block w-40">
+            <select v-model="currentUser" class="inline-block w-40 h-10">
                 <option :value="store.state.user" selected>Your Inventory</option>
                 <option :value="{ _id: 'all' }">All Tech's</option>
                 <option v-if="store.state.user.role == 'admin'" v-for="user in users" :value="user">{{
@@ -156,13 +160,16 @@ setInterval(() => {
             </select>
         </div>
         <div v-if="items.length > 0"
-            class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 rounded-xl transition font-bold">
+            class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center p-2 rounded-xl transition font-bold">
             <p class="md:block hidden">NXID</p>
             <p>Manufacturer</p>
             <p>Name</p>
-            <p>Location</p>
+            <p class="md:block hidden">Location</p>
             <p>Quantity</p>
             <p></p>
+        </div>
+        <div v-else>
+            <p>is empty...</p>
         </div>
         <InventoryPartComponent :isCurrentUser="currentUser._id == store.state.user._id ? true : false"
             v-for="item in items" :part="item.part" :quantity="item.quantity" @movePart="move" />

@@ -58,7 +58,6 @@ onBeforeMount(() => {
             }
         })
     }
-    console.log(users)
 })
 
 function viewHistory(id: string) {
@@ -134,11 +133,11 @@ function viewHistory(id: string) {
         </div>
         <!-- PART RECORDS GO HERE -->
         <div v-if="partRecords.length > 0"
-            class="grid grid-cols-6 relative leading-10 text-center p-2 rounded-xl transition font-bold my-2">
+            class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 rounded-xl transition font-bold my-2">
             <p>Building</p>
             <p>Location</p>
             <p class="col-span-2">Owner</p>
-            <p>Date Created</p>
+            <p class="hidden md:block">Date Created</p>
             <p></p>
         </div>
         <PartRecordComponent v-for="record in partRecords" :users="users" :record="record" />

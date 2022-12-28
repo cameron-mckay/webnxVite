@@ -22,7 +22,6 @@ let parts = ref([] as LoadedCartItem[])
 onBeforeMount(() => {
     if (router.currentRoute.value.query.asset_tag) {
         let nxid = router.currentRoute.value.query.asset_tag as string
-        console.log(nxid)
         getAssetByID(http, nxid, (res, err) => {
             if (err) {
                 errorHandler(err)
@@ -50,7 +49,7 @@ function edit() {
             <div class="flex justify-between col-span-4">
                 <h1 class="text-4xl mb-4">{{ asset.asset_tag + ":" }}</h1>
                 <img class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
-                    src="../assets/pencil-solid.svg" v-on:click="edit">
+                    src="../../assets/pencil-solid.svg" v-on:click="edit">
             </div>
             <p>Building:</p>
             <p class="col-span-3">{{ asset.building }}</p>

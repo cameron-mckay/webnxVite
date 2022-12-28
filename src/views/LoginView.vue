@@ -55,8 +55,6 @@ async function login() {
                 localStorage.setItem("token", res.data.token);
                 // Add token to headers
                 http.defaults.headers['Authorization'] = res.data.token
-                console.log(`Headers:`)
-                console.log(http.defaults.headers)
                 // Save user data to vuex store
                 store.commit("updateUserData")
                 store.commit("authenticate")

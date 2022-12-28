@@ -111,11 +111,11 @@ function localCheckout() {
                 </div>
             </div>
             <div
-                class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 rounded-xl transition font-bold">
+                class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center p-2 rounded-xl transition font-bold">
                 <p class="md:block hidden">NXID</p>
                 <p>Manufacturer</p>
                 <p>Name</p>
-                <p>Location</p>
+                <p class="md:block hidden">Location</p>
                 <p>Quantity</p>
                 <p></p>
             </div>

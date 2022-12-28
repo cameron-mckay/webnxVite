@@ -84,7 +84,6 @@ function moveToInventory(part: PartSchema, quantity: number) {
         item.quantity -= quantity
         for (let inventory_item of inventory.value) {
             if (inventory_item.part.nxid == item.part.nxid) {
-                console.log("test")
                 inventory_item.quantity += quantity
                 break
             }
@@ -142,11 +141,11 @@ watch(currentUser, () => {
             <div v-if="inventory.length > 0">
                 <h1 class="text-4xl mb-4">Your Inventory:</h1>
                 <div
-                    class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 rounded-xl transition font-bold">
+                    class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center p-2 rounded-xl transition font-bold">
                     <p class="md:block hidden">NXID</p>
                     <p>Manufacturer</p>
                     <p>Name</p>
-                    <p>Location</p>
+                    <p class="md:block hidden">Location</p>
                     <p>Quantity</p>
                     <p></p>
                 </div>
@@ -163,11 +162,11 @@ watch(currentUser, () => {
             <div v-if="checkInList.length > 0">
                 <h1 class="text-4xl mb-4">Checking In:</h1>
                 <div
-                    class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center p-2 rounded-xl transition font-bold">
+                    class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center p-2 rounded-xl transition font-bold">
                     <p class="md:block hidden">NXID</p>
                     <p>Manufacturer</p>
                     <p>Name</p>
-                    <p>Location</p>
+                    <p class="md:block hidden">Location</p>
                     <p>Quantity</p>
                     <p></p>
                 </div>
@@ -178,6 +177,5 @@ watch(currentUser, () => {
                 </div>
             </div>
         </div>
-
     </form>
 </template>

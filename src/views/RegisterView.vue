@@ -54,9 +54,7 @@ async function register() {
     // Get email and password from input fields
     let { first_name, last_name, email, password, password2 } = form
     // If they are not empty
-    console.log("1")
     if (first_name && last_name && email && password && (password == password2)) {
-        console.log("2")
         // Send username and password to API
         await http.post("/api/register", form).then((res: AxiosResponse) => {
             // If login is successful

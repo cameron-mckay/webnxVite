@@ -18,8 +18,11 @@ interface Props {
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 
 let oldAsset = ref({} as AssetSchema)
+let assetCopy = {} as AssetSchema
 let partsOnAsset = ref([] as LoadedCartItem[])
+let partsOnAssetCopy = [] as AssetSchema[]
 let inventory = ref([] as LoadedCartItem[])
+let inventoryCopy = [] as LoadedCartItem[]
 
 // RAILS AND LIVE GET CLEARED ON LOAD WITHOUT THIS
 let firstLoad = true
@@ -27,32 +30,32 @@ let secondLoad = true
 
 onBeforeMount(() => {
     if (router.currentRoute.value.query.asset_tag) {
+        // get asset tag from url
         let nxid = router.currentRoute.value.query.asset_tag as string
-        console.log(nxid)
+        // Get asset from API
         getAssetByID(http, nxid, (res, err) => {
             if (err) {
                 errorHandler(err)
             }
-            let rawRes = JSON.parse(JSON.stringify(res)) as AssetSchema
-            console.log(rawRes)
-            oldAsset.value = JSON.parse(JSON.stringify(rawRes))
-            oldAsset.value.rails = rawRes.rails
-            console.log(oldAsset.value.rails)
-            oldAsset.value.live = rawRes.live
-            console.log(rawRes.live)
-            console.log(typeof (JSON.parse(JSON.stringify(res)).live))
+            // Set asset to res
+            oldAsset.value = res as AssetSchema
+            assetCopy = JSON.parse(JSON.stringify(oldAsset.value))
+            // Get parts from api
             getPartsOnAsset(http, oldAsset.value.asset_tag!, (res, err) => {
                 if (err) {
                     errorHandler(err)
                 }
                 partsOnAsset.value = res as LoadedCartItem[]
+                partsOnAssetCopy = JSON.parse(JSON.stringify(partsOnAsset.value))
             })
         })
+        // Get user inventory from api
         getUserInventory(http, (res, err) => {
             if (err) {
                 errorHandler(err)
             }
             inventory.value = res as LoadedCartItem[]
+            inventoryCopy = JSON.parse(JSON.stringify(inventory.value))
         })
 
     }
@@ -73,26 +76,38 @@ function assetSubmit() {
     })
 }
 
-function addToAsset(item: LoadedCartItem) {
-    console.log()
-    let found = false
-    if (item.quantity >= 1) {
-        item.quantity -= 1
+function plusPart(item: LoadedCartItem) {
+    if (partsOnAsset.value.indexOf(item) == -1) {
+        let found = false
         for (let existingItem of partsOnAsset.value) {
-            if (existingItem.part.nxid == item.part.nxid) {
+            if (item.part._id == existingItem.part._id) {
                 found = true
-                existingItem.quantity += 1;
+                item.quantity -= 1
+                existingItem.quantity += 1
+                break
             }
         }
         if (!found) {
-            displayMessage(`Added ${item.part.manufacturer} ${item.part.name} to asset`)
-            partsOnAsset.value.push({ part: JSON.parse(JSON.stringify(item.part)), quantity: 1 })
+            partsOnAsset.value.push({ part: JSON.parse(JSON.stringify(item.part)), quantity: 1 });
+            item.quantity -= 1
         }
-        if (item.quantity < 1) {
+        if (item.quantity < 1)
             inventory.value.splice(inventory.value.indexOf(item), 1)
-        }
     } else {
-        errorHandler("Not enough in inventory")
+        let found = false
+        for (let existingItem of inventory.value) {
+            if (item.part._id == existingItem.part._id) {
+                found = true
+                item.quantity += 1
+                existingItem.quantity -= 1
+                if (existingItem.quantity < 1)
+                    inventory.value.splice(inventory.value.indexOf(existingItem), 1)
+                break
+            }
+        }
+        if (!found) {
+            errorHandler("Not enough parts in your inventory.")
+        }
     }
 }
 
@@ -116,12 +131,16 @@ function minusPart(item: LoadedCartItem) {
 }
 
 function deletePart(part: LoadedCartItem) {
-    for (let i = 0; i < partsOnAsset.value.length; i++) {
-        if (part.part._id == partsOnAsset.value[i].part._id) {
-            partsOnAsset.value.splice(i, 1)
-            break;
-        }
-    }
+    inventory.value.push(JSON.parse(JSON.stringify(part)))
+    partsOnAsset.value.splice(partsOnAsset.value.indexOf(part), 1)
+}
+
+function reset() {
+    firstLoad = true
+    secondLoad = true
+    oldAsset.value = JSON.parse(JSON.stringify(assetCopy))
+    partsOnAsset.value = JSON.parse(JSON.stringify(partsOnAssetCopy))
+    inventory.value = JSON.parse(JSON.stringify(inventoryCopy))
 }
 
 // Clear out fields when part type is changed
@@ -161,6 +180,6 @@ watch(() => oldAsset.value.live, () => {
 <template>
     <AssetManagerComponent :http="http" :title="'Edit Asset:'" :submitText="'Update Asset'" :strict="true"
         :oldAsset="oldAsset" :parts="partsOnAsset" :errorHandler="errorHandler" :inventory="inventory"
-        :displayMessage="displayMessage" :inventorySearch="true" @assetSubmit="assetSubmit" @plusPart="addToAsset"
-        @minusPart="minusPart" @deletePart="deletePart" />
+        :displayMessage="displayMessage" :inventorySearch="true" @assetSubmit="assetSubmit" @plusPart="plusPart"
+        @minusPart="minusPart" @deletePart="deletePart" @assetReset="reset" />
 </template>

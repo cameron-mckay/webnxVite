@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { PartSchema } from '../plugins/interfaces';
 
 interface Props {
@@ -22,20 +22,16 @@ function minus() {
     item_quantity.value -= 1
     emit('minus')
 }
-
-onMounted(() => {
-    console.log(part)
-})
 </script>
 
 <template>
     <div class="group">
         <div
-            class="grid md:grid-cols-6 grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl group-hover:rounded-bl-none group-hover:shadow-lg">
+            class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl group-hover:rounded-bl-none group-hover:shadow-lg">
             <p class="md:block hidden">{{ part.nxid }}</p>
             <p>{{ part.manufacturer }}</p>
             <p>{{ part.name }}</p>
-            <p>{{ part.shelf_location }}</p>
+            <p class="md:block hidden">{{ part.shelf_location }}</p>
             <p>{{ `${item_quantity}/${part.quantity}` }}</p>
             <div class="flex justify-center">
                 <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition"
@@ -49,6 +45,7 @@ onMounted(() => {
         <div
             class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-xl group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
             <p class="md:hidden block">{{ `NXID: ${part.nxid}` }}</p>
+            <p class="md:hidden block">{{ `Shelf Location: ${part.shelf_location}` }}</p>
             <p>{{ `Type: ${part.type}` }}</p>
             <div v-if="part.type == 'Motherboard'">
                 <p>{{ `Chipset: ${part.chipset}` }}</p>

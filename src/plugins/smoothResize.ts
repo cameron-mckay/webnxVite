@@ -10,7 +10,6 @@ const checkHeightForChangeAndUpdate = (el: VueElement, oldHeight: any, delay: an
   let currentCheck = 0
   // function to check and loop until currentCheck === maxCheck
   const check = () => {
-    console.log("check")
     // check to see if this should run and return if not
     if (currentCheck === maxCheck) { return false }
     // clock up currentCheck

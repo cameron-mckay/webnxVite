@@ -34,7 +34,6 @@ watch(props, () => {
 
 onMounted(async () => {
     if (defaultValue) {
-        console.log("THIS SHOULD SHOW 3")
         if (options.indexOf(defaultValue) == -1) {
             custom.value = true
         }

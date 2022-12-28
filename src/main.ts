@@ -3,6 +3,7 @@ import App from './App.vue'
 import axios from './plugins/axios'
 import { smoothResize } from './plugins/smoothResize'
 import { createGlobalStore, key } from './plugins/store'
+import './registerServiceWorker'
 import router from './router/index'
 import './style.css'
 // Create root app instance
