@@ -2,7 +2,8 @@
   <div>
     <HeaderComponent v-if="store.state.isAuth" :http="http" :store="store" />
     <MessageComponent :messages="messages" :errors="errorMessages" />
-    <router-view class="md:max-w-3xl bg-zinc-300 p-4 rounded-lg my-16 shadow-xl md:mx-auto w-[calc(100%-2rem)] mx-4"
+    <router-view
+      class="md:max-w-3xl bg-zinc-300 p-4 rounded-lg my-16 shadow-xl md:mx-auto w-[calc(100%-2rem)] mx-4 md:text-base text-sm"
       :http='http' :store='store' :errorHandler='errorHandler' :router='router' :displayMessage='displayMessage'
       :user_data="user_data" :routeLocation="route" />
   </div>

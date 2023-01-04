@@ -38,9 +38,10 @@ function loadUsers() {
         }
         users.value = data as User[]
         users.value.push({ first_name: 'All', last_name: 'Techs', _id: 'all' })
-        for (let user of users.value) {
-            if (user.role == 'kiosk') {
-                users.value.splice(users.value.indexOf(user), 1)
+        for (let i = 0; i < users.value.length; i++) {
+            if (users.value[i].role == 'kiosk') {
+                users.value.splice(i, 1)
+                i--
             }
         }
     })
