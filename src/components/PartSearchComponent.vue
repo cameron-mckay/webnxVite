@@ -145,6 +145,8 @@ async function advancedSearch(part: PartSchema) {
     part['building'] = building.value.toString()
     router.push({ query: part })
     // Query the API
+    delete part['location']
+    delete part['building']
     getPartsByData(http, part, building.value, location, (data, err) => {
         // Hide advanced search
         showAdvanced.value = false
