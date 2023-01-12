@@ -13,11 +13,11 @@ const { part, quantity, isCurrentUser } = defineProps<Props>()
     <div class="group">
         <div
             class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl group-hover:rounded-bl-none group-hover:shadow-lg">
-            <p class="md:block hidden">{{ part.nxid }}</p>
-            <p>{{ part.manufacturer }}</p>
-            <p>{{ part.name }}</p>
-            <p class="md:block hidden">{{ part.shelf_location }}</p>
-            <p>{{ quantity }}</p>
+            <p class="break-words md:block hidden">{{ part.nxid }}</p>
+            <p class="break-words">{{ part.manufacturer }}</p>
+            <p class="break-words">{{ part.name }}</p>
+            <p class="break-words md:block hidden">{{ part.shelf_location }}</p>
+            <p class="break-words">{{ quantity }}</p>
             <div v-if="isCurrentUser" class="flex justify-center">
                 <img class="md:h-10 md:w-10 m-1 w-8 h-8 p-2 bg-zinc-400 hover:bg-zinc-500 active:bg-zinc-600 rounded-lg shadow-lg transition"
                     src="../assets/1arrowUp.png" v-on:click="$emit('movePart', part, 1)">

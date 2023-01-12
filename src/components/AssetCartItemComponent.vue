@@ -12,10 +12,10 @@ const { item, hideButtons } = defineProps<Props>()
     <div class="group">
         <div
             class="grid grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl group-hover:rounded-bl-none group-hover:shadow-lg">
-            <p>{{ item.part.nxid }}</p>
-            <p>{{ item.part.manufacturer }}</p>
-            <p>{{ item.part.name }}</p>
-            <p>{{ item.quantity }}</p>
+            <p class="break-words">{{ item.part.nxid }}</p>
+            <p class="break-words">{{ item.part.manufacturer }}</p>
+            <p class="break-words">{{ item.part.name }}</p>
+            <p class="break-words">{{ item.quantity }}</p>
             <div v-if="hideButtons != true" class="flex justify-center">
                 <img class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
                     src="../assets/plus-solid.svg" v-on:click="$emit('plus')">

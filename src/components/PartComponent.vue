@@ -16,9 +16,9 @@ const { part } = defineProps<Props>()
         <div class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 
             p-2 rounded-lg group-hover:rounded-bl-none">
             <p class="md:block hidden">{{ part.nxid }}</p>
-            <p>{{ part.manufacturer }}</p>
-            <p>{{ part.name }}</p>
-            <p class="md:block hidden">{{ part.shelf_location }}</p>
+            <p class="break-words">{{ part.manufacturer }}</p>
+            <p class="break-words">{{ part.name }}</p>
+            <p class="break-words md:block hidden">{{ part.shelf_location }}</p>
             <p>{{ part.quantity + "/" + part.total_quantity }}</p>
             <div class="flex justify-center">
                 <img v-if="(edit === true)"

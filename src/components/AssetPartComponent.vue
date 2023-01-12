@@ -12,9 +12,9 @@ const { part } = defineProps<Props>()
     <div class="group my-1">
         <div class="grid grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 
             p-2 rounded-lg group-hover:rounded-bl-none">
-            <p class="md:block hidden">{{ part.nxid }}</p>
-            <p>{{ part.manufacturer }}</p>
-            <p>{{ part.name }}</p>
+            <p class="break-words md:block hidden">{{ part.nxid }}</p>
+            <p class="break-words">{{ part.manufacturer }}</p>
+            <p class="break-words">{{ part.name }}</p>
             <div class="flex justify-center">
                 <img class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
                     src="../assets/plus-solid.svg" v-on:click="$emit('addPartAction')">
