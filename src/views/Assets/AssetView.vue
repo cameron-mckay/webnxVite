@@ -16,7 +16,11 @@ interface Props {
 }
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 
-let asset = ref({} as AssetSchema)
+let asset = ref({
+    asset_tag: "",
+    building: 3,
+    asset_type: "",
+} as AssetSchema)
 let parts = ref([] as LoadedCartItem[])
 
 onBeforeMount(() => {

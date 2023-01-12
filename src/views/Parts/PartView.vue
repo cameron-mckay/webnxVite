@@ -17,7 +17,16 @@ interface Props {
 }
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>()
 
-let part = ref({} as PartSchema)
+let part = ref({
+    nxid: "",
+    manufacturer: "",
+    name: "",
+    type: "",
+    quantity: 0,
+    total_quantity: 0,
+    shelf_location: ""
+
+} as PartSchema)
 let partRecords = ref([] as PartRecord[])
 let users = ref([{ _id: 'all', first_name: 'All', last_name: 'Techs' }] as User[])
 
