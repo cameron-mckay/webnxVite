@@ -38,30 +38,30 @@ function resetForm() {
 // When component mounted
 onMounted(() => {
     request.value.nxid = part.nxid!
-})
 
-watch(request, () => {
-    switch (request.value.location) {
-        // If all techs, set owner to arbitrary data
-        case "All Techs":
-            owner.value = { _id: 'all', first_name: 'All', last_name: 'Techs', building: request.value.building }
-            break;
-        // If parts room, remove owner
-        case "Parts Room":
-            owner.value = {}
-            break;
-        // If asset, set location
-        case "Asset":
-            owner.value = { _id: owner.value._id, building: request.value.building }
-            break;
-        // If tech inventory, set current building to current user
-        case "Tech Inventory":
-            request.value.building = owner.value.building
-            break;
-        // Default case - do nothing
-        default:
-            break;
-    }
+    watch(request, () => {
+        switch (request.value.location) {
+            // If all techs, set owner to arbitrary data
+            case "All Techs":
+                owner.value = { _id: 'all', first_name: 'All', last_name: 'Techs', building: request.value.building }
+                break;
+            // If parts room, remove owner
+            case "Parts Room":
+                owner.value = {}
+                break;
+            // If asset, set location
+            case "Asset":
+                owner.value = { _id: owner.value._id, building: request.value.building }
+                break;
+            // If tech inventory, set current building to current user
+            case "Tech Inventory":
+                request.value.building = owner.value.building
+                break;
+            // Default case - do nothing
+            default:
+                break;
+        }
+    })
 })
 
 </script>

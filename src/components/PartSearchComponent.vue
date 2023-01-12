@@ -147,6 +147,7 @@ async function advancedSearch(part: PartSchema) {
     // Query the API
     delete part['location']
     delete part['building']
+    delete part['advanced']
     getPartsByData(http, part, building.value, location, (data, err) => {
         // Hide advanced search
         showAdvanced.value = false

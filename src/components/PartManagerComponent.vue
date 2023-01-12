@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Get http and store from props
-import { Ref, ref, watch } from 'vue';
+import { Ref, onMounted, ref, watch } from 'vue';
 import type { PartSchema } from '../plugins/interfaces';
 import CustomDropdownCompononent from './CustomDropdownComponent.vue';
 
@@ -24,8 +24,8 @@ function resetForm() {
 }
 
 // Clear out fields when part type is changed
-watch(() => part.value.type, () => {
-    if (!firstLoad) {
+onMounted(() => {
+    watch(() => part.value.type, () => {
         delete part.value.frequency
         delete part.value.chipset
         delete part.value.memory_type
@@ -37,16 +37,14 @@ watch(() => part.value.type, () => {
         delete part.value.port_type
         delete part.value.cable_end1
         delete part.value.cable_end2
-    } else {
-        firstLoad = false
-    }
-})
+    })
 
-// Clear out connector type when storage interface is changed
-watch(() => part.value.storage_interface, () => {
-    if (part.value.storage_interface != 'NVME') {
-        delete part.value.port_type
-    }
+    // Clear out connector type when storage interface is changed
+    watch(() => part.value.storage_interface, () => {
+        if (part.value.storage_interface != 'NVME') {
+            delete part.value.port_type
+        }
+    })
 })
 </script>
 
@@ -66,7 +64,7 @@ watch(() => part.value.storage_interface, () => {
             <label>Shelf Location: </label>
             <input :required="strict" v-model="part.shelf_location" type="text" placeholder="Shelf Location">
             <label>Part Type: </label>
-            <CustomDropdownCompononent :required="strict"
+            <CustomDropdownCompononent :required="strict" :defaultValue="part.type"
                 :options="['Motherboard', 'CPU', 'Memory', 'Storage', 'Peripheral Card', 'GPU', 'Cable', 'Backplane']"
                 @updateValue="(value) => { part.type = value }" />
 
@@ -101,12 +99,12 @@ watch(() => part.value.storage_interface, () => {
             <div v-if="part.type == 'Peripheral Card'" class="col-span-2 grid grid-cols-2">
                 <label>Card type: </label>
                 <CustomDropdownCompononent :required="strict" :options="['RAID', 'JBOD', 'NIC', 'Adapter']"
-                    @updateValue="(value) => { part.peripheral_type = value }" />
+                    @updateValue="(value) => { part.peripheral_type = value }" :defaultValue="part.peripheral_type" />
                 <label>Port Type: </label>
                 <CustomDropdownCompononent v-if="part.port_type == 'NIC'" :required="strict" :options="['SFP', 'RJ45']"
-                    @updateValue="(value) => { part.port_type = value }" />
+                    @updateValue="(value) => { part.port_type = value }" :defaultValue="part.port_type" />
                 <CustomDropdownCompononent v-else :required="strict" :options="['SAS', 'Mini SAS HD']"
-                    @updateValue="(value) => { part.port_type = value }" />
+                    @updateValue="(value) => { part.port_type = value }" :defaultValue="part.port_type" />
             </div>
             <div v-if="part.type == 'Storage'" class="col-span-2 grid grid-cols-2">
                 <label>Storage interface: </label>
@@ -120,13 +118,13 @@ watch(() => part.value.storage_interface, () => {
                 <div class="flex justify-between">
                     <input :required="strict" v-model="part.capacity" step="any" min="0" type="number">
                     <CustomDropdownCompononent :required="strict" :options="['GB', 'TB']"
-                        @updateValue="(value) => { part.capacity_unit = value }" />
+                        @updateValue="(value) => { part.capacity_unit = value }" :defaultValue="part.capacity_unit" />
 
                 </div>
                 <div v-if="part.storage_interface == 'NVME'" class="col-span-2 grid grid-cols-2">
                     <label>Connector Type: </label>
                     <CustomDropdownCompononent :required="strict" :options="['SAS', 'M.2']"
-                        @updateValue="(value) => { part.port_type = value }" />
+                        @updateValue="(value) => { part.port_type = value }" :defaultValue="part.port_type" />
 
                 </div>
             </div>
@@ -142,10 +140,11 @@ watch(() => part.value.storage_interface, () => {
             <div v-if="part.type == 'Backplane'" class="col-span-2 grid grid-cols-2">
                 <label>Storage interface: </label>
                 <CustomDropdownCompononent :required="strict" :options="['SAS', 'NVME']"
-                    @updateValue="(value) => { part.storage_interface = value }" />
+                    @updateValue="(value) => { part.storage_interface = value }"
+                    :defaultValue="part.storage_interface" />
                 <label>Ports: </label>
                 <CustomDropdownCompononent :required="strict" :options="['SAS', 'Mini SAS HD']"
-                    @updateValue="(value) => { part.port_type = value }" />
+                    @updateValue="(value) => { part.port_type = value }" :defaultValue="part.port_type" />
             </div>
             <input class="col-span-2 submit bg-red-500 hover:bg-red-600 active:bg-red-700" type="reset" value="Reset">
             <input class="col-span-2 submit" type="submit" :value="submitText">

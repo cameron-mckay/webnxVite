@@ -19,18 +19,7 @@ function closeCustom() {
     custom.value = false
 }
 
-watch(textValue, () => {
-    if (textValue.value === "Custom") {
-        textValue.value = ""
-        custom.value = true
-    }
-    emit('updateValue', textValue.value)
-})
-watch(props, () => {
-    if (props.defaultValue) {
-        textValue.value = props.defaultValue
-    }
-})
+
 
 onMounted(async () => {
     if (defaultValue) {
@@ -39,6 +28,18 @@ onMounted(async () => {
         }
         textValue.value = defaultValue
     }
+    watch(textValue, () => {
+        if (textValue.value === "Custom") {
+            textValue.value = ""
+            custom.value = true
+        }
+        emit('updateValue', textValue.value)
+    })
+    watch(props, () => {
+        if (props.defaultValue) {
+            textValue.value = props.defaultValue
+        }
+    })
 })
 </script>
 <template>

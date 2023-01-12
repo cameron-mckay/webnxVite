@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetManagerComponent from '../../components/AssetManagerComponent.vue';
@@ -35,22 +35,24 @@ function assetSubmit() {
 }
 
 // Clear out fields when part type is changed
-watch(() => oldAsset.value.asset_type, () => {
-    delete oldAsset.value.rails
-    delete oldAsset.value.live
-    delete oldAsset.value.public_port
-    delete oldAsset.value.private_port
-    delete oldAsset.value.ipmi_port
-    delete oldAsset.value.power_port
-    delete oldAsset.value.sid
-})
-
-watch(() => oldAsset.value.live, () => {
-    if (oldAsset.value.asset_type == "Server" && oldAsset.value.live) {
-        oldAsset.value.rails = true
-    } else {
+onMounted(() => {
+    watch(() => oldAsset.value.asset_type, () => {
         delete oldAsset.value.rails
-    }
+        delete oldAsset.value.live
+        delete oldAsset.value.public_port
+        delete oldAsset.value.private_port
+        delete oldAsset.value.ipmi_port
+        delete oldAsset.value.power_port
+        delete oldAsset.value.sid
+    })
+
+    watch(() => oldAsset.value.live, () => {
+        if (oldAsset.value.asset_type == "Server" && oldAsset.value.live) {
+            oldAsset.value.rails = true
+        } else {
+            delete oldAsset.value.rails
+        }
+    })
 })
 
 function plusPart(part: LoadedCartItem) {
