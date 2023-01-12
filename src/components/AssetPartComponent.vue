@@ -12,7 +12,7 @@ const { part } = defineProps<Props>()
     <div class="group my-1">
         <div class="grid grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 
             p-2 rounded-lg group-hover:rounded-bl-none">
-            <p class="break-words md:block hidden">{{ part.nxid }}</p>
+            <p class="md:block hidden">{{ part.nxid }}</p>
             <p class="break-words">{{ part.manufacturer }}</p>
             <p class="break-words">{{ part.name }}</p>
             <div class="flex justify-center">

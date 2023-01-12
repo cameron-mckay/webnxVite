@@ -29,8 +29,8 @@ onMounted(() => {
             group-hover:bg-zinc-400 p-2 rounded-lg group-hover:rounded-bl-none">
             <p class="break-words">{{ record.building }}</p>
             <p class="break-words">{{ record.location }}</p>
-            <p class="break-words col-span-2" v-if="owner">{{ `${owner?.first_name} ${owner?.last_name}` }}</p>
-            <p class="break-words col-span-2" v-else-if="record.asset_tag">{{ record.asset_tag }}</p>
+            <p class="col-span-2" v-if="owner">{{ `${owner?.first_name} ${owner?.last_name}` }}</p>
+            <p class="col-span-2" v-else-if="record.asset_tag">{{ record.asset_tag }}</p>
             <p class="break-words col-span-2" v-else></p>
             <p class="break-words hidden md:block">{{ `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
             }}</p>

@@ -15,7 +15,7 @@ const { asset, edit, add, view } = defineProps<Props>()
     <div class="group my-1">
         <div class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 
             p-2 rounded-lg group-hover:rounded-bl-none">
-            <p class="break-words">{{ asset.asset_tag }}</p>
+            <p>{{ asset.asset_tag }}</p>
             <p class="break-words">{{ asset.building }}</p>
             <p class="break-words md:block hidden">{{ asset.asset_type }}</p>
             <p class="break-words md:block hidden">{{ asset.chassis_type }}</p>
