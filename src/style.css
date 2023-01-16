@@ -33,8 +33,5 @@ html {
 body {
   overflow: scroll;
   height: 100%;
-}
-
-body {
   overscroll-behavior-y: none;
 }
