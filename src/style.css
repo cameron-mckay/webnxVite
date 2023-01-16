@@ -16,7 +16,7 @@
 
   /* Used in register and login */
   .submit {
-    @apply bg-green-500 px-5 py-2 mt-2 rounded-lg text-white shadow-lg hover: bg-green-600 active:bg-green-700 transition;
+    @apply bg-green-500 px-5 py-2 mt-2 rounded-lg text-white shadow-lg hover:bg-green-600 active:bg-green-700 transition;
   }
 }
 
