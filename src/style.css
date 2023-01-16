@@ -3,20 +3,38 @@
 @tailwind utilities;
 
 @layer components {
+
   /* Used in register and login */
   .card {
     @apply bg-zinc-300 mx-auto p-10 rounded-lg mt-10 shadow-lg
   }
+
   /* Used in register and login */
   .textbox {
     @apply p-1 m-1 w-[calc(100%-.5rem)] rounded-lg shadow-sm;
   }
+
   /* Used in register and login */
   .submit {
-    @apply bg-green-500 px-5 py-2 mt-2 rounded-lg text-white shadow-lg hover:bg-green-600 active:bg-green-700 transition;
+    @apply bg-green-500 px-5 py-2 mt-2 rounded-lg text-white shadow-lg hover: bg-green-600 active:bg-green-700 transition;
   }
 }
 
-input, select {
+input,
+select {
   @apply textbox
+}
+
+html {
+  overflow: hidden;
+  height: 100%;
+}
+
+body {
+  overflow: scroll;
+  height: 100%;
+}
+
+body {
+  overscroll-behavior-y: none;
 }
