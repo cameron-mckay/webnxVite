@@ -122,8 +122,7 @@ function addPartFromInventory(item: LoadedCartItem) {
             <div v-if="(http != undefined)" class="col-span-2">
                 <div v-show="oldAsset.asset_type == 'Server'">
                     <h1 class="text-4xl inline-block">Parts: </h1>
-                    <img class="w-10 h-10 p-2 mx-1 bg-zinc-400 hover:bg-green-500 
-                    shadow-lg rounded-lg inline-block transition" @click="togglePopup" src="../assets/plus-solid.svg">
+                    <img class="w-10 h-10 p-2 mx-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg inline-block transition" @click="togglePopup" src="../assets/plus-solid.svg">
                 </div>
                 <FullScreenPopupComponent v-if="partSearch" v-show="partSearchPopup" @toggle="togglePopup">
                     <AssetPartSearchComponent :http="http" :errorHandler="errorHandler!"
@@ -133,8 +132,7 @@ function addPartFromInventory(item: LoadedCartItem) {
                     @toggle="togglePopup">
                     <InventoryPopup @addPartAction="addPartFromInventory" :inventory="inventory" />
                 </FullScreenPopupComponent>
-                <div v-if="(parts!.length > 0)" class="grid font-bold grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl 
-                    group-hover:rounded-bl-none group-hover:shadow-lg">
+                <div v-if="(parts!.length > 0)" class="grid font-bold grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl group-hover:rounded-bl-none group-hover:shadow-lg">
                     <p>NXID</p>
                     <p>Manufacturer</p>
                     <p>Name</p>

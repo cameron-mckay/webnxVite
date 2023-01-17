@@ -48,8 +48,7 @@ function edit() {
 
 <template>
     <div class="body">
-        <div class="grid grid-cols-4 relative leading-10 group-hover:bg-zinc-400 
-            p-2 rounded-lg group-hover:rounded-bl-none">
+        <div class="grid grid-cols-4 relative leading-10 group-hover:bg-zinc-400 p-2 rounded-lg group-hover:rounded-bl-none">
             <div class="flex justify-between col-span-4">
                 <h1 class="text-4xl mb-4">{{ asset.asset_tag + ":" }}</h1>
                 <img class="h-10 w-10 p-2 m-1 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
@@ -90,8 +89,7 @@ function edit() {
         </div>
         <div v-if="parts.length > 0">
             <h1 class="text-4xl mb-4 col-span-2">Parts</h1>
-            <div v-if="(parts!.length > 0)" class="grid font-bold grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl 
-                    group-hover:rounded-bl-none group-hover:shadow-lg">
+            <div v-if="(parts!.length > 0)" class="grid font-bold grid-cols-5 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl group-hover:rounded-bl-none group-hover:shadow-lg">
                 <p>NXID</p>
                 <p>Manufacturer</p>
                 <p>Name</p>

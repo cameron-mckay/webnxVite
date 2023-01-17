@@ -12,9 +12,8 @@ const { part } = defineProps<Props>()
 </script>
 
 <template>
-    <div class="group my-1">
-        <div class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 
-            p-2 rounded-lg group-hover:rounded-bl-none">
+    <div class="group my-1 relative">
+        <div class="grid md:grid-cols-6 grid-cols-4 leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-lg group-hover:rounded-bl-none">
             <p class="md:block hidden">{{ part.nxid }}</p>
             <p class="break-words">{{ part.manufacturer }}</p>
             <p class="break-words">{{ part.name }}</p>
@@ -32,8 +31,7 @@ const { part } = defineProps<Props>()
                     src="../assets/eye-solid.svg" v-on:click="$emit('viewPartAction')">
             </div>
         </div>
-        <div class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-lg 
-            group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
+        <div class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-lg group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
             <p class="md:hidden block">{{ `NXID: ${part.nxid}` }}</p>
             <p class="md:hidden block">{{ `Shelf Location: ${part.shelf_location}` }}</p>
             <p>{{ `Type: ${part.type}` }}</p>

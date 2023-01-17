@@ -10,8 +10,7 @@ const { part } = defineProps<Props>()
 
 <template>
     <div class="group my-1">
-        <div class="grid grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 
-            p-2 rounded-lg group-hover:rounded-bl-none">
+        <div class="grid grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-lg group-hover:rounded-bl-none">
             <p class="md:block hidden">{{ part.nxid }}</p>
             <p class="break-words">{{ part.manufacturer }}</p>
             <p class="break-words">{{ part.name }}</p>
@@ -20,8 +19,7 @@ const { part } = defineProps<Props>()
                     src="../assets/plus-solid.svg" v-on:click="$emit('addPartAction')">
             </div>
         </div>
-        <div class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-lg 
-            group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
+        <div class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-lg group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
             <p class="md:hidden block">{{ `NXID: ${part.nxid}` }}</p>
             <p>{{ `Type: ${part.type}` }}</p>
             <div v-if="part.type == 'Motherboard'">

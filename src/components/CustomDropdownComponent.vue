@@ -50,7 +50,6 @@ onMounted(async () => {
     </select>
     <div v-else>
         <input :required="true" type="text" v-model="textValue" class="w-[calc(100%-3.25rem)]">
-        <img class="h-8 w-8 p-2 bg-zinc-400 hover:bg-red-500 inline-block
-        active:bg-red-600 rounded-lg shadow-lg transition m-1" src="../assets/x-solid.svg" v-on:click="closeCustom">
+        <img class="h-8 w-8 p-2 bg-zinc-400 hover:bg-red-500 inline-blockactive:bg-red-600 rounded-lg shadow-lg transition m-1" src="../assets/x-solid.svg" v-on:click="closeCustom">
     </div>
 </template>

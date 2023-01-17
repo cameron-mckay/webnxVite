@@ -12,9 +12,8 @@ const { asset, edit, add, view } = defineProps<Props>()
 </script>
 
 <template>
-    <div class="group my-1">
-        <div class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 
-            p-2 rounded-lg group-hover:rounded-bl-none">
+    <div class="group my-1 relative">
+        <div class="grid md:grid-cols-6 grid-cols-4 leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-lg group-hover:rounded-bl-none">
             <p>{{ asset.asset_tag }}</p>
             <p class="break-words">{{ asset.building }}</p>
             <p class="break-words md:block hidden">{{ asset.asset_type }}</p>
@@ -33,8 +32,7 @@ const { asset, edit, add, view } = defineProps<Props>()
                     src="../assets/eye-solid.svg" v-on:click="$emit('viewPartAction')">
             </div>
         </div>
-        <div class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-lg 
-            group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
+        <div class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-lg group-hover:bg-zinc-400 p-2 z-50 group-hover:shadow-lg">
             <p>{{ "Type: " + asset.asset_type }}</p>
             <p>{{ "Chassis: " + asset.chassis_type }}</p>
             <p>{{ "Manufacturer: " + asset.manufacturer }}</p>

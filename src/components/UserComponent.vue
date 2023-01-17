@@ -6,8 +6,7 @@ interface Props {
 const { user } = defineProps<Props>()
 </script>
 <template>
-    <div class="grid auto-cols-max relative leading-10 text-center hover:bg-zinc-400 
-        p-2 rounded-lg">
+    <div class="grid auto-cols-max relative leading-10 text-center hover:bg-zinc-400 p-2 rounded-lg">
         <p>{{ user.email }}</p>
         <p>{{ user.first_name }}</p>
         <p>{{ user.last_name }}</p>

@@ -10,9 +10,9 @@ const { part, quantity, isCurrentUser } = defineProps<Props>()
 </script>
 
 <template>
-    <div class="group">
+    <div class="group relative">
         <div
-            class="grid md:grid-cols-6 grid-cols-4 relative leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl group-hover:rounded-bl-none group-hover:shadow-lg">
+            class="grid md:grid-cols-6 grid-cols-4 leading-10 text-center group-hover:bg-zinc-400 p-2 rounded-xl group-hover:rounded-bl-none group-hover:shadow-lg">
             <p class="md:block hidden">{{ part.nxid }}</p>
             <p class="break-words">{{ part.manufacturer }}</p>
             <p class="break-words">{{ part.name }}</p>
@@ -32,7 +32,7 @@ const { part, quantity, isCurrentUser } = defineProps<Props>()
             </div>
         </div>
         <div
-            class="hidden h-0 absolute group-hover:h-auto group-hover:block rounded-b-xl group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
+            class="hidden h-0 fixed group-hover:h-auto group-hover:block rounded-b-xl group-hover:bg-zinc-400 p-2 z-30 group-hover:shadow-lg">
             <p class="md:hidden block">{{ `NXID: ${part.nxid}` }}</p>
             <p class="md:hidden block">{{ `Shelf Location: ${part.shelf_location}` }}</p>
             <p>{{ `Type: ${part.type}` }}</p>
