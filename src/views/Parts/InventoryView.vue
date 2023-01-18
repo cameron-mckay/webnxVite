@@ -82,7 +82,7 @@ function moveFromInventory (part: PartSchema, quantity: number) {
     move(items, transferList, part, quantity)
 }
 
-function moveFromTrasferList (part: PartSchema, quantity: number) {
+function moveFromTransferList (part: PartSchema, quantity: number) {
     move(transferList, items, part, quantity)
 }
 
@@ -203,7 +203,7 @@ watch(currentUser, () => {
                         <p class="leading-[4] mr-2">To: </p>
                         <select required v-model="transferUser" class=" w-60">
                             <option v-if="currentUser._id != store.state.user._id" :value="store.state.user" :disabled="store.state.user._id==currentUser._id" selected>Your Inventory</option>
-                            <option v-else :value="{ _id: 'all', building: store.state.user.building }" :disabled="currentUser._id=='all'" selected>All Tech's</option>
+                            <option v-if="currentUser._id != 'all'" :value="{ _id: 'all', building: store.state.user.building }" :disabled="currentUser._id=='all'" selected>All Tech's</option>
                             <option v-if="store.state.user.role == 'admin'||store.state.user.role == 'clerk'" v-for="user in users" :disabled="user._id==currentUser._id" :value="user">{{ `${user.first_name} ${user.last_name}` }}
                             </option>
                         </select>
@@ -219,7 +219,7 @@ watch(currentUser, () => {
                     <p></p>
                 </div>
                 <InventoryPartComponent :isCurrentUser="true" v-for="item in transferList" :part="item.part"
-                    :quantity="item.quantity" @movePart="moveFromTrasferList" />
+                    :quantity="item.quantity" @movePart="moveFromTransferList" />
                 <div class="flex justify-center">
                     <input type="submit" class="submit mx-1" value="Move Parts">
                 </div>
