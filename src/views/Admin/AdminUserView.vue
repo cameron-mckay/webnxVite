@@ -1,76 +1,88 @@
 <script setup lang="ts">
-import { Ref, onMounted, ref } from 'vue';
-import UserComponent from '../../components/UserComponent.vue';
-import { getAllUsers, updateUser } from '../../plugins/dbCommands/userManager';
-import { User } from '../../plugins/interfaces';
+import { Ref, onMounted, ref } from "vue";
+import UserComponent from "../../components/UserComponent.vue";
+import { getAllUsers, updateUser } from "../../plugins/dbCommands/userManager";
+import { User } from "../../plugins/interfaces";
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
-import type { AxiosError, AxiosInstance } from 'axios';
-import { Router } from 'vue-router';
-import type { Store } from 'vuex';
-import UserManagerComponent from '../../components/UserManagerComponent.vue';
-import type { UserState } from '../../plugins/interfaces';
+import type { AxiosError, AxiosInstance } from "axios";
+import { Router } from "vue-router";
+import type { Store } from "vuex";
+import UserManagerComponent from "../../components/UserManagerComponent.vue";
+import type { UserState } from "../../plugins/interfaces";
 
 interface Props {
-    http: AxiosInstance,
-    store: Store<UserState>,
-    router: Router,
-    errorHandler: (err: Error | AxiosError | string) => void,
-    displayMessage: (message: string) => void
+  http: AxiosInstance;
+  store: Store<UserState>;
+  router: Router;
+  errorHandler: (err: Error | AxiosError | string) => void;
+  displayMessage: (message: string) => void;
 }
 
-const { http, errorHandler, displayMessage } = defineProps<Props>()
+const { http, errorHandler, displayMessage } = defineProps<Props>();
 // END OF PROPS
 
-let users: Ref<Array<User>> = ref([])
-let editUser = ref(false)
-let currentUser: Ref<User> = ref({})
+let users: Ref<Array<User>> = ref([]);
+let editUser = ref(false);
+let currentUser: Ref<User> = ref({});
 
 function getUsers() {
-    getAllUsers(http, (data, err) => {
-        if (err) {
-            return errorHandler(err)
-        }
-        users.value = data as Array<User>
-    })
+  getAllUsers(http, (data, err) => {
+    if (err) {
+      return errorHandler(err);
+    }
+    users.value = data as Array<User>;
+  });
 }
 
 function toggleEdit(user: User) {
-    if (!editUser.value) {
-        currentUser.value = user
-        editUser.value = true
-    } else {
-        currentUser.value = {}
-        editUser.value = false
-    }
+  if (!editUser.value) {
+    currentUser.value = user;
+    editUser.value = true;
+  } else {
+    currentUser.value = {};
+    editUser.value = false;
+  }
 }
 
 function localUpdateUser(user: User) {
-    updateUser(http, user, (data, err) => {
-        if (err) {
-            return errorHandler(err)
-        }
-        currentUser.value = {}
-        toggleEdit({})
-        displayMessage("Updated user.")
-    })
+  updateUser(http, user, (data, err) => {
+    if (err) {
+      return errorHandler(err);
+    }
+    currentUser.value = {};
+    toggleEdit({});
+    displayMessage("Updated user.");
+  });
 }
 
 onMounted(() => {
-    getUsers()
-})
+  getUsers();
+});
 </script>
 <template>
-    <div>
-        <h1 class="text-4xl mb-4">User Manager</h1>
-        <div class="grid grid-cols-5 relative leading-10 text-center p-2 transition text-sm font-bold">
-            <p>Email</p>
-            <p>First Name</p>
-            <p>Last Name</p>
-            <p>Role</p>
-        </div>
-        <UserComponent class="grid grid-cols-5 relative leading-10 text-center p-2 transition text-sm"
-            v-for="user in users" :user="user" @edit="toggleEdit(user)" />
-        <UserManagerComponent v-if="editUser" class="pointer-events-auto" :user="currentUser" :show="editUser"
-            @toggle="toggleEdit" @update="localUpdateUser" />
+  <div>
+    <h1 class="mb-4 text-4xl">User Manager</h1>
+    <div
+      class="relative grid grid-cols-5 p-2 text-center text-sm font-bold leading-10 transition"
+    >
+      <p>Email</p>
+      <p>First Name</p>
+      <p>Last Name</p>
+      <p>Role</p>
     </div>
+    <UserComponent
+      class="relative grid grid-cols-5 p-2 text-center text-sm leading-10 transition"
+      v-for="user in users"
+      :user="user"
+      @edit="toggleEdit(user)"
+    />
+    <UserManagerComponent
+      v-if="editUser"
+      class="pointer-events-auto"
+      :user="currentUser"
+      :show="editUser"
+      @toggle="toggleEdit"
+      @update="localUpdateUser"
+    />
+  </div>
 </template>

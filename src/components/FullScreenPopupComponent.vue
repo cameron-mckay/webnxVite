@@ -1,10 +1,18 @@
 <template>
-    <div class="overflow-y-scroll w-full h-full top-0 left-0 z-50 fixed pointer-events-auto">
-        <div class="w-full h-full top-0 left-0 fixed z-40 bg-zinc-700 opacity-50 pointer-events-none"></div>
-        <div class="w-full h-full top-0 left-0 fixed z-30 pointer-events-auto -ml-8" @click="$emit('toggle')"></div>
-        <div
-            class="relative p-4 rounded-xl block bg-zinc-300 mt-32 mx-auto max-w-xl shadow-lg z-50 pointer-events-auto">
-            <slot></slot>
-        </div>
+  <div
+    class="pointer-events-auto fixed top-0 left-0 z-50 h-full w-full overflow-y-scroll"
+  >
+    <div
+      class="pointer-events-none fixed top-0 left-0 z-40 h-full w-full bg-zinc-700 opacity-50"
+    ></div>
+    <div
+      class="pointer-events-auto fixed top-0 left-0 z-30 -ml-8 h-full w-full"
+      @click="$emit('toggle')"
+    ></div>
+    <div
+      class="pointer-events-auto relative z-50 mx-auto mt-32 block max-w-xl rounded-xl bg-zinc-300 p-4 shadow-lg"
+    >
+      <slot></slot>
     </div>
+  </div>
 </template>

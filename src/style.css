@@ -1,28 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer components {
-
   /* Used in register and login */
   .card {
-    @apply bg-zinc-300 mx-auto p-10 rounded-lg mt-10 shadow-lg
+    @apply mx-auto mt-10 rounded-lg bg-zinc-300 p-10 shadow-lg;
   }
 
   /* Used in register and login */
   .textbox {
-    @apply p-1 m-1 w-[calc(100%-.5rem)] rounded-lg shadow-sm;
+    @apply m-1 w-[calc(100%-.5rem)] rounded-lg p-1 shadow-sm;
   }
 
   /* Used in register and login */
   .submit {
-    @apply bg-green-500 px-5 py-2 mt-2 rounded-lg text-white shadow-lg hover:bg-green-600 active:bg-green-700 transition;
+    @apply mt-2 rounded-lg bg-green-500 px-5 py-2 text-white shadow-lg transition hover:bg-green-600 active:bg-green-700;
   }
+}
+
+* {
+  font-family: "Inter", sans-serif;
 }
 
 input,
 select {
-  @apply textbox
+  @apply textbox;
 }
 
 html {

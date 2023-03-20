@@ -1,7 +1,7 @@
 {
-    "editor.codeActionsOnSave": {
+  "editor.codeActionsOnSave": {
     "source.organizeImports": true
-    },
-    "files.insertFinalNewline": true,
-    "editor.formatOnSave": false
+  },
+  "files.insertFinalNewline": true,
+  "editor.formatOnSave": false
 }

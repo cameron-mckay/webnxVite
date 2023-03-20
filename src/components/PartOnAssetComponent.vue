@@ -1,64 +1,33 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import { PartSchema } from "../plugins/interfaces";
 
 interface Props {
   part: PartSchema;
-  quantity: number;
-}
-const { part, quantity } = defineProps<Props>();
-const emit = defineEmits(["plus", "minus", "delete"]);
-
-let item_quantity = ref(quantity);
-
-function plus() {
-  if (item_quantity.value < part.quantity!) {
-    item_quantity.value = item_quantity.value + 1;
-  }
-  emit("plus");
 }
 
-function minus() {
-  item_quantity.value -= 1;
-  emit("minus");
-}
+const { part } = defineProps<Props>();
 </script>
 
 <template>
-  <div class="group relative">
+  <div class="group my-1">
     <div
-      class="grid grid-cols-4 rounded-xl p-2 text-center leading-10 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-6"
+      class="relative grid grid-cols-4 rounded-lg p-2 text-center leading-10 group-hover:rounded-bl-none group-hover:bg-zinc-400"
     >
       <p class="hidden md:block">{{ part.nxid }}</p>
       <p class="break-words">{{ part.manufacturer }}</p>
       <p class="break-words">{{ part.name }}</p>
-      <p class="hidden break-words md:block">{{ part.shelf_location }}</p>
-      <p class="break-words">{{ `${item_quantity}/${part.quantity}` }}</p>
       <div class="flex justify-center">
         <img
-          class="h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-zinc-500 active:bg-zinc-600"
+          class="m-1 h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
           src="../assets/plus-solid.svg"
-          v-on:click="plus"
-        />
-        <img
-          class="h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-zinc-500 active:bg-zinc-600"
-          src="../assets/minus-solid.svg"
-          v-on:click="minus"
-        />
-        <img
-          class="h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-red-500 active:bg-red-600"
-          src="../assets/x-solid.svg"
-          v-on:click="$emit('delete')"
+          v-on:click="$emit('addPartAction')"
         />
       </div>
     </div>
     <div
-      class="fixed z-30 hidden h-0 rounded-b-xl p-2 group-hover:block group-hover:h-auto group-hover:bg-zinc-400 group-hover:shadow-lg"
+      class="absolute z-30 hidden h-0 rounded-b-lg p-2 group-hover:block group-hover:h-auto group-hover:bg-zinc-400 group-hover:shadow-lg"
     >
       <p class="block md:hidden">{{ `NXID: ${part.nxid}` }}</p>
-      <p class="block md:hidden">
-        {{ `Shelf Location: ${part.shelf_location}` }}
-      </p>
       <p>{{ `Type: ${part.type}` }}</p>
       <div v-if="part.type == 'Motherboard'">
         <p>{{ `Chipset: ${part.chipset}` }}</p>

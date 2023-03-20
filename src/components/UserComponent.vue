@@ -1,17 +1,22 @@
 <script setup lang="ts">
-import { User } from '../plugins/interfaces';
+import { User } from "../plugins/interfaces";
 interface Props {
-    user: User
+  user: User;
 }
-const { user } = defineProps<Props>()
+const { user } = defineProps<Props>();
 </script>
 <template>
-    <div class="grid auto-cols-max relative leading-10 text-center hover:bg-zinc-400 p-2 rounded-lg">
-        <p>{{ user.email }}</p>
-        <p>{{ user.first_name }}</p>
-        <p>{{ user.last_name }}</p>
-        <p>{{ user.role }}</p>
-        <img class="h-10 w-10 p-2 bg-zinc-400 hover:bg-green-500 shadow-lg rounded-lg transition"
-            src="../assets/pencil-solid.svg" v-on:click="$emit('edit')">
-    </div>
+  <div
+    class="relative grid auto-cols-max rounded-lg p-2 text-center leading-10 hover:bg-zinc-400"
+  >
+    <p>{{ user.email }}</p>
+    <p>{{ user.first_name }}</p>
+    <p>{{ user.last_name }}</p>
+    <p>{{ user.role }}</p>
+    <img
+      class="h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+      src="../assets/pencil-solid.svg"
+      v-on:click="$emit('edit')"
+    />
+  </div>
 </template>
