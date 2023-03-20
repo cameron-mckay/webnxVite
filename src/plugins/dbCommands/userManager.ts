@@ -1,5 +1,5 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from "axios";
-import type { User, apiResponse } from "../interfaces";
+import type { apiResponse, User } from "../interfaces";
 
 /**
  * @brief Get the current user's object from the API
