@@ -5,15 +5,15 @@ import { Router } from "vue-router";
 import type { Store } from "vuex";
 import PartRecordComponent from "../../components/PartRecordComponent.vue";
 import {
-  getPartByID,
-  getPartHistoryByID,
+getPartByID,
+getPartHistoryByID,
 } from "../../plugins/dbCommands/partManager";
 import { getUserByID } from "../../plugins/dbCommands/userManager";
 import type {
-  PartRecord,
-  PartSchema,
-  User,
-  UserState,
+PartRecord,
+PartSchema,
+User,
+UserState,
 } from "../../plugins/interfaces";
 
 interface Props {
@@ -84,79 +84,79 @@ function viewHistory(id: string) {
 </script>
 <template>
   <div>
-    <div class="grid grid-cols-4">
-      <h1 class="col-span-4 mb-4 inline-block text-4xl">
+    <div class="detail-table">
+      <h1 class="detail-title">
         {{ `${part.manufacturer} ${part.name}` }}
       </h1>
-      <p class="my-2 font-bold">NXID:</p>
-      <p class="col-span-3 my-2">{{ part.nxid }}</p>
-      <p class="my-2 font-bold">Shelf Location:</p>
-      <p class="col-span-3 my-2">{{ part.shelf_location }}</p>
-      <p class="my-2 font-bold">Parts Room Quantity:</p>
-      <p class="col-span-3 my-2">{{ part.quantity }}</p>
-      <p class="my-2 font-bold">Total Quantity:</p>
-      <p class="col-span-3 my-2">{{ part.total_quantity }}</p>
-      <p class="my-2 font-bold">Type:</p>
-      <p class="col-span-3 my-2">{{ part.type }}</p>
+      <p class="detail-label">NXID:</p>
+      <p class="detail-data">{{ part.nxid }}</p>
+      <p class="detail-label">Shelf Location:</p>
+      <p class="detail-data">{{ part.shelf_location }}</p>
+      <p class="detail-label">Parts Room Quantity:</p>
+      <p class="detail-data">{{ part.quantity }}</p>
+      <p class="detail-label">Total Quantity:</p>
+      <p class="detail-data">{{ part.total_quantity }}</p>
+      <p class="detail-label">Type:</p>
+      <p class="detail-data">{{ part.type }}</p>
       <div
-        class="col-span-4 grid grid-cols-4"
+        class="detail-row"
         v-if="part.type == 'Motherboard'"
       >
-        <p class="my-2 font-bold">Chipset</p>
-        <p class="col-span-3 my-2">{{ part.chipset }}</p>
+        <p>Chipset:</p>
+        <p>{{ part.chipset }}</p>
       </div>
-      <div v-if="part.type == 'CPU'" class="col-span-4 grid grid-cols-4">
-        <p class="my-2 font-bold">Chipset:</p>
-        <p class="col-span-3 my-2">{{ part.chipset }}</p>
-        <p class="my-2 font-bold">Frequency:</p>
-        <p class="col-span-3 my-2">{{ part.frequency + "GHz" }}</p>
+      <div v-if="part.type == 'CPU'" class="detail-row">
+        <p>Chipset:</p>
+        <p>{{ part.chipset }}</p>
+        <p>Frequency:</p>
+        <p>{{ part.frequency + "GHz" }}</p>
       </div>
-      <div v-if="part.type == 'Memory'" class="col-span-4 grid grid-cols-4">
-        <p class="my-2 font-bold">Frequency:</p>
-        <p class="col-span-3 my-2">{{ part.frequency + "MHz" }}</p>
-        <p class="my-2 font-bold">Capacity:</p>
-        <p class="col-span-3 my-2">{{ part.capacity + "GB" }}</p>
-        <p class="my-2 font-bold">Memory Type:</p>
-        <p class="col-span-3 my-2">{{ part.memory_type }}</p>
+      <div v-if="part.type == 'Memory'" class="detail-row">
+        <p>Frequency:</p>
+        <p>{{ part.frequency + "MHz" }}</p>
+        <p>Capacity:</p>
+        <p>{{ part.capacity + "GB" }}</p>
+        <p>Memory Type:</p>
+        <p>{{ part.memory_type }}</p>
       </div>
       <div
         v-if="part.type == 'Peripheral Card'"
-        class="col-span-4 grid grid-cols-4"
+        class="detail-row"
       >
-        <p class="my-2 font-bold">Card Type:</p>
-        <p class="col-span-3 my-2">{{ part.peripheral_type }}</p>
-        <p class="my-2 font-bold">Port Type:</p>
-        <p class="col-span-3 my-2">{{ part.port_type }}</p>
+        <p>Card Type:</p>
+        <p>{{ part.peripheral_type }}</p>
+        <p>Port Type:</p>
+        <p>{{ part.port_type }}</p>
       </div>
-      <div v-if="part.type == 'Storage'" class="col-span-4 grid grid-cols-4">
-        <p class="my-2 font-bold">Interface:</p>
-        <p class="col-span-3 my-2">{{ part.storage_interface }}</p>
-        <p class="my-2 font-bold">Capacity:</p>
-        <p class="col-span-3 my-2">
+      <div v-if="part.type == 'Storage'" class="detail-row">
+        <p>Interface:</p>
+        <p>{{ part.storage_interface }}</p>
+        <p>Capacity:</p>
+        <p>
           {{ `${part.capacity}${part.capacity_unit}` }}
         </p>
         <div
           v-if="part.storage_interface == 'NVME'"
-          class="col-span-4 grid grid-cols-4"
+          class="detail-row"
         >
-          <p class="my-2 font-bold">Connector:</p>
-          <p class="col-span-3 my-2">{{ part.port_type }}</p>
+          <p>Connector:</p>
+          <p>{{ part.port_type }}</p>
         </div>
       </div>
       <div v-if="part.type == 'GPU'">
         <!-- Placeholder -->
       </div>
-      <div v-if="part.type == 'Cable'" class="col-span-4 grid grid-cols-4">
-        <p class="my-2 font-bold">End 1:</p>
-        <p class="col-span-3 my-2">{{ part.cable_end1 }}</p>
-        <p class="my-2 font-bold">End 2:</p>
-        <p class="col-span-3 my-2">{{ part.cable_end2 }}</p>
+      <div v-if="part.type == 'Cable'" class="detail-row">
+        <p>End 1:</p>
+        <p>{{ part.cable_end1 }}</p>
+        <p>End 2:</p>
+        <p>{{ part.cable_end2 }}</p>
       </div>
-      <div v-if="part.type == 'Backplane'" class="col-span-4 grid grid-cols-4">
-        <p class="my-2 font-bold">Interface:</p>
-        <p class="col-span-3 my-2">{{ part.storage_interface }}</p>
-        <p class="my-2 font-bold">Ports:</p>
-        <p class="col-span-3 my-2">{{ part.port_type }}</p>
+      <div v-if="part.type == 'Backplane'" class="detail-row">
+        <p>Interface:</p>
+        <p>{{ part.storage_interface }}</p>
+        <p>Ports:</p>
+        <p>{{ part.port_type }}</p>
       </div>
       <div v-if="part.type == 'Misc.'">
         <!-- Placeholder -->

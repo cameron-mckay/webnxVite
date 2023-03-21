@@ -24,7 +24,7 @@ const { part } = defineProps<Props>();
         />
       </div>
     </div>
-    <div class="group-hover:bab-drop-hover hidden">
+    <div class="group-hover:bab-drop-hover bab-drop">
       <p class="block md:hidden">{{ `NXID: ${part.nxid}` }}</p>
       <p>{{ `Type: ${part.type}` }}</p>
       <div v-if="part.type == 'Motherboard'">

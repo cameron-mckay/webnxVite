@@ -6,29 +6,29 @@
 @layer components {
   /* Used in register and login */
   .card {
-    @apply bg-gray-200 background-and-border mx-auto mt-10 rounded-lg p-10 shadow-lg dark:bg-zinc-900;
+    @apply transition-colors bg-gray-200 background-and-border mx-auto mt-10 rounded-lg p-10 shadow-lg dark:bg-zinc-900;
   }
   .background-color {
-    @apply bg-gray-200 dark:bg-zinc-800;
+    @apply transition-colors bg-gray-200 dark:bg-zinc-800;
   }
   .hover-color {
-    @apply bg-gray-200 dark:bg-zinc-700;
+    @apply transition-colors bg-gray-200 dark:bg-zinc-700;
   }
   .active-color {
-    @apply bg-gray-500 dark:bg-zinc-600;
+    @apply transition-colors bg-gray-500 dark:bg-zinc-600;
   }
   .nx-border-color {
-    @apply border-gray-500 dark:border-zinc-500;
+    @apply transition-colors border-gray-500 dark:border-zinc-500;
   }
   /* Used in register and login */
   .textbox {
-    @apply m-1 w-[calc(100%-.5rem)] rounded-lg bg-gray-300 p-1 shadow-sm dark:bg-gray-100 dark:text-black;
+    @apply transition-colors m-1 w-[calc(100%-.5rem)] rounded-lg bg-gray-300 p-1 shadow-sm dark:bg-gray-100 dark:text-black;
   }
   .header-button-colors {
-    @apply hover:hover-color active:active-color;
+    @apply transition-colors hover:hover-color active:active-color;
   }
   .header-color {
-    @apply bg-gray-300 dark:bg-zinc-900;
+    @apply transition-colors bg-gray-300 dark:bg-zinc-900;
   }
   /* Used in register and login */
   .submit {
@@ -38,13 +38,47 @@
     @apply bg-gray-300 nx-border-color rounded-md border-2 shadow-md dark:bg-zinc-900;
   }
   .bab-hover {
-    @apply hover-color rounded-bl-none;
+    @apply transition md:delay-300 hover-color rounded-bl-none;
+  }
+  .bab-drop {
+    @apply h-0 bg-gray-300 nx-border-color opacity-0
   }
   .bab-drop-hover {
-    @apply nx-border-color hover-color absolute z-10 -mt-0.5 block h-0 h-auto rounded-b-md border-x-2 border-b-2 p-2 shadow-md;
+    @apply opacity-100 transition md:delay-300 nx-border-color hover-color absolute z-10 -mt-0.5 block h-auto rounded-b-md border-x-2 border-b-2 p-2 shadow-md;
   }
   .button-icon {
-    @apply transition m-1 h-8 w-8 rounded-lg bg-gray-400 dark:bg-gray-500 p-2 shadow-lg transition hover:bg-green-400 active:bg-green-500 md:h-10 md:w-10
+    @apply m-1 h-8 w-8 rounded-md bg-gray-400 dark:bg-gray-500 p-2 shadow-lg transition hover:bg-green-400 active:bg-green-500 md:h-10 md:w-10 dark:filter
+  }
+  .detail-table {
+    @apply grid md:grid-cols-4 grid-cols-2
+  }
+  .detail-title {
+    @apply md:col-span-4 col-span-2 mb-4 inline-block text-4xl
+  }
+  .detail-label {
+    @apply my-2 font-bold
+
+  }
+  .detail-data {
+    @apply md:col-span-3 my-2
+  }
+  .detail-row {
+    @apply md:col-span-4 grid md:grid-cols-4 grid-cols-2 col-span-2
+  }
+  .detail-row > p {
+    @apply odd:detail-label even:detail-data
+  }
+  .mobile-nav-button {
+    @apply transition bg-green-400 p-4 pl-10 leading-10 hover:bg-green-500 active:bg-green-600 shadow-xl dark:text-black
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .button-icon {
+    filter: invert(100%) sepia(1%) saturate(2533%) hue-rotate(177deg) brightness(93%) contrast(107%);
+    background-color: #EAEAEA;
+  }
+  .button-icon:hover {
+    background-color: #CACACA;
   }
 }
 

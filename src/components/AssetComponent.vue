@@ -43,7 +43,7 @@ const { asset, edit, add, view } = defineProps<Props>();
         />
       </div>
     </div>
-    <div class="group-hover:bab-drop-hover hidden">
+    <div class="group-hover:bab-drop-hover bab-drop">
       <p>{{ "Type: " + asset.asset_type }}</p>
       <p>{{ "Chassis: " + asset.chassis_type }}</p>
       <p>{{ "Manufacturer: " + asset.manufacturer }}</p>

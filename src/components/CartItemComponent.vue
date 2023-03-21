@@ -52,7 +52,7 @@ function minus() {
         />
       </div>
     </div>
-    <div class="group-hover:bab-drop-hover relative">
+    <div class="group-hover:bab-drop-hover bab-drop relative">
       <p class="block md:hidden">{{ `NXID: ${part.nxid}` }}</p>
       <p class="block md:hidden">
         {{ `Shelf Location: ${part.shelf_location}` }}

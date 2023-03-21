@@ -47,7 +47,7 @@ onMounted(() => {
         />
       </div>
     </div>
-    <div class="group-hover:bab-drop-hover hidden">
+    <div class="group-hover:bab-drop-hover bab-drop">
       <p class="block md:hidden">
         {{
           `Date Created: ${

@@ -5,7 +5,7 @@
     >
       <div class="flex justify-center">
         <img
-          class="header-button-colors h-10 w-10 p-1 md:hidden"
+          class="header-button-colors h-10 w-10 p-1 md:hidden dark:invert"
           v-on:click="toggle"
           src="../assets/bars-solid.svg"
         />
@@ -92,14 +92,14 @@
       class="fixed top-10 z-50 flex h-[calc(100%-2.5rem)] w-full flex-col justify-center text-2xl md:hidden"
     >
       <RouterLink
-        class="transiton bg-green-400 p-4 pl-10 leading-10 hover:bg-green-500 active:bg-green-600"
+        class="mobile-nav-button"
         to="/parts"
       >
         Parts</RouterLink
       >
       <RouterLink
         v-if="store.state.user.role != 'kiosk'"
-        class="transiton bg-green-400 p-4 pl-10 leading-10 hover:bg-green-500 active:bg-green-600"
+        class="mobile-nav-button"
         to="/assets"
       >
         Assets
@@ -108,7 +108,7 @@
       <RouterLink
         v-if="store.state.user.role == 'kiosk'"
         v-show="store.state.cart.length > 0"
-        class="bg-green-400 p-4 pl-10 leading-10 transition hover:bg-green-500 active:bg-green-600"
+        class="mobile-nav-button"
         to="/cart"
       >
         {{ `Check Out(${store.getters.getTotalNumItems})` }}</RouterLink
@@ -116,21 +116,21 @@
       <RouterLink
         v-if="store.state.user.role == 'kiosk'"
         v-show="store.state.cart.length < 1"
-        class="bg-green-400 p-4 pl-10 leading-10 transition hover:bg-green-500 active:bg-green-600"
+        class="mobile-nav-button"
         to="/cart"
       >
         Check Out
       </RouterLink>
       <RouterLink
         v-if="store.state.user.role == 'kiosk'"
-        class="bg-green-400 p-4 pl-10 leading-10 transition hover:bg-green-500 active:bg-green-600"
+        class="mobile-nav-button"
         to="/checkin"
       >
         Check In
       </RouterLink>
       <RouterLink
         v-if="store.state.user.role != 'kiosk'"
-        class="transiton bg-green-400 p-4 pl-10 leading-10 hover:bg-green-500 active:bg-green-600"
+        class="mobile-nav-button"
         to="/inventory"
       >
         Inventory</RouterLink
@@ -140,14 +140,14 @@
           store.state.user.role == 'inventory' ||
           store.state.user.role == 'admin'
         "
-        class="active:bg-green-60 bg-green-400 p-4 pl-10 leading-10 transition hover:bg-green-500"
+        class="mobile-nav-button"
         to="/manage"
       >
         Manage
       </RouterLink>
       <RouterLink
         v-if="store.state.user.role == 'admin'"
-        class="bg-green-400 p-4 pl-10 leading-10 transition hover:bg-green-500 active:bg-green-600"
+        class="mobile-nav-button"
         to="/admin"
       >
         Admin

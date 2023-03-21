@@ -44,7 +44,7 @@ const { part, quantity, isCurrentUser } = defineProps<Props>();
         />
       </div>
     </div>
-    <div class="group-hover:bab-drop-hover hidden">
+    <div class="group-hover:bab-drop-hover bab-drop">
       <p class="block md:hidden">{{ `NXID: ${part.nxid}` }}</p>
       <p class="block md:hidden">
         {{ `Shelf Location: ${part.shelf_location}` }}
