@@ -24,6 +24,7 @@ interface Props {
   inventory?: LoadedCartItem[];
 }
 
+// Begin props
 const {
   title,
   submitText,
@@ -37,6 +38,7 @@ const {
   inventorySearch,
   inventory,
 } = defineProps<Props>();
+// End props
 
 let inRack = ref(false);
 let partSearchPopup = ref(false);
@@ -61,10 +63,7 @@ function addPartFromInventory(item: LoadedCartItem) {
 }
 </script>
 <template>
-  <div
-    class="body"
-    v-smooth-resize="{ delay: 50, transition: 800, fineTune: 27 }"
-  >
+  <div class="body">
     <h1 class="mb-4 text-4xl">{{ title }}</h1>
     <form
       id="form"

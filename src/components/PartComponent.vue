@@ -14,37 +14,35 @@ const { part } = defineProps<Props>();
 <template>
   <div class="group relative my-1">
     <div
-      class="grid grid-cols-4 rounded-md border-2 border-gray-500 p-2 text-center leading-10 group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-6"
+      class="background-and-border group-hover:bab-hover grid grid-cols-4 p-2 text-center leading-10 md:grid-cols-6"
     >
       <p class="hidden md:block">{{ part.nxid }}</p>
       <p class="break-words">{{ part.manufacturer }}</p>
       <p class="break-words">{{ part.name }}</p>
       <p class="hidden break-words md:block">{{ part.shelf_location }}</p>
       <p>{{ part.quantity + "/" + part.total_quantity }}</p>
-      <div class="flex justify-center">
+      <div class="flex justify-end">
         <img
           v-if="edit === true"
-          class="m-1 h-8 w-8 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500 md:h-10 md:w-10"
+          class="m-1 h-8 w-8 rounded-md bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500 md:h-10 md:w-10"
           src="../assets/pencil-solid.svg"
           v-on:click="$emit('editPartAction')"
         />
         <img
           v-if="add === true"
-          class="m-1 h-8 w-8 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500 md:h-10 md:w-10"
+          class="m-1 h-8 w-8 rounded-md bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500 md:h-10 md:w-10"
           src="../assets/plus-solid.svg"
           v-on:click="$emit('addPartAction')"
         />
         <img
           v-if="view === true"
-          class="m-1 h-8 w-8 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500 md:h-10 md:w-10"
+          class="m-1 h-8 w-8 rounded-md bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500 md:h-10 md:w-10"
           src="../assets/eye-solid.svg"
           v-on:click="$emit('viewPartAction')"
         />
       </div>
     </div>
-    <div
-      class="absolute z-30 hidden h-0 rounded-b-md border-x-2 border-b-2 border-gray-500 p-2 group-hover:block group-hover:h-auto group-hover:bg-zinc-400 group-hover:shadow-lg"
-    >
+    <div class="group-hover:bab-drop-hover hidden">
       <p class="block md:hidden">{{ `NXID: ${part.nxid}` }}</p>
       <p class="block md:hidden">
         {{ `Shelf Location: ${part.shelf_location}` }}

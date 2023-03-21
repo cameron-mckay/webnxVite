@@ -10,16 +10,16 @@ const { part, quantity, isCurrentUser } = defineProps<Props>();
 </script>
 
 <template>
-  <div class="group relative">
+  <div class="group relative my-1">
     <div
-      class="grid grid-cols-4 rounded-xl p-2 text-center leading-10 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-6"
+      class="group-hover:bab-hover background-and-border grid grid-cols-4 p-2 text-center leading-10 md:grid-cols-6"
     >
       <p class="hidden md:block">{{ part.nxid }}</p>
       <p class="break-words">{{ part.manufacturer }}</p>
       <p class="break-words">{{ part.name }}</p>
       <p class="hidden break-words md:block">{{ part.shelf_location }}</p>
       <p class="break-words">{{ quantity }}</p>
-      <div v-if="isCurrentUser" class="flex justify-center">
+      <div v-if="isCurrentUser" class="flex justify-end">
         <img
           class="m-1 h-8 w-8 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-zinc-500 active:bg-zinc-600 md:h-10 md:w-10"
           src="../assets/1arrowUp.png"
@@ -31,7 +31,7 @@ const { part, quantity, isCurrentUser } = defineProps<Props>();
           v-on:click="$emit('movePart', part, quantity)"
         />
       </div>
-      <div v-else class="flex justify-center">
+      <div v-else class="flex justify-end">
         <img
           class="m-1 h-8 w-8 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-zinc-500 active:bg-zinc-600 md:h-10 md:w-10"
           src="../assets/1arrowDown.png"
@@ -44,9 +44,7 @@ const { part, quantity, isCurrentUser } = defineProps<Props>();
         />
       </div>
     </div>
-    <div
-      class="fixed z-30 hidden h-0 rounded-b-xl p-2 group-hover:block group-hover:h-auto group-hover:bg-zinc-400 group-hover:shadow-lg"
-    >
+    <div class="group-hover:bab-drop-hover hidden">
       <p class="block md:hidden">{{ `NXID: ${part.nxid}` }}</p>
       <p class="block md:hidden">
         {{ `Shelf Location: ${part.shelf_location}` }}

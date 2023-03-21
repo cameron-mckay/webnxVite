@@ -1,5 +1,5 @@
 <template>
-  <div v-smooth-resize="{ delay: 50, transition: 800, fineTune: 27 }">
+  <div>
     <form class="flex justify-between" @submit.prevent="search">
       <input
         class="textbox"
@@ -100,11 +100,13 @@ interface Props {
 
 // Define shit
 let props = defineProps<Props>();
+// Define emitted events
 const emit = defineEmits([
   "addAssetAction",
   "editAssetAction",
   "viewAssetAction",
 ]);
+// Wizardry
 defineExpose({
   search,
 });
@@ -129,13 +131,16 @@ let multiplePages = ref(false);
 
 // Before component is mounted
 onBeforeMount(async () => {
-  // Fuck this
+  // Destructure query from route
   let { query } = router.currentRoute.value;
+  // If building exists in query string
   if (query.building) {
+    // Parse building number
     building.value = parseInt(query.building as string);
   }
   // Check for advanced search
   if (query.advanced === "true") {
+    // Define variable to store Asset attributes
     let searchAsset = {} as AssetSchema;
     // Loop through query to create part object
     for (const key in query) {
@@ -147,9 +152,12 @@ onBeforeMount(async () => {
   } else {
     // Check for search text
     if (query.text) {
+      // Get text search from query string
       searchText.value = query.text as string;
     }
+    // Check if pageNum exists
     if (query.pageNum) {
+      // Parse page number from query string
       pageNum.value = parseInt(query.pageNum as string);
     }
     search();
@@ -158,29 +166,37 @@ onBeforeMount(async () => {
 
 // Previous search page
 function prevPage() {
+  // Check current page num
   if (pageNum.value > 1) {
+    // Decrement
     pageNum.value -= 1;
+    // Send search query
     search();
   }
 }
 
 // Next search page
 function nextPage() {
+  // Check if results have multiple pages
   if (multiplePages) {
+    // Increment page num
     pageNum.value += 1;
+    // Send search query
     search();
   }
 }
 
 // Toggle advanced search
 function toggleAdvanced() {
+  // Negate
   showAdvanced.value = !showAdvanced.value;
 }
 
 // Advanced search
 async function advancedSearch(asset: AssetSchema) {
+  // Add new attribute to asset (this a wizard trick to make adding data to router easier)
   asset["advanced"] = "true";
-
+  // Push asset to router
   router.push({ query: asset });
   // Query the API
   getAssetsByData(http, asset, (data, err) => {
@@ -199,6 +215,8 @@ async function advancedSearch(asset: AssetSchema) {
 
 // Search function
 async function search() {
+  // Reset dis shit
+  multiplePages.value = false;
   // Check for webnx regex
   if (/WNX([0-9]{7})+/.test(searchText.value)) {
     // temp value
@@ -211,11 +229,13 @@ async function search() {
       }
       // Typecast data
       let asset = data as AssetSchema;
+      // Check if asset does not exist
       if (asset == null) {
         // If no part was found
         return errorHandler("Asset not found.");
       }
       // Emit actions
+      // Triple equals because Truthy and Falsy piss me off
       if (add === true) {
         emit("addAssetAction", asset);
       } else if (view === true) {
@@ -225,9 +245,9 @@ async function search() {
       }
     });
   } else {
-    multiplePages.value = false;
     // Text search
     router.push({ query: { text: searchText.value, pageNum: pageNum.value } });
+    // Send the API text search query
     getAssetsByTextSearch(
       http,
       searchText.value,
@@ -239,10 +259,14 @@ async function search() {
         }
         // typecast
         assets.value = data as AssetSchema[];
+        // API will send 51 objects to indicate more pages
         if (assets.value.length > 50) {
+          // Pop the extra object
           assets.value.pop;
+          // Set multiple pages
           multiplePages.value = true;
         } else if (assets.value.length === 0 && pageNum.value != 1) {
+          // Extra redundancy just in case query string is malformed
           pageNum.value = 1;
           search();
         }
@@ -252,6 +276,7 @@ async function search() {
 }
 
 function addUntrackedAsset() {
+  // Redirect
   router.push({ name: "Add Untracked Asset" });
 }
 </script>

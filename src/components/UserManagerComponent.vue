@@ -13,9 +13,7 @@ let user: Ref<User> = ref({});
 user.value = props.user;
 </script>
 <template>
-  <FullScreenPopupComponent
-    v-smooth-resize="{ delay: 50, transition: 800, fineTune: 27 }"
-  >
+  <FullScreenPopupComponent>
     <h1>Edit User:</h1>
     <form @submit.prevent="$emit('update', user)" class="grid grid-cols-2">
       <label>Email</label>

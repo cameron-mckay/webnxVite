@@ -22,9 +22,9 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="group my-1">
+  <div class="group relative my-1">
     <div
-      class="relative grid grid-cols-5 rounded-lg p-2 text-center leading-10 group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-6"
+      class="background-and-border group-hover:bab-hover grid grid-cols-5 p-2 text-center leading-10 md:grid-cols-6"
     >
       <p class="break-words">{{ record.building }}</p>
       <p class="break-words">{{ record.location }}</p>
@@ -38,16 +38,16 @@ onMounted(() => {
       <p class="hidden break-words md:block">
         {{ `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}` }}
       </p>
-      <img
-        v-if="view === true"
-        class="m-1 h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
-        src="../assets/eye-solid.svg"
-        v-on:click="$emit('viewPartAction', record._id)"
-      />
+      <div class="flex justify-end">
+        <img
+          v-if="view === true"
+          class="m-1 h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+          src="../assets/eye-solid.svg"
+          v-on:click="$emit('viewPartAction', record._id)"
+        />
+      </div>
     </div>
-    <div
-      class="absolute z-30 hidden h-0 rounded-b-lg p-2 group-hover:block group-hover:h-auto group-hover:bg-zinc-400 group-hover:shadow-lg"
-    >
+    <div class="group-hover:bab-drop-hover hidden">
       <p class="block md:hidden">
         {{
           `Date Created: ${

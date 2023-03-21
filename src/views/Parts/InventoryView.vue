@@ -226,7 +226,7 @@ watch(currentUser, () => {
         </div>
         <div v-if="transferList.length > 0">
           <div class="flex justify-between">
-            <h1 class="mb-4 inline-block text-4xl">Transfer List</h1>
+            <h1 class="my-4 inline-block text-4xl">Transfer List</h1>
             <div class="flex">
               <p class="mr-2 leading-[4]">To:</p>
               <select required v-model="transferUser" class="w-60">

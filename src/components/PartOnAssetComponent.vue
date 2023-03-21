@@ -9,14 +9,14 @@ const { part } = defineProps<Props>();
 </script>
 
 <template>
-  <div class="group my-1">
+  <div class="group relative my-1">
     <div
-      class="relative grid grid-cols-4 rounded-lg p-2 text-center leading-10 group-hover:rounded-bl-none group-hover:bg-zinc-400"
+      class="group-hover:bab-hover background-and-border grid grid-cols-4 rounded-lg p-2 text-center leading-10"
     >
       <p class="hidden md:block">{{ part.nxid }}</p>
       <p class="break-words">{{ part.manufacturer }}</p>
       <p class="break-words">{{ part.name }}</p>
-      <div class="flex justify-center">
+      <div class="flex justify-end">
         <img
           class="m-1 h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
           src="../assets/plus-solid.svg"
@@ -24,9 +24,7 @@ const { part } = defineProps<Props>();
         />
       </div>
     </div>
-    <div
-      class="absolute z-30 hidden h-0 rounded-b-lg p-2 group-hover:block group-hover:h-auto group-hover:bg-zinc-400 group-hover:shadow-lg"
-    >
+    <div class="group-hover:bab-drop-hover hidden">
       <p class="block md:hidden">{{ `NXID: ${part.nxid}` }}</p>
       <p>{{ `Type: ${part.type}` }}</p>
       <div v-if="part.type == 'Motherboard'">

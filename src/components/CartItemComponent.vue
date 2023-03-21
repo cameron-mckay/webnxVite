@@ -27,14 +27,14 @@ function minus() {
 <template>
   <div class="group relative">
     <div
-      class="grid grid-cols-4 rounded-xl p-2 text-center leading-10 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-6"
+      class="group-hover:bab-hover background-and-border grid grid-cols-4 p-2 text-center leading-10 md:grid-cols-6"
     >
       <p class="hidden md:block">{{ part.nxid }}</p>
       <p class="break-words">{{ part.manufacturer }}</p>
       <p class="break-words">{{ part.name }}</p>
       <p class="hidden break-words md:block">{{ part.shelf_location }}</p>
       <p class="break-words">{{ `${item_quantity}/${part.quantity}` }}</p>
-      <div class="flex justify-center">
+      <div class="flex justify-end">
         <img
           class="h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-zinc-500 active:bg-zinc-600"
           src="../assets/plus-solid.svg"
@@ -52,9 +52,7 @@ function minus() {
         />
       </div>
     </div>
-    <div
-      class="fixed z-30 hidden h-0 rounded-b-xl p-2 group-hover:block group-hover:h-auto group-hover:bg-zinc-400 group-hover:shadow-lg"
-    >
+    <div class="group-hover:bab-drop-hover relative">
       <p class="block md:hidden">{{ `NXID: ${part.nxid}` }}</p>
       <p class="block md:hidden">
         {{ `Shelf Location: ${part.shelf_location}` }}

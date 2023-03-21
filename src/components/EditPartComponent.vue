@@ -8,7 +8,7 @@ interface Props {
   show: boolean;
 }
 
-const { oldPart } = defineProps<Props>();
+const { oldPart, show } = defineProps<Props>();
 const emit = defineEmits(["updatePart"]);
 
 function submit(part: PartSchema) {

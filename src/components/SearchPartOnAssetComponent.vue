@@ -1,6 +1,6 @@
 <!-- Identical to PartSearchComponent but without quantities and query strings -->
 <template>
-  <div v-smooth-resize="{ delay: 50, transition: 800, fineTune: 27 }">
+  <div>
     <form class="flex justify-between" @submit.prevent="search">
       <!-- Search box -->
       <input

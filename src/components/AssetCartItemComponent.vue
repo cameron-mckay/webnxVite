@@ -9,15 +9,15 @@ const { item, hideButtons } = defineProps<Props>();
 </script>
 
 <template>
-  <div class="group">
+  <div class="group relative my-1">
     <div
-      class="relative grid grid-cols-5 rounded-xl p-2 text-center leading-10 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg"
+      class="group-hover:bab-hover background-and-border grid grid-cols-5 p-2 text-center leading-10"
     >
       <p>{{ item.part.nxid }}</p>
       <p class="break-words">{{ item.part.manufacturer }}</p>
       <p class="break-words">{{ item.part.name }}</p>
       <p class="break-words">{{ item.quantity }}</p>
-      <div v-if="hideButtons != true" class="flex justify-center">
+      <div v-if="hideButtons != true" class="flex justify-end">
         <img
           class="m-1 h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
           src="../assets/plus-solid.svg"
@@ -35,9 +35,7 @@ const { item, hideButtons } = defineProps<Props>();
         />
       </div>
     </div>
-    <div
-      class="absolute z-30 hidden h-0 rounded-b-xl p-2 group-hover:block group-hover:h-auto group-hover:bg-zinc-400 group-hover:shadow-lg"
-    >
+    <div class="group-hover:bab-drop-hover hidden">
       <p class="block md:hidden">{{ `NXID: ${item.part.nxid}` }}</p>
       <p>{{ `Type: ${item.part.type}` }}</p>
       <div v-if="item.part.type == 'Motherboard'">

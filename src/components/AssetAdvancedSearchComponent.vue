@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import type {
-  AssetSchema,
-  LoadedCartItem,
-  PartSchema,
-} from "../plugins/interfaces";
 import { ref } from "vue";
-import FullScreenPopupComponent from "./FullScreenPopupComponent.vue";
+import type { AssetSchema, LoadedCartItem } from "../plugins/interfaces";
 import AssetManagerComponent from "./AssetManagerComponent.vue";
+import FullScreenPopupComponent from "./FullScreenPopupComponent.vue";
 
 // Props interface
 let partsOnAsset = [] as LoadedCartItem[];

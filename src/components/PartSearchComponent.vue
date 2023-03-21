@@ -1,5 +1,5 @@
 <template>
-  <div v-smooth-resize="{ delay: 50, transition: 800, fineTune: 27 }">
+  <div>
     <form class="flex justify-between" @submit.prevent="search">
       <input
         class="textbox"
@@ -26,7 +26,7 @@
     </form>
     <div v-if="parts.length != 0">
       <div
-        class="md:grid-cols-6${} relative grid grid-cols-4 p-2 text-center font-bold leading-10 transition"
+        class="relative grid grid-cols-4 p-2 text-center font-bold leading-10 transition md:grid-cols-6"
       >
         <p class="hidden md:block">NXID</p>
         <p>Manufacturer</p>

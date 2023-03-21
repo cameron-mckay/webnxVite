@@ -13,19 +13,14 @@ const { users, part } = defineProps<Props>();
 // End props
 
 // Request as cart item
-interface request {
-  nxid: string;
-  quantity: number;
-  building: number;
-  location?: string;
-  owner?: string;
-}
 let request = ref({
   nxid: part.nxid!,
   quantity: 0,
   building: 3,
   location: "Parts Room",
 } as CartItem);
+
+// Owner
 let owner = ref({} as User);
 
 // Reset form
@@ -37,8 +32,9 @@ function resetForm() {
 
 // When component mounted
 onMounted(() => {
+  // Set value of request to props
   request.value.nxid = part.nxid!;
-
+  // Register watch on the request object
   watch(request, () => {
     switch (request.value.location) {
       // If all techs, set owner to arbitrary data

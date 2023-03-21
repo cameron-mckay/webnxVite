@@ -1,25 +1,25 @@
 <template>
   <div>
     <div
-      class="fixed top-0 z-10 flex w-full justify-between bg-gray-300 shadow-lg"
+      class="header-color fixed top-0 z-20 flex w-full justify-between shadow-md"
     >
       <div class="flex justify-center">
         <img
-          class="h-10 w-10 p-1 hover:bg-zinc-400 active:bg-zinc-500 md:hidden"
+          class="header-button-colors h-10 w-10 p-1 md:hidden"
           v-on:click="toggle"
           src="../assets/bars-solid.svg"
         />
         <img class="h-10 p-2" alt="WebNX Logo" src="../assets/logo.png" />
         <div class="hidden justify-center md:flex">
           <RouterLink
-            class="transiton w-20 text-center leading-10 hover:bg-zinc-400 active:bg-zinc-500"
+            class="transiton header-button-colors w-20 text-center leading-10"
             to="/parts"
           >
             Parts</RouterLink
           >
           <RouterLink
             v-if="store.state.user.role != 'kiosk'"
-            class="transiton w-20 text-center leading-10 hover:bg-zinc-400 active:bg-zinc-500"
+            class="transiton header-button-colors w-20 text-center leading-10"
             to="/assets"
           >
             Assets
@@ -28,7 +28,7 @@
           <RouterLink
             v-if="store.state.user.role == 'kiosk'"
             v-show="store.state.cart.length > 0"
-            class="w-28 text-center leading-10 transition hover:bg-zinc-400 active:bg-zinc-500"
+            class="header-button-colors w-28 text-center leading-10 transition"
             to="/cart"
           >
             {{ `Check Out(${store.getters.getTotalNumItems})` }}</RouterLink
@@ -36,21 +36,21 @@
           <RouterLink
             v-if="store.state.user.role == 'kiosk'"
             v-show="store.state.cart.length < 1"
-            class="w-20 text-center leading-10 transition hover:bg-zinc-400 active:bg-zinc-500"
+            class="header-button-colors w-20 text-center leading-10 transition"
             to="/cart"
           >
             Check Out
           </RouterLink>
           <RouterLink
             v-if="store.state.user.role == 'kiosk'"
-            class="w-20 text-center leading-10 transition hover:bg-zinc-400 active:bg-zinc-500"
+            class="header-button-colors w-20 text-center leading-10 transition"
             to="/checkin"
           >
             Check In
           </RouterLink>
           <RouterLink
             v-if="store.state.user.role != 'kiosk'"
-            class="transiton w-20 text-center leading-10 hover:bg-zinc-400 active:bg-zinc-500"
+            class="transiton header-button-colors w-20 text-center leading-10"
             to="/inventory"
           >
             Inventory</RouterLink
@@ -60,14 +60,14 @@
               store.state.user.role == 'inventory' ||
               store.state.user.role == 'admin'
             "
-            class="w-20 text-center leading-10 transition hover:bg-zinc-400 active:bg-zinc-500"
+            class="header-button-colors w-20 text-center leading-10 transition"
             to="/manage"
           >
             Manage
           </RouterLink>
           <RouterLink
             v-if="store.state.user.role == 'admin'"
-            class="w-20 text-center leading-10 transition hover:bg-zinc-400 active:bg-zinc-500"
+            class="header-button-colors w-20 text-center leading-10 transition"
             to="/admin"
           >
             Admin

@@ -1,6 +1,6 @@
 <!-- Identical to PartSearchComponent but without quantities and query strings -->
 <template>
-  <div v-smooth-resize="{ delay: 50, transition: 800, fineTune: 27 }">
+  <div>
     <!-- If there are parts -->
     <h1 class="mb-4 text-4xl">Your Inventory:</h1>
     <div v-if="inventory.length != 0">

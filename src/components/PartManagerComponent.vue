@@ -57,10 +57,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    class="body"
-    v-smooth-resize="{ delay: 50, transition: 800, fineTune: 27 }"
-  >
+  <div class="body">
     <h1 class="mb-4 text-4xl">{{ title }}</h1>
     <form
       id="form"
