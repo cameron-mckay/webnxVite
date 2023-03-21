@@ -9,7 +9,7 @@ self.addEventListener("message", (event) => {
   }
 });
 
-workbox.clientsClaim();
+workbox.core.clientsClaim();
 
 // The precaching code provided by Workbox.
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
