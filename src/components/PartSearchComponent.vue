@@ -12,7 +12,7 @@
         <option :value="1">1 - LA</option>
       </select>
       <img
-        class="inline-block h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+        class="button-icon"
         @click="toggleAdvanced"
         src="../assets/sliders-solid.svg"
       />
@@ -54,13 +54,13 @@
       <p class="mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
       <img
         v-show="multiplePages || pageNum > 1"
-        class="inline-block h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+        class="button-icon"
         src="../assets/caret-left-solid.svg"
         v-on:click="prevPage"
       />
       <img
         v-show="multiplePages || pageNum > 1"
-        class="inline-block h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+        class="button-icon"
         src="../assets/caret-right-solid.svg"
         v-on:click="nextPage"
       />
@@ -72,8 +72,8 @@ import type { AxiosError, AxiosInstance } from "axios";
 import { Ref, onBeforeMount, ref } from "vue";
 import { Router } from "vue-router";
 import {
-  getPartsByData,
-  getPartsByTextSearch,
+getPartsByData,
+getPartsByTextSearch,
 } from "../plugins/dbCommands/partManager";
 import type { PartSchema } from "../plugins/interfaces";
 import AdvancedSearchComponent from "./PartAdvancedSearchComponent.vue";

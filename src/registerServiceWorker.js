@@ -2,7 +2,7 @@
 
 import { register } from "register-service-worker";
 
-if (import.meta.env.VITE_NODE_ENV === "production") {
+if (import.meta.env.VITE_NODE_ENV == "production") {
   register(`${import.meta.env.VITE_BASE_URL}/service-worker.js`, {
     ready() {
       console.log(

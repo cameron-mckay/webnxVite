@@ -12,12 +12,12 @@
         <option :value="1">1 - LA</option>
       </select>
       <img
-        class="mx-1 inline-block h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+        class="button-icon"
         @click="toggleAdvanced"
         src="../assets/sliders-solid.svg"
       />
       <img
-        class="mx-1 inline-block h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+        class="button-icon"
         @click="addUntrackedAsset"
         src="../assets/plus-solid.svg"
       />
@@ -76,9 +76,9 @@ import type { AxiosError, AxiosInstance } from "axios";
 import { Ref, onBeforeMount, ref } from "vue";
 import { Router } from "vue-router";
 import {
-  getAssetByID,
-  getAssetsByData,
-  getAssetsByTextSearch,
+getAssetByID,
+getAssetsByData,
+getAssetsByTextSearch,
 } from "../plugins/dbCommands/assetManager";
 import type { AssetSchema } from "../plugins/interfaces";
 import AdvancedSearchComponent from "./AssetAdvancedSearchComponent.vue";

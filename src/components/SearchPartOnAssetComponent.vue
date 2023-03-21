@@ -11,7 +11,7 @@
       />
       <!-- Toggle advance search button -->
       <img
-        class="inline-block h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+        class="button-icon"
         @click="toggleAdvanced"
         src="../assets/sliders-solid.svg"
       />
@@ -55,14 +55,14 @@
       <!-- Previous page button -->
       <img
         v-show="multiplePages || pageNum > 1"
-        class="inline-block h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+        class="button-icon"
         src="../assets/caret-left-solid.svg"
         v-on:click="prevPage"
       />
       <!-- Next page button -->
       <img
         v-show="multiplePages || pageNum > 1"
-        class="inline-block h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+        class="button-icon"
         src="../assets/caret-right-solid.svg"
         v-on:click="nextPage"
       />
@@ -73,9 +73,9 @@
 import type { AxiosError, AxiosInstance } from "axios";
 import { Ref, onBeforeMount, ref } from "vue";
 import {
-  getPartByID,
-  getPartsByData,
-  getPartsByTextSearch,
+getPartByID,
+getPartsByData,
+getPartsByTextSearch,
 } from "../plugins/dbCommands/partManager";
 import type { PartSchema } from "../plugins/interfaces";
 import AdvancedSearchComponent from "./PartAdvancedSearchComponent.vue";

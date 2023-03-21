@@ -21,24 +21,24 @@ const { part, quantity, isCurrentUser } = defineProps<Props>();
       <p class="break-words">{{ quantity }}</p>
       <div v-if="isCurrentUser" class="flex justify-end">
         <img
-          class="m-1 h-8 w-8 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-zinc-500 active:bg-zinc-600 md:h-10 md:w-10"
+          class="button-icon"
           src="../assets/1arrowUp.png"
           v-on:click="$emit('movePart', part, 1)"
         />
         <img
-          class="m-1 h-8 w-8 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-zinc-500 active:bg-zinc-600 md:h-10 md:w-10"
+          class="button-icon"
           src="../assets/2arrowsUp.png"
           v-on:click="$emit('movePart', part, quantity)"
         />
       </div>
       <div v-else class="flex justify-end">
         <img
-          class="m-1 h-8 w-8 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-zinc-500 active:bg-zinc-600 md:h-10 md:w-10"
+          class="button-icon"
           src="../assets/1arrowDown.png"
           v-on:click="$emit('movePart', part, 1)"
         />
         <img
-          class="m-1 h-8 w-8 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-zinc-500 active:bg-zinc-600 md:h-10 md:w-10"
+          class="button-icon"
           src="../assets/2arrowsDown.png"
           v-on:click="$emit('movePart', part, quantity)"
         />

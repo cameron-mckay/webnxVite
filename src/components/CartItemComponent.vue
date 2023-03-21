@@ -36,17 +36,17 @@ function minus() {
       <p class="break-words">{{ `${item_quantity}/${part.quantity}` }}</p>
       <div class="flex justify-end">
         <img
-          class="h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-zinc-500 active:bg-zinc-600"
+          class="button-icon"
           src="../assets/plus-solid.svg"
           v-on:click="plus"
         />
         <img
-          class="h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-zinc-500 active:bg-zinc-600"
+          class="button-icon"
           src="../assets/minus-solid.svg"
           v-on:click="minus"
         />
         <img
-          class="h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-red-500 active:bg-red-600"
+          class="button-icon"
           src="../assets/x-solid.svg"
           v-on:click="$emit('delete')"
         />

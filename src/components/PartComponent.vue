@@ -24,19 +24,19 @@ const { part } = defineProps<Props>();
       <div class="flex justify-end">
         <img
           v-if="edit === true"
-          class="m-1 h-8 w-8 rounded-md bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500 md:h-10 md:w-10"
+          class="button-icon"
           src="../assets/pencil-solid.svg"
           v-on:click="$emit('editPartAction')"
         />
         <img
           v-if="add === true"
-          class="m-1 h-8 w-8 rounded-md bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500 md:h-10 md:w-10"
+          class="button-icon"
           src="../assets/plus-solid.svg"
           v-on:click="$emit('addPartAction')"
         />
         <img
           v-if="view === true"
-          class="m-1 h-8 w-8 rounded-md bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500 md:h-10 md:w-10"
+          class="button-icon"
           src="../assets/eye-solid.svg"
           v-on:click="$emit('viewPartAction')"
         />

@@ -79,7 +79,7 @@ onMounted(async () => {
       class="w-[calc(100%-3.25rem)]"
     />
     <img
-      class="inline-blockactive:bg-red-600 m-1 h-8 w-8 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-red-500"
+      class="button-icon"
       src="../assets/x-solid.svg"
       v-on:click="closeCustom"
     />

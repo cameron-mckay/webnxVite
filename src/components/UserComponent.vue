@@ -15,7 +15,7 @@ const { user } = defineProps<Props>();
     <p>{{ user.role }}</p>
     <div class="flex justify-end">
       <img
-        class="h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+        class="button-icon"
         src="../assets/pencil-solid.svg"
         v-on:click="$emit('edit')"
       />

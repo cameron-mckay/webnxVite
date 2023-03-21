@@ -228,7 +228,7 @@ function addPartFromInventory(item: LoadedCartItem) {
         <div v-show="oldAsset.asset_type == 'Server'">
           <h1 class="inline-block text-4xl">Parts:</h1>
           <img
-            class="mx-1 inline-block h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+            class="button-icon"
             @click="togglePopup"
             src="../assets/plus-solid.svg"
           />

@@ -18,7 +18,7 @@ const { item } = defineProps<Props>();
       <p class="break-words">{{ item.quantity }}</p>
       <div class="flex justify-end">
         <img
-          class="m-1 h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+          class="button-icon"
           src="../assets/plus-solid.svg"
           v-on:click="$emit('plus')"
         />

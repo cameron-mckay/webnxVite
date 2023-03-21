@@ -19,17 +19,17 @@ const { item, hideButtons } = defineProps<Props>();
       <p class="break-words">{{ item.quantity }}</p>
       <div v-if="hideButtons != true" class="flex justify-end">
         <img
-          class="m-1 h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+          class="button-icon"
           src="../assets/plus-solid.svg"
           v-on:click="$emit('plus')"
         />
         <img
-          class="m-1 h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-green-500"
+          class="button-icon"
           src="../assets/minus-solid.svg"
           v-on:click="$emit('minus')"
         />
         <img
-          class="m-1 h-10 w-10 rounded-lg bg-zinc-400 p-2 shadow-lg transition hover:bg-red-500 active:bg-red-600"
+          class="button-icon"
           src="../assets/x-solid.svg"
           v-on:click="$emit('delete')"
         />
