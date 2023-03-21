@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js');
 import { register } from "register-service-worker";
 
 if (import.meta.env.VITE_NODE_ENV == "production") {
