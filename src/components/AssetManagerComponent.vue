@@ -280,9 +280,9 @@ function addPartFromInventory(item: LoadedCartItem) {
         </FullScreenPopupComponent>
         <div
           v-if="(parts!.length > 0)"
-          class="relative grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:leading-10"
+          class="relative grid grid-cols-4 md:grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:leading-10"
         >
-          <p>NXID</p>
+          <p class="md:block hidden">NXID</p>
           <p>Manufacturer</p>
           <p>Name</p>
           <p>Quantity</p>

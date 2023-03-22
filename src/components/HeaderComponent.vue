@@ -4,6 +4,7 @@
       class="header-color fixed top-0 z-20 flex w-full justify-between shadow-md"
     >
       <div class="flex justify-center">
+        <!-- Hamburger nav -->
         <svg
           class="header-button-colors h-10 w-10 p-1 md:hidden"
           v-on:click="toggle"
@@ -16,6 +17,7 @@
             d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"
           />
         </svg>
+        <!-- 3 dots nav -->
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"
@@ -29,7 +31,9 @@
             d="M0 256a56 56 0 1 1 112 0A56 56 0 1 1 0 256zm160 0a56 56 0 1 1 112 0 56 56 0 1 1 -112 0zm216-56a56 56 0 1 1 0 112 56 56 0 1 1 0-112z"
           />
         </svg>
+        <!-- Header logo -->
         <img class="h-10 p-2" alt="WebNX Logo" src="../assets/logo.png" />
+        <!-- Desktop nav -->
         <div class="hidden justify-center md:flex">
           <RouterLink
             class="transiton header-button-colors w-20 text-center leading-10"
@@ -106,6 +110,11 @@
         <a class="leading-10" v-on:click="logout" href="#">Logout</a>
       </div>
     </div>
+    <!-- User drop down -->
+    <div>
+
+    </div>
+    <!-- Mobile nav menu -->
     <div
       v-if="showMenu"
       v-on:click="toggle"

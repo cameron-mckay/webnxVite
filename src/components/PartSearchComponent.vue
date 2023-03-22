@@ -7,9 +7,21 @@
         v-model="searchText"
         placeholder="🔍 keywords..."
       />
-      <select v-if="changeBuilding === true" v-model="building" class="w-32">
+      <select
+        v-if="changeBuilding === true"
+        v-model="building"
+        class="search w-fit hidden md:block"
+      >
         <option :value="3" selected>3 - Ogden</option>
         <option :value="1">1 - LA</option>
+      </select>
+      <select
+        v-if="changeBuilding === true"
+        v-model="building"
+        class="search w-fit block md:hidden"
+      >
+        <option :value="3" selected>3</option>
+        <option :value="1">1</option>
       </select>
       <!-- Sliders -->
       <svg
@@ -95,8 +107,8 @@ import type { AxiosError, AxiosInstance } from "axios";
 import { Ref, onBeforeMount, ref } from "vue";
 import { Router } from "vue-router";
 import {
-  getPartsByData,
-  getPartsByTextSearch,
+getPartsByData,
+getPartsByTextSearch,
 } from "../plugins/dbCommands/partManager";
 import type { PartSchema } from "../plugins/interfaces";
 import AdvancedSearchComponent from "./PartAdvancedSearchComponent.vue";

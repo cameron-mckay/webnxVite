@@ -8,15 +8,15 @@ import AddInventoryComponent from "../../components/AddInventoryComponent.vue";
 import EditPartComponent from "../../components/EditPartComponent.vue";
 import SearchComponent from "../../components/PartSearchComponent.vue";
 import {
-  createNewPartRecords,
-  updatePart,
+createNewPartRecords,
+updatePart,
 } from "../../plugins/dbCommands/partManager";
 import { getAllUsers } from "../../plugins/dbCommands/userManager";
 import type {
-  CartItem,
-  PartSchema,
-  User,
-  UserState,
+CartItem,
+PartSchema,
+User,
+UserState,
 } from "../../plugins/interfaces";
 
 interface Props {
