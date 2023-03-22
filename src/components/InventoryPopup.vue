@@ -6,7 +6,7 @@
     <div v-if="inventory.length != 0">
       <!-- Headers -->
       <div
-        class="relative grid grid-cols-4 p-2 text-center font-bold leading-10 transition"
+        class="relative grid grid-cols-4 p-1 md:p-2 text-center font-bold leading-8 md:leading-10 transition"
       >
         <p>NXID</p>
         <p>Manufacturer</p>

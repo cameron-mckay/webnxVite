@@ -12,14 +12,14 @@ const { part, quantity, isCurrentUser } = defineProps<Props>();
 <template>
   <div class="group relative my-1">
     <div
-      class="group-hover:bab-hover background-and-border grid grid-cols-4 p-2 text-center leading-10 md:grid-cols-6"
+      class="group-hover:bab-hover background-and-border grid grid-cols-4 p-1 md:p-2 text-center leading-8 md:leading-10 md:grid-cols-6"
     >
       <p class="hidden md:block">{{ part.nxid }}</p>
       <p class="break-words">{{ part.manufacturer }}</p>
       <p class="break-words">{{ part.name }}</p>
       <p class="hidden break-words md:block">{{ part.shelf_location }}</p>
       <p class="break-words">{{ quantity }}</p>
-      <div v-if="isCurrentUser" class="flex justify-end">
+      <div v-if="isCurrentUser" class="flex justify-end my-auto">
         <img
           class="button-icon"
           src="../assets/1arrowUp.png"

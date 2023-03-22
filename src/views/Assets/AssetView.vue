@@ -60,15 +60,18 @@ function edit() {
 <template>
   <div class="body">
     <div
-      class="relative grid md:grid-cols-4 grid-cols-2 rounded-lg p-2 group-hover:rounded-bl-none group-hover:bg-zinc-400"
+      class="relative grid md:grid-cols-4 grid-cols-2 rounded-lg p-1 md:p-2 group-hover:rounded-bl-none group-hover:bg-zinc-400"
     >
       <div class="md:col-span-4 col-span-2 flex">
-        <h1 class="mb-4 text-4xl">{{ asset.asset_tag + ":" }}</h1>
-        <img
-          class="button-icon ml-4"
-          src="../../assets/pencil-solid.svg"
+        <h1 class="mb-4 text-4xl leading-8 md:leading-10">{{ asset.asset_tag + ":" }}</h1>
+        <!-- Pencil -->
+        <svg 
           v-on:click="edit"
-        />
+          class="button-icon"
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 512 512">
+          <path fill="currentColor" stroke="currentColor" d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"/>
+        </svg>
       </div>
       <div class="detail-row">  
         <p>Building:</p>
@@ -125,7 +128,7 @@ function edit() {
       <h1 class="col-span-2 mb-4 text-4xl">Parts</h1>
       <div
         v-if="(parts!.length > 0)"
-        class="relative grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-10 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg"
+        class="relative grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 md:leading-10 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg"
       >
         <p>NXID</p>
         <p>Manufacturer</p>

@@ -3,14 +3,14 @@ import { Ref, onMounted, ref, watch } from "vue";
 import InventoryPartComponent from "../../components/InventoryPartComponent.vue";
 import { movePart } from "../../plugins/dbCommands/partManager";
 import {
-  getAllUsers,
-  getUserInventoryByID,
+getAllUsers,
+getUserInventoryByID,
 } from "../../plugins/dbCommands/userManager";
 import {
-  LoadedCartItem,
-  PartRecord,
-  PartSchema,
-  User,
+LoadedCartItem,
+PartRecord,
+PartSchema,
+User,
 } from "../../plugins/interfaces";
 
 import type { AxiosError, AxiosInstance } from "axios";
@@ -201,7 +201,7 @@ watch(currentUser, () => {
         </div>
         <div v-if="items.length > 0">
           <div
-            class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-10 transition md:grid-cols-6"
+            class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 md:leading-10 transition md:grid-cols-6"
           >
             <p class="hidden md:block">NXID</p>
             <p>Manufacturer</p>
@@ -261,7 +261,7 @@ watch(currentUser, () => {
             </div>
           </div>
           <div
-            class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-10 transition md:grid-cols-6"
+            class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 md:leading-10 transition md:grid-cols-6"
           >
             <p class="hidden md:block">NXID</p>
             <p>Manufacturer</p>

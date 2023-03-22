@@ -67,6 +67,7 @@ onMounted(() => {
     >
       <label>NXID: </label>
       <input
+        class="textbox m-1"
         :required="strict"
         v-model="part.nxid"
         type="text"
@@ -74,6 +75,7 @@ onMounted(() => {
       />
       <label>Manufacturer: </label>
       <input
+        class="textbox m-1"
         :required="strict"
         v-model="part.manufacturer"
         type="text"
@@ -81,6 +83,7 @@ onMounted(() => {
       />
       <label>Part Name: </label>
       <input
+        class="textbox m-1"
         :required="strict"
         v-model="part.name"
         type="text"
@@ -90,6 +93,7 @@ onMounted(() => {
         >Quantity:
       </label>
       <input
+        class="textbox m-1"
         :required="strict"
         v-if="strict && JSON.stringify(oldPart) == JSON.stringify({})"
         v-model="part.quantity"
@@ -99,6 +103,7 @@ onMounted(() => {
       />
       <label>Shelf Location: </label>
       <input
+        class="textbox m-1"
         :required="strict"
         v-model="part.shelf_location"
         type="text"
@@ -106,6 +111,7 @@ onMounted(() => {
       />
       <label>Part Type: </label>
       <CustomDropdownCompononent
+        class="textbox m-1"
         :required="strict"
         :defaultValue="part.type"
         :options="[
@@ -131,7 +137,7 @@ onMounted(() => {
       >
         <label class="col-span-1">Chipset: </label>
         <input
-          class="col-span-1"
+          class="col-span-1 textbox m-1"
           :required="strict"
           v-model="part.chipset"
           type="text"
@@ -142,6 +148,7 @@ onMounted(() => {
       <div v-if="part.type == 'CPU'" class="col-span-2 grid grid-cols-2">
         <label>Chipset: </label>
         <input
+          class="textbox m-1"
           :required="strict"
           v-model="part.chipset"
           type="text"
@@ -149,6 +156,7 @@ onMounted(() => {
         />
         <label>Frequency(GHz): </label>
         <input
+          class="textbox m-1"
           :required="strict"
           v-model="part.frequency"
           type="number"
@@ -160,6 +168,7 @@ onMounted(() => {
       <div v-if="part.type == 'Memory'" class="col-span-2 grid grid-cols-2">
         <label>Frequency(MHz): </label>
         <input
+          class="textbox m-1"
           :required="strict"
           v-model="part.frequency"
           type="number"
@@ -169,6 +178,7 @@ onMounted(() => {
         />
         <label>Capacity(GB): </label>
         <input
+          class="textbox m-1"
           :required="strict"
           v-model="part.capacity"
           type="number"
@@ -177,7 +187,7 @@ onMounted(() => {
           placeholder="Capacity"
         />
         <label>Type: </label>
-        <select v-model="part.memory_type">
+        <select v-model="part.memory_type" class="textbox m-1">
           <option disabled value="">Memory type</option>
           <option>UDIMM</option>
           <option>ECC</option>
@@ -190,6 +200,7 @@ onMounted(() => {
       >
         <label>Card type: </label>
         <CustomDropdownCompononent
+          class="textbox m-1"
           :required="strict"
           :options="['RAID', 'JBOD', 'NIC', 'Adapter']"
           @updateValue="
@@ -201,6 +212,7 @@ onMounted(() => {
         />
         <label>Port Type: </label>
         <CustomDropdownCompononent
+          class="textbox m-1"
           v-if="part.port_type == 'NIC'"
           :required="strict"
           :options="['SFP', 'RJ45']"
@@ -212,6 +224,7 @@ onMounted(() => {
           :defaultValue="part.port_type"
         />
         <CustomDropdownCompononent
+          class="textbox m-1"
           v-else
           :required="strict"
           :options="['SAS', 'Mini SAS HD']"
@@ -225,7 +238,7 @@ onMounted(() => {
       </div>
       <div v-if="part.type == 'Storage'" class="col-span-2 grid grid-cols-2">
         <label>Storage interface: </label>
-        <select :required="strict" v-model="part.storage_interface">
+        <select :required="strict" v-model="part.storage_interface" class="textbox m-1">
           <option disabled value="">Pick one</option>
           <option>SATA</option>
           <option>SAS</option>
@@ -234,6 +247,7 @@ onMounted(() => {
         <label>Capacity: </label>
         <div class="flex justify-between">
           <input
+            class="textbox m-1"
             :required="strict"
             v-model="part.capacity"
             step="any"
@@ -241,6 +255,7 @@ onMounted(() => {
             type="number"
           />
           <CustomDropdownCompononent
+            class="textbox m-1"
             :required="strict"
             :options="['GB', 'TB']"
             @updateValue="
@@ -257,6 +272,7 @@ onMounted(() => {
         >
           <label>Connector Type: </label>
           <CustomDropdownCompononent
+            class="textbox m-1"
             :required="strict"
             :options="['SAS', 'M.2']"
             @updateValue="
@@ -273,13 +289,14 @@ onMounted(() => {
       </div>
       <div v-if="part.type == 'Cable'" class="col-span-2 grid grid-cols-2">
         <label>Cable end 1: </label>
-        <input :required="strict" v-model="part.cable_end1" type="text" />
+        <input class="textbox m-1" :required="strict" v-model="part.cable_end1" type="text" />
         <label>Cable end 2: </label>
-        <input :required="strict" v-model="part.cable_end2" type="text" />
+        <input class="textbox m-1" :required="strict" v-model="part.cable_end2" type="text" />
       </div>
       <div v-if="part.type == 'Backplane'" class="col-span-2 grid grid-cols-2">
         <label>Storage interface: </label>
         <CustomDropdownCompononent
+          class="textbox m-1"
           :required="strict"
           :options="['SAS', 'NVME']"
           @updateValue="
@@ -291,6 +308,7 @@ onMounted(() => {
         />
         <label>Ports: </label>
         <CustomDropdownCompononent
+          class="textbox m-1"
           :required="strict"
           :options="['SAS', 'Mini SAS HD']"
           @updateValue="

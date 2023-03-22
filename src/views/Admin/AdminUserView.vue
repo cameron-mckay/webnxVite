@@ -63,7 +63,7 @@ onMounted(() => {
   <div>
     <h1 class="mb-4 text-4xl">User Manager</h1>
     <div
-      class="relative grid grid-cols-5 p-2 text-center text-sm font-bold leading-10 transition"
+      class="relative grid grid-cols-5 p-2 text-center text-sm font-bold leading-8 md:leading-10 transition"
     >
       <p>Email</p>
       <p>First Name</p>

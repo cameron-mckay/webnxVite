@@ -10,18 +10,22 @@ const { item } = defineProps<Props>();
 <template>
   <div class="group relative my-1">
     <div
-      class="group-hover:bab-hover background-and-border grid grid-cols-5 p-2 text-center leading-10"
+      class="group-hover:bab-hover background-and-border grid grid-cols-5 p-1 md:p-2 text-center leading-8 md:leading-10"
     >
       <p class="break-words">{{ item.part.nxid }}</p>
       <p class="break-words">{{ item.part.manufacturer }}</p>
       <p class="break-words">{{ item.part.name }}</p>
       <p class="break-words">{{ item.quantity }}</p>
       <div class="flex justify-end">
-        <img
+        <!-- Plus -->
+        <svg 
           class="button-icon"
-          src="../assets/plus-solid.svg"
           v-on:click="$emit('plus')"
-        />
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 448 512"
+          >
+          <path fill="currentColor" stroke="currentColor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/>
+        </svg>
       </div>
     </div>
     <div class="group-hover:bab-drop-hover bab-drop">

@@ -11,28 +11,40 @@ const { item, hideButtons } = defineProps<Props>();
 <template>
   <div class="group relative my-1">
     <div
-      class="group-hover:bab-hover background-and-border grid grid-cols-5 p-2 text-center leading-10"
+      class="group-hover:bab-hover background-and-border grid grid-cols-5 p-1 md:p-2 text-center leading-8 md:leading-10"
     >
       <p>{{ item.part.nxid }}</p>
       <p class="break-words">{{ item.part.manufacturer }}</p>
       <p class="break-words">{{ item.part.name }}</p>
       <p class="break-words">{{ item.quantity }}</p>
-      <div v-if="hideButtons != true" class="flex justify-end">
-        <img
+      <div v-if="hideButtons != true" class="flex justify-end my-auto">
+        <!-- Plus -->
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          viewBox="0 0 448 512"
           class="button-icon"
-          src="../assets/plus-solid.svg"
           v-on:click="$emit('plus')"
-        />
-        <img
+          >
+          <path stroke="currentColor" fill="currentColor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/>
+        </svg>
+        <!-- Minus -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 448 512"
           class="button-icon"
-          src="../assets/minus-solid.svg"
           v-on:click="$emit('minus')"
-        />
-        <img
+        >
+          <path  stroke="currentColor" fill="currentColor" d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"/>
+        </svg>
+        <!-- X icon -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 384 512"
           class="button-icon"
-          src="../assets/x-solid.svg"
           v-on:click="$emit('delete')"
-        />
+        >
+          <path  fill="currentColor" stroke="currentColor" d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/>
+        </svg>
       </div>
     </div>
     <div class="group-hover:bab-drop-hover bab-drop">

@@ -173,7 +173,7 @@ function viewHistory(id: string) {
     <!-- PART RECORDS GO HERE -->
     <div
       v-if="partRecords.length > 0"
-      class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-10 transition md:grid-cols-6"
+      class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 md:leading-10 transition md:grid-cols-6"
     >
       <p>Building</p>
       <p>Location</p>
