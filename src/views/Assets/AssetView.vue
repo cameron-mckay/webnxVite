@@ -5,13 +5,13 @@ import type { Router } from "vue-router";
 import type { Store } from "vuex";
 import AssetCartItemComponent from "../../components/AssetCartItemComponent.vue";
 import {
-getAssetByID,
-getPartsOnAsset,
+  getAssetByID,
+  getPartsOnAsset,
 } from "../../plugins/dbCommands/assetManager";
 import type {
-AssetSchema,
-LoadedCartItem,
-UserState,
+  AssetSchema,
+  LoadedCartItem,
+  UserState,
 } from "../../plugins/interfaces";
 
 interface Props {
@@ -135,7 +135,7 @@ function edit() {
       <h1 class="col-span-2 mb-4 text-4xl">Parts</h1>
       <div
         v-if="(parts!.length > 0)"
-        class="relative grid grid-cols-4 md:grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:leading-10"
+        class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-5 md:leading-10"
       >
         <p class="hidden md:block">NXID</p>
         <p>Manufacturer</p>

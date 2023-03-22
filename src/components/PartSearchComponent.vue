@@ -2,7 +2,7 @@
   <div>
     <form class="flex justify-between" @submit.prevent="search">
       <input
-        class="search"
+        class="search ml-0"
         type="text"
         v-model="searchText"
         placeholder="🔍 keywords..."
@@ -10,7 +10,7 @@
       <select
         v-if="changeBuilding === true"
         v-model="building"
-        class="search w-fit hidden md:block"
+        class="search hidden w-fit md:block"
       >
         <option :value="3" selected>3 - Ogden</option>
         <option :value="1">1 - LA</option>
@@ -18,7 +18,7 @@
       <select
         v-if="changeBuilding === true"
         v-model="building"
-        class="search w-fit block md:hidden"
+        class="search block w-fit md:hidden"
       >
         <option :value="3" selected>3</option>
         <option :value="1">1</option>
@@ -36,7 +36,7 @@
           d="M0 416c0-17.7 14.3-32 32-32l54.7 0c12.3-28.3 40.5-48 73.3-48s61 19.7 73.3 48L480 384c17.7 0 32 14.3 32 32s-14.3 32-32 32l-246.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 448c-17.7 0-32-14.3-32-32zm192 0c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32zM384 256c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32zm-32-80c32.8 0 61 19.7 73.3 48l54.7 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-54.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l246.7 0c12.3-28.3 40.5-48 73.3-48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32s-14.3-32-32-32zm73.3 0L480 64c17.7 0 32 14.3 32 32s-14.3 32-32 32l-214.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 128C14.3 128 0 113.7 0 96S14.3 64 32 64l86.7 0C131 35.7 159.2 16 192 16s61 19.7 73.3 48z"
         />
       </svg>
-      <input class="search-button" type="submit" value="Search" />
+      <input class="search-button mr-0" type="submit" value="Search" />
       <AdvancedSearchComponent
         :http="http"
         v-show="showAdvanced"
@@ -107,8 +107,8 @@ import type { AxiosError, AxiosInstance } from "axios";
 import { Ref, onBeforeMount, ref } from "vue";
 import { Router } from "vue-router";
 import {
-getPartsByData,
-getPartsByTextSearch,
+  getPartsByData,
+  getPartsByTextSearch,
 } from "../plugins/dbCommands/partManager";
 import type { PartSchema } from "../plugins/interfaces";
 import AdvancedSearchComponent from "./PartAdvancedSearchComponent.vue";

@@ -2,7 +2,7 @@
   <div>
     <form class="flex justify-between" @submit.prevent="search">
       <input
-        class="search"
+        class="search ml-0"
         type="text"
         v-model="searchText"
         placeholder="🔍 keywords..."
@@ -38,7 +38,7 @@
         />
       </svg>
 
-      <input class="search-button" type="submit" value="Search" />
+      <input class="search-button mr-0" type="submit" value="Search" />
       <AdvancedSearchComponent
         v-if="showAdvanced"
         @assetSearch="advancedSearch"

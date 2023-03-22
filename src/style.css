@@ -78,7 +78,7 @@
     @apply border-collapse border-y border-green-700 bg-green-400 p-4 px-10 text-center leading-10 text-black shadow-xl transition-colors hover:bg-green-500 active:bg-green-600;
   }
   .hideViewOnMobile {
-    @apply hidden md:block
+    @apply hidden md:block;
   }
 }
 

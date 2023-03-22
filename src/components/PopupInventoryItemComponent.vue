@@ -10,9 +10,9 @@ const { item } = defineProps<Props>();
 <template>
   <div class="group relative my-1">
     <div
-      class="group-hover:bab-hover background-and-border grid grid-cols-4 md:grid-cols-5 p-1 text-center leading-8 md:p-2 md:leading-10"
+      class="group-hover:bab-hover background-and-border grid grid-cols-4 p-1 text-center leading-8 md:grid-cols-5 md:p-2 md:leading-10"
     >
-      <p class="break-words md:block hidden">{{ item.part.nxid }}</p>
+      <p class="hidden break-words md:block">{{ item.part.nxid }}</p>
       <p class="break-words">{{ item.part.manufacturer }}</p>
       <p class="break-words">{{ item.part.name }}</p>
       <p class="break-words">{{ item.quantity }}</p>

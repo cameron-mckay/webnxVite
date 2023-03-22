@@ -130,7 +130,9 @@ async function errorHandler(err: AxiosError | string) {
     if (messageRef.quantity < 2) {
       // Delete message
       let i = errorMessages.value.indexOf(messageRef);
-      errorMessages.value.splice(i, 1);
+      if (i > -1) {
+        errorMessages.value.splice(i, 1);
+      }
     }
     // If not last message
     else {
@@ -173,7 +175,9 @@ async function displayMessage(message: string) {
     // If last message - delete
     if (messageRef.quantity < 2) {
       let i = messages.value.indexOf(messageRef);
-      messages.value.splice(i, 1);
+      if (i > -1) {
+        messages.value.splice(i, 1);
+      }
     }
     // If not last message
     else {
