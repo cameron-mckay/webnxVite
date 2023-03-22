@@ -8,15 +8,15 @@ import type { Store } from "vuex";
 import InventoryPartComponent from "../../components/InventoryPartComponent.vue";
 import { checkin } from "../../plugins/dbCommands/partManager";
 import {
-getAllUsers,
-getUserInventoryByID,
+  getAllUsers,
+  getUserInventoryByID,
 } from "../../plugins/dbCommands/userManager";
 import type {
-CartItem,
-LoadedCartItem,
-PartSchema,
-User,
-UserState,
+  CartItem,
+  LoadedCartItem,
+  PartSchema,
+  User,
+  UserState,
 } from "../../plugins/interfaces";
 
 interface Props {
@@ -152,7 +152,7 @@ watch(currentUser, () => {
       <div v-if="inventory.length > 0">
         <h1 class="mb-4 text-4xl">Your Inventory:</h1>
         <div
-          class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 md:leading-10 transition md:grid-cols-6"
+          class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
         >
           <p class="hidden md:block">NXID</p>
           <p>Manufacturer</p>
@@ -178,7 +178,7 @@ watch(currentUser, () => {
       <div v-if="checkInList.length > 0">
         <h1 class="mb-4 text-4xl">Checking In:</h1>
         <div
-          class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 md:leading-10 transition md:grid-cols-6"
+          class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
         >
           <p class="hidden md:block">NXID</p>
           <p>Manufacturer</p>

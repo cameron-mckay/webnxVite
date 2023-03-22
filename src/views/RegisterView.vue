@@ -1,9 +1,12 @@
 <template>
-  <div class="card max-w-sm" v-on:keyup.enter="register">
+  <div
+    class="card mx-auto max-w-sm shadow-xl md:max-w-sm"
+    v-on:keyup.enter="register"
+  >
     <img class="mx-auto mb-4" alt="WebNX logo" src="../assets/logo.png" />
     <form class="text-center" @submit.prevent="register">
       <input
-        class="textbox"
+        class="textbox my-1"
         type="first_name"
         id="first_name"
         v-model="form.first_name"
@@ -11,34 +14,34 @@
         required
       />
       <input
-        class="textbox"
+        class="textbox my-1"
         type="last_name"
         v-model="form.last_name"
         placeholder="Last name"
         required
       />
       <input
-        class="textbox"
+        class="textbox my-1"
         type="email"
         v-model="form.email"
         placeholder="Email"
         required
       />
       <input
-        class="textbox"
+        class="textbox my-1"
         type="password"
         v-model="form.password"
         placeholder="Password"
         required
       />
       <input
-        class="textbox"
+        class="textbox my-1"
         type="password"
         v-model="form.password2"
         placeholder="Confirm password"
         required
       />
-      <input class="submit" type="submit" value="Register" />
+      <input class="submit w-full" type="submit" value="Register" />
     </form>
   </div>
 </template>

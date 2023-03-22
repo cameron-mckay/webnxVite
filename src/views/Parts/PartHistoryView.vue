@@ -5,15 +5,15 @@ import { Router } from "vue-router";
 import type { Store } from "vuex";
 import PartRecordComponent from "../../components/PartRecordComponent.vue";
 import {
-getPartByID,
-getPartHistoryByID,
+  getPartByID,
+  getPartHistoryByID,
 } from "../../plugins/dbCommands/partManager";
 import { getUserByID } from "../../plugins/dbCommands/userManager";
 import type {
-PartRecord,
-PartSchema,
-User,
-UserState,
+  PartRecord,
+  PartSchema,
+  User,
+  UserState,
 } from "../../plugins/interfaces";
 
 interface Props {
@@ -98,10 +98,7 @@ function viewHistory(id: string) {
       <p class="detail-data">{{ part.total_quantity }}</p>
       <p class="detail-label">Type:</p>
       <p class="detail-data">{{ part.type }}</p>
-      <div
-        class="detail-row"
-        v-if="part.type == 'Motherboard'"
-      >
+      <div class="detail-row" v-if="part.type == 'Motherboard'">
         <p>Chipset:</p>
         <p>{{ part.chipset }}</p>
       </div>
@@ -119,10 +116,7 @@ function viewHistory(id: string) {
         <p>Memory Type:</p>
         <p>{{ part.memory_type }}</p>
       </div>
-      <div
-        v-if="part.type == 'Peripheral Card'"
-        class="detail-row"
-      >
+      <div v-if="part.type == 'Peripheral Card'" class="detail-row">
         <p>Card Type:</p>
         <p>{{ part.peripheral_type }}</p>
         <p>Port Type:</p>
@@ -135,10 +129,7 @@ function viewHistory(id: string) {
         <p>
           {{ `${part.capacity}${part.capacity_unit}` }}
         </p>
-        <div
-          v-if="part.storage_interface == 'NVME'"
-          class="detail-row"
-        >
+        <div v-if="part.storage_interface == 'NVME'" class="detail-row">
           <p>Connector:</p>
           <p>{{ part.port_type }}</p>
         </div>
@@ -165,7 +156,7 @@ function viewHistory(id: string) {
     <!-- PART RECORDS GO HERE -->
     <div
       v-if="partRecords.length > 0"
-      class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 md:leading-10 transition md:grid-cols-6"
+      class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
     >
       <p>Building</p>
       <p>Location</p>

@@ -3,14 +3,14 @@ import { Ref, onMounted, ref, watch } from "vue";
 import InventoryPartComponent from "../../components/InventoryPartComponent.vue";
 import { movePart } from "../../plugins/dbCommands/partManager";
 import {
-getAllUsers,
-getUserInventoryByID,
+  getAllUsers,
+  getUserInventoryByID,
 } from "../../plugins/dbCommands/userManager";
 import {
-LoadedCartItem,
-PartRecord,
-PartSchema,
-User,
+  LoadedCartItem,
+  PartRecord,
+  PartSchema,
+  User,
 } from "../../plugins/interfaces";
 
 import type { AxiosError, AxiosInstance } from "axios";
@@ -177,19 +177,19 @@ watch(currentUser, () => {
   <div>
     <form @submit.prevent="submit">
       <div>
-        <div class="flex justify-between">
+        <div class="flex flex-wrap justify-between">
           <h1
-            class="mb-4 inline-block text-4xl"
+            class="mb-4 inline-block w-full text-4xl md:w-fit"
             v-if="currentUser._id != 'all'"
           >
             {{ currentUser.first_name }}'s Inventory
           </h1>
-          <h1 class="mb-4 inline-block text-4xl" v-else>
+          <h1 class="mb-4 inline-block w-full text-4xl md:w-fit" v-else>
             All Tech's Inventory
           </h1>
           <div class="flex">
-            <p class="mr-2 leading-[4]">User:</p>
-            <select required v-model="currentUser" class="w-60">
+            <p class="mr-2 mt-auto">User:</p>
+            <select required v-model="currentUser" class="mt-auto">
               <option disabled :value="{}"></option>
               <option :value="store.state.user" selected>Your Inventory</option>
               <option :value="{ _id: 'all' }">All Tech's</option>
@@ -201,7 +201,7 @@ watch(currentUser, () => {
         </div>
         <div v-if="items.length > 0">
           <div
-            class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 md:leading-10 transition md:grid-cols-6"
+            class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
           >
             <p class="hidden md:block">NXID</p>
             <p>Manufacturer</p>
@@ -225,11 +225,13 @@ watch(currentUser, () => {
           <p>Inventory is empty...</p>
         </div>
         <div v-if="transferList.length > 0">
-          <div class="flex justify-between">
-            <h1 class="my-4 inline-block text-4xl">Transfer List</h1>
+          <div class="flex flex-wrap justify-between">
+            <h1 class="my-4 inline-block w-full text-4xl md:w-fit">
+              Transfer List
+            </h1>
             <div class="flex">
-              <p class="mr-2 leading-[4]">To:</p>
-              <select required v-model="transferUser" class="w-60">
+              <p class="mr-2 mt-auto">To:</p>
+              <select required v-model="transferUser" class="mt-auto">
                 <option
                   v-if="currentUser._id != store.state.user._id"
                   :value="store.state.user"
@@ -261,7 +263,7 @@ watch(currentUser, () => {
             </div>
           </div>
           <div
-            class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 md:leading-10 transition md:grid-cols-6"
+            class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
           >
             <p class="hidden md:block">NXID</p>
             <p>Manufacturer</p>

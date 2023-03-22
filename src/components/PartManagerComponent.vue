@@ -2,7 +2,7 @@
 // Get http and store from props
 import { Ref, onMounted, ref, watch } from "vue";
 import type { PartSchema } from "../plugins/interfaces";
-import CustomDropdownCompononent from "./CustomDropdownComponent.vue";
+import CustomDropdownComponent from "./CustomDropdownComponent.vue";
 
 // Props interface
 interface Props {
@@ -110,8 +110,7 @@ onMounted(() => {
         placeholder="Shelf Location"
       />
       <label>Part Type: </label>
-      <CustomDropdownCompononent
-        class="textbox m-1"
+      <CustomDropdownComponent
         :required="strict"
         :defaultValue="part.type"
         :options="[
@@ -137,7 +136,7 @@ onMounted(() => {
       >
         <label class="col-span-1">Chipset: </label>
         <input
-          class="col-span-1 textbox m-1"
+          class="textbox col-span-1 m-1"
           :required="strict"
           v-model="part.chipset"
           type="text"
@@ -199,37 +198,34 @@ onMounted(() => {
         class="col-span-2 grid grid-cols-2"
       >
         <label>Card type: </label>
-        <CustomDropdownCompononent
-          class="textbox m-1"
+        <CustomDropdownComponent
           :required="strict"
           :options="['RAID', 'JBOD', 'NIC', 'Adapter']"
           @updateValue="
-            (value) => {
+            (value: string) => {
               part.peripheral_type = value;
             }
           "
           :defaultValue="part.peripheral_type"
         />
         <label>Port Type: </label>
-        <CustomDropdownCompononent
-          class="textbox m-1"
+        <CustomDropdownComponent
           v-if="part.port_type == 'NIC'"
           :required="strict"
           :options="['SFP', 'RJ45']"
           @updateValue="
-            (value) => {
+            (value: string) => {
               part.port_type = value;
             }
           "
           :defaultValue="part.port_type"
         />
-        <CustomDropdownCompononent
-          class="textbox m-1"
+        <CustomDropdownComponent
           v-else
           :required="strict"
           :options="['SAS', 'Mini SAS HD']"
           @updateValue="
-            (value) => {
+            (value: string) => {
               part.port_type = value;
             }
           "
@@ -238,7 +234,11 @@ onMounted(() => {
       </div>
       <div v-if="part.type == 'Storage'" class="col-span-2 grid grid-cols-2">
         <label>Storage interface: </label>
-        <select :required="strict" v-model="part.storage_interface" class="textbox m-1">
+        <select
+          :required="strict"
+          v-model="part.storage_interface"
+          class="textbox m-1"
+        >
           <option disabled value="">Pick one</option>
           <option>SATA</option>
           <option>SAS</option>
@@ -254,8 +254,7 @@ onMounted(() => {
             min="0"
             type="number"
           />
-          <CustomDropdownCompononent
-            class="textbox m-1"
+          <CustomDropdownComponent
             :required="strict"
             :options="['GB', 'TB']"
             @updateValue="
@@ -271,12 +270,11 @@ onMounted(() => {
           class="col-span-2 grid grid-cols-2"
         >
           <label>Connector Type: </label>
-          <CustomDropdownCompononent
-            class="textbox m-1"
+          <CustomDropdownComponent
             :required="strict"
             :options="['SAS', 'M.2']"
             @updateValue="
-              (value) => {
+              (value: string) => {
                 part.port_type = value;
               }
             "
@@ -289,30 +287,38 @@ onMounted(() => {
       </div>
       <div v-if="part.type == 'Cable'" class="col-span-2 grid grid-cols-2">
         <label>Cable end 1: </label>
-        <input class="textbox m-1" :required="strict" v-model="part.cable_end1" type="text" />
+        <input
+          class="textbox m-1"
+          :required="strict"
+          v-model="part.cable_end1"
+          type="text"
+        />
         <label>Cable end 2: </label>
-        <input class="textbox m-1" :required="strict" v-model="part.cable_end2" type="text" />
+        <input
+          class="textbox m-1"
+          :required="strict"
+          v-model="part.cable_end2"
+          type="text"
+        />
       </div>
       <div v-if="part.type == 'Backplane'" class="col-span-2 grid grid-cols-2">
         <label>Storage interface: </label>
-        <CustomDropdownCompononent
-          class="textbox m-1"
+        <CustomDropdownComponent
           :required="strict"
           :options="['SAS', 'NVME']"
           @updateValue="
-            (value) => {
+            (value: string) => {
               part.storage_interface = value;
             }
           "
           :defaultValue="part.storage_interface"
         />
         <label>Ports: </label>
-        <CustomDropdownCompononent
-          class="textbox m-1"
+        <CustomDropdownComponent
           :required="strict"
           :options="['SAS', 'Mini SAS HD']"
           @updateValue="
-            (value) => {
+            (value: string) => {
               part.port_type = value;
             }
           "

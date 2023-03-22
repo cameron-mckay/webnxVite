@@ -6,83 +6,82 @@
 @layer components {
   /* Used in register and login */
   .card {
-    @apply transition-colors bg-gray-200 background-and-border mx-auto mt-10 rounded-lg p-10 shadow-lg dark:bg-zinc-900;
+    @apply background-and-border mx-auto mt-10 rounded-lg bg-gray-200 p-10 shadow-lg transition-colors dark:bg-zinc-900;
   }
   .background-color {
-    @apply transition-colors bg-gray-200 dark:bg-zinc-800;
+    @apply bg-gray-200 transition-colors dark:bg-zinc-800;
   }
   .hover-color {
-    @apply transition-colors bg-gray-200 dark:bg-zinc-700;
+    @apply bg-gray-200 transition-colors dark:bg-zinc-700;
   }
   .active-color {
-    @apply transition-colors bg-gray-500 dark:bg-zinc-600;
+    @apply bg-gray-500 transition-colors dark:bg-zinc-600;
   }
   .nx-border-color {
-    @apply transition-colors border-gray-500 dark:border-zinc-500;
+    @apply border-gray-500 transition-colors dark:border-zinc-500;
   }
   /* Used in register and login */
   .textbox {
-    @apply transition-colors mx-1 rounded-lg bg-gray-300 p-1 shadow-sm dark:bg-gray-100 dark:text-black w-full h-6 md:h-8;
+    @apply nx-border-color mx-1 h-6 w-full rounded-md border bg-gray-300 p-1 shadow-sm transition-colors dark:bg-gray-100 dark:text-black md:h-8;
   }
   .search {
     @apply textbox h-8 md:h-10;
   }
   .header-button-colors {
-    @apply transition-colors hover:hover-color active:active-color text-black dark:text-white;
+    @apply hover:hover-color active:active-color text-black transition-colors dark:text-white;
   }
   .header-color {
-    @apply transition-colors bg-gray-300 dark:bg-zinc-900;
+    @apply bg-gray-300 transition-colors dark:bg-zinc-900;
   }
   /* Used in register and login */
   .search-button {
-    @apply transition-colors px-4 md:px-10 bg-green-500 hover:bg-green-600 active:bg-green-700 h-8 md:h-10 mx-1 rounded-md dark:text-white text-black shrink-0
+    @apply mx-1 h-8 shrink-0 rounded-md bg-green-500 px-4 text-black transition-colors hover:bg-green-600 active:bg-green-700 dark:text-white md:h-10 md:px-10;
   }
   .submit {
-    @apply transition-colors my-1 rounded-lg bg-green-500 px-5 py-2 text-white shadow-lg transition hover:bg-green-600 active:bg-green-700;
+    @apply my-1 rounded-lg bg-green-500 px-5 py-2 text-white shadow-lg transition-colors hover:bg-green-600 active:bg-green-700;
   }
   .background-and-border {
-    @apply transition-colors nx-border-color rounded-md border-2 shadow-md dark:bg-zinc-900;
+    @apply nx-border-color header-color rounded-md border-2 shadow-md transition-colors;
   }
   .bab-hover {
-    @apply transition md:delay-300 hover-color rounded-bl-none;
+    @apply hover-color rounded-bl-none transition md:delay-300;
   }
   .bab-drop {
-    @apply h-0 bg-gray-300 nx-border-color opacity-0 pointer-events-none
+    @apply nx-border-color pointer-events-none h-0 bg-gray-300 opacity-0 dark:bg-zinc-900;
   }
 
   .bab-drop-hover {
-    @apply opacity-100 transition md:delay-300 nx-border-color hover-color absolute z-10 -mt-0.5 block h-auto rounded-b-md border-x-2 border-b-2 p-2 shadow-md pointer-events-auto;
+    @apply nx-border-color hover-color pointer-events-auto absolute z-10 -mt-0.5 block h-auto rounded-b-md border-x-2 border-b-2 p-2 opacity-100 shadow-md transition md:delay-300;
   }
   .button-icon {
-    @apply mx-1 h-8 w-8 rounded-md bg-gray-400 dark:bg-zinc-600 p-2 shadow-lg transition hover:bg-green-400 active:bg-green-500 md:h-10 md:w-10 dark:text-gray-100 shrink-0
+    @apply mx-1 my-auto h-8 w-8 shrink-0 rounded-md bg-gray-400 p-2 shadow-lg transition-colors hover:bg-green-400 active:bg-green-500 dark:bg-zinc-600 dark:text-gray-200 md:h-10 md:w-10;
   }
   .detail-table {
-    @apply grid md:grid-cols-4 grid-cols-2
+    @apply grid grid-cols-2 md:grid-cols-4;
   }
   .detail-title {
-    @apply md:col-span-4 col-span-2 mb-4 inline-block text-4xl
+    @apply col-span-2 mb-4 inline-block text-4xl md:col-span-4;
   }
   .detail-label {
-    @apply my-2 font-bold
-
+    @apply my-2 font-bold;
   }
   .detail-data {
-    @apply md:col-span-3 my-2
+    @apply my-2 md:col-span-3;
   }
   .detail-row {
-    @apply md:col-span-4 grid md:grid-cols-4 grid-cols-2 col-span-2
+    @apply col-span-2 grid grid-cols-2 md:col-span-4 md:grid-cols-4;
   }
   .detail-row > p {
-    @apply odd:detail-label even:detail-data
+    @apply odd:detail-label even:detail-data;
   }
   .mobile-nav-button {
-    @apply transition bg-green-400 p-4 pl-10 leading-10 hover:bg-green-500 active:bg-green-600 shadow-xl dark:text-black
+    @apply border-collapse border-y border-green-700 bg-green-400 p-4 px-10 text-center leading-10 text-black shadow-xl transition-colors hover:bg-green-500 active:bg-green-600;
   }
 }
 
 * {
   font-family: "Inter", sans-serif;
-  @apply text-black dark:text-gray-100;
+  @apply text-black dark:text-gray-200;
 }
 ::selection {
   @apply bg-green-400 text-white dark:text-black;

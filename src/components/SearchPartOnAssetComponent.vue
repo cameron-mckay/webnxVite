@@ -11,12 +11,17 @@
       />
       <!-- Toggle advance search button -->
       <!-- Sliders -->
-      <svg xmlns="http://www.w3.org/2000/svg"
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
         class="button-icon"
         @click="toggleAdvanced"
         viewBox="0 0 512 512"
-        >
-        <path fill="currentColor" stroke="currentColor" d="M0 416c0-17.7 14.3-32 32-32l54.7 0c12.3-28.3 40.5-48 73.3-48s61 19.7 73.3 48L480 384c17.7 0 32 14.3 32 32s-14.3 32-32 32l-246.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 448c-17.7 0-32-14.3-32-32zm192 0c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32zM384 256c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32zm-32-80c32.8 0 61 19.7 73.3 48l54.7 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-54.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l246.7 0c12.3-28.3 40.5-48 73.3-48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32s-14.3-32-32-32zm73.3 0L480 64c17.7 0 32 14.3 32 32s-14.3 32-32 32l-214.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 128C14.3 128 0 113.7 0 96S14.3 64 32 64l86.7 0C131 35.7 159.2 16 192 16s61 19.7 73.3 48z"/>
+      >
+        <path
+          fill="currentColor"
+          stroke="currentColor"
+          d="M0 416c0-17.7 14.3-32 32-32l54.7 0c12.3-28.3 40.5-48 73.3-48s61 19.7 73.3 48L480 384c17.7 0 32 14.3 32 32s-14.3 32-32 32l-246.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 448c-17.7 0-32-14.3-32-32zm192 0c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32zM384 256c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32zm-32-80c32.8 0 61 19.7 73.3 48l54.7 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-54.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l246.7 0c12.3-28.3 40.5-48 73.3-48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32s-14.3-32-32-32zm73.3 0L480 64c17.7 0 32 14.3 32 32s-14.3 32-32 32l-214.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 128C14.3 128 0 113.7 0 96S14.3 64 32 64l86.7 0C131 35.7 159.2 16 192 16s61 19.7 73.3 48z"
+        />
       </svg>
       <!-- Search button -->
       <input class="search-button" type="submit" value="Search" />
@@ -32,7 +37,7 @@
     <div v-if="parts.length != 0">
       <!-- Headers -->
       <div
-        class="relative grid grid-cols-4 p-1 md:p-2 text-center font-bold leading-8 md:leading-10 transition"
+        class="relative grid grid-cols-4 p-1 text-center font-bold leading-8 transition md:p-2 md:leading-10"
       >
         <p>NXID</p>
         <p>Manufacturer</p>
@@ -56,19 +61,31 @@
       <!-- Current page number -->
       <p class="mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
       <!-- Left Caret -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 256 512"
         v-on:click="prevPage"
         v-if="multiplePages || pageNum > 1"
       >
-        <path fill="currentColor" stroke="currentColor" d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"/>
+        <path
+          fill="currentColor"
+          stroke="currentColor"
+          d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
+        />
       </svg>
 
       <!-- Right Caret -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"
-      v-if="multiplePages || pageNum > 1"
-      v-on:click="nextPage"
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 256 512"
+        v-if="multiplePages || pageNum > 1"
+        v-on:click="nextPage"
       >
-      <path fill="currentColor" stroke="currentColor" d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"/>
+        <path
+          fill="currentColor"
+          stroke="currentColor"
+          d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
+        />
       </svg>
     </div>
   </div>
@@ -77,9 +94,9 @@
 import type { AxiosError, AxiosInstance } from "axios";
 import { Ref, onBeforeMount, ref } from "vue";
 import {
-getPartByID,
-getPartsByData,
-getPartsByTextSearch,
+  getPartByID,
+  getPartsByData,
+  getPartsByTextSearch,
 } from "../plugins/dbCommands/partManager";
 import type { PartSchema } from "../plugins/interfaces";
 import AdvancedSearchComponent from "./PartAdvancedSearchComponent.vue";

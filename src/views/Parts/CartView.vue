@@ -10,10 +10,10 @@ import type { Store } from "vuex";
 import { checkout, getPartByID } from "../../plugins/dbCommands/partManager";
 import { getAllUsers } from "../../plugins/dbCommands/userManager";
 import type {
-LoadedCartItem,
-PartSchema,
-User,
-UserState,
+  LoadedCartItem,
+  PartSchema,
+  User,
+  UserState,
 } from "../../plugins/interfaces";
 
 interface Props {
@@ -132,7 +132,7 @@ function localCheckout() {
         </div>
       </div>
       <div
-        class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 md:leading-10 transition md:grid-cols-6"
+        class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
       >
         <p class="hidden md:block">NXID</p>
         <p>Manufacturer</p>

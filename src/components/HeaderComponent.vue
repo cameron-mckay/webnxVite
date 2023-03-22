@@ -4,14 +4,31 @@
       class="header-color fixed top-0 z-20 flex w-full justify-between shadow-md"
     >
       <div class="flex justify-center">
-        <svg 
+        <svg
           class="header-button-colors h-10 w-10 p-1 md:hidden"
           v-on:click="toggle"
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 448 512">
-          <path fill="currentColor" d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/>
+          viewBox="0 0 448 512"
+          v-if="!showMenu"
+        >
+          <path
+            fill="currentColor"
+            d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"
+          />
         </svg>
-
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 448 512"
+          class="header-button-colors h-10 w-10 p-1 md:hidden"
+          v-on:click="toggle"
+          v-else
+        >
+          <path
+            fill="currentColor"
+            stroke="currentColor"
+            d="M0 256a56 56 0 1 1 112 0A56 56 0 1 1 0 256zm160 0a56 56 0 1 1 112 0 56 56 0 1 1 -112 0zm216-56a56 56 0 1 1 0 112 56 56 0 1 1 0-112z"
+          />
+        </svg>
         <img class="h-10 p-2" alt="WebNX Logo" src="../assets/logo.png" />
         <div class="hidden justify-center md:flex">
           <RouterLink
@@ -94,12 +111,7 @@
       v-on:click="toggle"
       class="fixed top-10 z-50 flex h-[calc(100%-2.5rem)] w-full flex-col justify-center text-2xl md:hidden"
     >
-      <RouterLink
-        class="mobile-nav-button"
-        to="/parts"
-      >
-        Parts</RouterLink
-      >
+      <RouterLink class="mobile-nav-button" to="/parts"> Parts</RouterLink>
       <RouterLink
         v-if="store.state.user.role != 'kiosk'"
         class="mobile-nav-button"

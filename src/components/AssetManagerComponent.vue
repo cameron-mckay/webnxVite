@@ -97,7 +97,6 @@ function addPartFromInventory(item: LoadedCartItem) {
       />
       <label>Building: </label>
       <CustomDropdownComponent
-        class="textbox m-1"
         :required="strict"
         :options="['3', '1', '4']"
         @updateValue="(value: string) => { oldAsset.building = parseInt(value) }"
@@ -121,7 +120,6 @@ function addPartFromInventory(item: LoadedCartItem) {
       />
       <label>Asset Type: </label>
       <CustomDropdownComponent
-        class="textbox m-1"
         :required="strict"
         :options="['Server', 'Laptop', 'Switch', 'PDU']"
         @updateValue="(value: string) => { oldAsset.asset_type = value }"
@@ -162,7 +160,6 @@ function addPartFromInventory(item: LoadedCartItem) {
         >
           <label>Chassis Type: </label>
           <CustomDropdownComponent
-            class="textbox m-1"
             :required="strict"
             :options="['Rack', 'Node', 'Tower']"
             @updateValue="(value: string) => { oldAsset.chassis_type = value }"
@@ -173,7 +170,11 @@ function addPartFromInventory(item: LoadedCartItem) {
             class="col-span-2 grid grid-cols-2"
           >
             <label>Rails: </label>
-            <select :required="strict" v-model="oldAsset.rails" class="textbox m-1">
+            <select
+              :required="strict"
+              v-model="oldAsset.rails"
+              class="textbox m-1"
+            >
               <option :value="true">Yes</option>
               <option :value="false">No</option>
             </select>
@@ -242,13 +243,17 @@ function addPartFromInventory(item: LoadedCartItem) {
         <div v-show="oldAsset.asset_type == 'Server'" class="flex">
           <h1 class="inline-block text-4xl leading-8 md:leading-10">Parts:</h1>
           <!-- Plus -->
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 448 512"
             class="button-icon ml-4"
             @click="togglePopup"
-            >
-            <path stroke="currentColor" fill="currentColor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/>
+          >
+            <path
+              stroke="currentColor"
+              fill="currentColor"
+              d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"
+            />
           </svg>
         </div>
         <FullScreenPopupComponent
@@ -275,7 +280,7 @@ function addPartFromInventory(item: LoadedCartItem) {
         </FullScreenPopupComponent>
         <div
           v-if="(parts!.length > 0)"
-          class="relative grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 md:leading-10 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg"
+          class="relative grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:leading-10"
         >
           <p>NXID</p>
           <p>Manufacturer</p>

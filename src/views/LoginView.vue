@@ -1,9 +1,9 @@
 <template>
-  <div class="card max-w-sm md:max-w-sm">
+  <div class="card mx-auto max-w-sm shadow-xl md:max-w-sm">
     <img class="mx-auto mb-4" alt="WebNX logo" src="../assets/logo.png" />
     <form class="text-center" @submit.prevent="login">
       <input
-        class="textbox"
+        class="textbox my-1"
         type="email"
         id="email"
         v-model="form.email"
@@ -12,13 +12,13 @@
         autofocus
       />
       <input
-        class="textbox"
+        class="textbox my-1"
         type="password"
         v-model="form.password"
         placeholder="Password"
         required
       />
-      <input class="submit" type="submit" value="Login" />
+      <input class="submit my-1 w-full" type="submit" value="Login" />
     </form>
   </div>
 </template>

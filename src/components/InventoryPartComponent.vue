@@ -12,36 +12,68 @@ const { part, quantity, isCurrentUser } = defineProps<Props>();
 <template>
   <div class="group relative my-1">
     <div
-      class="group-hover:bab-hover background-and-border grid grid-cols-4 p-1 md:p-2 text-center leading-8 md:leading-10 md:grid-cols-6"
+      class="group-hover:bab-hover background-and-border grid grid-cols-4 p-1 text-center leading-8 md:grid-cols-6 md:p-2 md:leading-10"
     >
       <p class="hidden md:block">{{ part.nxid }}</p>
       <p class="break-words">{{ part.manufacturer }}</p>
       <p class="break-words">{{ part.name }}</p>
       <p class="hidden break-words md:block">{{ part.shelf_location }}</p>
       <p class="break-words">{{ quantity }}</p>
-      <div v-if="isCurrentUser" class="flex justify-end my-auto">
-        <img
-          class="button-icon"
-          src="../assets/1arrowUp.png"
+      <div v-if="isCurrentUser" class="my-auto flex justify-end">
+        <!-- Single arrow up -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 384 512"
           v-on:click="$emit('movePart', part, 1)"
-        />
-        <img
           class="button-icon"
-          src="../assets/2arrowsUp.png"
+        >
+          <path
+            fill="currentColor"
+            stroke="currentColor"
+            d="M169.4 137.4c12.5-12.5 32.8-12.5 45.3 0l160 160c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L192 205.3 54.6 342.6c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l160-160z"
+          />
+        </svg>
+        <!-- Double arrow up -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 384 512"
+          class="button-icon"
           v-on:click="$emit('movePart', part, quantity)"
-        />
+        >
+          <path
+            fill="currentColor"
+            stroke="currentColor"
+            d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 109.3 329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160zm160 352l-160-160c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 329.4 438.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3z"
+          />
+        </svg>
       </div>
       <div v-else class="flex justify-end">
-        <img
+        <!-- Single arrow down -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 384 512"
           class="button-icon"
-          src="../assets/1arrowDown.png"
           v-on:click="$emit('movePart', part, 1)"
-        />
-        <img
+        >
+          <path
+            fill="currentColor"
+            stroke="currentColor"
+            d="M169.4 342.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 274.7 54.6 137.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"
+          />
+        </svg>
+        <!-- Double arrow down -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 384 512"
           class="button-icon"
-          src="../assets/2arrowsDown.png"
           v-on:click="$emit('movePart', part, quantity)"
-        />
+        >
+          <path
+            fill="currentColor"
+            stroke="currentColor"
+            d="M214.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-160-160c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 402.7 329.4 265.4c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-160 160zm160-352l-160 160c-12.5 12.5-32.8 12.5-45.3 0l-160-160c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 210.7 329.4 73.4c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3z"
+          />
+        </svg>
       </div>
     </div>
     <div class="group-hover:bab-drop-hover bab-drop">

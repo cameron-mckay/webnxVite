@@ -27,22 +27,26 @@ function minus() {
 <template>
   <div class="group relative">
     <div
-      class="group-hover:bab-hover background-and-border grid grid-cols-4 p-1 md:p-2 text-center leading-10 md:grid-cols-6"
+      class="group-hover:bab-hover background-and-border grid grid-cols-4 p-1 text-center leading-10 md:grid-cols-6 md:p-2"
     >
       <p class="hidden md:block">{{ part.nxid }}</p>
       <p class="break-words">{{ part.manufacturer }}</p>
       <p class="break-words">{{ part.name }}</p>
       <p class="hidden break-words md:block">{{ part.shelf_location }}</p>
       <p class="break-words">{{ `${item_quantity}/${part.quantity}` }}</p>
-      <div class="flex justify-end my-auto">
+      <div class="my-auto flex justify-end">
         <!-- Plus -->
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"
           class="button-icon"
           v-on:click="plus"
-          >
-          <path stroke="currentColor" fill="currentColor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/>
+        >
+          <path
+            stroke="currentColor"
+            fill="currentColor"
+            d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"
+          />
         </svg>
         <!-- Minus -->
         <svg
@@ -51,7 +55,11 @@ function minus() {
           class="button-icon"
           v-on:click="minus"
         >
-          <path  stroke="currentColor" fill="currentColor" d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"/>
+          <path
+            stroke="currentColor"
+            fill="currentColor"
+            d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"
+          />
         </svg>
         <!-- X icon -->
         <svg
@@ -60,7 +68,11 @@ function minus() {
           class="button-icon"
           v-on:click="$emit('delete')"
         >
-          <path  fill="currentColor" stroke="currentColor" d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/>
+          <path
+            fill="currentColor"
+            stroke="currentColor"
+            d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"
+          />
         </svg>
       </div>
     </div>
