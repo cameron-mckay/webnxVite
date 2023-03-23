@@ -238,10 +238,9 @@ onMounted(() => {
   ) {
     document.documentElement.classList.add("dark");
     dark.value = true;
-  } else {
-    console.log("else");
-    document.documentElement.classList.remove("dark");
+  } else { 
     dark.value = false;
+    localStorage.setItem("theme", "light")
   }
   watch(dark, () => {
     toggleTheme();
@@ -274,7 +273,6 @@ function toggleTheme() {
   } else {
     document.documentElement.classList.add("dark");
     localStorage.setItem("theme", "dark");
-    console.log(localStorage.getItem("theme"));
   }
 }
 </script>
