@@ -25,7 +25,7 @@ const { part, quantity, isCurrentUser } = defineProps<Props>();
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 384 512"
           v-on:click="$emit('movePart', part, 1)"
-          class="button-icon"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
         >
           <path
             fill="currentColor"
@@ -37,7 +37,7 @@ const { part, quantity, isCurrentUser } = defineProps<Props>();
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 384 512"
-          class="button-icon"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
           v-on:click="$emit('movePart', part, quantity)"
         >
           <path
@@ -52,7 +52,7 @@ const { part, quantity, isCurrentUser } = defineProps<Props>();
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 384 512"
-          class="button-icon"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
           v-on:click="$emit('movePart', part, 1)"
         >
           <path
@@ -65,7 +65,7 @@ const { part, quantity, isCurrentUser } = defineProps<Props>();
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 384 512"
-          class="button-icon"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
           v-on:click="$emit('movePart', part, quantity)"
         >
           <path

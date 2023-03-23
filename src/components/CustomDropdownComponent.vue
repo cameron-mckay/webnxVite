@@ -87,7 +87,7 @@ onMounted(async () => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 384 512"
-      class="button-icon mt-1 mr-0 h-6 w-6 md:h-8 md:w-8"
+      class="button-icon hover:button-icon-hover active:button-icon-active mt-1 mr-0 h-6 w-6 md:h-8 md:w-8"
       v-on:click="closeCustom"
     >
       <path

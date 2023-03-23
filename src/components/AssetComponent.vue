@@ -27,7 +27,7 @@ const { asset, edit, add, view } = defineProps<Props>();
         <svg
           v-if="edit === true"
           v-on:click="$emit('editPartAction')"
-          class="button-icon"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
         >
@@ -39,7 +39,7 @@ const { asset, edit, add, view } = defineProps<Props>();
         </svg>
         <!-- Plus -->
         <svg
-          class="button-icon"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
           v-if="add === true"
           v-on:click="$emit('addPartAction')"
           xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +54,7 @@ const { asset, edit, add, view } = defineProps<Props>();
         <!-- Eyeball -->
         <svg
           v-if="view === true"
-          class="button-icon"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
           v-on:click="$emit('viewPartAction')"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 576 512"

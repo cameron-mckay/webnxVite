@@ -5,13 +5,13 @@ import type { Router } from "vue-router";
 import type { Store } from "vuex";
 import AssetCartItemComponent from "../../components/AssetCartItemComponent.vue";
 import {
-  getAssetByID,
-  getPartsOnAsset,
+getAssetByID,
+getPartsOnAsset,
 } from "../../plugins/dbCommands/assetManager";
 import type {
-  AssetSchema,
-  LoadedCartItem,
-  UserState,
+AssetSchema,
+LoadedCartItem,
+UserState,
 } from "../../plugins/interfaces";
 
 interface Props {
@@ -69,7 +69,7 @@ function edit() {
         <!-- Pencil -->
         <svg
           v-on:click="edit"
-          class="button-icon"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
         >

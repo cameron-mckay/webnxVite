@@ -246,7 +246,7 @@ function addPartFromInventory(item: LoadedCartItem) {
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 448 512"
-            class="button-icon ml-4"
+            class="button-icon hover:button-icon-hover active:button-icon-active ml-4"
             @click="togglePopup"
           >
             <path

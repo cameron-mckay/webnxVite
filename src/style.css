@@ -54,7 +54,13 @@
     @apply nx-border-color hover-color pointer-events-auto absolute z-10 -mt-0.5 block h-auto rounded-b-md border-x-2 border-b-2 p-2 opacity-100 shadow-md transition md:delay-300;
   }
   .button-icon {
-    @apply mx-1 my-auto h-8 w-8 shrink-0 cursor-pointer rounded-md bg-gray-400 p-2 shadow-lg transition-colors hover:bg-green-400 active:bg-green-500 dark:bg-zinc-600 dark:text-gray-200 md:h-10 md:w-10;
+    @apply mx-1 my-auto h-8 w-8 shrink-0 cursor-pointer rounded-md bg-gray-400 p-2 shadow-lg transition-colors dark:bg-zinc-600 dark:text-gray-200 md:h-10 md:w-10;
+  }
+  .button-icon-hover {
+    @apply bg-green-400
+  }
+  .button-icon-active {
+    @apply bg-green-500
   }
   .detail-table {
     @apply grid grid-cols-2 md:grid-cols-4;

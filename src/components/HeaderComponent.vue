@@ -91,7 +91,7 @@
         </div>
       </div>
       <div class="flex justify-center" v-on:click="toggleProfile">
-        <p class="hidden leading-10 md:block">
+        <p class="hidden leading-10 md:block mr-2">
           {{ store.state.user.first_name + " " + store.state.user.last_name }}
         </p>
         <img

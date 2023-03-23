@@ -14,7 +14,7 @@
       <!-- Sliders -->
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="button-icon"
+        class="button-icon hover:button-icon-hover active:button-icon-active"
         @click="toggleAdvanced"
         viewBox="0 0 512 512"
       >
@@ -26,7 +26,7 @@
       </svg>
       <!-- Plus -->
       <svg
-        class="button-icon"
+        class="button-icon hover:button-icon-hover active:button-icon-active"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 448 512"
         @click="addUntrackedAsset"
@@ -108,9 +108,9 @@ import type { AxiosError, AxiosInstance } from "axios";
 import { Ref, onBeforeMount, ref } from "vue";
 import { Router } from "vue-router";
 import {
-  getAssetByID,
-  getAssetsByData,
-  getAssetsByTextSearch,
+getAssetByID,
+getAssetsByData,
+getAssetsByTextSearch,
 } from "../plugins/dbCommands/assetManager";
 import type { AssetSchema } from "../plugins/interfaces";
 import AdvancedSearchComponent from "./AssetAdvancedSearchComponent.vue";

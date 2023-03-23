@@ -19,7 +19,7 @@ const { part } = defineProps<Props>();
       <div class="my-auto flex justify-end">
         <!-- Plus -->
         <svg
-          class="button-icon"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
           v-on:click="$emit('addPartAction')"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"

@@ -26,7 +26,7 @@
       <!-- Sliders -->
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="button-icon"
+        class="button-icon hover:button-icon-hover active:button-icon-active"
         @click="toggleAdvanced"
         viewBox="0 0 512 512"
       >
@@ -107,8 +107,8 @@ import type { AxiosError, AxiosInstance } from "axios";
 import { Ref, onBeforeMount, ref } from "vue";
 import { Router } from "vue-router";
 import {
-  getPartsByData,
-  getPartsByTextSearch,
+getPartsByData,
+getPartsByTextSearch,
 } from "../plugins/dbCommands/partManager";
 import type { PartSchema } from "../plugins/interfaces";
 import AdvancedSearchComponent from "./PartAdvancedSearchComponent.vue";
