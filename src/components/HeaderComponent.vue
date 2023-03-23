@@ -231,7 +231,11 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
-  if (localStorage.getItem("theme") == "dark"||(localStorage.getItem("theme")==null&&window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  if (
+    localStorage.getItem("theme") == "dark" ||
+    (localStorage.getItem("theme") == null &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches)
+  ) {
     document.documentElement.classList.add("dark");
     dark.value = true;
   } else {
@@ -266,7 +270,7 @@ function toggleProfile() {
 function toggleTheme() {
   if (document.documentElement.classList.contains("dark")) {
     document.documentElement.classList.remove("dark");
-    localStorage.removeItem("theme");
+    localStorage.setItem("theme", "light");
   } else {
     document.documentElement.classList.add("dark");
     localStorage.setItem("theme", "dark");
