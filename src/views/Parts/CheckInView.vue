@@ -137,11 +137,11 @@ watch(currentUser, () => {
 <template>
   <form @submit.prevent="localCheckin">
     <div>
-      <div class="flex justify-between">
-        <h1 class="mb-4 text-4xl">Check In:</h1>
+      <div class="flex flex-wrap justify-between">
+        <h1 class="mb-4 inline-block w-full text-4xl md:w-fit">Check In:</h1>
         <div class="flex">
-          <p class="mr-2 leading-[4]">User:</p>
-          <select required v-model="currentUser" class="w-60">
+          <p class="mr-2 mt-auto">User:</p>
+          <select required v-model="currentUser" class="mt-auto">
             <option disabled :value="{}"></option>
             <option v-for="user in users" :value="user">
               {{ `${user.first_name} ${user.last_name}` }}
@@ -150,7 +150,6 @@ watch(currentUser, () => {
         </div>
       </div>
       <div v-if="inventory.length > 0">
-        <h1 class="mb-4 text-4xl">Your Inventory:</h1>
         <div
           class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
         >

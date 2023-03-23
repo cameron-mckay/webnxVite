@@ -24,10 +24,10 @@ function deleteError(error: Message) {
 
 <template>
   <div
-    class="fixed top-12 left-0 z-50 mx-auto block w-full text-center text-white"
+    class="pointer-events-none fixed top-12 left-0 z-50 mx-auto block w-full text-center text-white"
   >
     <div
-      class="mx-auto mb-1 flex w-fit rounded-lg bg-red-400 p-2 transition"
+      class="pointer-events-auto mx-auto mb-1 flex w-fit rounded-lg bg-red-400 p-2 transition"
       v-on:click="deleteError(error)"
       v-for="error in errors"
     >
@@ -50,7 +50,7 @@ function deleteError(error: Message) {
     </div>
 
     <div
-      class="mx-auto mb-1 flex w-fit rounded-lg bg-green-400 p-2 transition"
+      class="pointer-events-auto mx-auto mb-1 flex w-fit rounded-lg bg-green-400 p-2 transition"
       v-for="message in messages"
     >
       <p v-if="message.quantity > 1" class="text-2xl">

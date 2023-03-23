@@ -105,6 +105,7 @@ function deletePart(part: LoadedCartItem) {
 
 <template>
   <AssetManagerComponent
+    class="background-and-border p-4"
     :http="http"
     :title="'Add Untracked Asset:'"
     :submitText="'Create Asset'"

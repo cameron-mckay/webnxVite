@@ -25,7 +25,7 @@ function minus() {
 </script>
 
 <template>
-  <div class="group relative">
+  <div class="group relative my-1">
     <div
       class="group-hover:bab-hover background-and-border grid grid-cols-4 p-1 text-center leading-10 md:grid-cols-6 md:p-2"
     >

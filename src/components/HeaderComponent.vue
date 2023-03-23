@@ -28,14 +28,14 @@
         <!-- Desktop nav -->
         <div class="hidden justify-center md:flex">
           <RouterLink
-            class="transiton header-button-colors w-20 text-center leading-10"
+            class="transiton header-button-colors w-24 text-center leading-10"
             to="/parts"
           >
             Parts</RouterLink
           >
           <RouterLink
             v-if="store.state.user.role != 'kiosk'"
-            class="transiton header-button-colors w-20 text-center leading-10"
+            class="transiton header-button-colors w-24 text-center leading-10"
             to="/assets"
           >
             Assets
@@ -52,21 +52,21 @@
           <RouterLink
             v-if="store.state.user.role == 'kiosk'"
             v-show="store.state.cart.length < 1"
-            class="header-button-colors w-20 text-center leading-10 transition"
+            class="header-button-colors w-24 text-center leading-10 transition"
             to="/cart"
           >
             Check Out
           </RouterLink>
           <RouterLink
             v-if="store.state.user.role == 'kiosk'"
-            class="header-button-colors w-20 text-center leading-10 transition"
+            class="header-button-colors w-24 text-center leading-10 transition"
             to="/checkin"
           >
             Check In
           </RouterLink>
           <RouterLink
             v-if="store.state.user.role != 'kiosk'"
-            class="transiton header-button-colors w-20 text-center leading-10"
+            class="transiton header-button-colors w-24 text-center leading-10"
             to="/inventory"
           >
             Inventory</RouterLink
@@ -76,22 +76,22 @@
               store.state.user.role == 'inventory' ||
               store.state.user.role == 'admin'
             "
-            class="header-button-colors w-20 text-center leading-10 transition"
+            class="header-button-colors w-24 text-center leading-10 transition"
             to="/manage"
           >
             Manage
           </RouterLink>
           <RouterLink
             v-if="store.state.user.role == 'admin'"
-            class="header-button-colors w-20 text-center leading-10 transition"
+            class="header-button-colors w-24 text-center leading-10 transition"
             to="/admin"
           >
             Admin
           </RouterLink>
         </div>
       </div>
-      <div class="flex justify-center">
-        <p class="leading-10">
+      <div class="flex justify-center" v-on:click="toggleProfile">
+        <p class="hidden leading-10 md:block">
           {{ store.state.user.first_name + " " + store.state.user.last_name }}
         </p>
         <img
@@ -99,11 +99,46 @@
           alt="profile picture"
           :src="profilePicture"
         />
-        <a class="leading-10" v-on:click="logout" href="#">Logout</a>
       </div>
     </div>
     <!-- User drop down -->
-    <div></div>
+    <div
+      class="fixed top-0 z-30 h-full w-full"
+      v-on:click="toggleProfile"
+      v-if="showProfile"
+    ></div>
+    <div
+      class="pointer-events-none fixed top-10 z-40 flex w-full justify-end"
+      v-if="showProfile"
+    >
+      <div
+        class="nx-border-color header-color pointer-events-auto w-fit rounded-bl-md border-l-2 border-b-2 p-2 shadow-lg"
+      >
+        <p class="cursor-default rounded-md p-2 font-bold md:hidden">
+          {{ store.state.user.first_name + " " + store.state.user.last_name }}
+        </p>
+        <div class="flex w-full">
+          <p class="cursor-default p-2">Dark Mode</p>
+          <div>
+            <label
+              class="relative my-2 ml-2 mr-5 inline-flex cursor-pointer items-center"
+            >
+              <input type="checkbox" class="peer sr-only" v-model="dark" />
+              <div
+                class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-0.5 after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-green-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-2 peer-focus:ring-gray-500 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-gray-700"
+              ></div>
+            </label>
+          </div>
+        </div>
+        <p
+          class="hover:hover-color cursor-pointer rounded-md p-2"
+          v-on:click="logout"
+          href="#"
+        >
+          Logout
+        </p>
+      </div>
+    </div>
     <!-- Mobile nav menu -->
     <div
       v-if="showMenu"
@@ -173,11 +208,11 @@
 
 <script setup lang="ts">
 import type { AxiosInstance } from "axios";
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { Store } from "vuex";
 import { UserState } from "../plugins/interfaces";
 import router from "../router";
-
+document.documentElement.classList.remove("dark");
 interface Props {
   http: AxiosInstance;
   store: Store<UserState>;
@@ -185,11 +220,28 @@ interface Props {
 const { http, store } = defineProps<Props>();
 
 let showMenu = ref(false);
+let dark = ref(false);
+let showProfile = ref(false);
+
 let profilePicture =
   "https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg";
 
 onBeforeMount(() => {
   store.commit("updateUserData");
+});
+
+onMounted(() => {
+  if (localStorage.getItem("theme") == "dark") {
+    document.documentElement.classList.add("dark");
+    dark.value = true;
+  } else {
+    console.log("else");
+    document.documentElement.classList.remove("dark");
+    dark.value = false;
+  }
+  watch(dark, () => {
+    toggleTheme();
+  });
 });
 
 async function logout() {
@@ -199,5 +251,26 @@ async function logout() {
 
 function toggle() {
   showMenu.value = !showMenu.value;
+  if (showMenu.value) {
+    showProfile.value = false;
+  }
+}
+
+function toggleProfile() {
+  showProfile.value = !showProfile.value;
+  if (showProfile.value) {
+    showMenu.value = false;
+  }
+}
+
+function toggleTheme() {
+  if (document.documentElement.classList.contains("dark")) {
+    document.documentElement.classList.remove("dark");
+    localStorage.removeItem("theme");
+  } else {
+    document.documentElement.classList.add("dark");
+    localStorage.setItem("theme", "dark");
+    console.log(localStorage.getItem("theme"));
+  }
 }
 </script>
