@@ -1,5 +1,4 @@
 import { createApp } from "vue";
-import VueQrcodeReader from "vue-qrcode-reader";
 import App from "./App.vue";
 import axios from "./plugins/axios";
 import { createGlobalStore, key } from "./plugins/store";
@@ -13,6 +12,5 @@ const app = createApp(App);
 app.use(axios, {});
 // Create global store
 app.use(createGlobalStore(app), key);
-app.use(VueQrcodeReader);
 // Add router and mount app
 app.use(router).mount("#app");
