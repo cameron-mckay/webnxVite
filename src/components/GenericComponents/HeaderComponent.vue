@@ -6,7 +6,7 @@
       <div class="flex justify-center">
         <!-- Hamburger nav -->
         <svg
-          class="header-button-colors h-10 w-10 p-2 md:hidden"
+          class="header-button-colors h-10 w-10 shrink-0 p-2 md:hidden"
           v-on:click="toggle"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"
@@ -24,7 +24,11 @@
           />
         </svg>
         <!-- Header logo -->
-        <img class="h-10 p-2" alt="WebNX Logo" src="../../assets/logo.png" />
+        <img
+          class="h-10 w-fit p-2"
+          alt="WebNX Logo"
+          src="../../assets/logo.webp"
+        />
         <!-- Desktop nav -->
         <div class="hidden justify-center md:flex">
           <RouterLink
@@ -90,15 +94,24 @@
           </RouterLink>
         </div>
       </div>
-      <div class="flex justify-center" v-on:click="toggleProfile">
-        <p class="mr-2 hidden leading-10 md:block">
+      <div
+        class="header-button-colors flex justify-center"
+        v-on:click="toggleProfile"
+      >
+        <p class="mr-2 hidden pl-2 leading-10 md:block">
           {{ store.state.user.first_name + ' ' + store.state.user.last_name }}
         </p>
-        <img
-          class="h-10 rounded-full p-1"
-          alt="profile picture"
-          :src="profilePicture"
-        />
+        <svg
+          class="user-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 448 512"
+        >
+          <path
+            fill="currentColor"
+            stroke="currentColor"
+            d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"
+          />
+        </svg>
       </div>
     </div>
     <!-- User drop down -->
@@ -268,7 +281,6 @@ function toggleProfile() {
 }
 
 function toggleTheme() {
-  console.log('FUCK YOU!!!!');
   if (document.documentElement.classList.contains('dark')) {
     document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', 'light');

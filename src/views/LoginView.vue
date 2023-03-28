@@ -1,6 +1,10 @@
 <template>
   <div class="card mx-auto max-w-sm shadow-xl md:max-w-sm">
-    <img class="mx-auto mb-4" alt="WebNX logo" src="../assets/logo.png" />
+    <img
+      class="mx-auto mb-4 h-fit w-fit"
+      alt="WebNX logo"
+      src="../assets/logo.webp"
+    />
     <form class="text-center" @submit.prevent="login">
       <input
         class="textbox my-1"
