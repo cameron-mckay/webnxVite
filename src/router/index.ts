@@ -1,131 +1,110 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import AdminDashboardView from '../views/Admin/AdminDashboardView.vue';
-import AdminPartSearchView from '../views/Admin/AdminPartSearchView.vue';
-import AdminUserView from '../views/Admin/AdminUserView.vue';
-import CreatePartView from '../views/Admin/CreatePartView.vue';
-import InventoryManagerDashboardView from '../views/Admin/InventoryManagerDashboardView.vue';
-import AddUntrackedAsset from '../views/Assets/AddUntrackedAssetView.vue';
-import AssetSearchView from '../views/Assets/AssetSearchView.vue';
-import AssetView from '../views/Assets/AssetView.vue';
-import EditAssetView from '../views/Assets/EditAssetView.vue';
-import LoginView from '../views/LoginView.vue';
-import NotFound from '../views/NotFound.vue';
-import CartView from '../views/Parts/CartView.vue';
-import CheckInView from '../views/Parts/CheckInView.vue';
-import FindPartView from '../views/Parts/FindPartView.vue';
-import InventoryView from '../views/Parts/InventoryView.vue';
-import PartHistoryView from '../views/Parts/PartHistoryView.vue';
-import PartView from '../views/Parts/PartView.vue';
-import RegisterView from '../views/RegisterView.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: FindPartView,
+    component: () => import('../views/Parts/FindPartView.vue'),
   },
   {
     path: '/register',
     name: 'Register',
-    component: RegisterView,
+    component: () => import('../views/RegisterView.vue')
   },
   {
     path: '/login',
     name: 'Login',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: LoginView,
+    component: () => import('../views/LoginView.vue')
   },
   {
     path: '/cart',
     name: 'Check Out',
-    component: CartView,
+    component: () => import('../views/Parts/CartView.vue')
   },
   {
     path: '/checkin',
     name: 'Check In',
-    component: CheckInView,
+    component: () => import('../views/Parts/CheckInView.vue')
   },
   {
     path: '/parts',
     name: 'Parts',
-    component: FindPartView,
+    component: () => import('../views/Parts/FindPartView.vue')
   },
   {
     path: '/parts/view',
     name: 'Part View',
-    component: PartView,
+    component: () => import('../views/Parts/PartView.vue')
   },
   {
     path: '/parts/view/history',
     name: 'Part History',
-    component: PartHistoryView,
+    component: () => import('../views/Parts/PartHistoryView.vue')
   },
   {
     path: '/assets',
     name: 'Assets',
-    component: AssetSearchView,
+    component: () => import('../views/Assets/AssetSearchView.vue')
   },
   {
     path: '/assets/add',
     name: 'Add Untracked Asset',
-    component: AddUntrackedAsset,
+    component: () => import('../views/Assets/AddUntrackedAssetView.vue')
   },
   {
     path: '/assets/edit',
     name: 'Edit Asset',
-    component: EditAssetView,
+    component: () => import('../views/Assets/EditAssetView.vue')
   },
   {
     path: '/assets/view',
     name: 'View Asset',
-    component: AssetView,
+    component: () => import('../views/Assets/AssetView.vue')
   },
   {
     path: '/manage',
     name: 'Inventory Manager Dashboard',
-    component: InventoryManagerDashboardView,
+    component: () => import('../views/Admin/InventoryManagerDashboardView.vue')
   },
   {
     path: '/manage/parts',
     name: 'Part Manager',
-    component: AdminPartSearchView,
+    component: () => import('../views/Admin/AdminPartSearchView.vue')
   },
   {
     path: '/manage/parts/create',
     name: 'Create Part',
-    component: CreatePartView,
+    component: () => import('../views/Admin/CreatePartView.vue')
   },
   {
     path: '/admin',
     name: 'Admin Dashboard',
-    component: AdminDashboardView,
+    component: () => import('../views/Admin/AdminDashboardView.vue')
   },
   {
     path: '/admin/parts/create',
     name: 'Create Part Admin',
-    component: CreatePartView,
+    component: () => import('../views/Admin/CreatePartView.vue')
   },
   {
     path: '/admin/parts',
     name: 'Part Manager Admin',
-    component: AdminPartSearchView,
+    component: () => import('../views/Admin/AdminPartSearchView.vue')
   },
   {
     path: '/admin/users',
     name: 'User Manager',
-    component: AdminUserView,
+    component: () => import('../views/Admin/AdminUserView.vue')
   },
   {
     path: '/inventory',
     name: 'Inventory',
-    component: InventoryView,
+    component: () => import('../views/Parts/InventoryView.vue')
   },
   {
     path: '/:catchall(.*)',
     name: '404',
-    component: NotFound,
+    component: () => import('../views/NotFound.vue')
   },
 ];
 
