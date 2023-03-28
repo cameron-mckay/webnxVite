@@ -126,9 +126,9 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-  getAssetByID,
-  getAssetsByData,
-  getAssetsByTextSearch,
+getAssetByID,
+getAssetsByData,
+getAssetsByTextSearch,
 } from '../../plugins/dbCommands/assetManager';
 import type { AssetSchema } from '../../plugins/interfaces';
 import QRCodeScannerPopupComponent from '../GenericComponents/QRCodeScannerPopupComponent.vue';
@@ -251,6 +251,7 @@ function toggleQR() {
 }
 
 function decodedQR(nxid: string) {
+  showQR.value = false
   searchText.value = nxid;
   search();
 }

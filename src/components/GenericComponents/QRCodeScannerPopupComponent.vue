@@ -2,11 +2,10 @@
 import { StreamBarcodeReader } from 'vue-barcode-reader';
 import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
 
-const emit = defineEmits(['decoded', 'toggle']);
+const emit = defineEmits(['decoded']);
 
 function onDecode(nxid: string) {
   emit('decoded', nxid);
-  emit('toggle');
 }
 </script>
 
