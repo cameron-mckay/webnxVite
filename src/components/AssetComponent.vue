@@ -54,7 +54,7 @@ const { asset, edit, add, view } = defineProps<Props>();
         <!-- Eyeball -->
         <svg
           v-if="view === true"
-          class="button-icon hover:button-icon-hover active:button-icon-active"
+          class="button-icon hover:button-icon-hover active:button-icon-active no-margin-on-mobile"
           v-on:click="$emit('viewPartAction')"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 576 512"

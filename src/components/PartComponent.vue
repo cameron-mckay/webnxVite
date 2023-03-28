@@ -38,9 +38,8 @@ const { part } = defineProps<Props>();
         </svg>
         <!-- Plus -->
         <svg
-          class="button-icon hover:button-icon-hover active:button-icon-active hover:button-icon-hover active:button-icon-active"
+          class="button-icon hover:button-icon-hover active:button-icon-active hover:button-icon-hover active:button-icon-active no-margin-on-mobile"
           v-if="add === true"
-          :class="{ reduceMarginOnMobile: edit }"
           v-on:click="$emit('addPartAction')"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"
@@ -55,7 +54,6 @@ const { part } = defineProps<Props>();
         <svg
           v-if="view === true"
           class="button-icon hover:button-icon-hover active:button-icon-active hover:button-icon-hover active:button-icon-active"
-          :class="{ hideViewOnMobile: edit }"
           v-on:click="$emit('viewPartAction')"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 576 512"

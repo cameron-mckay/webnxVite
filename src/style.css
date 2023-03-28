@@ -98,6 +98,9 @@
   .reduceMarginOnMobile {
     @apply mr-0 md:mr-1
   }
+  .no-margin-on-mobile {
+    @apply md:mx-1 mx-0
+  }
 }
 
 /* Apply fonts and colors */

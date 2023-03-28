@@ -14,7 +14,7 @@
       <!-- Sliders -->
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="button-icon hover:button-icon-hover active:button-icon-active"
+        class="button-icon hover:button-icon-hover active:button-icon-active no-margin-on-mobile"
         @click="toggleAdvanced"
         viewBox="0 0 512 512"
       >
@@ -26,7 +26,7 @@
       </svg>
       <!-- Plus -->
       <svg
-        class="button-icon hover:button-icon-hover active:button-icon-active"
+        class="button-icon hover:button-icon-hover active:button-icon-active no-margin-on-mobile ml-1"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 448 512"
         @click="addUntrackedAsset"
