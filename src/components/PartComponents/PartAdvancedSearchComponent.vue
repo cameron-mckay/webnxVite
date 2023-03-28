@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AxiosInstance } from "axios";
-import type { PartSchema } from "../plugins/interfaces";
-import FullScreenPopupComponent from "./FullScreenPopupComponent.vue";
+import type { PartSchema } from "../../plugins/interfaces";
+import FullScreenPopupComponent from "../GenericComponents/FullScreenPopupComponent.vue";
 import PartManagerComponent from "./PartManagerComponent.vue";
 
 interface Props {

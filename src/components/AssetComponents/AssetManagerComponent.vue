@@ -2,12 +2,12 @@
 import { AxiosError, AxiosInstance } from "axios";
 import { ref } from "vue";
 import { Router } from "vue-router";
-import { AssetSchema, LoadedCartItem, PartSchema } from "../plugins/interfaces";
-import AssetCartItemComponent from "./AssetCartItemComponent.vue";
-import CustomDropdownComponent from "./CustomDropdownComponent.vue";
-import FullScreenPopupComponent from "./FullScreenPopupComponent.vue";
-import InventoryPopup from "./InventoryPopup.vue";
-import AssetPartSearchComponent from "./SearchPartOnAssetComponent.vue";
+import { AssetSchema, LoadedCartItem, PartSchema } from "../../plugins/interfaces";
+import AssetCartItemComponent from "../AssetComponents/AssetCartItemComponent.vue";
+import AssetPartSearchComponent from "../AssetComponents/SearchPartOnAssetComponent.vue";
+import CustomDropdownComponent from "../GenericComponents/CustomDropdownComponent.vue";
+import FullScreenPopupComponent from "../GenericComponents/FullScreenPopupComponent.vue";
+import InventoryPopup from "../InventoryComponents/InventoryPopup.vue";
 
 interface Props {
   title: string;

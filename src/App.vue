@@ -16,8 +16,8 @@
 </template>
 <script setup lang="ts">
 // Vue components
-import HeaderComponent from "./components/HeaderComponent.vue";
-import MessageComponent from "./components/MessageComponent.vue";
+import HeaderComponent from "./components/GenericComponents/HeaderComponent.vue";
+import MessageComponent from "./components/GenericComponents/MessageComponent.vue";
 
 // Import dependencies
 import type { AxiosError, AxiosInstance } from "axios";

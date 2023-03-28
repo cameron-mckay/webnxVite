@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // Get http and store from props
 import { Ref, onMounted, ref, watch } from "vue";
-import type { PartSchema } from "../plugins/interfaces";
-import CustomDropdownComponent from "./CustomDropdownComponent.vue";
+import type { PartSchema } from "../../plugins/interfaces";
+import CustomDropdownComponent from "../GenericComponents/CustomDropdownComponent.vue";
 
 // Props interface
 interface Props {

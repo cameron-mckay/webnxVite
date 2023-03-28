@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref, watch } from "vue";
-import InventoryPartComponent from "../../components/InventoryPartComponent.vue";
+import InventoryPartComponent from "../../components/InventoryComponents/InventoryPartComponent.vue";
 import { movePart } from "../../plugins/dbCommands/partManager";
 import {
-  getAllUsers,
-  getUserInventoryByID,
+getAllUsers,
+getUserInventoryByID,
 } from "../../plugins/dbCommands/userManager";
 import {
-  LoadedCartItem,
-  PartRecord,
-  PartSchema,
-  User,
+LoadedCartItem,
+PartRecord,
+PartSchema,
+User,
 } from "../../plugins/interfaces";
 
 import type { AxiosError, AxiosInstance } from "axios";

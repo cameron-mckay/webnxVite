@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { PartSchema } from "../plugins/interfaces";
+import { PartSchema } from "../../plugins/interfaces";
 
 interface Props {
   part: PartSchema;

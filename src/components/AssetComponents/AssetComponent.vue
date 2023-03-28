@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AssetSchema } from "../plugins/interfaces";
+import { AssetSchema } from "../../plugins/interfaces";
 
 interface Props {
   asset: AssetSchema;

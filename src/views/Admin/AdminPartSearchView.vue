@@ -4,19 +4,19 @@ import type { AxiosError, AxiosInstance } from "axios";
 import { Ref, onActivated, ref } from "vue";
 import { Router } from "vue-router";
 import type { Store } from "vuex";
-import AddInventoryComponent from "../../components/AddInventoryComponent.vue";
-import EditPartComponent from "../../components/EditPartComponent.vue";
-import SearchComponent from "../../components/PartSearchComponent.vue";
+import AddInventoryComponent from "../../components/PartComponents/AddInventoryComponent.vue";
+import EditPartComponent from "../../components/PartComponents/EditPartComponent.vue";
+import SearchComponent from "../../components/PartComponents/PartSearchComponent.vue";
 import {
-  createNewPartRecords,
-  updatePart,
+createNewPartRecords,
+updatePart,
 } from "../../plugins/dbCommands/partManager";
 import { getAllUsers } from "../../plugins/dbCommands/userManager";
 import type {
-  CartItem,
-  PartSchema,
-  User,
-  UserState,
+CartItem,
+PartSchema,
+User,
+UserState,
 } from "../../plugins/interfaces";
 
 interface Props {

@@ -24,7 +24,7 @@
           />
         </svg>
         <!-- Header logo -->
-        <img class="h-10 p-2" alt="WebNX Logo" src="../assets/logo.png" />
+        <img class="h-10 p-2" alt="WebNX Logo" src="../../assets/logo.png" />
         <!-- Desktop nav -->
         <div class="hidden justify-center md:flex">
           <RouterLink
@@ -210,8 +210,8 @@
 import type { AxiosInstance } from "axios";
 import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { Store } from "vuex";
-import { UserState } from "../plugins/interfaces";
-import router from "../router";
+import { UserState } from "../../plugins/interfaces";
+import router from "../../router";
 document.documentElement.classList.remove("dark");
 interface Props {
   http: AxiosInstance;
@@ -235,7 +235,7 @@ onMounted(() => {
   if (
     localStorage.getItem("theme") == "dark" ||
     (localStorage.getItem("theme") == null &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches)
+      window.matchMedia("(prefers-color-scheme: dark)").matches) || document.documentElement.classList.contains("dark")
   ) {
     dark.value = true;
   } else { 
@@ -243,6 +243,7 @@ onMounted(() => {
   }
   // Enable watcher
   watch(dark, () => {
+    
     toggleTheme();
   });
 });
@@ -267,6 +268,7 @@ function toggleProfile() {
 }
 
 function toggleTheme() {
+  console.log("FUCK YOU!!!!")
   if (document.documentElement.classList.contains("dark")) {
     document.documentElement.classList.remove("dark");
     localStorage.setItem("theme", "light");

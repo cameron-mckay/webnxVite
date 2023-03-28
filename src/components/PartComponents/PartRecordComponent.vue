@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { PartRecord, User } from "../plugins/interfaces";
+import { PartRecord, User } from "../../plugins/interfaces";
 
 interface Props {
   record: PartRecord;

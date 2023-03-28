@@ -29,7 +29,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { LoadedCartItem } from "../plugins/interfaces";
+import type { LoadedCartItem } from "../../plugins/interfaces";
 import PopupInventoryItemComponent from "./PopupInventoryItemComponent.vue";
 
 // Props interface

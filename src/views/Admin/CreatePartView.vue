@@ -4,7 +4,7 @@ import type { AxiosError, AxiosInstance } from "axios";
 import { ref } from "vue";
 import { Router } from "vue-router";
 import type { Store } from "vuex";
-import PartManagerComponent from "../../components/PartManagerComponent.vue";
+import PartManagerComponent from "../../components/PartComponents/PartManagerComponent.vue";
 import { createPart } from "../../plugins/dbCommands/partManager";
 import type { PartSchema, UserState } from "../../plugins/interfaces";
 

@@ -111,6 +111,12 @@
   @apply bg-green-400 text-white dark:text-black;
 }
 
+h1 {
+  @apply drop-shadow-md
+}
+h1, p, a, RouterLink {
+  @apply drop-shadow-md
+}
 /* In case I forget */
 select {
   @apply textbox

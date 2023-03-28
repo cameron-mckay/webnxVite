@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
-import { CartItem, PartSchema, User } from "../plugins/interfaces";
-import FullScreenPopupComponent from "./FullScreenPopupComponent.vue";
+import { CartItem, PartSchema, User } from "../../plugins/interfaces";
+import FullScreenPopupComponent from "../GenericComponents/FullScreenPopupComponent.vue";
 
 // Start props
 interface Props {

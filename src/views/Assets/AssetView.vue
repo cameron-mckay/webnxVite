@@ -3,7 +3,7 @@ import type { AxiosError, AxiosInstance } from "axios";
 import { onBeforeMount, ref } from "vue";
 import type { Router } from "vue-router";
 import type { Store } from "vuex";
-import AssetCartItemComponent from "../../components/AssetCartItemComponent.vue";
+import AssetCartItemComponent from "../../components/AssetComponents/AssetCartItemComponent.vue";
 import {
 getAssetByID,
 getPartsOnAsset,

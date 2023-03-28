@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Ref, ref } from "vue";
-import { User } from "../plugins/interfaces";
-import FullScreenPopupComponent from "./FullScreenPopupComponent.vue";
+import { User } from "../../plugins/interfaces";
+import FullScreenPopupComponent from "../GenericComponents/FullScreenPopupComponent.vue";
 
 interface Props {
   user: User;

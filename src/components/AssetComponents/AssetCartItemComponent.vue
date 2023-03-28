@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LoadedCartItem } from "../plugins/interfaces";
+import { LoadedCartItem } from "../../plugins/interfaces";
 
 interface Props {
   item: LoadedCartItem;

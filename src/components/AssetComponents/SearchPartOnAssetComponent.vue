@@ -97,9 +97,9 @@ import {
 getPartByID,
 getPartsByData,
 getPartsByTextSearch,
-} from "../plugins/dbCommands/partManager";
-import type { PartSchema } from "../plugins/interfaces";
-import AdvancedSearchComponent from "./PartAdvancedSearchComponent.vue";
+} from "../../plugins/dbCommands/partManager";
+import type { PartSchema } from "../../plugins/interfaces";
+import AdvancedSearchComponent from "../PartComponents/PartAdvancedSearchComponent.vue";
 import AssetPartComponent from "./PartOnAssetComponent.vue";
 
 // Props interface

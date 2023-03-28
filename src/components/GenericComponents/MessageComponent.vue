@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Message } from "../plugins/interfaces";
+import type { Message } from "../../plugins/interfaces";
 
 // Define props
 interface MessageProps {
