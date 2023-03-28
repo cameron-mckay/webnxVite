@@ -11,6 +11,19 @@
         <option :value="3" selected>3 - Ogden</option>
         <option :value="1">1 - LA</option>
       </select>
+      <!-- QR Code -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        @click="toggleQR"
+        class="button-icon hover:button-icon-hover active:button-icon-active"
+        viewBox="0 0 448 512"
+      >
+        <path
+          fill="currentColor"
+          stroke="currentColor"
+          d="M0 80C0 53.5 21.5 32 48 32h96c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V80zM64 96v64h64V96H64zM0 336c0-26.5 21.5-48 48-48h96c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V336zm64 16v64h64V352H64zM304 32h96c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H304c-26.5 0-48-21.5-48-48V80c0-26.5 21.5-48 48-48zm80 64H320v64h64V96zM256 304c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s7.2-16 16-16s16 7.2 16 16v96c0 8.8-7.2 16-16 16H368c-8.8 0-16-7.2-16-16s-7.2-16-16-16s-16 7.2-16 16v64c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V304zM368 480a16 16 0 1 1 0-32 16 16 0 1 1 0 32zm64 0a16 16 0 1 1 0-32 16 16 0 1 1 0 32z"
+        />
+      </svg>
       <!-- Sliders -->
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -44,6 +57,11 @@
         @assetSearch="advancedSearch"
         @toggle="toggleAdvanced"
       />
+      <QRCodeScannerPopupComponent
+        v-if="showQR"
+        @toggle="toggleQR"
+        @decoded="decodedQR"
+      ></QRCodeScannerPopupComponent>
     </form>
     <div v-if="assets.length != 0">
       <div
@@ -108,11 +126,12 @@ import type { AxiosError, AxiosInstance } from "axios";
 import { Ref, onBeforeMount, ref } from "vue";
 import { Router } from "vue-router";
 import {
-getAssetByID,
-getAssetsByData,
-getAssetsByTextSearch,
+  getAssetByID,
+  getAssetsByData,
+  getAssetsByTextSearch,
 } from "../../plugins/dbCommands/assetManager";
 import type { AssetSchema } from "../../plugins/interfaces";
+import QRCodeScannerPopupComponent from "../GenericComponents/QRCodeScannerPopupComponent.vue";
 import AdvancedSearchComponent from "./AssetAdvancedSearchComponent.vue";
 import AssetComponent from "./AssetComponent.vue";
 
@@ -159,6 +178,7 @@ let searchText = ref("");
 let pageNum = ref(1);
 let assets: Ref<AssetSchema[]> = ref([]);
 let showAdvanced = ref(false);
+let showQR = ref(false);
 let multiplePages = ref(false);
 
 // Before component is mounted
@@ -222,6 +242,17 @@ function nextPage() {
 function toggleAdvanced() {
   // Negate
   showAdvanced.value = !showAdvanced.value;
+}
+
+// Toggle QR search
+function toggleQR() {
+  // Negate
+  showQR.value = !showQR.value;
+}
+
+function decodedQR(nxid: string) {
+  searchText.value = nxid;
+  search();
 }
 
 // Advanced search

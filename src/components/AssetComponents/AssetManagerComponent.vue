@@ -2,7 +2,11 @@
 import { AxiosError, AxiosInstance } from "axios";
 import { ref } from "vue";
 import { Router } from "vue-router";
-import { AssetSchema, LoadedCartItem, PartSchema } from "../../plugins/interfaces";
+import {
+  AssetSchema,
+  LoadedCartItem,
+  PartSchema,
+} from "../../plugins/interfaces";
 import AssetCartItemComponent from "../AssetComponents/AssetCartItemComponent.vue";
 import AssetPartSearchComponent from "../AssetComponents/SearchPartOnAssetComponent.vue";
 import CustomDropdownComponent from "../GenericComponents/CustomDropdownComponent.vue";

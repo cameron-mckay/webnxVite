@@ -6,10 +6,10 @@ import type { Store } from "vuex";
 import AssetManagerComponent from "../../components/AssetComponents/AssetManagerComponent.vue";
 import { createAsset } from "../../plugins/dbCommands/assetManager";
 import type {
-AssetSchema,
-CartItem,
-LoadedCartItem,
-UserState,
+  AssetSchema,
+  CartItem,
+  LoadedCartItem,
+  UserState,
 } from "../../plugins/interfaces";
 
 interface Props {

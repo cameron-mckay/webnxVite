@@ -10,10 +10,10 @@ import type { Store } from "vuex";
 import { checkout, getPartByID } from "../../plugins/dbCommands/partManager";
 import { getAllUsers } from "../../plugins/dbCommands/userManager";
 import type {
-LoadedCartItem,
-PartSchema,
-User,
-UserState,
+  LoadedCartItem,
+  PartSchema,
+  User,
+  UserState,
 } from "../../plugins/interfaces";
 
 interface Props {

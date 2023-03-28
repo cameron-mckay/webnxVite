@@ -39,21 +39,21 @@ var messages: Ref<Message[]> = ref([]);
 var errorMessages: Ref<Message[]> = ref([]);
 let user_data = ref({} as User);
 
-onMounted(()=> {
+onMounted(() => {
   if (
     localStorage.getItem("theme") == "dark" ||
     (localStorage.getItem("theme") == null &&
       window.matchMedia("(prefers-color-scheme: dark)").matches)
   ) {
-    setTimeout(()=>{
+    setTimeout(() => {
       document.documentElement.classList.add("dark");
-    }, 100)
-  } else { 
-    setTimeout(()=>{
-      localStorage.setItem("theme", "light")
-    }, 100)
+    }, 100);
+  } else {
+    setTimeout(() => {
+      localStorage.setItem("theme", "light");
+    }, 100);
   }
-})
+});
 
 // Before app is created
 checkAuth(http, (data, err) => {

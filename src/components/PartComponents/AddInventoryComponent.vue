@@ -105,7 +105,12 @@ onMounted(() => {
       >
         <label>Owner: </label>
         <select v-model="owner">
-          <option v-for="user in users" v-bind:key="user._id" :value="user" class="textbox m-1">
+          <option
+            v-for="user in users"
+            v-bind:key="user._id"
+            :value="user"
+            class="textbox m-1"
+          >
             {{ user.first_name + " " + user.last_name }}
           </option>
         </select>
@@ -115,7 +120,12 @@ onMounted(() => {
         v-if="request.location == 'Asset'"
       >
         <label>Asset Tag: </label>
-        <input type="text" placeholder="Asset Tag" v-model="owner._id"  class="textbox m-1"/>
+        <input
+          type="text"
+          placeholder="Asset Tag"
+          v-model="owner._id"
+          class="textbox m-1"
+        />
       </div>
       <input
         class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"

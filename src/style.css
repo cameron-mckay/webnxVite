@@ -25,25 +25,25 @@
 
   /* Buttons and inputs */
   .textbox {
-    @apply nx-border-color mx-0.5 md:mx-1 h-8 w-full rounded-md border bg-gray-300 p-1 shadow-sm transition-colors dark:bg-gray-100 dark:text-black md:h-10;
+    @apply nx-border-color mx-0.5 h-8 w-full rounded-md border bg-gray-300 p-1 shadow-sm transition-colors dark:bg-gray-100 dark:text-black md:mx-1 md:h-10;
   }
   .search {
     @apply textbox h-8 md:h-10;
   }
   .search-button {
-    @apply mx-0.5 md:mx-1 h-8 shrink-0 cursor-pointer rounded-md bg-green-500 px-4 text-black transition-colors hover:bg-green-600 active:bg-green-700 dark:text-white md:h-10 md:px-10;
+    @apply mx-0.5 h-8 shrink-0 cursor-pointer rounded-md bg-green-500 px-4 text-black transition-colors hover:bg-green-600 active:bg-green-700 dark:text-white md:mx-1 md:h-10 md:px-10;
   }
   .submit {
     @apply my-1 cursor-pointer rounded-lg bg-green-500 px-5 py-2 text-white shadow-lg transition-colors hover:bg-green-600 active:bg-green-700;
   }
   .button-icon {
-    @apply mx-0.5 md:mx-1 my-auto h-8 w-8 shrink-0 cursor-pointer rounded-md bg-gray-400 p-2 shadow-lg transition-colors dark:bg-zinc-600 dark:text-gray-200 md:h-10 md:w-10 only:mr-0 last:mr-0 first:ml-0;
+    @apply mx-0.5 my-auto h-8 w-8 shrink-0 cursor-pointer rounded-md bg-gray-400 p-2 shadow-lg transition-colors first:ml-0 last:mr-0 only:mr-0 dark:bg-zinc-600 dark:text-gray-200 md:mx-1 md:h-10 md:w-10;
   }
   .button-icon-hover {
-    @apply bg-green-400
+    @apply bg-green-400;
   }
   .button-icon-active {
-    @apply bg-green-500
+    @apply bg-green-500;
   }
 
   /* Header styles */
@@ -53,7 +53,7 @@
   .header-color {
     @apply bg-gray-300 transition-colors dark:bg-zinc-900;
   }
-  
+
   /* Used for lists and backgrounds for some views */
   .background-and-border {
     @apply nx-border-color header-color rounded-md border-2 shadow-md transition-colors;
@@ -87,16 +87,16 @@
   .detail-row > p {
     @apply odd:detail-label even:detail-data;
   }
-  
+
   /* Mobile specific styles */
   .mobile-nav-button {
-    @apply p-4 px-10 text-center leading-10 text-black shadow-xl transition-colors nx-border-color header-color border-4 hover:hover-color -mt-2;
+    @apply nx-border-color header-color hover:hover-color -mt-2 border-4 p-4 px-10 text-center leading-10 text-black shadow-xl transition-colors;
   }
   .hideViewOnMobile {
-    @apply hidden md:block before:mr-0;
+    @apply hidden before:mr-0 md:block;
   }
   .noMarginOnMobile {
-    @apply md:mr-1 mr-0
+    @apply mr-0 md:mr-1;
   }
 }
 
@@ -112,14 +112,17 @@
 }
 
 h1 {
-  @apply drop-shadow-md
+  @apply drop-shadow-md;
 }
-h1, p, a, RouterLink {
-  @apply drop-shadow-md
+h1,
+p,
+a,
+RouterLink {
+  @apply drop-shadow-md;
 }
 /* In case I forget */
 select {
-  @apply textbox
+  @apply textbox;
 }
 
 /* Gets rid of overscrolling animation on mobile */

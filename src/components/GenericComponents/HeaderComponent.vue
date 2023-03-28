@@ -91,7 +91,7 @@
         </div>
       </div>
       <div class="flex justify-center" v-on:click="toggleProfile">
-        <p class="hidden leading-10 md:block mr-2">
+        <p class="mr-2 hidden leading-10 md:block">
           {{ store.state.user.first_name + " " + store.state.user.last_name }}
         </p>
         <img
@@ -143,7 +143,7 @@
     <div
       v-if="showMenu"
       v-on:click="toggle"
-      class="fixed top-12 z-50 flex h-[calc(100%-2.5rem)] w-full flex-col justify-center text-2xl md:hidden" 
+      class="fixed top-12 z-50 flex h-[calc(100%-2.5rem)] w-full flex-col justify-center text-2xl md:hidden"
     >
       <RouterLink class="mobile-nav-button" to="/parts"> Parts</RouterLink>
       <RouterLink
@@ -235,15 +235,15 @@ onMounted(() => {
   if (
     localStorage.getItem("theme") == "dark" ||
     (localStorage.getItem("theme") == null &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches) || document.documentElement.classList.contains("dark")
+      window.matchMedia("(prefers-color-scheme: dark)").matches) ||
+    document.documentElement.classList.contains("dark")
   ) {
     dark.value = true;
-  } else { 
+  } else {
     dark.value = false;
   }
   // Enable watcher
   watch(dark, () => {
-    
     toggleTheme();
   });
 });
@@ -268,7 +268,7 @@ function toggleProfile() {
 }
 
 function toggleTheme() {
-  console.log("FUCK YOU!!!!")
+  console.log("FUCK YOU!!!!");
   if (document.documentElement.classList.contains("dark")) {
     document.documentElement.classList.remove("dark");
     localStorage.setItem("theme", "light");
