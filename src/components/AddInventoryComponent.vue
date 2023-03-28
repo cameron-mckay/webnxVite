@@ -79,6 +79,7 @@ onMounted(() => {
     >
       <label>Quantity: </label>
       <input
+        class="textbox m-1"
         required
         v-model="request.quantity"
         type="number"
@@ -86,13 +87,13 @@ onMounted(() => {
         placeholder="Quantity"
       />
       <label>Building: </label>
-      <select required v-model="request.building">
+      <select required v-model="request.building" class="textbox m-1">
         <option>3</option>
         <option>1</option>
         <option>4</option>
       </select>
       <label>Location: </label>
-      <select required v-model="request.location">
+      <select required v-model="request.location" class="textbox m-1">
         <option>Tech Inventory</option>
         <option>All Techs</option>
         <option>Parts Room</option>
@@ -104,7 +105,7 @@ onMounted(() => {
       >
         <label>Owner: </label>
         <select v-model="owner">
-          <option v-for="user in users" v-bind:key="user._id" :value="user">
+          <option v-for="user in users" v-bind:key="user._id" :value="user" class="textbox m-1">
             {{ user.first_name + " " + user.last_name }}
           </option>
         </select>
@@ -114,7 +115,7 @@ onMounted(() => {
         v-if="request.location == 'Asset'"
       >
         <label>Asset Tag: </label>
-        <input type="text" placeholder="Asset Tag" v-model="owner._id" />
+        <input type="text" placeholder="Asset Tag" v-model="owner._id"  class="textbox m-1"/>
       </div>
       <input
         class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"

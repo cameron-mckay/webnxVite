@@ -40,6 +40,7 @@ const { part } = defineProps<Props>();
         <svg
           class="button-icon hover:button-icon-hover active:button-icon-active hover:button-icon-hover active:button-icon-active"
           v-if="add === true"
+          :class="{ reduceMarginOnMobile: edit }"
           v-on:click="$emit('addPartAction')"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"

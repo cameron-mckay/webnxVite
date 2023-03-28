@@ -8,6 +8,8 @@
   .card {
     @apply background-and-border mx-auto mt-10 rounded-lg bg-gray-200 p-10 shadow-lg transition-colors dark:bg-zinc-900;
   }
+
+  /* Common colors */
   .background-color {
     @apply bg-gray-200 transition-colors dark:bg-zinc-800;
   }
@@ -20,26 +22,39 @@
   .nx-border-color {
     @apply border-gray-500 transition-colors dark:border-zinc-500;
   }
-  /* Used in register and login */
+
+  /* Buttons and inputs */
   .textbox {
-    @apply nx-border-color mx-1 h-6 w-full rounded-md border bg-gray-300 p-1 shadow-sm transition-colors dark:bg-gray-100 dark:text-black md:h-8;
+    @apply nx-border-color mx-1 h-8 w-full rounded-md border bg-gray-300 p-1 shadow-sm transition-colors dark:bg-gray-100 dark:text-black md:h-10;
   }
   .search {
     @apply textbox h-8 md:h-10;
   }
-  .header-button-colors {
-    @apply hover:hover-color active:active-color text-black transition-colors dark:text-white;
-  }
-  .header-color {
-    @apply bg-gray-300 transition-colors dark:bg-zinc-900;
-  }
-  /* Used in register and login */
   .search-button {
     @apply mx-1 h-8 shrink-0 cursor-pointer rounded-md bg-green-500 px-4 text-black transition-colors hover:bg-green-600 active:bg-green-700 dark:text-white md:h-10 md:px-10;
   }
   .submit {
     @apply my-1 cursor-pointer rounded-lg bg-green-500 px-5 py-2 text-white shadow-lg transition-colors hover:bg-green-600 active:bg-green-700;
   }
+  .button-icon {
+    @apply mx-1 my-auto h-8 w-8 shrink-0 cursor-pointer rounded-md bg-gray-400 p-2 shadow-lg transition-colors dark:bg-zinc-600 dark:text-gray-200 md:h-10 md:w-10 only:mr-0 last:mr-0 first:ml-0;
+  }
+  .button-icon-hover {
+    @apply bg-green-400
+  }
+  .button-icon-active {
+    @apply bg-green-500
+  }
+
+  /* Header styles */
+  .header-button-colors {
+    @apply hover:hover-color active:active-color text-black transition-colors dark:text-white;
+  }
+  .header-color {
+    @apply bg-gray-300 transition-colors dark:bg-zinc-900;
+  }
+  
+  /* Used for lists and backgrounds for some views */
   .background-and-border {
     @apply nx-border-color header-color rounded-md border-2 shadow-md transition-colors;
   }
@@ -49,19 +64,11 @@
   .bab-drop {
     @apply nx-border-color pointer-events-none h-0 bg-gray-300 opacity-0 dark:bg-zinc-900;
   }
-
   .bab-drop-hover {
     @apply nx-border-color hover-color pointer-events-auto absolute z-10 -mt-0.5 block h-auto rounded-b-md border-x-2 border-b-2 p-2 opacity-100 shadow-md transition md:delay-300;
   }
-  .button-icon {
-    @apply mx-1 my-auto h-8 w-8 shrink-0 cursor-pointer rounded-md bg-gray-400 p-2 shadow-lg transition-colors dark:bg-zinc-600 dark:text-gray-200 md:h-10 md:w-10;
-  }
-  .button-icon-hover {
-    @apply bg-green-400
-  }
-  .button-icon-active {
-    @apply bg-green-500
-  }
+
+  /* Detail page styles */
   .detail-table {
     @apply grid grid-cols-2 md:grid-cols-4;
   }
@@ -80,31 +87,42 @@
   .detail-row > p {
     @apply odd:detail-label even:detail-data;
   }
+  
+  /* Mobile specific styles */
   .mobile-nav-button {
-    @apply border-collapse border-y border-green-700 bg-green-400 p-4 px-10 text-center leading-10 text-black shadow-xl transition-colors hover:bg-green-500 active:bg-green-600;
+    @apply p-4 px-10 text-center leading-10 text-black shadow-xl transition-colors nx-border-color header-color border-4 hover:hover-color -mt-2;
   }
   .hideViewOnMobile {
-    @apply hidden md:block;
+    @apply hidden md:block before:mr-0;
+  }
+  .reduceMarginOnMobile {
+    @apply mr-0 md:mr-1
   }
 }
 
+/* Apply fonts and colors */
 * {
   font-family: "Inter", sans-serif;
   @apply text-black dark:text-gray-200;
 }
+
+/* Change selection color */
 ::selection {
   @apply bg-green-400 text-white dark:text-black;
 }
 
+/* In case I forget */
 select {
-  @apply textbox;
+  @apply textbox
 }
 
+/* Gets rid of overscrolling animation on mobile */
 html {
   overflow: hidden;
   height: 100%;
 }
 
+/* Gets rid of overscrolling animation on mobile */
 body {
   overflow: scroll;
   height: 100%;

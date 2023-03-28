@@ -143,7 +143,7 @@
     <div
       v-if="showMenu"
       v-on:click="toggle"
-      class="fixed top-10 z-50 flex h-[calc(100%-2.5rem)] w-full flex-col justify-center text-2xl md:hidden"
+      class="fixed top-12 z-50 flex h-[calc(100%-2.5rem)] w-full flex-col justify-center text-2xl md:hidden" 
     >
       <RouterLink class="mobile-nav-button" to="/parts"> Parts</RouterLink>
       <RouterLink
@@ -231,17 +231,17 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
+  // Load theme preference
   if (
     localStorage.getItem("theme") == "dark" ||
     (localStorage.getItem("theme") == null &&
       window.matchMedia("(prefers-color-scheme: dark)").matches)
   ) {
-    document.documentElement.classList.add("dark");
     dark.value = true;
   } else { 
     dark.value = false;
-    localStorage.setItem("theme", "light")
   }
+  // Enable watcher
   watch(dark, () => {
     toggleTheme();
   });

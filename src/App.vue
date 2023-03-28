@@ -21,7 +21,7 @@ import MessageComponent from "./components/MessageComponent.vue";
 
 // Import dependencies
 import type { AxiosError, AxiosInstance } from "axios";
-import { Ref, inject, ref } from "vue";
+import { Ref, inject, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { injectionKey } from "./plugins/axios";
 import { checkAuth } from "./plugins/dbCommands/userManager";
@@ -38,6 +38,23 @@ const store = useStore();
 var messages: Ref<Message[]> = ref([]);
 var errorMessages: Ref<Message[]> = ref([]);
 let user_data = ref({} as User);
+
+onMounted(()=> {
+  if (
+    localStorage.getItem("theme") == "dark" ||
+    (localStorage.getItem("theme") == null &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches)
+  ) {
+    setTimeout(()=>{
+      document.documentElement.classList.add("dark");
+    }, 100)
+  } else { 
+    setTimeout(()=>{
+      localStorage.setItem("theme", "light")
+    }, 100)
+  }
+})
+
 // Before app is created
 checkAuth(http, (data, err) => {
   // If not authenticated
