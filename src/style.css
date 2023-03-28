@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -102,7 +102,7 @@
 
 /* Apply fonts and colors */
 * {
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   @apply text-black dark:text-gray-200;
 }
 

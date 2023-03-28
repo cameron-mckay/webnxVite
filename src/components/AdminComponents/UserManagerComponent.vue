@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Ref, ref } from "vue";
-import { User } from "../../plugins/interfaces";
-import FullScreenPopupComponent from "../GenericComponents/FullScreenPopupComponent.vue";
+import { Ref, ref } from 'vue';
+import { User } from '../../plugins/interfaces';
+import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
 
 interface Props {
   user: User;
 }
+const emit = defineEmits(['update']);
 
 const props = defineProps<Props>();
 

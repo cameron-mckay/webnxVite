@@ -6,20 +6,20 @@
         to="/admin/parts/create"
         class="m-2 block rounded-lg bg-orange-400 p-4 text-center hover:bg-orange-500 active:bg-orange-600"
       >
-        Create a part</RouterLink
-      >
+        Create a part
+      </RouterLink>
       <RouterLink
         to="/admin/parts"
         class="m-2 block rounded-lg bg-orange-400 p-4 text-center hover:bg-orange-500 active:bg-orange-600"
       >
-        Manage Parts</RouterLink
-      >
+        Manage Parts
+      </RouterLink>
       <RouterLink
         to="/admin/users"
         class="m-2 block rounded-lg bg-orange-400 p-4 text-center hover:bg-orange-500 active:bg-orange-600"
       >
-        Manage Users</RouterLink
-      >
+        Manage Users
+      </RouterLink>
     </div>
   </div>
 </template>

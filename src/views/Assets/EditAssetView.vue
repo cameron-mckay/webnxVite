@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import type { AxiosError, AxiosInstance } from "axios";
-import { onBeforeMount, ref, watch } from "vue";
-import type { Router } from "vue-router";
-import type { Store } from "vuex";
-import AssetManagerComponent from "../../components/AssetComponents/AssetManagerComponent.vue";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { onBeforeMount, ref, watch } from 'vue';
+import type { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import AssetManagerComponent from '../../components/AssetComponents/AssetManagerComponent.vue';
 import {
   getAssetByID,
   getPartsOnAsset,
   updateAsset,
-} from "../../plugins/dbCommands/assetManager";
-import { getUserInventory } from "../../plugins/dbCommands/userManager";
+} from '../../plugins/dbCommands/assetManager';
+import { getUserInventory } from '../../plugins/dbCommands/userManager';
 import type {
   AssetSchema,
   CartItem,
   LoadedCartItem,
   UserState,
-} from "../../plugins/interfaces";
+} from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -70,7 +70,7 @@ onBeforeMount(() => {
         () => {
           if (!resetting) {
             // If server and live, asset has rails
-            if (oldAsset.value.asset_type == "Server" && oldAsset.value.live) {
+            if (oldAsset.value.asset_type == 'Server' && oldAsset.value.live) {
               oldAsset.value.rails = true;
             } else {
               delete oldAsset.value.rails;
@@ -166,7 +166,7 @@ function plusPart(item: LoadedCartItem) {
       }
     }
     if (!found) {
-      errorHandler("Not enough parts in your inventory.");
+      errorHandler('Not enough parts in your inventory.');
     }
   }
 }

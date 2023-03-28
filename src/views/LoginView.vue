@@ -25,13 +25,13 @@
 
 <script setup lang="ts">
 // IMPORTS!!!!! YAY
-import { onMounted } from "vue";
+import { onMounted } from 'vue';
 
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
-import type { AxiosError, AxiosInstance } from "axios";
-import { Router } from "vue-router";
-import type { Store } from "vuex";
-import type { UserState } from "../plugins/interfaces";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import type { UserState } from '../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -47,8 +47,8 @@ const { http, store, router, errorHandler, displayMessage } =
 
 // Form data binding
 let form = {
-  email: "",
-  password: "",
+  email: '',
+  password: '',
 };
 
 // Lifecycle hook
@@ -64,17 +64,17 @@ async function login() {
   if (email && password) {
     // Send username and password to API
     await http
-      .post("/api/login", { email, password })
+      .post('/api/login', { email, password })
       .then((res) => {
         // If login is successful
         // Store cookie in local storage
-        localStorage.setItem("token", res.data.token);
+        localStorage.setItem('token', res.data.token);
         // Add token to headers
-        http.defaults.headers["Authorization"] = res.data.token;
+        http.defaults.headers['Authorization'] = res.data.token;
         // Save user data to vuex store
-        store.commit("updateUserData");
-        store.commit("authenticate");
-        router.push("/");
+        store.commit('updateUserData');
+        store.commit('authenticate');
+        router.push('/');
       })
       .catch((err: Error | AxiosError) => {
         // Error
@@ -86,11 +86,11 @@ async function login() {
 // Redirects if token is already present
 async function redirectIfLoggedIn() {
   await http
-    .post("/api/auth")
+    .post('/api/auth')
     .then(() => {
       // Go to home
       store.state.isAuth = true;
-      router.push("/");
+      router.push('/');
     })
     .catch((err: Error | AxiosError) => {
       // Go to login

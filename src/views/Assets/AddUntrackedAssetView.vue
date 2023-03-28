@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import type { AxiosError, AxiosInstance } from "axios";
-import { onMounted, ref, watch } from "vue";
-import type { Router } from "vue-router";
-import type { Store } from "vuex";
-import AssetManagerComponent from "../../components/AssetComponents/AssetManagerComponent.vue";
-import { createAsset } from "../../plugins/dbCommands/assetManager";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { onMounted, ref, watch } from 'vue';
+import type { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import AssetManagerComponent from '../../components/AssetComponents/AssetManagerComponent.vue';
+import { createAsset } from '../../plugins/dbCommands/assetManager';
 import type {
   AssetSchema,
   CartItem,
   LoadedCartItem,
   UserState,
-} from "../../plugins/interfaces";
+} from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -61,7 +61,7 @@ onMounted(() => {
   watch(
     () => oldAsset.value.live,
     () => {
-      if (oldAsset.value.asset_type == "Server" && oldAsset.value.live) {
+      if (oldAsset.value.asset_type == 'Server' && oldAsset.value.live) {
         oldAsset.value.rails = true;
       } else {
         delete oldAsset.value.rails;

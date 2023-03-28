@@ -115,16 +115,16 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { AxiosError, AxiosInstance } from "axios";
-import { Ref, onBeforeMount, ref } from "vue";
-import { Router } from "vue-router";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { Ref, onBeforeMount, ref } from 'vue';
+import { Router } from 'vue-router';
 import {
   getPartsByData,
   getPartsByTextSearch,
-} from "../../plugins/dbCommands/partManager";
-import type { PartSchema } from "../../plugins/interfaces";
-import AdvancedSearchComponent from "./PartAdvancedSearchComponent.vue";
-import PartComponent from "./PartComponent.vue";
+} from '../../plugins/dbCommands/partManager';
+import type { PartSchema } from '../../plugins/interfaces';
+import AdvancedSearchComponent from './PartAdvancedSearchComponent.vue';
+import PartComponent from './PartComponent.vue';
 
 interface AddObject {
   show: boolean;
@@ -157,7 +157,7 @@ let {
   changeBuilding,
   add_object,
 } = props;
-const emit = defineEmits(["addPartAction", "editPartAction", "viewPartAction"]);
+const emit = defineEmits(['addPartAction', 'editPartAction', 'viewPartAction']);
 defineExpose({
   search,
 });
@@ -165,7 +165,7 @@ defineExpose({
 // component variables
 let location = props.location;
 let building = ref(props.building);
-let searchText = ref("");
+let searchText = ref('');
 let pageNum = ref(1);
 let parts: Ref<PartSchema[]> = ref([]);
 let showAdvanced = ref(false);
@@ -182,7 +182,7 @@ onBeforeMount(async () => {
     location = query.location as string;
   }
   // Check for advanced search
-  if (query.advanced === "true") {
+  if (query.advanced === 'true') {
     let searchPart = {} as PartSchema;
     // Loop through query to create part object
     for (const key in query) {
@@ -226,15 +226,15 @@ function toggleAdvanced() {
 
 // Advanced search
 async function advancedSearch(part: PartSchema) {
-  part["advanced"] = "true";
-  part["location"] = location;
-  part["building"] = building.value.toString();
+  part['advanced'] = 'true';
+  part['location'] = location;
+  part['building'] = building.value.toString();
   router.push({ query: part });
   // Query the API
-  delete part["location"];
-  delete part["building"];
-  delete part["advanced"];
-  delete part["nxid"];
+  delete part['location'];
+  delete part['building'];
+  delete part['advanced'];
+  delete part['nxid'];
   getPartsByData(http, part, building.value, location, (data, err) => {
     // Hide advanced search
     showAdvanced.value = false;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch } from 'vue';
 
 interface Props {
   required: boolean;
@@ -11,14 +11,14 @@ const props = defineProps<Props>();
 // Destructure props
 const { required, options, defaultValue } = props;
 // Define emitter events
-const emit = defineEmits(["updateValue"]);
+const emit = defineEmits(['updateValue']);
 
 // Custom text field option
 let custom = ref(false);
 // String value for drop down
-let textValue = ref("");
+let textValue = ref('');
 // Temp variable
-let prevValue = "";
+let prevValue = '';
 
 // Leave custom mode
 function closeCustom() {
@@ -43,16 +43,16 @@ onMounted(async () => {
   // Enable watcher on text value
   watch(textValue, (value, oldValue) => {
     // If drop down is set to custom
-    if (textValue.value === "Custom" && !custom.value) {
+    if (textValue.value === 'Custom' && !custom.value) {
       // Save previous value for if custom gets cleared
       prevValue = oldValue;
       // Set text value to blank string
-      textValue.value = "";
+      textValue.value = '';
       // Enable custom value
       custom.value = true;
     }
     // Emit value update when textValue changes
-    emit("updateValue", textValue.value);
+    emit('updateValue', textValue.value);
   });
   // Enable watcher on props, since they can change after
   // mount depending on loading conditions

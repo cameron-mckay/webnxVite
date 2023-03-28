@@ -1,11 +1,11 @@
-import type { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import type {
   apiResponse,
   CartItem,
   PartRecord,
   PartSchema,
   User,
-} from "../interfaces";
+} from '../interfaces';
 
 /**
  * @brief Get a list of 50 parts from a keyword search string
@@ -27,7 +27,7 @@ export async function getPartsByTextSearch(
 ) {
   // Send string query to API
   await http
-    .get("/api/part/search", {
+    .get('/api/part/search', {
       params: {
         searchString,
         pageNum,
@@ -64,7 +64,7 @@ export async function getPartByID(
 ) {
   // Request part using ID in query string
   await http
-    .get("/api/part/id", {
+    .get('/api/part/id', {
       params: {
         id,
         building,
@@ -98,7 +98,7 @@ export async function getPartsByData(
   callback: apiResponse
 ) {
   await http
-    .get("/api/part", {
+    .get('/api/part', {
       params: {
         part,
         building,
@@ -133,7 +133,7 @@ export async function createPart(
 ) {
   // Send new part to API
   await http
-    .post("/api/part", {
+    .post('/api/part', {
       part,
       building,
       location,
@@ -161,7 +161,7 @@ export async function updatePart(
   callback: apiResponse
 ) {
   await http
-    .put("/api/part", { part })
+    .put('/api/part', { part })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);
@@ -187,7 +187,7 @@ export async function checkout(
   callback: apiResponse
 ) {
   await http
-    .post("/api/checkout", {
+    .post('/api/checkout', {
       cart,
       user_id,
     })
@@ -216,7 +216,7 @@ export async function checkin(
   callback: apiResponse
 ) {
   await http
-    .post("/api/checkin", {
+    .post('/api/checkin', {
       inventory,
       user_id,
     })
@@ -244,7 +244,7 @@ export function getUniqueOnPartInfo(
   callback: apiResponse
 ) {
   http
-    .get("/api/part/distinct", {
+    .get('/api/part/distinct', {
       params: {
         key,
         where,
@@ -274,7 +274,7 @@ export function getUniqueOnPartRecord(
   callback: apiResponse
 ) {
   http
-    .get("/api/partRecord/distinct", {
+    .get('/api/partRecord/distinct', {
       params: {
         key,
         where,
@@ -304,7 +304,7 @@ export async function createNewPartRecords(
   callback: apiResponse
 ) {
   await http
-    .post("/api/part/add", {
+    .post('/api/part/add', {
       part,
       owner,
     })
@@ -331,7 +331,7 @@ export function getPartRecordsByID(
   callback: apiResponse
 ) {
   http
-    .get("/api/part/records", {
+    .get('/api/part/records', {
       params: {
         nxid,
       },
@@ -359,7 +359,7 @@ export function getPartHistoryByID(
   callback: apiResponse
 ) {
   http
-    .get("/api/partRecord/history", {
+    .get('/api/partRecord/history', {
       params: {
         id,
       },
@@ -390,7 +390,7 @@ export function movePart(
   callback: apiResponse
 ) {
   http
-    .post("/api/part/move", {
+    .post('/api/part/move', {
       to,
       from,
       quantity,

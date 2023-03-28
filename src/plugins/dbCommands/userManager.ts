@@ -1,5 +1,5 @@
-import type { AxiosError, AxiosInstance, AxiosResponse } from "axios";
-import type { apiResponse, User } from "../interfaces";
+import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import type { apiResponse, User } from '../interfaces';
 
 /**
  * @brief Get the current user's object from the API
@@ -13,7 +13,7 @@ export async function getCurrentUser(
 ) {
   // Send request to API
   await http
-    .get("/api/user")
+    .get('/api/user')
     .then((res: AxiosResponse) => {
       // Success - send response data to callback
       callback(res.data, null);
@@ -38,7 +38,7 @@ export async function getUserByID(
 ) {
   // Send request to API
   await http
-    .get("/api/user", {
+    .get('/api/user', {
       params: {
         id,
       },
@@ -61,10 +61,10 @@ export async function getUserByID(
  */
 export async function checkAuth(http: AxiosInstance, callback: apiResponse) {
   // Add token to default headers
-  http.defaults.headers.common["Authorization"] = localStorage.getItem("token");
+  http.defaults.headers.common['Authorization'] = localStorage.getItem('token');
   // Check with API to see if authorized
   await http
-    .post("/api/auth")
+    .post('/api/auth')
     .then((res: AxiosResponse) => {
       // Authenticated - send null error to callback
       callback(res.data, null);
@@ -83,7 +83,7 @@ export async function checkAuth(http: AxiosInstance, callback: apiResponse) {
  */
 export async function getAllUsers(http: AxiosInstance, callback: apiResponse) {
   await http
-    .get("/api/user/all")
+    .get('/api/user/all')
     .then((res: AxiosResponse) => {
       callback(res.data, null);
     })
@@ -105,7 +105,7 @@ export async function updateUser(
   callback: apiResponse
 ) {
   await http
-    .put("/api/user", { user })
+    .put('/api/user', { user })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);
@@ -127,7 +127,7 @@ export async function getUserInventory(
   callback: apiResponse
 ) {
   await http
-    .get("/api/user/inventory")
+    .get('/api/user/inventory')
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);
@@ -151,7 +151,7 @@ export async function getUserInventoryByID(
   callback: apiResponse
 ) {
   await http
-    .get("/api/user/inventory", {
+    .get('/api/user/inventory', {
       params: {
         user_id,
       },
@@ -171,9 +171,9 @@ export async function getAllTechsInventory(
   callback: apiResponse
 ) {
   await http
-    .get("/api/user/inventory", {
+    .get('/api/user/inventory', {
       params: {
-        user_id: "all",
+        user_id: 'all',
       },
     })
     .then((res: AxiosResponse) => {

@@ -31,8 +31,8 @@
             class="transiton header-button-colors w-24 text-center leading-10"
             to="/parts"
           >
-            Parts</RouterLink
-          >
+            Parts
+          </RouterLink>
           <RouterLink
             v-if="store.state.user.role != 'kiosk'"
             class="transiton header-button-colors w-24 text-center leading-10"
@@ -47,8 +47,8 @@
             class="header-button-colors w-28 text-center leading-10 transition"
             to="/cart"
           >
-            {{ `Check Out(${store.getters.getTotalNumItems})` }}</RouterLink
-          >
+            {{ `Check Out(${store.getters.getTotalNumItems})` }}
+          </RouterLink>
           <RouterLink
             v-if="store.state.user.role == 'kiosk'"
             v-show="store.state.cart.length < 1"
@@ -69,8 +69,8 @@
             class="transiton header-button-colors w-24 text-center leading-10"
             to="/inventory"
           >
-            Inventory</RouterLink
-          >
+            Inventory
+          </RouterLink>
           <RouterLink
             v-if="
               store.state.user.role == 'inventory' ||
@@ -92,7 +92,7 @@
       </div>
       <div class="flex justify-center" v-on:click="toggleProfile">
         <p class="mr-2 hidden leading-10 md:block">
-          {{ store.state.user.first_name + " " + store.state.user.last_name }}
+          {{ store.state.user.first_name + ' ' + store.state.user.last_name }}
         </p>
         <img
           class="h-10 rounded-full p-1"
@@ -115,7 +115,7 @@
         class="nx-border-color header-color pointer-events-auto w-fit rounded-bl-md border-l-2 border-b-2 p-2 shadow-lg"
       >
         <p class="cursor-default rounded-md p-2 font-bold md:hidden">
-          {{ store.state.user.first_name + " " + store.state.user.last_name }}
+          {{ store.state.user.first_name + ' ' + store.state.user.last_name }}
         </p>
         <div class="flex w-full">
           <p class="cursor-default p-2">Dark Mode</p>
@@ -145,7 +145,7 @@
       v-on:click="toggle"
       class="fixed top-12 z-50 flex h-[calc(100%-2.5rem)] w-full flex-col justify-center text-2xl md:hidden"
     >
-      <RouterLink class="mobile-nav-button" to="/parts"> Parts</RouterLink>
+      <RouterLink class="mobile-nav-button" to="/parts">Parts</RouterLink>
       <RouterLink
         v-if="store.state.user.role != 'kiosk'"
         class="mobile-nav-button"
@@ -160,8 +160,8 @@
         class="mobile-nav-button"
         to="/cart"
       >
-        {{ `Check Out(${store.getters.getTotalNumItems})` }}</RouterLink
-      >
+        {{ `Check Out(${store.getters.getTotalNumItems})` }}
+      </RouterLink>
       <RouterLink
         v-if="store.state.user.role == 'kiosk'"
         v-show="store.state.cart.length < 1"
@@ -182,8 +182,8 @@
         class="mobile-nav-button"
         to="/inventory"
       >
-        Inventory</RouterLink
-      >
+        Inventory
+      </RouterLink>
       <RouterLink
         v-if="
           store.state.user.role == 'inventory' ||
@@ -207,12 +207,12 @@
 </template>
 
 <script setup lang="ts">
-import type { AxiosInstance } from "axios";
-import { onBeforeMount, onMounted, ref, watch } from "vue";
-import { Store } from "vuex";
-import { UserState } from "../../plugins/interfaces";
-import router from "../../router";
-document.documentElement.classList.remove("dark");
+import type { AxiosInstance } from 'axios';
+import { onBeforeMount, onMounted, ref, watch } from 'vue';
+import { Store } from 'vuex';
+import { UserState } from '../../plugins/interfaces';
+import router from '../../router';
+document.documentElement.classList.remove('dark');
 interface Props {
   http: AxiosInstance;
   store: Store<UserState>;
@@ -224,19 +224,19 @@ let dark = ref(false);
 let showProfile = ref(false);
 
 let profilePicture =
-  "https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg";
+  'https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg';
 
 onBeforeMount(() => {
-  store.commit("updateUserData");
+  store.commit('updateUserData');
 });
 
 onMounted(() => {
   // Load theme preference
   if (
-    localStorage.getItem("theme") == "dark" ||
-    (localStorage.getItem("theme") == null &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches) ||
-    document.documentElement.classList.contains("dark")
+    localStorage.getItem('theme') == 'dark' ||
+    (localStorage.getItem('theme') == null &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches) ||
+    document.documentElement.classList.contains('dark')
   ) {
     dark.value = true;
   } else {
@@ -249,8 +249,8 @@ onMounted(() => {
 });
 
 async function logout() {
-  await store.commit("logout", http);
-  router.push("/login");
+  await store.commit('logout', http);
+  router.push('/login');
 }
 
 function toggle() {
@@ -268,13 +268,13 @@ function toggleProfile() {
 }
 
 function toggleTheme() {
-  console.log("FUCK YOU!!!!");
-  if (document.documentElement.classList.contains("dark")) {
-    document.documentElement.classList.remove("dark");
-    localStorage.setItem("theme", "light");
+  console.log('FUCK YOU!!!!');
+  if (document.documentElement.classList.contains('dark')) {
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
   } else {
-    document.documentElement.classList.add("dark");
-    localStorage.setItem("theme", "dark");
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
   }
 }
 </script>

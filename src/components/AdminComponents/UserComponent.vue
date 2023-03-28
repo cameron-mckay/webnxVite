@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { User } from "../../plugins/interfaces";
+import { User } from '../../plugins/interfaces';
 interface Props {
   user: User;
 }
+const emit = defineEmits(['edit']);
 const { user } = defineProps<Props>();
 </script>
 <template>

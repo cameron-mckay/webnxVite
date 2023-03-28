@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { Ref, onMounted, ref } from "vue";
-import UserComponent from "../../components/AdminComponents/UserComponent.vue";
-import { getAllUsers, updateUser } from "../../plugins/dbCommands/userManager";
-import { User } from "../../plugins/interfaces";
+import { Ref, onMounted, ref } from 'vue';
+import UserComponent from '../../components/AdminComponents/UserComponent.vue';
+import { getAllUsers, updateUser } from '../../plugins/dbCommands/userManager';
+import { User } from '../../plugins/interfaces';
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
-import type { AxiosError, AxiosInstance } from "axios";
-import { Router } from "vue-router";
-import type { Store } from "vuex";
-import UserManagerComponent from "../../components/AdminComponents/UserManagerComponent.vue";
-import type { UserState } from "../../plugins/interfaces";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import UserManagerComponent from '../../components/AdminComponents/UserManagerComponent.vue';
+import type { UserState } from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -51,7 +51,7 @@ function localUpdateUser(user: User) {
     }
     currentUser.value = {};
     toggleEdit({});
-    displayMessage("Updated user.");
+    displayMessage('Updated user.');
   });
 }
 

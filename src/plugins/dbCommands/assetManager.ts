@@ -1,5 +1,5 @@
-import type { AxiosError, AxiosInstance, AxiosResponse } from "axios";
-import type { apiResponse, AssetSchema, CartItem } from "../interfaces";
+import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import type { apiResponse, AssetSchema, CartItem } from '../interfaces';
 
 /**
  * @brief Get a list of 50 assets from a keyword search string
@@ -17,7 +17,7 @@ export async function getAssetsByTextSearch(
 ) {
   // Send string query to API
   await http
-    .get("/api/asset/search", {
+    .get('/api/asset/search', {
       params: {
         searchString,
         pageNum,
@@ -48,7 +48,7 @@ export async function getAssetByID(
 ) {
   // Request part using ID in query string
   await http
-    .get("/api/asset/id", {
+    .get('/api/asset/id', {
       params: {
         id,
       },
@@ -76,7 +76,7 @@ export async function getAssetsByData(
   callback: apiResponse
 ) {
   await http
-    .get("/api/asset", { params: asset })
+    .get('/api/asset', { params: asset })
     .then((res: AxiosResponse) => {
       // Success - send results to callback
       callback(res.data, null);
@@ -103,7 +103,7 @@ export async function createAsset(
 ) {
   // Send new part to API
   await http
-    .post("/api/asset", { asset, parts })
+    .post('/api/asset', { asset, parts })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);
@@ -128,7 +128,7 @@ export async function updateAsset(
   callback: apiResponse
 ) {
   await http
-    .put("/api/asset", { asset, parts: parts })
+    .put('/api/asset', { asset, parts: parts })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);
@@ -152,7 +152,7 @@ export async function getPartsOnAsset(
   callback: apiResponse
 ) {
   await http
-    .get("/api/asset/parts", { params: { asset_tag } })
+    .get('/api/asset/parts', { params: { asset_tag } })
     .then((res: AxiosResponse) => {
       // Success - send results to callback
       callback(res.data, null);

@@ -5,13 +5,15 @@
       <RouterLink
         to="/manage/parts/create"
         class="m-2 block rounded-lg bg-green-400 p-4 text-center hover:bg-green-500 active:bg-green-600"
-        >Create a part</RouterLink
       >
+        Create a part
+      </RouterLink>
       <RouterLink
         to="/manage/parts"
         class="m-2 block rounded-lg bg-green-400 p-4 text-center hover:bg-green-500 active:bg-green-600"
-        >Manage Parts</RouterLink
       >
+        Manage Parts
+      </RouterLink>
     </div>
   </div>
 </template>

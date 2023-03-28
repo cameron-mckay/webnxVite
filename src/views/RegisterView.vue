@@ -47,12 +47,12 @@
 </template>
 
 <script setup lang="ts">
-import type { AxiosError, AxiosInstance } from "axios";
-import { AxiosResponse } from "axios";
-import { onMounted } from "vue";
-import { Router } from "vue-router";
-import type { Store } from "vuex";
-import type { UserState } from "../plugins/interfaces";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { AxiosResponse } from 'axios';
+import { onMounted } from 'vue';
+import { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import type { UserState } from '../plugins/interfaces';
 
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 interface Props {
@@ -69,11 +69,11 @@ const { http, store, router, errorHandler, displayMessage } =
 
 // Bound to form data
 let form = {
-  first_name: "",
-  last_name: "",
-  email: "",
-  password: "",
-  password2: "",
+  first_name: '',
+  last_name: '',
+  email: '',
+  password: '',
+  password2: '',
 };
 
 // Lifecycle hook
@@ -90,17 +90,17 @@ async function register() {
   if (first_name && last_name && email && password && password == password2) {
     // Send username and password to API
     await http
-      .post("/api/register", form)
+      .post('/api/register', form)
       .then((res: AxiosResponse) => {
         // If login is successful
         // Store cookie in local storage
-        localStorage.setItem("token", res.data.token);
+        localStorage.setItem('token', res.data.token);
         // Add token to headers
-        http.defaults.headers.common["Authorization"] = res.data.token;
+        http.defaults.headers.common['Authorization'] = res.data.token;
         // Save user data to vuex store
-        store.commit("updateUserData");
-        store.commit("authenticate");
-        router.push("/");
+        store.commit('updateUserData');
+        store.commit('authenticate');
+        router.push('/');
       })
       .catch((err: Error | AxiosError) => {
         // Error
@@ -111,10 +111,10 @@ async function register() {
 
 async function redirectIfLoggedIn() {
   await http
-    .post("/api/auth")
+    .post('/api/auth')
     .then(() => {
       // Go to home
-      router.push("/");
+      router.push('/');
     })
     .catch((err: Error | AxiosError) => {
       // Go to login
@@ -123,6 +123,6 @@ async function redirectIfLoggedIn() {
 
 async function focus() {
   // Focus first name entry field
-  document.getElementById("first_name")!.focus();
+  document.getElementById('first_name')!.focus();
 }
 </script>

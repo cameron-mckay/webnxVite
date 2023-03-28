@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { LoadedCartItem } from "../../plugins/interfaces";
+import { LoadedCartItem } from '../../plugins/interfaces';
 
 interface Props {
   item: LoadedCartItem;
   hideButtons?: boolean;
 }
 const { item, hideButtons } = defineProps<Props>();
+const emit = defineEmits(['plus', 'minus', 'delete']);
 </script>
 
 <template>

@@ -29,8 +29,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { LoadedCartItem } from "../../plugins/interfaces";
-import PopupInventoryItemComponent from "./PopupInventoryItemComponent.vue";
+import type { LoadedCartItem } from '../../plugins/interfaces';
+import PopupInventoryItemComponent from './PopupInventoryItemComponent.vue';
 
 // Props interface
 interface Props {

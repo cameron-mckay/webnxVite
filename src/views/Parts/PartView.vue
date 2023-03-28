@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import type { AxiosError, AxiosInstance } from "axios";
-import { onBeforeMount, ref } from "vue";
-import { Router } from "vue-router";
-import type { Store } from "vuex";
-import PartRecordComponent from "../../components/PartComponents/PartRecordComponent.vue";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { onBeforeMount, ref } from 'vue';
+import { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
 import {
   getPartByID,
   getPartRecordsByID,
-} from "../../plugins/dbCommands/partManager";
-import { getUserByID } from "../../plugins/dbCommands/userManager";
+} from '../../plugins/dbCommands/partManager';
+import { getUserByID } from '../../plugins/dbCommands/userManager';
 import type {
   PartRecord,
   PartSchema,
   User,
   UserState,
-} from "../../plugins/interfaces";
+} from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -27,23 +27,23 @@ const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 
 let part = ref({
-  nxid: "",
-  manufacturer: "",
-  name: "",
-  type: "",
+  nxid: '',
+  manufacturer: '',
+  name: '',
+  type: '',
   quantity: 0,
   total_quantity: 0,
-  shelf_location: "",
+  shelf_location: '',
 } as PartSchema);
 let partRecords = ref([] as PartRecord[]);
 let users = ref([
-  { _id: "all", first_name: "All", last_name: "Techs" },
+  { _id: 'all', first_name: 'All', last_name: 'Techs' },
 ] as User[]);
 
 onBeforeMount(() => {
   if (router.currentRoute.value.query.nxid) {
     let nxid = router.currentRoute.value.query.nxid as string;
-    getPartByID(http, nxid, 3, "Parts Room", (res, err) => {
+    getPartByID(http, nxid, 3, 'Parts Room', (res, err) => {
       if (err) {
         errorHandler(err);
       }
@@ -59,7 +59,7 @@ onBeforeMount(() => {
         // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
         if (
           record.owner &&
-          record.owner != "all" &&
+          record.owner != 'all' &&
           users.value.find((e) => e._id == record.owner) === undefined
         ) {
           await getUserByID(http, record.owner, (res, err) => {
@@ -87,7 +87,7 @@ onBeforeMount(() => {
 });
 
 function viewHistory(id: string) {
-  router.push({ name: "Part History", query: { id, nxid: part.value.nxid } });
+  router.push({ name: 'Part History', query: { id, nxid: part.value.nxid } });
 }
 </script>
 <template>
@@ -114,13 +114,13 @@ function viewHistory(id: string) {
         <p>Chipset:</p>
         <p>{{ part.chipset }}</p>
         <p>Frequency:</p>
-        <p>{{ part.frequency + "GHz" }}</p>
+        <p>{{ part.frequency + 'GHz' }}</p>
       </div>
       <div v-if="part.type == 'Memory'" class="detail-row">
         <p>Frequency:</p>
-        <p>{{ part.frequency + "MHz" }}</p>
+        <p>{{ part.frequency + 'MHz' }}</p>
         <p>Capacity:</p>
-        <p>{{ part.capacity + "GB" }}</p>
+        <p>{{ part.capacity + 'GB' }}</p>
         <p>Memory Type:</p>
         <p>{{ part.memory_type }}</p>
       </div>

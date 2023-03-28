@@ -1,12 +1,12 @@
 <script setup lang="ts">
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
-import type { AxiosError, AxiosInstance } from "axios";
-import { Ref, ref } from "vue";
-import { Router } from "vue-router";
-import type { Store } from "vuex";
-import SearchComponent from "../../components/PartComponents/PartSearchComponent.vue";
-import { updatePart } from "../../plugins/dbCommands/partManager";
-import type { PartSchema, UserState } from "../../plugins/interfaces";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { Ref, ref } from 'vue';
+import { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import SearchComponent from '../../components/PartComponents/PartSearchComponent.vue';
+import { updatePart } from '../../plugins/dbCommands/partManager';
+import type { PartSchema, UserState } from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;

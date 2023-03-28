@@ -1,7 +1,7 @@
 /**
  * This code was taken from CodePen
  */
-import type { VNode, VueElement } from "vue";
+import type { VNode, VueElement } from 'vue';
 
 const checkHeightForChangeAndUpdate = (
   el: VueElement,
@@ -43,7 +43,7 @@ const checkHeightForChangeAndUpdate = (
         setTimeout(() => {
           // change the element's height back to 'auto' so that
           // it's height will change again the next time a child is added or removed.
-          el.style.height = "auto";
+          el.style.height = 'auto';
         }, transitionTime);
       }, delay);
     }
@@ -55,7 +55,7 @@ const checkHeightForChangeAndUpdate = (
 export const smoothResize = (el: VueElement, binding: any, vnode: VNode) => {
   // first things first, set the element's height to auto so that
   // it's height will change the next time a child is added or removed.
-  el.style.height = "auto";
+  el.style.height = 'auto';
   // transitionTime is the amount of time in ms that the transition should take.
   let transitionTime = (binding.value && binding.value.transition) || 300;
   transitionTime = parseInt(transitionTime);
@@ -69,7 +69,7 @@ export const smoothResize = (el: VueElement, binding: any, vnode: VNode) => {
   let oldHeight = `${el.clientHeight}px`;
   // set the transition and overflow styles.
   el.style.transition = `all ${transitionTime}ms cubic-bezier(0.25, 0.8, 0.5, 1)`;
-  el.style.overflow = "hidden";
+  el.style.overflow = 'hidden';
   // Run the function to check for height change and adjust accordingly
   checkHeightForChangeAndUpdate(el, oldHeight, delay, transitionTime, fineTune);
 };

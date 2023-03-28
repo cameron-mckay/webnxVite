@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PartSchema } from "../../plugins/interfaces";
+import { PartSchema } from '../../plugins/interfaces';
 
 interface Props {
   part: PartSchema;
@@ -20,7 +20,7 @@ const { part } = defineProps<Props>();
       <p class="break-words">{{ part.manufacturer }}</p>
       <p class="break-words">{{ part.name }}</p>
       <p class="hidden break-words md:block">{{ part.shelf_location }}</p>
-      <p>{{ part.quantity + "/" + part.total_quantity }}</p>
+      <p>{{ part.quantity + '/' + part.total_quantity }}</p>
       <div class="my-auto flex justify-end">
         <!-- Pencil -->
         <svg

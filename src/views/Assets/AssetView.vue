@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import type { AxiosError, AxiosInstance } from "axios";
-import { onBeforeMount, ref } from "vue";
-import type { Router } from "vue-router";
-import type { Store } from "vuex";
-import AssetCartItemComponent from "../../components/AssetComponents/AssetCartItemComponent.vue";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { onBeforeMount, ref } from 'vue';
+import type { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import AssetCartItemComponent from '../../components/AssetComponents/AssetCartItemComponent.vue';
 import {
   getAssetByID,
   getPartsOnAsset,
-} from "../../plugins/dbCommands/assetManager";
+} from '../../plugins/dbCommands/assetManager';
 import type {
   AssetSchema,
   LoadedCartItem,
   UserState,
-} from "../../plugins/interfaces";
+} from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -25,9 +25,9 @@ const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 
 let asset = ref({
-  asset_tag: "",
+  asset_tag: '',
   building: 3,
-  asset_type: "",
+  asset_type: '',
 } as AssetSchema);
 let parts = ref([] as LoadedCartItem[]);
 
@@ -51,7 +51,7 @@ onBeforeMount(() => {
 
 function edit() {
   router.push({
-    name: "Edit Asset",
+    name: 'Edit Asset',
     query: { asset_tag: asset.value.asset_tag },
   });
 }
@@ -64,7 +64,7 @@ function edit() {
     >
       <div class="col-span-2 flex md:col-span-4">
         <h1 class="mb-4 text-4xl leading-8 md:leading-10">
-          {{ asset.asset_tag + ":" }}
+          {{ asset.asset_tag + ':' }}
         </h1>
         <!-- Pencil -->
         <svg
@@ -118,14 +118,14 @@ function edit() {
         <p>Date Updated:</p>
         <p>
           {{
-            "Date Updated: " +
+            'Date Updated: ' +
             new Date(Date.parse(asset.date_updated!)).toDateString()
           }}
         </p>
         <p>Date Created:</p>
         <p>
           {{
-            "Date Created: " +
+            'Date Created: ' +
             new Date(Date.parse(asset.date_created!)).toDateString()
           }}
         </p>

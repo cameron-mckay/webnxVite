@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { PartRecord, User } from "../../plugins/interfaces";
+import { onMounted, ref } from 'vue';
+import { PartRecord, User } from '../../plugins/interfaces';
 
 interface Props {
   record: PartRecord;
@@ -10,8 +10,8 @@ interface Props {
 
 const { record, users, view } = defineProps<Props>();
 
-let by = ref({ first_name: "", last_name: "" } as User);
-let owner = ref({ first_name: "", last_name: "" } as User);
+let by = ref({ first_name: '', last_name: '' } as User);
+let owner = ref({ first_name: '', last_name: '' } as User);
 let date = new Date(Date.parse(record.date_created!));
 
 onMounted(() => {

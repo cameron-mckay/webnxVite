@@ -1,8 +1,8 @@
-import axios, { AxiosInstance } from "axios";
-import { App } from "vue";
-import type { AxiosOptions } from "./interfaces";
+import axios, { AxiosInstance } from 'axios';
+import { App } from 'vue';
+import type { AxiosOptions } from './interfaces';
 
-export const injectionKey = Symbol("http");
+export const injectionKey = Symbol('http');
 
 // Creates global instance of Axios
 export default {
@@ -27,10 +27,10 @@ function newAxiosInstance(options: AxiosOptions): AxiosInstance {
       : import.meta.env.VITE_API_URL /* window.location.origin */,
     headers: {
       common: {
-        Authorization: options.token ? options.token : "",
-        "Access-Control-Allow-Origin": import.meta.env.VITE_BASE_URL
+        Authorization: options.token ? options.token : '',
+        'Access-Control-Allow-Origin': import.meta.env.VITE_BASE_URL
           ? import.meta.env.VITE_BASE_URL
-          : "" /* window.location.origin */,
+          : '' /* window.location.origin */,
       },
     },
     withCredentials: true,

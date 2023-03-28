@@ -122,18 +122,18 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { AxiosError, AxiosInstance } from "axios";
-import { Ref, onBeforeMount, ref } from "vue";
-import { Router } from "vue-router";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { Ref, onBeforeMount, ref } from 'vue';
+import { Router } from 'vue-router';
 import {
   getAssetByID,
   getAssetsByData,
   getAssetsByTextSearch,
-} from "../../plugins/dbCommands/assetManager";
-import type { AssetSchema } from "../../plugins/interfaces";
-import QRCodeScannerPopupComponent from "../GenericComponents/QRCodeScannerPopupComponent.vue";
-import AdvancedSearchComponent from "./AssetAdvancedSearchComponent.vue";
-import AssetComponent from "./AssetComponent.vue";
+} from '../../plugins/dbCommands/assetManager';
+import type { AssetSchema } from '../../plugins/interfaces';
+import QRCodeScannerPopupComponent from '../GenericComponents/QRCodeScannerPopupComponent.vue';
+import AdvancedSearchComponent from './AssetAdvancedSearchComponent.vue';
+import AssetComponent from './AssetComponent.vue';
 
 // Props interface
 interface Props {
@@ -153,9 +153,9 @@ interface Props {
 let props = defineProps<Props>();
 // Define emitted events
 const emit = defineEmits([
-  "addAssetAction",
-  "editAssetAction",
-  "viewAssetAction",
+  'addAssetAction',
+  'editAssetAction',
+  'viewAssetAction',
 ]);
 // Wizardry
 defineExpose({
@@ -174,7 +174,7 @@ let {
   changeBuilding,
 } = props;
 let building = ref(props.building);
-let searchText = ref("");
+let searchText = ref('');
 let pageNum = ref(1);
 let assets: Ref<AssetSchema[]> = ref([]);
 let showAdvanced = ref(false);
@@ -191,7 +191,7 @@ onBeforeMount(async () => {
     building.value = parseInt(query.building as string);
   }
   // Check for advanced search
-  if (query.advanced === "true") {
+  if (query.advanced === 'true') {
     // Define variable to store Asset attributes
     let searchAsset = {} as AssetSchema;
     // Loop through query to create part object
@@ -258,7 +258,7 @@ function decodedQR(nxid: string) {
 // Advanced search
 async function advancedSearch(asset: AssetSchema) {
   // Add new attribute to asset (this a wizard trick to make adding data to router easier)
-  asset["advanced"] = "true";
+  asset['advanced'] = 'true';
   // Push asset to router
   router.push({ query: asset });
   // Query the API
@@ -295,16 +295,16 @@ async function search() {
       // Check if asset does not exist
       if (asset == null) {
         // If no part was found
-        return errorHandler("Asset not found.");
+        return errorHandler('Asset not found.');
       }
       // Emit actions
       // Triple equals because Truthy and Falsy piss me off
       if (add === true) {
-        emit("addAssetAction", asset);
+        emit('addAssetAction', asset);
       } else if (view === true) {
-        emit("viewAssetAction", asset);
+        emit('viewAssetAction', asset);
       } else if (edit == true) {
-        emit("viewAssetAction", asset);
+        emit('viewAssetAction', asset);
       }
     });
   } else {
@@ -340,6 +340,6 @@ async function search() {
 
 function addUntrackedAsset() {
   // Redirect
-  router.push({ name: "Add Untracked Asset" });
+  router.push({ name: 'Add Untracked Asset' });
 }
 </script>

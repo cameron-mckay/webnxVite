@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // Get http and store from props
-import { Ref, onMounted, ref, watch } from "vue";
-import type { PartSchema } from "../../plugins/interfaces";
-import CustomDropdownComponent from "../GenericComponents/CustomDropdownComponent.vue";
+import { Ref, onMounted, ref, watch } from 'vue';
+import type { PartSchema } from '../../plugins/interfaces';
+import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponent.vue';
 
 // Props interface
 interface Props {
@@ -48,7 +48,7 @@ onMounted(() => {
   watch(
     () => part.value.storage_interface,
     () => {
-      if (part.value.storage_interface != "NVME") {
+      if (part.value.storage_interface != 'NVME') {
         delete part.value.port_type;
       }
     }
@@ -65,7 +65,7 @@ onMounted(() => {
       @reset.prevent="resetForm"
       class="grid grid-cols-2"
     >
-      <label>NXID: </label>
+      <label>NXID:</label>
       <input
         class="textbox m-1"
         :required="strict"
@@ -73,7 +73,7 @@ onMounted(() => {
         type="text"
         placeholder="NXID"
       />
-      <label>Manufacturer: </label>
+      <label>Manufacturer:</label>
       <input
         class="textbox m-1"
         :required="strict"
@@ -81,7 +81,7 @@ onMounted(() => {
         type="text"
         placeholder="Manufacturer"
       />
-      <label>Part Name: </label>
+      <label>Part Name:</label>
       <input
         class="textbox m-1"
         :required="strict"
@@ -89,8 +89,8 @@ onMounted(() => {
         type="text"
         placeholder="Part Name"
       />
-      <label v-if="strict && JSON.stringify(oldPart) == JSON.stringify({})"
-        >Quantity:
+      <label v-if="strict && JSON.stringify(oldPart) == JSON.stringify({})">
+        Quantity:
       </label>
       <input
         class="textbox m-1"
@@ -101,7 +101,7 @@ onMounted(() => {
         min="0"
         placeholder="Quantity"
       />
-      <label>Shelf Location: </label>
+      <label>Shelf Location:</label>
       <input
         class="textbox m-1"
         :required="strict"
@@ -109,7 +109,7 @@ onMounted(() => {
         type="text"
         placeholder="Shelf Location"
       />
-      <label>Part Type: </label>
+      <label>Part Type:</label>
       <CustomDropdownComponent
         :required="strict"
         :defaultValue="part.type"
@@ -134,7 +134,7 @@ onMounted(() => {
         v-if="part.type == 'Motherboard'"
         class="col-span-2 grid grid-cols-2"
       >
-        <label class="col-span-1">Chipset: </label>
+        <label class="col-span-1">Chipset:</label>
         <input
           class="textbox col-span-1 m-1"
           :required="strict"
@@ -145,7 +145,7 @@ onMounted(() => {
       </div>
 
       <div v-if="part.type == 'CPU'" class="col-span-2 grid grid-cols-2">
-        <label>Chipset: </label>
+        <label>Chipset:</label>
         <input
           class="textbox m-1"
           :required="strict"
@@ -153,7 +153,7 @@ onMounted(() => {
           type="text"
           placeholder="Chipset"
         />
-        <label>Frequency(GHz): </label>
+        <label>Frequency(GHz):</label>
         <input
           class="textbox m-1"
           :required="strict"
@@ -165,7 +165,7 @@ onMounted(() => {
         />
       </div>
       <div v-if="part.type == 'Memory'" class="col-span-2 grid grid-cols-2">
-        <label>Frequency(MHz): </label>
+        <label>Frequency(MHz):</label>
         <input
           class="textbox m-1"
           :required="strict"
@@ -175,7 +175,7 @@ onMounted(() => {
           min="0"
           placeholder="Frequency"
         />
-        <label>Capacity(GB): </label>
+        <label>Capacity(GB):</label>
         <input
           class="textbox m-1"
           :required="strict"
@@ -185,7 +185,7 @@ onMounted(() => {
           min="0"
           placeholder="Capacity"
         />
-        <label>Type: </label>
+        <label>Type:</label>
         <select v-model="part.memory_type" class="textbox m-1">
           <option disabled value="">Memory type</option>
           <option>UDIMM</option>
@@ -197,7 +197,7 @@ onMounted(() => {
         v-if="part.type == 'Peripheral Card'"
         class="col-span-2 grid grid-cols-2"
       >
-        <label>Card type: </label>
+        <label>Card type:</label>
         <CustomDropdownComponent
           :required="strict"
           :options="['RAID', 'JBOD', 'NIC', 'Adapter']"
@@ -208,7 +208,7 @@ onMounted(() => {
           "
           :defaultValue="part.peripheral_type"
         />
-        <label>Port Type: </label>
+        <label>Port Type:</label>
         <CustomDropdownComponent
           v-if="part.port_type == 'NIC'"
           :required="strict"
@@ -233,7 +233,7 @@ onMounted(() => {
         />
       </div>
       <div v-if="part.type == 'Storage'" class="col-span-2 grid grid-cols-2">
-        <label>Storage interface: </label>
+        <label>Storage interface:</label>
         <select
           :required="strict"
           v-model="part.storage_interface"
@@ -244,7 +244,7 @@ onMounted(() => {
           <option>SAS</option>
           <option>NVME</option>
         </select>
-        <label>Capacity: </label>
+        <label>Capacity:</label>
         <div class="flex justify-between">
           <input
             class="textbox m-1"
@@ -269,7 +269,7 @@ onMounted(() => {
           v-if="part.storage_interface == 'NVME'"
           class="col-span-2 grid grid-cols-2"
         >
-          <label>Connector Type: </label>
+          <label>Connector Type:</label>
           <CustomDropdownComponent
             :required="strict"
             :options="['SAS', 'M.2']"
@@ -286,14 +286,14 @@ onMounted(() => {
         <!--   -->
       </div>
       <div v-if="part.type == 'Cable'" class="col-span-2 grid grid-cols-2">
-        <label>Cable end 1: </label>
+        <label>Cable end 1:</label>
         <input
           class="textbox m-1"
           :required="strict"
           v-model="part.cable_end1"
           type="text"
         />
-        <label>Cable end 2: </label>
+        <label>Cable end 2:</label>
         <input
           class="textbox m-1"
           :required="strict"
@@ -302,7 +302,7 @@ onMounted(() => {
         />
       </div>
       <div v-if="part.type == 'Backplane'" class="col-span-2 grid grid-cols-2">
-        <label>Storage interface: </label>
+        <label>Storage interface:</label>
         <CustomDropdownComponent
           :required="strict"
           :options="['SAS', 'NVME']"
@@ -313,7 +313,7 @@ onMounted(() => {
           "
           :defaultValue="part.storage_interface"
         />
-        <label>Ports: </label>
+        <label>Ports:</label>
         <CustomDropdownComponent
           :required="strict"
           :options="['SAS', 'Mini SAS HD']"

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { StreamBarcodeReader } from "vue-barcode-reader";
-import FullScreenPopupComponent from "../GenericComponents/FullScreenPopupComponent.vue";
+import { StreamBarcodeReader } from 'vue-barcode-reader';
+import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
 
-const emit = defineEmits(["decoded"]);
+const emit = defineEmits(['decoded', 'toggle']);
 
 function onDecode(nxid: string) {
-  emit("decoded", nxid);
+  emit('decoded', nxid);
+  emit('toggle');
 }
 </script>
 
@@ -15,6 +16,6 @@ function onDecode(nxid: string) {
     <p class="hidden pb-4 text-center md:block">
       This won't work with front facing cameras or webcams
     </p>
-    <StreamBarcodeReader @decode="onDecode"> </StreamBarcodeReader>
+    <StreamBarcodeReader @decode="onDecode"></StreamBarcodeReader>
   </FullScreenPopupComponent>
 </template>

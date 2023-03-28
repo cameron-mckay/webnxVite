@@ -1,11 +1,11 @@
 <script setup lang="ts">
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
-import type { AxiosError, AxiosInstance } from "axios";
-import { onMounted, ref } from "vue";
-import { Router } from "vue-router";
-import type { Store } from "vuex";
-import SearchComponent from "../../components/PartComponents/PartSearchComponent.vue";
-import type { PartSchema, UserState } from "../../plugins/interfaces";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { onMounted, ref } from 'vue';
+import { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import SearchComponent from '../../components/PartComponents/PartSearchComponent.vue';
+import type { PartSchema, UserState } from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -20,7 +20,7 @@ let add = ref({ show: false });
 onMounted(() => {
   setTimeout(() => {
     currentBuilding.value = store.state.user.building!;
-    add.value.show = store.state.user.role == "kiosk";
+    add.value.show = store.state.user.role == 'kiosk';
   }, 500);
 });
 
@@ -30,11 +30,11 @@ const { http, store, router, errorHandler, displayMessage } =
 
 function addToCart(part: PartSchema) {
   displayMessage(`Added ${part.manufacturer} ${part.name} to cart`);
-  store.commit("addToCart", part.nxid);
+  store.commit('addToCart', part.nxid);
 }
 
 function viewPart(part: PartSchema) {
-  router.push({ name: "Part View", query: { nxid: part.nxid } });
+  router.push({ name: 'Part View', query: { nxid: part.nxid } });
 }
 </script>
 <template>

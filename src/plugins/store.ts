@@ -1,8 +1,8 @@
-import { AxiosInstance } from "axios";
-import { App, InjectionKey } from "vue";
-import { createStore, Store, useStore as baseUseStore } from "vuex";
-import { getCurrentUser } from "./dbCommands/userManager";
-import type { CartItem, User, UserState } from "./interfaces";
+import { AxiosInstance } from 'axios';
+import { App, InjectionKey } from 'vue';
+import { createStore, Store, useStore as baseUseStore } from 'vuex';
+import { getCurrentUser } from './dbCommands/userManager';
+import type { CartItem, User, UserState } from './interfaces';
 // Injection key
 export const key: InjectionKey<Store<UserState>> = Symbol();
 
@@ -44,9 +44,9 @@ export function createGlobalStore(app: App): Store<UserState> {
       },
       // Logout user
       logout(state: UserState, http: AxiosInstance) {
-        localStorage.removeItem("token");
+        localStorage.removeItem('token');
         state.isAuth = false;
-        http.defaults.headers["Authorization"] = "";
+        http.defaults.headers['Authorization'] = '';
       },
       // Add ID of item to store
       addToCart(state: UserState, id: string) {
@@ -66,7 +66,7 @@ export function createGlobalStore(app: App): Store<UserState> {
             nxid: id,
             quantity: 1,
             building: store.state.user.building!,
-            location: "Parts Room",
+            location: 'Parts Room',
           };
           state.cart.push(item);
         }

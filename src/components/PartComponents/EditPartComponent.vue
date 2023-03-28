@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { PartSchema } from "../../plugins/interfaces";
-import FullScreenPopupComponent from "../GenericComponents/FullScreenPopupComponent.vue";
-import PartManagerComponent from "./PartManagerComponent.vue";
+import type { PartSchema } from '../../plugins/interfaces';
+import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
+import PartManagerComponent from './PartManagerComponent.vue';
 
 interface Props {
   oldPart?: PartSchema;
@@ -9,10 +9,10 @@ interface Props {
 }
 
 const { oldPart, show } = defineProps<Props>();
-const emit = defineEmits(["updatePart"]);
+const emit = defineEmits(['updatePart']);
 
 function submit(part: PartSchema) {
-  emit("updatePart", part);
+  emit('updatePart', part);
 }
 </script>
 <template>

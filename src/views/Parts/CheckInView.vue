@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, watch } from "vue";
+import { onBeforeMount, ref, watch } from 'vue';
 
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
-import type { AxiosError, AxiosInstance } from "axios";
-import { Router } from "vue-router";
-import type { Store } from "vuex";
-import InventoryPartComponent from "../../components/InventoryComponents/InventoryPartComponent.vue";
-import { checkin } from "../../plugins/dbCommands/partManager";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import InventoryPartComponent from '../../components/InventoryComponents/InventoryPartComponent.vue';
+import { checkin } from '../../plugins/dbCommands/partManager';
 import {
   getAllUsers,
   getUserInventoryByID,
-} from "../../plugins/dbCommands/userManager";
+} from '../../plugins/dbCommands/userManager';
 import type {
   CartItem,
   LoadedCartItem,
   PartSchema,
   User,
   UserState,
-} from "../../plugins/interfaces";
+} from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -46,9 +46,9 @@ function loadUsers() {
       return errorHandler(err);
     }
     users.value = data as User[];
-    users.value.push({ first_name: "All", last_name: "Techs", _id: "all" });
+    users.value.push({ first_name: 'All', last_name: 'Techs', _id: 'all' });
     for (let i = 0; i < users.value.length; i++) {
-      if (users.value[i].role == "kiosk") {
+      if (users.value[i].role == 'kiosk') {
         users.value.splice(i, 1);
         i--;
       }
@@ -74,7 +74,7 @@ function localCheckin() {
       return errorHandler(err);
     }
     setTimeout(() => {
-      displayMessage("Successfully checked in.");
+      displayMessage('Successfully checked in.');
       loadInventory();
     }, 500);
   });

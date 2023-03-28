@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import CartItemComponent from "../../components/KioskComponents/CartItemComponent.vue";
+import CartItemComponent from '../../components/KioskComponents/CartItemComponent.vue';
 
-import { onBeforeMount, ref, Ref } from "vue";
+import { onBeforeMount, ref, Ref } from 'vue';
 
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
-import type { AxiosError, AxiosInstance } from "axios";
-import { Router } from "vue-router";
-import type { Store } from "vuex";
-import { checkout, getPartByID } from "../../plugins/dbCommands/partManager";
-import { getAllUsers } from "../../plugins/dbCommands/userManager";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import { checkout, getPartByID } from '../../plugins/dbCommands/partManager';
+import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
   LoadedCartItem,
   PartSchema,
   User,
   UserState,
-} from "../../plugins/interfaces";
+} from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -43,9 +43,9 @@ function loadUsers() {
       return errorHandler(err);
     }
     users.value = data as User[];
-    users.value.push({ first_name: "All", last_name: "Techs", _id: "all" });
+    users.value.push({ first_name: 'All', last_name: 'Techs', _id: 'all' });
     for (let i = 0; i < users.value.length; i++) {
-      if (users.value[i].role == "kiosk") {
+      if (users.value[i].role == 'kiosk') {
         users.value.splice(i, 1);
         i--;
       }
@@ -60,7 +60,7 @@ async function loadCart() {
       http,
       item.nxid,
       store.state.user.building!,
-      "Parts Room",
+      'Parts Room',
       (data, err) => {
         if (err) {
           return errorHandler(err);
@@ -76,7 +76,7 @@ async function loadCart() {
 }
 
 async function deletePart(id: string) {
-  store.commit("removeAll", id);
+  store.commit('removeAll', id);
   loadCart();
 }
 
@@ -85,20 +85,20 @@ async function addOne(id: string) {
     http,
     id,
     store.state.user.building!,
-    "Parts Room",
+    'Parts Room',
     (data, err) => {
       let part = data as PartSchema;
       if (part.quantity! > store.getters.getQuantity(id)) {
-        store.commit("addOne", id);
+        store.commit('addOne', id);
       } else {
-        errorHandler("Not enough stock.");
+        errorHandler('Not enough stock.');
       }
     }
   );
 }
 
 async function subOne(id: string) {
-  store.commit("removeOne", id);
+  store.commit('removeOne', id);
   if (store.getters.getQuantity(id) == 0) {
     loadCart();
   }
@@ -109,8 +109,8 @@ function localCheckout() {
     if (err) {
       return errorHandler(err);
     }
-    displayMessage("Successfully checked out.");
-    store.commit("emptyCart");
+    displayMessage('Successfully checked out.');
+    store.commit('emptyCart');
     loadCart();
   });
 }

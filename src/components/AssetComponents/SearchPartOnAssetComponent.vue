@@ -91,16 +91,16 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { AxiosError, AxiosInstance } from "axios";
-import { Ref, onBeforeMount, ref } from "vue";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { Ref, onBeforeMount, ref } from 'vue';
 import {
   getPartByID,
   getPartsByData,
   getPartsByTextSearch,
-} from "../../plugins/dbCommands/partManager";
-import type { PartSchema } from "../../plugins/interfaces";
-import AdvancedSearchComponent from "../PartComponents/PartAdvancedSearchComponent.vue";
-import AssetPartComponent from "./PartOnAssetComponent.vue";
+} from '../../plugins/dbCommands/partManager';
+import type { PartSchema } from '../../plugins/interfaces';
+import AdvancedSearchComponent from '../PartComponents/PartAdvancedSearchComponent.vue';
+import AssetPartComponent from './PartOnAssetComponent.vue';
 
 // Props interface
 interface Props {
@@ -112,15 +112,15 @@ interface Props {
 // Define shit
 let props = defineProps<Props>();
 let { http, errorHandler, displayMessage } = props;
-const emit = defineEmits(["addPartAction"]);
+const emit = defineEmits(['addPartAction']);
 defineExpose({
   search,
 });
 
 // component variables
-let location = "";
+let location = '';
 let building = 3;
-let searchText = ref("");
+let searchText = ref('');
 let pageNum = ref(1);
 let parts: Ref<PartSchema[]> = ref([]);
 let showAdvanced = ref(false);
@@ -175,7 +175,7 @@ async function search() {
   if (/WNX([0-9]{7})+/.test(searchText.value)) {
     // temp value
     let query = searchText.value;
-    searchText.value = "";
+    searchText.value = '';
     // Search and add to cart
     getPartByID(http, query, building, location, (data, err) => {
       if (err) {
@@ -186,10 +186,10 @@ async function search() {
       let part = data as PartSchema;
       if (part == null) {
         // If no part was found
-        return errorHandler("Part not found.");
+        return errorHandler('Part not found.');
       }
       // Emit actions
-      emit("addPartAction", part);
+      emit('addPartAction', part);
     });
   } else {
     multiplePages.value = false;

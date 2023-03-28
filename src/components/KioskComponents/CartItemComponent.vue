@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { PartSchema } from "../../plugins/interfaces";
+import { ref } from 'vue';
+import { PartSchema } from '../../plugins/interfaces';
 
 interface Props {
   part: PartSchema;
   quantity: number;
 }
 const { part, quantity } = defineProps<Props>();
-const emit = defineEmits(["plus", "minus", "delete"]);
+const emit = defineEmits(['plus', 'minus', 'delete']);
 
 let item_quantity = ref(quantity);
 
@@ -15,12 +15,12 @@ function plus() {
   if (item_quantity.value < part.quantity!) {
     item_quantity.value = item_quantity.value + 1;
   }
-  emit("plus");
+  emit('plus');
 }
 
 function minus() {
   item_quantity.value -= 1;
-  emit("minus");
+  emit('minus');
 }
 </script>
 

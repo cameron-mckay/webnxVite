@@ -1,4 +1,4 @@
-import type { AxiosError, AxiosInstance } from "axios";
+import type { AxiosError, AxiosInstance } from 'axios';
 
 // For db commands
 export interface apiResponse {

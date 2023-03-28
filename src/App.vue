@@ -16,17 +16,17 @@
 </template>
 <script setup lang="ts">
 // Vue components
-import HeaderComponent from "./components/GenericComponents/HeaderComponent.vue";
-import MessageComponent from "./components/GenericComponents/MessageComponent.vue";
+import HeaderComponent from './components/GenericComponents/HeaderComponent.vue';
+import MessageComponent from './components/GenericComponents/MessageComponent.vue';
 
 // Import dependencies
-import type { AxiosError, AxiosInstance } from "axios";
-import { Ref, inject, onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { injectionKey } from "./plugins/axios";
-import { checkAuth } from "./plugins/dbCommands/userManager";
-import type { Message, User } from "./plugins/interfaces";
-import { useStore } from "./plugins/store";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { Ref, inject, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { injectionKey } from './plugins/axios';
+import { checkAuth } from './plugins/dbCommands/userManager';
+import type { Message, User } from './plugins/interfaces';
+import { useStore } from './plugins/store';
 
 // Global instances passed through props
 const http = inject<AxiosInstance>(injectionKey)!;
@@ -41,16 +41,16 @@ let user_data = ref({} as User);
 
 onMounted(() => {
   if (
-    localStorage.getItem("theme") == "dark" ||
-    (localStorage.getItem("theme") == null &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches)
+    localStorage.getItem('theme') == 'dark' ||
+    (localStorage.getItem('theme') == null &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches)
   ) {
     setTimeout(() => {
-      document.documentElement.classList.add("dark");
+      document.documentElement.classList.add('dark');
     }, 100);
   } else {
     setTimeout(() => {
-      localStorage.setItem("theme", "light");
+      localStorage.setItem('theme', 'light');
     }, 100);
   }
 });
@@ -60,33 +60,33 @@ checkAuth(http, (data, err) => {
   // If not authenticated
   if (err) {
     // set status
-    store.commit("deauthenticate");
+    store.commit('deauthenticate');
     // redirect
-    if (route.name != "Register") {
-      router.push({ name: "Login" });
+    if (route.name != 'Register') {
+      router.push({ name: 'Login' });
     }
     // return
     return;
   }
   // If authenticated, set status
-  displayMessage("Successfully logged in.");
-  store.commit("authenticate");
-  store.commit("updateUserData");
+  displayMessage('Successfully logged in.');
+  store.commit('authenticate');
+  store.commit('updateUserData');
   // Check if user is a non admin trying to access admin route
   user_data.value = data as User;
   router.beforeEach((to, from, next) => {
     // Make sure they are admin for admin routes
-    if (user_data.value.role != "admin" && /\/admin\/*/.test(to.path)) {
-      router.push({ name: "Parts" });
-      errorHandler("You are not authorized to access this page.");
+    if (user_data.value.role != 'admin' && /\/admin\/*/.test(to.path)) {
+      router.push({ name: 'Parts' });
+      errorHandler('You are not authorized to access this page.');
     }
     if (
-      user_data.value.role != "admin" &&
-      user_data.value.role != "inventory" &&
+      user_data.value.role != 'admin' &&
+      user_data.value.role != 'inventory' &&
       /\/manage\/*/.test(to.path)
     ) {
-      router.push({ name: "Parts" });
-      errorHandler("You are not authorized to access this page.");
+      router.push({ name: 'Parts' });
+      errorHandler('You are not authorized to access this page.');
     }
     // This goes through the matched routes from last to first, finding the closest route with a title.
     // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
@@ -105,7 +105,7 @@ async function errorHandler(err: AxiosError | string) {
   // string variable for message text
   let message: string;
   // if error is already a string
-  if (typeof err == "string") {
+  if (typeof err == 'string') {
     message = err;
   }
   // If error is axios error

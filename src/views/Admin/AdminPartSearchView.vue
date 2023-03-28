@@ -1,23 +1,23 @@
 <script setup lang="ts">
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
-import type { AxiosError, AxiosInstance } from "axios";
-import { Ref, onActivated, ref } from "vue";
-import { Router } from "vue-router";
-import type { Store } from "vuex";
-import AddInventoryComponent from "../../components/PartComponents/AddInventoryComponent.vue";
-import EditPartComponent from "../../components/PartComponents/EditPartComponent.vue";
-import SearchComponent from "../../components/PartComponents/PartSearchComponent.vue";
+import type { AxiosError, AxiosInstance } from 'axios';
+import { Ref, onActivated, ref } from 'vue';
+import { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import AddInventoryComponent from '../../components/PartComponents/AddInventoryComponent.vue';
+import EditPartComponent from '../../components/PartComponents/EditPartComponent.vue';
+import SearchComponent from '../../components/PartComponents/PartSearchComponent.vue';
 import {
   createNewPartRecords,
   updatePart,
-} from "../../plugins/dbCommands/partManager";
-import { getAllUsers } from "../../plugins/dbCommands/userManager";
+} from '../../plugins/dbCommands/partManager';
+import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
   CartItem,
   PartSchema,
   User,
   UserState,
-} from "../../plugins/interfaces";
+} from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -71,7 +71,7 @@ function toggleAdd(part: PartSchema) {
 }
 
 function viewPart(part: PartSchema) {
-  router.push({ name: "Part View", query: { nxid: part.nxid } });
+  router.push({ name: 'Part View', query: { nxid: part.nxid } });
 }
 
 function updatePartInfo(part: PartSchema) {
@@ -96,7 +96,7 @@ function submitAddToInventory(request: CartItem, owner: User) {
       return errorHandler(err);
     }
     // Display confirmation
-    displayMessage("Successfully added to inventory");
+    displayMessage('Successfully added to inventory');
     // Reset
     toggleAdd({});
     // Refresh parts list

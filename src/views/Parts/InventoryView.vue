@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { Ref, onMounted, ref, watch } from "vue";
-import InventoryPartComponent from "../../components/InventoryComponents/InventoryPartComponent.vue";
-import { movePart } from "../../plugins/dbCommands/partManager";
+import { Ref, onMounted, ref, watch } from 'vue';
+import InventoryPartComponent from '../../components/InventoryComponents/InventoryPartComponent.vue';
+import { movePart } from '../../plugins/dbCommands/partManager';
 import {
   getAllUsers,
   getUserInventoryByID,
-} from "../../plugins/dbCommands/userManager";
+} from '../../plugins/dbCommands/userManager';
 import {
   LoadedCartItem,
   PartRecord,
   PartSchema,
   User,
-} from "../../plugins/interfaces";
+} from '../../plugins/interfaces';
 
-import type { AxiosError, AxiosInstance } from "axios";
-import type { Router } from "vue-router";
-import type { Store } from "vuex";
-import type { UserState } from "../../plugins/interfaces";
+import type { AxiosError, AxiosInstance } from 'axios';
+import type { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import type { UserState } from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -65,7 +65,7 @@ function firstLoad() {
   // Load inventory
   loadInventory();
   // If admin - get other users
-  if (store.state.user.role == "admin") {
+  if (store.state.user.role == 'admin') {
     // Get all userse
     getAllUsers(http, (data, err) => {
       if (err) {
@@ -78,7 +78,7 @@ function firstLoad() {
         // Delete
         if (
           users.value[i]._id == store.state.user._id ||
-          users.value[i].role == "kiosk"
+          users.value[i].role == 'kiosk'
         ) {
           // remove current user and kiosk
           users.value.splice(i, 1);
@@ -140,12 +140,12 @@ function submit() {
     let from = {
       owner: currentUser.value._id,
       building: currentUser.value.building,
-      nxid: "",
+      nxid: '',
     };
     let to = {
       owner: transferUser.value._id,
       building: transferUser.value.building,
-      nxid: "",
+      nxid: '',
     } as PartRecord;
     for (let item of transferList.value) {
       from.nxid = item.part.nxid!;
@@ -170,7 +170,7 @@ watch(currentUser, () => {
   transferUser.value =
     currentUser.value._id != store.state.user._id
       ? store.state.user
-      : { _id: "all", building: store.state.user.building };
+      : { _id: 'all', building: store.state.user.building };
 });
 </script>
 <template>
