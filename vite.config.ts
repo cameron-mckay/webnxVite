@@ -20,7 +20,8 @@ export default defineConfig({
           'essentials': [
             './src/views/Assets/AssetSearchView.vue',
             './src/views/Parts/FindPartView.vue',
-            './src/views/Parts/InventoryView.vue'
+            './src/views/Parts/InventoryView.vue',
+            './src/views/NotFound.vue'
           ],
           'asset-extras': [
             './src/views/Assets/AssetView.vue',

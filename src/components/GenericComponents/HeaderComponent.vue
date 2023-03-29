@@ -248,10 +248,11 @@ onMounted(() => {
   if (
     localStorage.getItem('theme') == 'dark' ||
     (localStorage.getItem('theme') == null &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches) ||
-    document.documentElement.classList.contains('dark')
+      window.matchMedia('(prefers-color-scheme: dark)').matches)
   ) {
     dark.value = true;
+    if(!document.documentElement.classList.contains('dark'))
+      document.documentElement.classList.add('dark')
   } else {
     dark.value = false;
   }
