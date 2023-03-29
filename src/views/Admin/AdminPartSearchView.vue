@@ -8,15 +8,16 @@ import AddInventoryComponent from '../../components/PartComponents/AddInventoryC
 import EditPartComponent from '../../components/PartComponents/EditPartComponent.vue';
 import SearchComponent from '../../components/PartComponents/PartSearchComponent.vue';
 import {
-  createNewPartRecords,
-  updatePart,
+createNewPartRecords,
+updatePart,
+updatePartImage
 } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
-  CartItem,
-  PartSchema,
-  User,
-  UserState,
+CartItem,
+PartSchema,
+User,
+UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -74,14 +75,30 @@ function viewPart(part: PartSchema) {
   router.push({ name: 'Part View', query: { nxid: part.nxid } });
 }
 
-function updatePartInfo(part: PartSchema) {
+function updatePartInfo(part: PartSchema, image: File) {
   // Update part info
   updatePart(http, part, (data, err) => {
     if (err) {
       return errorHandler(err);
     }
+    let newPart = data as PartSchema
     // Display confirmation
-    displayMessage(data as string);
+    displayMessage(`Updated: ${newPart.manufacturer} ${newPart.name}`);
+      // Check for image
+    if (image) {
+      // Rename image file
+      let blob = image.slice(0, image.size, image.type)
+      let fileName = part.nxid!;
+      let renamedImage = new File([blob], fileName, {type: image.type})
+      console.log(renamedImage.name)
+      // upload image if exists
+      updatePartImage(http, renamedImage, (data, err) => {
+        if (err) {
+          errorHandler(err);
+          return;
+        }
+      });
+    }
     // Reset vars
     toggleEdit({});
     // Call search to refresh data

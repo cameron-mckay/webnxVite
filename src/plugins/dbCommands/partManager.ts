@@ -5,11 +5,11 @@ import type {
   AxiosResponse,
 } from 'axios';
 import type {
-  apiResponse,
   CartItem,
   PartRecord,
   PartSchema,
   User,
+  apiResponse,
 } from '../interfaces';
 
 /**
@@ -410,16 +410,21 @@ export function movePart(
     });
 }
 
+/**
+ * 
+ * @param http 
+ * @param image 
+ * @param nxid
+ * @param callback 
+ */
 export function updatePartImage(
   http: AxiosInstance,
   image: File,
-  part_id: string,
   callback: apiResponse
 ) {
   // Create blank form
   const formData = new FormData();
   // Add part id
-  formData.append('name', part_id);
   // Add file blob
   formData.append('file', image);
   // Set headers
