@@ -13,15 +13,12 @@ export default defineConfig({
       // https://rollupjs.org/guide/en/#outputmanualchunks
       output: {
         manualChunks: {
-          'login': [
-            './src/views/LoginView.vue',
-            './src/views/RegisterView.vue',
-          ],
-          'essentials': [
+          login: ['./src/views/LoginView.vue', './src/views/RegisterView.vue'],
+          essentials: [
             './src/views/Assets/AssetSearchView.vue',
             './src/views/Parts/FindPartView.vue',
             './src/views/Parts/InventoryView.vue',
-            './src/views/NotFound.vue'
+            './src/views/NotFound.vue',
           ],
           'asset-extras': [
             './src/views/Assets/AssetView.vue',
@@ -30,20 +27,20 @@ export default defineConfig({
           ],
           'part-extras': [
             './src/views/Parts/PartHistoryView.vue',
-            './src/views/Parts/PartView.vue'
+            './src/views/Parts/PartView.vue',
           ],
-          'kiosk': [
+          kiosk: [
             './src/views/Parts/CartView.vue',
             './src/views/Parts/CheckInView.vue',
           ],
-          'admin': [
+          admin: [
             './src/views/Admin/AddToInventoryView.vue',
             './src/views/Admin/AdminDashboardView.vue',
             './src/views/Admin/AdminPartSearchView.vue',
             './src/views/Admin/AdminUserView.vue',
             './src/views/Admin/CreatePartView.vue',
-            './src/views/Admin/InventoryManagerDashboardView.vue'
-          ]
+            './src/views/Admin/InventoryManagerDashboardView.vue',
+          ],
         },
       },
     },

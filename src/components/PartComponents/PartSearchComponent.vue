@@ -26,6 +26,7 @@
       <!-- QR Code -->
       <svg
         xmlns="http://www.w3.org/2000/svg"
+        @click="toggleQR"
         class="button-icon hover:button-icon-hover active:button-icon-active"
         viewBox="0 0 448 512"
       >
@@ -124,10 +125,11 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-getPartsByData,
-getPartsByTextSearch,
+  getPartsByData,
+  getPartsByTextSearch,
 } from '../../plugins/dbCommands/partManager';
 import type { PartSchema } from '../../plugins/interfaces';
+import QRCodeScannerPopupComponent from '../GenericComponents/QRCodeScannerPopupComponent.vue';
 import AdvancedSearchComponent from './PartAdvancedSearchComponent.vue';
 import PartComponent from './PartComponent.vue';
 

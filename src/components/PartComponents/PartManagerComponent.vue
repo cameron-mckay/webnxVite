@@ -18,11 +18,32 @@ let part: Ref<PartSchema> = ref(
   JSON.parse(JSON.stringify(oldPart)) as PartSchema
 );
 let partCopy = JSON.parse(JSON.stringify(oldPart));
-let firstLoad = false;
-
+let image = ref<File>();
+let imageUrl = ref<string>();
+const allowedFileTypes = ['image/png', 'image/jpeg'];
 // Reset form
 function resetForm() {
   part.value = JSON.parse(JSON.stringify(partCopy));
+}
+
+// Any type because typedefs do not exists for File Uploads
+function handleImageUpload(event: any) {
+  // Check file type
+  if (allowedFileTypes.includes(event.target.files![0].type)) {
+    // File is allowed
+    // Get blob
+    image.value = event.target.files![0];
+    // Create URL pointing to blob
+    imageUrl.value = URL.createObjectURL(image.value!);
+  } else {
+    // Reset file blob
+    image = ref<File>();
+    // Reset image URL
+    imageUrl.value = '';
+    // Cheap trick so I don't have to make an extends
+    let tempVar = document.getElementById('imageUpload') as any;
+    tempVar.value = null;
+  }
 }
 
 // Clear out fields when part type is changed
@@ -61,10 +82,27 @@ onMounted(() => {
     <h1 class="mb-4 text-4xl">{{ title }}</h1>
     <form
       id="form"
-      @submit.prevent="$emit('partSubmit', part)"
+      @submit.prevent="
+        () => {
+          if (strict) $emit('partSubmit', part, image);
+          else $emit('partSubmit', part);
+        }
+      "
       @reset.prevent="resetForm"
       class="grid grid-cols-2"
     >
+      <label v-if="strict">Image:</label>
+      <div>
+        <input
+          class="m-1"
+          type="file"
+          accept="image/*"
+          id="imageUpload"
+          @change="handleImageUpload"
+          v-if="strict"
+        />
+        <img class="col-span-2 my-2" v-if="imageUrl" :src="imageUrl" />
+      </div>
       <label>NXID:</label>
       <input
         class="textbox m-1"

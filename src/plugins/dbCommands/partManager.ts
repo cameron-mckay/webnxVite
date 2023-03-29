@@ -1,4 +1,9 @@
-import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import type {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from 'axios';
 import type {
   apiResponse,
   CartItem,
@@ -395,6 +400,36 @@ export function movePart(
       from,
       quantity,
     })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function updatePartImage(
+  http: AxiosInstance,
+  image: File,
+  part_id: string,
+  callback: apiResponse
+) {
+  // Create blank form
+  const formData = new FormData();
+  // Add part id
+  formData.append('name', part_id);
+  // Add file blob
+  formData.append('file', image);
+  // Set headers
+  let imgConfig = {
+    header: {
+      'Content-Type': image.type,
+    },
+  } as AxiosRequestConfig<FormData>;
+  http
+    .put(`/images/parts`, formData, imgConfig)
     .then((res: AxiosResponse) => {
       // Success - send results to callback
       callback(res.data, null);

@@ -251,8 +251,8 @@ onMounted(() => {
   ) {
     dark.value = true;
     // Fixes weird login bug
-    if(!document.documentElement.classList.contains('dark'))
-      document.documentElement.classList.add('dark')
+    if (!document.documentElement.classList.contains('dark'))
+      document.documentElement.classList.add('dark');
   } else {
     dark.value = false;
   }
@@ -270,15 +270,13 @@ async function logout() {
 function toggle() {
   showMenu.value = !showMenu.value;
   // Prevent overlapping
-  if (showMenu.value)
-    showProfile.value = false;
+  if (showMenu.value) showProfile.value = false;
 }
 
 function toggleProfile() {
   showProfile.value = !showProfile.value;
   // Prevent overlapping
-  if (showProfile.value)
-    showMenu.value = false;
+  if (showProfile.value) showMenu.value = false;
 }
 
 function updateTheme() {
