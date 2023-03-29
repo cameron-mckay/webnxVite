@@ -101,6 +101,7 @@
         <p class="mr-2 hidden pl-2 leading-10 md:block">
           {{ store.state.user.first_name + ' ' + store.state.user.last_name }}
         </p>
+        <!-- User icon -->
         <svg
           class="user-icon"
           xmlns="http://www.w3.org/2000/svg"
@@ -112,6 +113,7 @@
             d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"
           />
         </svg>
+        <!--  -->
       </div>
     </div>
     <!-- User drop down -->
@@ -236,9 +238,6 @@ let showMenu = ref(false);
 let dark = ref(false);
 let showProfile = ref(false);
 
-let profilePicture =
-  'https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg';
-
 onBeforeMount(() => {
   store.commit('updateUserData');
 });
@@ -251,6 +250,7 @@ onMounted(() => {
       window.matchMedia('(prefers-color-scheme: dark)').matches)
   ) {
     dark.value = true;
+    // Fixes weird login bug
     if(!document.documentElement.classList.contains('dark'))
       document.documentElement.classList.add('dark')
   } else {
@@ -258,7 +258,7 @@ onMounted(() => {
   }
   // Enable watcher
   watch(dark, () => {
-    toggleTheme();
+    updateTheme();
   });
 });
 
@@ -269,25 +269,30 @@ async function logout() {
 
 function toggle() {
   showMenu.value = !showMenu.value;
-  if (showMenu.value) {
+  // Prevent overlapping
+  if (showMenu.value)
     showProfile.value = false;
-  }
 }
 
 function toggleProfile() {
   showProfile.value = !showProfile.value;
-  if (showProfile.value) {
+  // Prevent overlapping
+  if (showProfile.value)
     showMenu.value = false;
-  }
 }
 
-function toggleTheme() {
-  if (document.documentElement.classList.contains('dark')) {
-    document.documentElement.classList.remove('dark');
-    localStorage.setItem('theme', 'light');
-  } else {
+function updateTheme() {
+  // Check status of switch
+  if (dark.value) {
+    // Add dark mode class to document
     document.documentElement.classList.add('dark');
+    // Save preference to localStorage
     localStorage.setItem('theme', 'dark');
+  } else {
+    // Remove dark mode class from document
+    document.documentElement.classList.remove('dark');
+    // Save preference to localStorage
+    localStorage.setItem('theme', 'light');
   }
 }
 </script>

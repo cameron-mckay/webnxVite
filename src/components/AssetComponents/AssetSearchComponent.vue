@@ -61,7 +61,7 @@
         v-if="showQR"
         @toggle="toggleQR"
         @decoded="decodedQR"
-      ></QRCodeScannerPopupComponent>
+      />
     </form>
     <div v-if="assets.length != 0">
       <div
@@ -126,9 +126,9 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-  getAssetByID,
-  getAssetsByData,
-  getAssetsByTextSearch,
+getAssetByID,
+getAssetsByData,
+getAssetsByTextSearch,
 } from '../../plugins/dbCommands/assetManager';
 import type { AssetSchema } from '../../plugins/interfaces';
 import QRCodeScannerPopupComponent from '../GenericComponents/QRCodeScannerPopupComponent.vue';

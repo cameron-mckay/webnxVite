@@ -55,6 +55,11 @@
         @partSearch="advancedSearch"
         @toggle="toggleAdvanced"
       />
+      <QRCodeScannerPopupComponent
+        v-if="showQR"
+        @toggle="toggleQR"
+        @decoded="decodedQR"
+      />
     </form>
     <div v-if="parts.length != 0">
       <div
@@ -119,8 +124,8 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-  getPartsByData,
-  getPartsByTextSearch,
+getPartsByData,
+getPartsByTextSearch,
 } from '../../plugins/dbCommands/partManager';
 import type { PartSchema } from '../../plugins/interfaces';
 import AdvancedSearchComponent from './PartAdvancedSearchComponent.vue';
@@ -169,6 +174,7 @@ let searchText = ref('');
 let pageNum = ref(1);
 let parts: Ref<PartSchema[]> = ref([]);
 let showAdvanced = ref(false);
+let showQR = ref(false);
 let multiplePages = ref(false);
 
 // Before component is mounted
@@ -222,6 +228,18 @@ function nextPage() {
 // Toggle advanced search
 function toggleAdvanced() {
   showAdvanced.value = !showAdvanced.value;
+}
+
+// Toggle QR search
+function toggleQR() {
+  // Negate
+  showQR.value = !showQR.value;
+}
+
+function decodedQR(nxid: string) {
+  showQR.value = false;
+  searchText.value = nxid;
+  search();
 }
 
 // Advanced search
