@@ -6,6 +6,7 @@ interface Props {
   record: PartRecord;
   users: User[];
   view?: boolean;
+  quantity?: number;
 }
 
 const { record, users, view } = defineProps<Props>();
@@ -22,9 +23,10 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="group relative my-1">
+  <div class="group relative my-1" >
     <div
-      class="background-and-border group-hover:bab-hover grid grid-cols-5 p-1 text-center leading-8 md:grid-cols-6 md:p-2 md:leading-10"
+    class="background-and-border group-hover:bab-hover grid grid-cols-5 p-1 text-center leading-8 md:grid-cols-6 md:p-2 md:leading-10"
+    v-bind:class="{ 'group-hover:rounded-md': quantity}"  
     >
       <p class="break-words">{{ record.building }}</p>
       <p class="break-words">{{ record.location }}</p>
@@ -35,7 +37,11 @@ onMounted(() => {
         {{ record.asset_tag }}
       </p>
       <p class="col-span-2 break-words" v-else></p>
-      <p class="hidden break-words md:block">
+      <p class="hidden break-words md:block" v-if="quantity">
+        {{ quantity }}
+      </p>
+      <p class="hidden break-words md:block"
+        v-else>
         {{ `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}` }}
       </p>
       <div class="my-auto flex justify-end">
@@ -43,7 +49,7 @@ onMounted(() => {
         <svg
           v-if="view === true"
           class="button-icon hover:button-icon-hover active:button-icon-active"
-          v-on:click="$emit('viewPartAction', record._id)"
+          v-on:click="$emit('viewPartAction', record, quantity)"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 576 512"
         >
@@ -55,7 +61,7 @@ onMounted(() => {
         </svg>
       </div>
     </div>
-    <div class="group-hover:bab-drop-hover bab-drop">
+    <div class="group-hover:bab-drop-hover bab-drop" v-if="quantity==undefined">
       <p class="block md:hidden">
         {{
           `Date Created: ${

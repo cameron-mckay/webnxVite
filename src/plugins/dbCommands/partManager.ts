@@ -336,7 +336,7 @@ export function getPartRecordsByID(
   callback: apiResponse
 ) {
   http
-    .get('/api/part/records', {
+    .get('/api/part/records/id', {
       params: {
         nxid,
       },
@@ -435,6 +435,25 @@ export function updatePartImage(
   } as AxiosRequestConfig<FormData>;
   http
     .put(`/images/parts`, formData, imgConfig)
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getPartRecords(
+  http: AxiosInstance,
+  params: PartRecord,
+  callback: apiResponse
+) {
+  http
+    .get('/api/part/records', {
+      params
+    })
     .then((res: AxiosResponse) => {
       // Success - send results to callback
       callback(res.data, null);

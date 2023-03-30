@@ -6,7 +6,7 @@ import type { Store } from 'vuex';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
 import {
 getPartByID,
-getPartRecordsByID,
+getPartRecords,
 } from '../../plugins/dbCommands/partManager';
 import { getUserByID } from '../../plugins/dbCommands/userManager';
 import type {
@@ -23,17 +23,8 @@ interface Props {
   errorHandler: (err: Error | AxiosError | string) => void;
   displayMessage: (message: string) => void;
 }
-
-interface GroupedRecords {
-  record: PartRecord,
-  quantity: number,
-  key: number
-}
-
 const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
-
-let url = import.meta.env.VITE_API_URL
 
 let part = ref({
   nxid: 'q',
@@ -44,8 +35,9 @@ let part = ref({
   total_quantity: 0,
   shelf_location: '',
 } as PartSchema);
+let pageTitle = ref("")
 let partRecords = ref([] as PartRecord[]);
-let groupedRecords = ref([] as GroupedRecords[]);
+let url = import.meta.env.VITE_API_URL
 let users = ref([
   { _id: 'all', first_name: 'All', last_name: 'Techs' },
 ] as User[]);
@@ -53,34 +45,15 @@ let users = ref([
 onBeforeMount(() => {
   if (router.currentRoute.value.query.nxid) {
     let nxid = router.currentRoute.value.query.nxid as string;
-    getPartByID(http, nxid, 3, 'Parts Room', (res, err) => {
-      if (err) {
-        errorHandler(err);
-      }
-      part.value = res as PartSchema;
-    });
-    getPartRecordsByID(http, nxid, async (res, err) => {
+    let query = router.currentRoute.value.query;
+    
+    getPartRecords(http, query, async (res, err) => {
       if (err) {
         errorHandler(err);
       }
       partRecords.value = res as PartRecord[];
       partRecords.value = partRecords.value.reverse();
       for (const record of res as PartRecord[]) {
-        // Check if group already exists
-        let existingGroup = groupedRecords.value.find((e) => 
-        (e.record.nxid == record.nxid)&&
-        (e.record.location == record.location)&&
-        (e.record.owner==record.owner)&&
-        (e.record.asset_tag==record.asset_tag))
-        // Increment if exists and continue
-        if(existingGroup) {
-          existingGroup.quantity += 1
-          continue
-        } else {
-          // Create new group
-          groupedRecords.value.push({record: record, quantity: 1, key: groupedRecords.value.length })
-        }
-        // Check 
         // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
         if (
           record.owner &&
@@ -94,30 +67,54 @@ onBeforeMount(() => {
             users.value.push(res as User);
           });
         }
+        // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
+        if (
+          record.by &&
+          users.value.find((e) => e._id == record.by) === undefined
+        ) {
+          await getUserByID(http, record.by, (res, err) => {
+            if (err) {
+              errorHandler(err);
+            }
+            users.value.push(res as User);
+          });
+        }
       }
-      // Sort array by quantity
-      groupedRecords.value.sort((r1, r2)=> r1.quantity < r2.quantity ? 1 : -1);
-      // Advanced key switch to fix owners (hackerman)
-      groupedRecords.value.map((group) => {
-        group.key +=1
-        group.key -=1
-      })
+    });
+    pageTitle.value = ""
+    if (query.location == 'All Techs') {
+        pageTitle.value = pageTitle.value + "All Tech's inventory:"
+    }
+    else if(query.owner) {
+        console.log(users.value)
+        getUserByID(http, query.owner as string, (res, err) => {
+            if (err) {
+              errorHandler(err);
+            }
+            let userObject = res as User
+            pageTitle.value = pageTitle.value + userObject?.first_name + " " + userObject?.last_name + "'s inventory:"
+          });
+    }
+    else {
+        if(query.asset_tag) {
+            pageTitle.value = pageTitle.value + query.asset_tag + ":";   
+        }
+        else {
+            pageTitle.value = pageTitle.value + query.location + ":";
+        }
+    }
+
+    getPartByID(http, nxid, 3, 'Parts Room', (res, err) => {
+      if (err) {
+        errorHandler(err);
+      }
+      part.value = res as PartSchema;
     });
   }
 });
 
 function viewHistory(record: PartRecord, quantity: number) {
-  if (quantity == 1)
     router.push({ name: 'Part History', query: { id: record._id, nxid: record.nxid } });
-  else
-    router.push({ name: 'Part Location', query: { 
-        nxid: part.value.nxid, 
-        owner: record.owner, 
-        location: record.location, 
-        building: record.building?.toString(), 
-        asset_tag: record.asset_tag
-    } 
-    });
 }
 </script>
 <template>
@@ -195,6 +192,9 @@ function viewHistory(record: PartRecord, quantity: number) {
       </div>
     </div>
     <!-- PART RECORDS GO HERE -->
+    <h1 class="detail-title mt-4">
+      {{ pageTitle }}
+    </h1>
     <div
       v-if="partRecords.length > 0"
       class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
@@ -202,17 +202,14 @@ function viewHistory(record: PartRecord, quantity: number) {
       <p>Building</p>
       <p>Location</p>
       <p class="col-span-2">Owner</p>
-      <p class="hidden md:block">Quantity</p>
-      <!-- <p class="hidden md:block">Date Updated</p> -->
+      <p class="hidden md:block">Date Updated</p>
       <p></p>
     </div>
     <PartRecordComponent
-      v-for="group in groupedRecords"
+      v-for="record in partRecords"
       :users="users"
-      :record="group.record"
-      :quantity="group.quantity"
+      :record="record"
       :view="true"
-      :key="group.key"
       @viewPartAction="viewHistory"
     />
   </div>

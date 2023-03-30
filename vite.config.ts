@@ -28,6 +28,7 @@ export default defineConfig({
           'part-extras': [
             './src/views/Parts/PartHistoryView.vue',
             './src/views/Parts/PartView.vue',
+            './src/views/Parts/PartLocationView.vue'
           ],
           kiosk: [
             './src/views/Parts/CartView.vue',

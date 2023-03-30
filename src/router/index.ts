@@ -37,6 +37,11 @@ const routes = [
     component: () => import('../views/Parts/PartView.vue'),
   },
   {
+    path: '/parts/location',
+    name: 'Part Location',
+    component: () => import('../views/Parts/PartLocationView.vue'),
+  },
+  {
     path: '/parts/view/history',
     name: 'Part History',
     component: () => import('../views/Parts/PartHistoryView.vue'),

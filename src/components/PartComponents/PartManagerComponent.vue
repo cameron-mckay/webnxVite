@@ -20,7 +20,7 @@ let part: Ref<PartSchema> = ref(
 let partCopy = JSON.parse(JSON.stringify(oldPart));
 let image = ref<File>();
 let imageUrl = ref<string>();
-const allowedFileTypes = ['image/png', 'image/jpeg'];
+const allowedFileTypes = ['image/png', 'image/jpeg', 'image/webp'];
 // Reset form
 function resetForm() {
   part.value = JSON.parse(JSON.stringify(partCopy));

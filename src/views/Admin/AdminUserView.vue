@@ -72,7 +72,7 @@ onMounted(() => {
       <p>Role</p>
     </div>
     <UserComponent
-      class="relative grid grid-cols-5 p-2 text-center text-sm leading-10 transition"
+      class="relative grid grid-cols-5 text-center text-sm leading-10 transition"
       v-for="user in users"
       :user="user"
       @edit="toggleEdit(user)"

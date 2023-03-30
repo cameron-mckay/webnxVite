@@ -82,13 +82,19 @@
     @apply my-2 font-bold;
   }
   .detail-data {
-    @apply my-2 md:col-span-3;
+    @apply my-2;
   }
   .detail-row {
-    @apply col-span-2 grid grid-cols-2 md:col-span-4 md:grid-cols-4;
+    @apply col-span-2 grid grid-cols-2;
   }
   .detail-row > p {
     @apply odd:detail-label even:detail-data;
+  }
+  .detail-image-container {
+    @apply col-span-2 md:col-start-3 md:col-end-5 w-full h-full md:row-start-2 md:row-end-[20] md:m-0 my-2 md:p-0 p-2
+  }
+  .detail-image-container > img {
+    @apply shadow-md
   }
 
   /* Mobile specific styles */

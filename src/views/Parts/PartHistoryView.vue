@@ -5,15 +5,15 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
 import {
-  getPartByID,
-  getPartHistoryByID,
+getPartByID,
+getPartHistoryByID,
 } from '../../plugins/dbCommands/partManager';
 import { getUserByID } from '../../plugins/dbCommands/userManager';
 import type {
-  PartRecord,
-  PartSchema,
-  User,
-  UserState,
+PartRecord,
+PartSchema,
+User,
+UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -25,8 +25,16 @@ interface Props {
 }
 const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
-
-let part = ref({} as PartSchema);
+let url = import.meta.env.VITE_API_URL
+let part = ref({
+  nxid: 'q',
+  manufacturer: '',
+  name: '',
+  type: '',
+  quantity: 0,
+  total_quantity: 0,
+  shelf_location: '',
+} as PartSchema);
 let partRecords = ref([] as PartRecord[]);
 let users = ref([
   { _id: 'all', first_name: 'All', last_name: 'Techs' },
@@ -152,8 +160,14 @@ function viewHistory(id: string) {
       <div v-if="part.type == 'Misc.'">
         <!-- Placeholder -->
       </div>
+      <div class="detail-image-container">
+        <img :src="`${url}/images/parts/${part.nxid}`">
+      </div>
     </div>
     <!-- PART RECORDS GO HERE -->
+    <h1 class="detail-title">
+        History:
+    </h1>
     <div
       v-if="partRecords.length > 0"
       class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
@@ -161,7 +175,7 @@ function viewHistory(id: string) {
       <p>Building</p>
       <p>Location</p>
       <p class="col-span-2">Owner</p>
-      <p class="hidden md:block">Date Created</p>
+      <p class="hidden md:block">Date</p>
       <p></p>
     </div>
     <PartRecordComponent
