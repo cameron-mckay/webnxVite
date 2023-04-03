@@ -1,5 +1,5 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
-import type { apiResponse, AssetSchema, CartItem } from '../interfaces';
+import type { AssetSchema, CartItem, apiResponse } from '../interfaces';
 
 /**
  * @brief Get a list of 50 assets from a keyword search string
@@ -153,6 +153,30 @@ export async function getPartsOnAsset(
 ) {
   await http
     .get('/api/asset/parts', { params: { asset_tag } })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+/**
+ * @brief Get asset history from asset tag
+ *
+ * @param http
+ * @param asset_tag
+ * @param callback
+ */
+export async function getAssetHistory(
+  http: AxiosInstance,
+  asset_tag: string,
+  callback: apiResponse
+) {
+  await http
+    .get('/api/asset/history', { params: { id: asset_tag } })
     .then((res: AxiosResponse) => {
       // Success - send results to callback
       callback(res.data, null);
