@@ -33,6 +33,7 @@ let keyNum = 0
 // Check if part is in map and add it if it isn't
 async function checkPart(part: CartItem) {
     if(!parts.value.has(part.nxid)) {
+        parts.value.set(part.nxid, {})
         getPartByID(http, part.nxid, 3, 'Part Room', (data, err)=>{
             if(err) {
                 errorHandler(err)
@@ -49,6 +50,7 @@ async function checkForAsset(historyEvent: keyedEvent) {
     historyEvent.key = keyNum
     keyNum++
     if(!assets.value.has(historyEvent.asset_id)){
+        assets.value.set(historyEvent.asset_id, {})
         getAssetByID(http, historyEvent.asset_id, (data, err) => {
             if(err) {
                 errorHandler(err)
@@ -79,6 +81,7 @@ async function checkForAsset(historyEvent: keyedEvent) {
 // Check if user is in map and add if it isn't
 function checkUser(asset: AssetSchema) {
     if(!users.value.has(asset.by!)) {
+        users.value.set(asset.by!, {})
         getUserByID(http, asset.by!, (data, err) => {
             if(err) {
                 errorHandler(err)
