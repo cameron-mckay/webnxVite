@@ -46,28 +46,29 @@ export interface PartSchema {
   cable_end1?: string;
   cable_end2?: string;
 }
-
 export interface AssetSchema {
-  [index: string]: any;
-  _id?: string;
-  asset_tag?: string;
-  building?: number;
-  asset_type?: string;
-  chassis_type?: string;
-  manufacturer?: string;
-  model?: string;
-  serial?: string;
-  rails?: Boolean;
-  live?: Boolean;
-  bay?: string;
-  power_port?: string;
-  public_port?: string;
-  private_port?: string;
-  ipmi_port?: string;
-  by?: string;
-  sid?: number;
-  date_created?: string;
-  date_updated?: string;
+  [index: string]: any,
+  _id?: string,
+  asset_tag?: string,
+  prev?: string|null,
+  next?: string|null,
+  building?: number,
+  asset_type?: string,
+  chassis_type?: string,
+  manufacturer?: string,
+  model?: string,
+  serial?: string,
+  rails?: Boolean,
+  live?: Boolean,
+  bay?: string | number,
+  power_port?: string,
+  public_port?: string,
+  private_port?: string,
+  ipmi_port?: string,
+  by?: string,
+  sid?: number,
+  date_created?: string,
+  date_replaced?: string,
 }
 
 export interface PartRecord {
@@ -116,4 +117,18 @@ export interface User {
   building?: number;
   _v?: number;
   _id?: string;
+}
+
+export interface AssetHistory {
+  events: AssetEvent[]
+}
+export interface AssetEvent {
+  date_begin: Date,
+  date_end: Date,
+  asset_id: string,
+  asset_info?: AssetSchema,
+  info_updated: boolean,
+  existing: CartItem[],
+  added: CartItem[],
+  removed: CartItem[]
 }

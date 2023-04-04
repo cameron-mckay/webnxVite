@@ -67,6 +67,11 @@ const routes = [
     component: () => import('../views/Assets/AssetView.vue'),
   },
   {
+    path: '/assets/history',
+    name: 'Asset History',
+    component: () => import('../views/Assets/AssetHistoryView.vue')
+  },
+  {
     path: '/manage',
     name: 'Inventory Manager Dashboard',
     component: () => import('../views/Admin/InventoryManagerDashboardView.vue'),

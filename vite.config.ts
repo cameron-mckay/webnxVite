@@ -24,6 +24,7 @@ export default defineConfig({
             './src/views/Assets/AssetView.vue',
             './src/views/Assets/AddUntrackedAssetView.vue',
             './src/views/Assets/EditAssetView.vue',
+            './src/views/Asset/AssetHistoryView.vue'
           ],
           'part-extras': [
             './src/views/Parts/PartHistoryView.vue',

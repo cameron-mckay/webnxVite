@@ -92,14 +92,13 @@ onMounted(() => {
       class="grid grid-cols-2"
     >
       <label v-if="strict">Image:</label>
-      <div>
+      <div v-if="strict">
         <input
           class="m-1"
           type="file"
           accept="image/*"
           id="imageUpload"
           @change="handleImageUpload"
-          v-if="strict"
         />
         <img class="col-span-2 my-2" v-if="imageUrl" :src="imageUrl" />
       </div>
