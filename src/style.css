@@ -7,6 +7,14 @@
   /* Used in register and login */
   .card {
     @apply background-and-border mx-auto mt-10 rounded-lg bg-gray-200 p-10 shadow-lg transition-colors dark:bg-zinc-900;
+    
+  }
+  p, h1, a, label {
+    @apply text-black dark:text-gray-200;
+  }
+
+  del {
+    @apply line-through decoration-black dark:decoration-gray-200
   }
 
   /* Common colors */
@@ -61,6 +69,10 @@
   .background-and-border {
     @apply nx-border-color header-color rounded-md border-2 shadow-md transition-colors;
   }
+
+  .background-and-border > p {
+    @apply my-auto
+  }
   .bab-hover {
     @apply hover-color rounded-bl-none transition  md:delay-300;
   }
@@ -112,7 +124,7 @@
 /* Apply fonts and colors */
 * {
   font-family: 'Inter', sans-serif;
-  @apply text-black dark:text-gray-200;
+  /* @apply text-black dark:text-gray-200; */
 }
 
 /* Change selection color */

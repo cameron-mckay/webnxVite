@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { AssetEvent, AssetSchema, CartItem, LoadedCartItem, PartSchema, User } from '../../plugins/interfaces';
+import AssetEventPartComponent from './AssetEventPartComponent.vue';
 
 interface Props {
     assets: Map<string, AssetSchema>,
@@ -58,11 +59,15 @@ onMounted(()=>{
 </script>
 <template>
     <div class="background-and-border p-4 my-4">
-        <h1 class="mb-4 text-4xl leading-8 md:leading-10">
+        <h1 class="mb-8 text-4xl leading-8 md:leading-10">
         {{ new Date(event.date_begin).toLocaleString() }}
         </h1>
         <div class="md:grid-cols-3 grid">
             <div v-if="event.info_updated&&(asset.prev!=null)" class="detail-row col-span-1">
+                <h1 class="mb-4 text-4xl leading-8 md:leading-10 col-span-2">
+                {{ asset.asset_tag }}
+                </h1>
+                <p class="hidden"></p>   
                 <p>Building:</p>
                 <p v-if="asset.building != asset.building"><del>{{ prevAsset.building }}</del> {{ asset.building }}</p>
                 <p v-else>{{ prevAsset.building }}</p>
@@ -129,6 +134,9 @@ onMounted(()=>{
                 <p v-else-if="asset.ipmi_port">{{ asset.ipmi_port }}</p>
             </div>
             <div v-else class="detail-row col-span-1">
+                <h1 class="mb-4 text-4xl leading-8 md:leading-10 col-span-2">
+                {{ asset.asset_tag }}
+                </h1>
                 <p>Building:</p>
                 <p>{{ asset.building }}</p>
                 <p>Asset Type:</p>
@@ -164,8 +172,20 @@ onMounted(()=>{
                 <p v-if="asset.ipmi_port">IPMI Port:</p>
                 <p v-if="asset.ipmi_port">{{ asset.ipmi_port }}</p>
             </div>
-            <div></div>
-            <div></div>
+            <div class="md:col-span-2">
+                <h1 v-if="existing.length > 0||added.length>0||removed.length>0"  class="mb-4 text-4xl leading-8 md:leading-10 md:mt-0 mt-4">Parts:</h1>
+                <div class="grid grid-cols-3 md:grid-cols-4 text-center font-bold">
+                    <p class="hidden md:block">NXID</p>
+                    <p>Manufacturer</p>
+                    <p>Name</p>
+                    <p>Quantity</p>
+                </div>
+                <AssetEventPartComponent v-for="item of existing" :item="item"/>
+                <AssetEventPartComponent v-for="item of added" :item="item" :plus="true"/>
+                <del>
+                    <AssetEventPartComponent v-for="item of removed" :item="item" :minus="true"/>
+                </del>
+            </div>
         </div>
     </div>
 </template>
