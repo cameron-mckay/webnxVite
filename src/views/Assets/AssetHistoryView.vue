@@ -109,22 +109,12 @@ onBeforeMount(() => {
   }
 });
 
-// onMounted(()=>{
-//     watch(assets.value, keySwap)
-//     watch(parts.value, keySwap)
-//     watch(users.value, keySwap)
-// })
-
 function keySwap() {
     console.log("key")
     history.value.map((e, i, arr) => {
         arr[i].key += 1000
     })
 }
-
-// function viewHistory(id: string) {
-//   router.push({ name: 'Part History', query: { id } });
-// }
 </script>
 <template>
     <div>
