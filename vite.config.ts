@@ -24,12 +24,12 @@ export default defineConfig({
             './src/views/Assets/AssetView.vue',
             './src/views/Assets/AddUntrackedAssetView.vue',
             './src/views/Assets/EditAssetView.vue',
-            './src/views/Assets/AssetHistoryView.vue'
+            './src/views/Assets/AssetHistoryView.vue',
           ],
           'part-extras': [
             './src/views/Parts/PartHistoryView.vue',
             './src/views/Parts/PartView.vue',
-            './src/views/Parts/PartLocationView.vue'
+            './src/views/Parts/PartLocationView.vue',
           ],
           kiosk: [
             './src/views/Parts/CartView.vue',

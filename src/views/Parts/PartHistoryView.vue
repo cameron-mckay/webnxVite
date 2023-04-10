@@ -5,15 +5,15 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
 import {
-getPartByID,
-getPartHistoryByID,
+  getPartByID,
+  getPartHistoryByID,
 } from '../../plugins/dbCommands/partManager';
 import { getUserByID } from '../../plugins/dbCommands/userManager';
 import type {
-PartRecord,
-PartSchema,
-User,
-UserState,
+  PartRecord,
+  PartSchema,
+  User,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -25,7 +25,7 @@ interface Props {
 }
 const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
-let url = import.meta.env.VITE_API_URL
+let url = import.meta.env.VITE_API_URL;
 let part = ref({
   nxid: 'q',
   manufacturer: '',
@@ -161,13 +161,11 @@ function viewHistory(id: string) {
         <!-- Placeholder -->
       </div>
       <div class="detail-image-container">
-        <img :src="`${url}/images/parts/${part.nxid}`">
+        <img :src="`${url}/images/parts/${part.nxid}`" />
       </div>
     </div>
     <!-- PART RECORDS GO HERE -->
-    <h1 class="detail-title">
-        History:
-    </h1>
+    <h1 class="detail-title">History:</h1>
     <div
       v-if="partRecords.length > 0"
       class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"

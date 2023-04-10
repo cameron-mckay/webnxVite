@@ -30,7 +30,7 @@ const { http, store, router, errorHandler, displayMessage } =
 
 function addToCart(part: PartSchema) {
   displayMessage(`Added ${part.manufacturer} ${part.name} to cart`);
-  store.commit('addToCart', part.nxid);
+  store.commit('addToCart', part);
 }
 
 function viewPart(part: PartSchema) {

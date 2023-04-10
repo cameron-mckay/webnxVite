@@ -20,10 +20,15 @@ let part: Ref<PartSchema> = ref(
 let partCopy = JSON.parse(JSON.stringify(oldPart));
 let image = ref<File>();
 let imageUrl = ref<string>();
+let url = import.meta.env.VITE_API_URL;
+let serials = ref('');
 const allowedFileTypes = ['image/png', 'image/jpeg', 'image/webp'];
 // Reset form
 function resetForm() {
   part.value = JSON.parse(JSON.stringify(partCopy));
+  image = ref<File>();
+  imageUrl.value = '';
+  serials.value = '';
 }
 
 // Any type because typedefs do not exists for File Uploads
@@ -48,6 +53,11 @@ function handleImageUpload(event: any) {
 
 // Clear out fields when part type is changed
 onMounted(() => {
+  if (oldPart && JSON.stringify(oldPart) != JSON.stringify({}))
+    imageUrl.value = `${url}/images/parts/${oldPart.nxid}`;
+  if (JSON.stringify(oldPart) == JSON.stringify({}) && strict)
+    part.value.serialized = false;
+
   watch(
     () => part.value.type,
     () => {
@@ -62,6 +72,29 @@ onMounted(() => {
       delete part.value.port_type;
       delete part.value.cable_end1;
       delete part.value.cable_end2;
+    }
+  );
+  watch(serials, () => {
+    // Watch S/Ns and update part record with spliced and filtered records
+    if (serials.value != '') {
+      part.value.serials = serials.value
+        // Splits string at newline
+        .split('\n')
+        // Filters out blank lines
+        .filter((sn) => sn != '')
+        // Gets rid of duplicates
+        .filter((sn, i, arr) => i == arr.indexOf(sn));
+    }
+  });
+  watch(
+    () => part.value.serialized,
+    () => {
+      if (part.value.serialized && !part.value.serials) {
+        part.value.serials = [];
+      }
+      if (!part.value.serialized) {
+        delete part.value.serials;
+      }
     }
   );
 
@@ -127,16 +160,57 @@ onMounted(() => {
         placeholder="Part Name"
       />
       <label v-if="strict && JSON.stringify(oldPart) == JSON.stringify({})">
+        Serialized:
+      </label>
+      <select
+        :required="strict"
+        v-model="part.serialized"
+        v-if="strict && JSON.stringify(oldPart) == JSON.stringify({})"
+        class="textbox m-1"
+      >
+        <option selected :value="false">No</option>
+        <option :value="true">Yes</option>
+      </select>
+      <label
+        v-if="
+          strict &&
+          JSON.stringify(oldPart) == JSON.stringify({}) &&
+          part.serialized === false
+        "
+      >
         Quantity:
       </label>
       <input
         class="textbox m-1"
-        :required="strict"
-        v-if="strict && JSON.stringify(oldPart) == JSON.stringify({})"
+        required
+        v-if="
+          strict &&
+          JSON.stringify(oldPart) == JSON.stringify({}) &&
+          part.serialized === false
+        "
         v-model="part.quantity"
         type="number"
         min="0"
         placeholder="Quantity"
+      />
+      <label
+        v-if="
+          strict &&
+          JSON.stringify(oldPart) == JSON.stringify({}) &&
+          part.serialized
+        "
+      >
+        Serial numbers:
+      </label>
+      <textarea
+        class="textbox m-1"
+        v-if="
+          strict &&
+          JSON.stringify(oldPart) == JSON.stringify({}) &&
+          part.serialized
+        "
+        v-model="serials"
+        placeholder="One per line.  Drag to resize"
       />
       <label>Shelf Location:</label>
       <input

@@ -5,15 +5,15 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
 import {
-getPartByID,
-getPartRecords,
+  getPartByID,
+  getPartRecords,
 } from '../../plugins/dbCommands/partManager';
 import { getUserByID } from '../../plugins/dbCommands/userManager';
 import type {
-PartRecord,
-PartSchema,
-User,
-UserState,
+  PartRecord,
+  PartSchema,
+  User,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -35,9 +35,9 @@ let part = ref({
   total_quantity: 0,
   shelf_location: '',
 } as PartSchema);
-let pageTitle = ref("")
+let pageTitle = ref('');
 let partRecords = ref([] as PartRecord[]);
-let url = import.meta.env.VITE_API_URL
+let url = import.meta.env.VITE_API_URL;
 let users = ref([
   { _id: 'all', first_name: 'All', last_name: 'Techs' },
 ] as User[]);
@@ -46,7 +46,7 @@ onBeforeMount(() => {
   if (router.currentRoute.value.query.nxid) {
     let nxid = router.currentRoute.value.query.nxid as string;
     let query = router.currentRoute.value.query;
-    
+
     getPartRecords(http, query, async (res, err) => {
       if (err) {
         errorHandler(err);
@@ -81,27 +81,29 @@ onBeforeMount(() => {
         }
       }
     });
-    pageTitle.value = ""
+    pageTitle.value = '';
     if (query.location == 'All Techs') {
-        pageTitle.value = pageTitle.value + "All Tech's inventory:"
-    }
-    else if(query.owner) {
-        console.log(users.value)
-        getUserByID(http, query.owner as string, (res, err) => {
-            if (err) {
-              errorHandler(err);
-            }
-            let userObject = res as User
-            pageTitle.value = pageTitle.value + userObject?.first_name + " " + userObject?.last_name + "'s inventory:"
-          });
-    }
-    else {
-        if(query.asset_tag) {
-            pageTitle.value = pageTitle.value + query.asset_tag + ":";   
+      pageTitle.value = pageTitle.value + "All Tech's inventory:";
+    } else if (query.owner) {
+      console.log(users.value);
+      getUserByID(http, query.owner as string, (res, err) => {
+        if (err) {
+          errorHandler(err);
         }
-        else {
-            pageTitle.value = pageTitle.value + query.location + ":";
-        }
+        let userObject = res as User;
+        pageTitle.value =
+          pageTitle.value +
+          userObject?.first_name +
+          ' ' +
+          userObject?.last_name +
+          "'s inventory:";
+      });
+    } else {
+      if (query.asset_tag) {
+        pageTitle.value = pageTitle.value + query.asset_tag + ':';
+      } else {
+        pageTitle.value = pageTitle.value + query.location + ':';
+      }
     }
 
     getPartByID(http, nxid, 3, 'Parts Room', (res, err) => {
@@ -114,7 +116,10 @@ onBeforeMount(() => {
 });
 
 function viewHistory(record: PartRecord, quantity: number) {
-    router.push({ name: 'Part History', query: { id: record._id, nxid: record.nxid } });
+  router.push({
+    name: 'Part History',
+    query: { id: record._id, nxid: record.nxid },
+  });
 }
 </script>
 <template>
@@ -188,7 +193,7 @@ function viewHistory(record: PartRecord, quantity: number) {
         <!-- Placeholder -->
       </div>
       <div class="detail-image-container">
-        <img :src="`${url}/images/parts/${part.nxid}`">
+        <img :src="`${url}/images/parts/${part.nxid}`" />
       </div>
     </div>
     <!-- PART RECORDS GO HERE -->

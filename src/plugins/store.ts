@@ -2,7 +2,7 @@ import { AxiosInstance } from 'axios';
 import { App, InjectionKey } from 'vue';
 import { createStore, Store, useStore as baseUseStore } from 'vuex';
 import { getCurrentUser } from './dbCommands/userManager';
-import type { CartItem, User, UserState } from './interfaces';
+import type { CartItem, PartSchema, User, UserState } from './interfaces';
 // Injection key
 export const key: InjectionKey<Store<UserState>> = Symbol();
 
@@ -14,22 +14,29 @@ export function createGlobalStore(app: App): Store<UserState> {
       isAuth: false,
       user: {},
       http: app.config.globalProperties.$http,
-      cart: [],
+      cart: {
+        serialized: [] as CartItem[],
+        unserialized: new Map<string, number>(),
+      },
     }),
     getters: {
       getQuantity: (state: UserState) => (id: string) => {
-        for (let item of state.cart) {
-          if (item.nxid == id) {
-            return item.quantity;
+        if (state.cart.unserialized.has(id)) {
+          return state.cart.unserialized.get(id);
+        } else {
+          let count = 0;
+          for (let item of state.cart.serialized) {
+            if (item.nxid == id) count++;
           }
+          return count;
         }
-        return 0;
       },
       getTotalNumItems: (state: UserState) => {
         let num = 0;
-        for (let item of state.cart) {
-          num += item.quantity;
+        for (let item of state.cart.unserialized.values()) {
+          num += item;
         }
+        num += state.cart.serialized.length;
         return num;
       },
     },
@@ -49,54 +56,56 @@ export function createGlobalStore(app: App): Store<UserState> {
         http.defaults.headers['Authorization'] = '';
       },
       // Add ID of item to store
-      addToCart(state: UserState, id: string) {
-        let found = false;
-        for (let i = 0; i < state.cart.length; i++) {
-          // Loop through each item and see if it
-          // already exists
-          if (store.state.cart[i].nxid == id) {
-            // Increment item
-            store.state.cart[i].quantity += 1;
-            i = store.state.cart.length;
-            found = true;
-          }
-        }
-        if (!found) {
-          let item: CartItem = {
-            nxid: id,
-            quantity: 1,
-            building: store.state.user.building!,
-            location: 'Parts Room',
-          };
-          state.cart.push(item);
-        }
+      addToCart(state: UserState, part: PartSchema) {
+        if (state.cart.unserialized.has(part.nxid!)) {
+          state.cart.unserialized.set(
+            part.nxid!,
+            state.cart.unserialized.get(part.nxid!)! + 1
+          );
+        } else if (part.serialized) {
+          state.cart.serialized.push({ nxid: part.nxid!, serial: '' });
+        } else state.cart.unserialized.set(part.nxid!, 1);
       },
       addOne(state: UserState, id: string) {
-        for (let i = 0; i < state.cart.length; i++) {
-          if (state.cart[i].nxid == id) {
-            state.cart[i].quantity += 1;
-          }
+        if (state.cart.unserialized.has(id)) {
+          state.cart.unserialized.set(id, state.cart.unserialized.get(id)! + 1);
         }
+        state.cart.serialized.push({ nxid: id, serial: '' });
       },
       // Remove item of ID from
       removeOne(state: UserState, id: string) {
-        for (let i = 0; i < state.cart.length; i++) {
-          if (state.cart[i].nxid == id && state.cart[i].quantity == 1) {
-            state.cart.splice(i, 1);
-          } else if (state.cart[i].nxid == id) {
-            state.cart[i].quantity -= 1;
-          }
+        if (state.cart.unserialized.has(id)) {
+          state.cart.unserialized.set(id, state.cart.unserialized.get(id)! - 1);
+          if (state.cart.unserialized.get(id)! < 1)
+            state.cart.unserialized.delete(id);
+        } else {
+          let index = state.cart.serialized.findIndex(
+            (e) => e.nxid == id && e.serial == ''
+          );
+          if (index < 0)
+            index = state.cart.serialized.findIndex((e) => e.nxid == id);
+          state.cart.serialized.splice(index, 1);
         }
       },
       removeAll(state: UserState, id: string) {
-        for (let i = 0; i < state.cart.length; i++) {
-          if (state.cart[i].nxid == id) {
-            state.cart.splice(i, 1);
+        if (state.cart.unserialized.has(id)) {
+          state.cart.unserialized.delete(id);
+        } else {
+          while (state.cart.serialized.findIndex((e) => e.nxid == id) >= 0) {
+            let index = state.cart.serialized.findIndex((e) => e.nxid == id);
+            state.cart.serialized.splice(index, 1);
           }
         }
       },
       emptyCart(state: UserState) {
-        state.cart = [];
+        state.cart.unserialized = new Map<string, number>();
+        state.cart.serialized = [];
+      },
+      setSerial(state: UserState, test: CartItem) {
+        state.cart.serialized[test.quantity!] = {
+          nxid: state.cart.serialized[test.quantity!].nxid,
+          serial: test.serial,
+        };
       },
       // Uses token to fetch user data from the API
       updateUserData(state: UserState, user: object) {

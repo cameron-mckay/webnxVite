@@ -5,11 +5,11 @@ import type {
   AxiosResponse,
 } from 'axios';
 import type {
+  apiResponse,
   CartItem,
   PartRecord,
   PartSchema,
   User,
-  apiResponse,
 } from '../interfaces';
 
 /**
@@ -411,11 +411,11 @@ export function movePart(
 }
 
 /**
- * 
- * @param http 
- * @param image 
+ *
+ * @param http
+ * @param image
  * @param nxid
- * @param callback 
+ * @param callback
  */
 export function updatePartImage(
   http: AxiosInstance,
@@ -452,7 +452,7 @@ export function getPartRecords(
 ) {
   http
     .get('/api/part/records', {
-      params
+      params,
     })
     .then((res: AxiosResponse) => {
       // Success - send results to callback

@@ -1,5 +1,5 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
-import type { AssetSchema, CartItem, apiResponse } from '../interfaces';
+import type { apiResponse, AssetSchema, CartItem } from '../interfaces';
 
 /**
  * @brief Get a list of 50 assets from a keyword search string

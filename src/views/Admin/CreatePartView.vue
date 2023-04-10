@@ -6,8 +6,8 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PartManagerComponent from '../../components/PartComponents/PartManagerComponent.vue';
 import {
-createPart,
-updatePartImage,
+  createPart,
+  updatePartImage,
 } from '../../plugins/dbCommands/partManager';
 import type { PartSchema, UserState } from '../../plugins/interfaces';
 
@@ -40,12 +40,12 @@ async function submitPart(part: PartSchema, image: File) {
       }
       // Success
       displayMessage(`Created part: ${newPart.manufacturer} ${newPart.name}`);
-        // Check for image
-        if (image) {
+      // Check for image
+      if (image) {
         // Rename image file
-        let blob = image.slice(0, image.size, image.type)
+        let blob = image.slice(0, image.size, image.type);
         let fileName = part.nxid!;
-        let renamedImage = new File([blob], fileName, {type: image.type})
+        let renamedImage = new File([blob], fileName, { type: image.type });
         // upload image if exists
         updatePartImage(http, renamedImage, (data, err) => {
           if (err) {

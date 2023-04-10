@@ -7,14 +7,16 @@
   /* Used in register and login */
   .card {
     @apply background-and-border mx-auto mt-10 rounded-lg bg-gray-200 p-10 shadow-lg transition-colors dark:bg-zinc-900;
-    
   }
-  p, h1, a, label {
+  p,
+  h1,
+  a,
+  label {
     @apply text-black dark:text-gray-200;
   }
 
   del {
-    @apply line-through decoration-black dark:decoration-gray-200
+    @apply line-through decoration-black dark:decoration-gray-200;
   }
 
   /* Common colors */
@@ -71,7 +73,7 @@
   }
 
   .background-and-border > p {
-    @apply my-auto
+    @apply my-auto;
   }
   .bab-hover {
     @apply hover-color rounded-bl-none transition  md:delay-300;
@@ -103,10 +105,10 @@
     @apply odd:detail-label even:detail-data;
   }
   .detail-image-container {
-    @apply col-span-2 md:col-start-3 md:col-end-5 w-full h-full md:row-start-2 md:row-end-[20] md:m-0 my-2 md:p-0 p-2
+    @apply col-span-2 my-2 h-full w-full p-2 md:col-start-3 md:col-end-5 md:row-start-2 md:row-end-[20] md:m-0 md:p-0;
   }
   .detail-image-container > img {
-    @apply shadow-md
+    @apply shadow-md;
   }
 
   /* Mobile specific styles */

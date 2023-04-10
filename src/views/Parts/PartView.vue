@@ -5,15 +5,15 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
 import {
-getPartByID,
-getPartRecordsByID,
+  getPartByID,
+  getPartRecordsByID,
 } from '../../plugins/dbCommands/partManager';
 import { getUserByID } from '../../plugins/dbCommands/userManager';
 import type {
-PartRecord,
-PartSchema,
-User,
-UserState,
+  PartRecord,
+  PartSchema,
+  User,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -25,15 +25,15 @@ interface Props {
 }
 
 interface GroupedRecords {
-  record: PartRecord,
-  quantity: number,
-  key: number
+  record: PartRecord;
+  quantity: number;
+  key: number;
 }
 
 const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 
-let url = import.meta.env.VITE_API_URL
+let url = import.meta.env.VITE_API_URL;
 
 let part = ref({
   nxid: 'q',
@@ -67,20 +67,26 @@ onBeforeMount(() => {
       partRecords.value = partRecords.value.reverse();
       for (const record of res as PartRecord[]) {
         // Check if group already exists
-        let existingGroup = groupedRecords.value.find((e) => 
-        (e.record.nxid == record.nxid)&&
-        (e.record.location == record.location)&&
-        (e.record.owner==record.owner)&&
-        (e.record.asset_tag==record.asset_tag))
+        let existingGroup = groupedRecords.value.find(
+          (e) =>
+            e.record.nxid == record.nxid &&
+            e.record.location == record.location &&
+            e.record.owner == record.owner &&
+            e.record.asset_tag == record.asset_tag
+        );
         // Increment if exists and continue
-        if(existingGroup) {
-          existingGroup.quantity += 1
-          continue
+        if (existingGroup) {
+          existingGroup.quantity += 1;
+          continue;
         } else {
           // Create new group
-          groupedRecords.value.push({record: record, quantity: 1, key: groupedRecords.value.length })
+          groupedRecords.value.push({
+            record: record,
+            quantity: 1,
+            key: groupedRecords.value.length,
+          });
         }
-        // Check 
+        // Check
         // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
         if (
           record.owner &&
@@ -96,27 +102,34 @@ onBeforeMount(() => {
         }
       }
       // Sort array by quantity
-      groupedRecords.value.sort((r1, r2)=> r1.quantity < r2.quantity ? 1 : -1);
+      groupedRecords.value.sort((r1, r2) =>
+        r1.quantity < r2.quantity ? 1 : -1
+      );
       // Advanced key switch to fix owners (hackerman)
       groupedRecords.value.map((group) => {
-        group.key +=1
-        group.key -=1
-      })
+        group.key += 1;
+        group.key -= 1;
+      });
     });
   }
 });
 
 function viewHistory(record: PartRecord, quantity: number) {
   if (quantity == 1)
-    router.push({ name: 'Part History', query: { id: record._id, nxid: record.nxid } });
+    router.push({
+      name: 'Part History',
+      query: { id: record._id, nxid: record.nxid },
+    });
   else
-    router.push({ name: 'Part Location', query: { 
-        nxid: part.value.nxid, 
-        owner: record.owner, 
-        location: record.location, 
-        building: record.building?.toString(), 
-        asset_tag: record.asset_tag
-    } 
+    router.push({
+      name: 'Part Location',
+      query: {
+        nxid: part.value.nxid,
+        owner: record.owner,
+        location: record.location,
+        building: record.building?.toString(),
+        asset_tag: record.asset_tag,
+      },
     });
 }
 </script>
@@ -191,7 +204,7 @@ function viewHistory(record: PartRecord, quantity: number) {
         <!-- Placeholder -->
       </div>
       <div class="detail-image-container">
-        <img :src="`${url}/images/parts/${part.nxid}`">
+        <img :src="`${url}/images/parts/${part.nxid}`" />
       </div>
     </div>
     <!-- PART RECORDS GO HERE -->

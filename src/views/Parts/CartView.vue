@@ -7,14 +7,24 @@ import { onBeforeMount, ref, Ref } from 'vue';
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import { checkout, getPartByID } from '../../plugins/dbCommands/partManager';
+import SerializedCartItemComponent from '../../components/KioskComponents/SerializedCartItemComponent.vue';
+import {
+  getPartByID,
+  getUniqueOnPartRecord,
+} from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
+  CartItem,
   LoadedCartItem,
   PartSchema,
+  SNAvailable,
   User,
   UserState,
 } from '../../plugins/interfaces';
+
+interface indexedPart extends LoadedCartItem {
+  index: number;
+}
 
 interface Props {
   http: AxiosInstance;
@@ -29,6 +39,9 @@ const { http, store, router, errorHandler, displayMessage } =
 // END OF PROPS
 
 let parts: Ref<Array<LoadedCartItem>> = ref([]);
+let cachedRecords = new Map<string, PartSchema>();
+let allSerials = ref(new Map<string, SNAvailable[]>());
+let serializedParts = ref([] as indexedPart[]);
 let users = ref([] as User[]);
 let currentUser = ref({} as User);
 
@@ -55,24 +68,79 @@ function loadUsers() {
 
 async function loadCart() {
   parts.value = [];
-  for (const item of store.state.cart) {
-    getPartByID(
-      http,
-      item.nxid,
-      store.state.user.building!,
-      'Parts Room',
-      (data, err) => {
-        if (err) {
-          return errorHandler(err);
+  for (let item of store.state.cart.unserialized.keys()) {
+    if (cachedRecords.has(item)) {
+      parts.value.push({
+        part: cachedRecords.get(item)!,
+        quantity: store.getters.getQuantity(item),
+      });
+    } else {
+      getPartByID(
+        http,
+        item,
+        store.state.user.building!,
+        'Parts Room',
+        (data, err) => {
+          if (err) {
+            return errorHandler(err);
+          }
+          let part = data as PartSchema;
+          cachedRecords.set(part.nxid!, part);
+          parts.value.push({
+            part,
+            quantity: store.getters.getQuantity(part.nxid),
+          });
         }
-        let part = data as PartSchema;
-        parts.value.push({
-          part,
-          quantity: store.getters.getQuantity(part.nxid),
-        });
-      }
-    );
+      );
+    }
   }
+  store.state.cart.serialized.map(async (item, i, arr) => {
+    if (cachedRecords.has(item.nxid)) {
+      serializedParts.value.push({
+        part: cachedRecords.get(item.nxid)!,
+        serial: arr[i].serial,
+        index: i,
+      } as indexedPart);
+    } else {
+      getPartByID(
+        http,
+        item.nxid,
+        store.state.user.building!,
+        'Parts Room',
+        (data, err) => {
+          if (err) {
+            return errorHandler(err);
+          }
+          let part = data as PartSchema;
+          getUniqueOnPartRecord(
+            http,
+            'serial',
+            {
+              nxid: part.nxid,
+              location: 'Parts Room',
+              building: store.state.user.building,
+            },
+            (data, err) => {
+              if (err) {
+                return errorHandler(err);
+              }
+              let serials = data as string[];
+              let mappedSerials = serials.map((sn) => {
+                return { serial: sn, available: true } as SNAvailable;
+              });
+              allSerials.value.set(part.nxid!, mappedSerials);
+              cachedRecords.set(part.nxid!, part);
+              serializedParts.value.push({
+                part: cachedRecords.get(item.nxid)!,
+                serial: arr[i].serial,
+                index: i,
+              } as indexedPart);
+            }
+          );
+        }
+      );
+    }
+  });
 }
 
 async function deletePart(id: string) {
@@ -89,7 +157,7 @@ async function addOne(id: string) {
     (data, err) => {
       let part = data as PartSchema;
       if (part.quantity! > store.getters.getQuantity(id)) {
-        store.commit('addOne', id);
+        store.commit('addOne', part.nxid);
       } else {
         errorHandler('Not enough stock.');
       }
@@ -104,21 +172,44 @@ async function subOne(id: string) {
   }
 }
 
+function updateSerial(serial: string, index: number) {
+  let serials = allSerials.value.get(serializedParts.value[index].part.nxid!)!;
+  let oldSerialIndex = -1;
+  if (serializedParts.value[index].serial != '')
+    oldSerialIndex = serials?.findIndex(
+      (e) => e.serial == serializedParts.value[index].serial
+    )!;
+  let newSerialIndex = serials?.findIndex((e) => e.serial == serial);
+  if (serials[newSerialIndex].available) {
+    if (oldSerialIndex >= 0) serials[oldSerialIndex].available = true;
+    serials[newSerialIndex].available = false;
+    store.commit('setSerial', { quantity: index, serial: serial });
+  }
+}
+
 function localCheckout() {
-  checkout(http, store.state.cart, currentUser.value._id!, (data, err) => {
-    if (err) {
-      return errorHandler(err);
-    }
-    displayMessage('Successfully checked out.');
-    store.commit('emptyCart');
-    loadCart();
+  let cart = [] as CartItem[];
+  for (let item of store.state.cart.unserialized.keys()) {
+    cart.push({ nxid: item, quantity: store.getters.getQuantity(item) });
+  }
+  store.state.cart.serialized.map((e) => {
+    cart.push({ nxid: e.nxid, serial: e.serial } as CartItem);
   });
+  console.log(cart);
+  // checkout(http, cart, currentUser.value._id!, (data, err) => {
+  //   if (err) {
+  //     return errorHandler(err);
+  //   }
+  //   displayMessage('Successfully checked out.');
+  //   store.commit('emptyCart');
+  //   loadCart();
+  // });
 }
 </script>
 
 <template>
   <form @submit.prevent="localCheckout">
-    <div v-if="parts.length != 0">
+    <div v-if="parts.length != 0 || serializedParts.length != 0">
       <div class="flex flex-wrap justify-between">
         <h1 class="mb-4 inline-block w-full text-4xl md:w-fit">Check Out:</h1>
         <div class="flex">
@@ -141,11 +232,20 @@ function localCheckout() {
         <p>Quantity</p>
         <p></p>
       </div>
+      <SerializedCartItemComponent
+        :index="item.index"
+        v-for="item of serializedParts"
+        v-bind:key="item.index"
+        :part="item.part"
+        :serials="allSerials.get(item.part.nxid!)!"
+        :quantity="item.quantity"
+        @update="updateSerial"
+      />
       <CartItemComponent
         v-for="item in parts"
         v-bind:key="item.part.nxid"
         :part="item.part"
-        :quantity="item.quantity"
+        :quantity="item.quantity!"
         @plus="addOne(item.part._id!)"
         @minus="subOne(item.part.nxid!)"
         @delete="deletePart(item.part.nxid!)"

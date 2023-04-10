@@ -69,7 +69,7 @@ const routes = [
   {
     path: '/assets/history',
     name: 'Asset History',
-    component: () => import('../views/Assets/AssetHistoryView.vue')
+    component: () => import('../views/Assets/AssetHistoryView.vue'),
   },
   {
     path: '/manage',

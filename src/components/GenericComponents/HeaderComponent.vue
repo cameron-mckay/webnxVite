@@ -47,7 +47,10 @@
           <!-- <RouterLink to="/assets">Assets</RouterLink> -->
           <RouterLink
             v-if="store.state.user.role == 'kiosk'"
-            v-show="store.state.cart.length > 0"
+            v-show="
+              store.state.cart.unserialized.size > 0 ||
+              store.state.cart.serialized.length > 0
+            "
             class="header-button-colors w-28 text-center leading-10 transition"
             to="/cart"
           >
@@ -55,7 +58,10 @@
           </RouterLink>
           <RouterLink
             v-if="store.state.user.role == 'kiosk'"
-            v-show="store.state.cart.length < 1"
+            v-show="
+              store.state.cart.unserialized.size < 1 &&
+              store.state.cart.serialized.length < 1
+            "
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/cart"
           >
@@ -171,16 +177,22 @@
       <!-- <RouterLink to="/assets">Assets</RouterLink> -->
       <RouterLink
         v-if="store.state.user.role == 'kiosk'"
-        v-show="store.state.cart.length > 0"
-        class="mobile-nav-button"
+        v-show="
+          store.state.cart.unserialized.size > 0 ||
+          store.state.cart.serialized.length > 0
+        "
+        class="header-button-colors w-28 text-center leading-10 transition"
         to="/cart"
       >
         {{ `Check Out(${store.getters.getTotalNumItems})` }}
       </RouterLink>
       <RouterLink
         v-if="store.state.user.role == 'kiosk'"
-        v-show="store.state.cart.length < 1"
-        class="mobile-nav-button"
+        v-show="
+          store.state.cart.unserialized.size < 1 &&
+          store.state.cart.serialized.length < 1
+        "
+        class="header-button-colors w-24 text-center leading-10 transition"
         to="/cart"
       >
         Check Out

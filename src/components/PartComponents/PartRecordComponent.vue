@@ -23,10 +23,10 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="group relative my-1" >
+  <div class="group relative my-1">
     <div
-    class="background-and-border group-hover:bab-hover grid grid-cols-5 p-1 text-center leading-8 md:grid-cols-6 md:p-2 md:leading-10"
-    v-bind:class="{ 'group-hover:rounded-md': quantity}"  
+      class="background-and-border group-hover:bab-hover grid grid-cols-5 p-1 text-center leading-8 md:grid-cols-6 md:p-2 md:leading-10"
+      v-bind:class="{ 'group-hover:rounded-md': quantity }"
     >
       <p class="break-words">{{ record.building }}</p>
       <p class="break-words">{{ record.location }}</p>
@@ -40,8 +40,7 @@ onMounted(() => {
       <p class="hidden break-words md:block" v-if="quantity">
         {{ quantity }}
       </p>
-      <p class="hidden break-words md:block"
-        v-else>
+      <p class="hidden break-words md:block" v-else>
         {{ `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}` }}
       </p>
       <div class="my-auto flex justify-end">
@@ -61,7 +60,10 @@ onMounted(() => {
         </svg>
       </div>
     </div>
-    <div class="group-hover:bab-drop-hover bab-drop" v-if="quantity==undefined">
+    <div
+      class="group-hover:bab-drop-hover bab-drop"
+      v-if="quantity == undefined"
+    >
       <p class="block md:hidden">
         {{
           `Date Created: ${

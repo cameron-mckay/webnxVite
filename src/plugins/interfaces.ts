@@ -45,30 +45,32 @@ export interface PartSchema {
   port_type?: string;
   cable_end1?: string;
   cable_end2?: string;
+  serialized?: boolean;
+  serials?: string[];
 }
 export interface AssetSchema {
-  [index: string]: any,
-  _id?: string,
-  asset_tag?: string,
-  prev?: string|null,
-  next?: string|null,
-  building?: number,
-  asset_type?: string,
-  chassis_type?: string,
-  manufacturer?: string,
-  model?: string,
-  serial?: string,
-  rails?: Boolean,
-  live?: Boolean,
-  bay?: string | number,
-  power_port?: string,
-  public_port?: string,
-  private_port?: string,
-  ipmi_port?: string,
-  by?: string,
-  sid?: number,
-  date_created?: string,
-  date_replaced?: string,
+  [index: string]: any;
+  _id?: string;
+  asset_tag?: string;
+  prev?: string | null;
+  next?: string | null;
+  building?: number;
+  asset_type?: string;
+  chassis_type?: string;
+  manufacturer?: string;
+  model?: string;
+  serial?: string;
+  rails?: Boolean;
+  live?: Boolean;
+  bay?: string | number;
+  power_port?: string;
+  public_port?: string;
+  private_port?: string;
+  ipmi_port?: string;
+  by?: string;
+  sid?: number;
+  date_created?: string;
+  date_replaced?: string;
 }
 
 export interface PartRecord {
@@ -88,15 +90,17 @@ export interface PartRecord {
 // User state interface
 export interface CartItem {
   nxid: string;
-  quantity: number;
+  quantity?: number;
   location?: string;
   building?: number;
+  serial?: string;
 }
 
 // Contains all part data
 export interface LoadedCartItem {
   part: PartSchema;
-  quantity: number;
+  quantity?: number;
+  serial?: string;
 }
 
 // User state for store
@@ -104,7 +108,7 @@ export interface UserState {
   isAuth: boolean;
   user: User;
   http: AxiosInstance;
-  cart: Array<CartItem>;
+  cart: Cart;
 }
 
 // User schema
@@ -119,14 +123,24 @@ export interface User {
   _id?: string;
 }
 
-export type AssetHistory = AssetEvent[]
+export type AssetHistory = AssetEvent[];
 export interface AssetEvent {
-  date_begin: Date,
-  date_end: Date,
-  asset_id: string,
-  asset_info?: AssetSchema,
-  info_updated: boolean,
-  existing: CartItem[],
-  added: CartItem[],
-  removed: CartItem[]
+  date_begin: Date;
+  date_end: Date;
+  asset_id: string;
+  asset_info?: AssetSchema;
+  info_updated: boolean;
+  existing: CartItem[];
+  added: CartItem[];
+  removed: CartItem[];
+}
+
+export interface SNAvailable {
+  serial: string;
+  available: boolean;
+}
+
+export interface Cart {
+  serialized: CartItem[];
+  unserialized: Map<string, number>;
 }
