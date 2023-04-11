@@ -35,15 +35,7 @@ const { http, store, router, errorHandler, displayMessage } =
 
 let url = import.meta.env.VITE_API_URL;
 
-let part = ref({
-  nxid: 'q',
-  manufacturer: '',
-  name: '',
-  type: '',
-  quantity: 0,
-  total_quantity: 0,
-  shelf_location: '',
-} as PartSchema);
+let part = ref({} as PartSchema);
 let partRecords = ref([] as PartRecord[]);
 let groupedRecords = ref([] as GroupedRecords[]);
 let users = ref([
@@ -137,18 +129,26 @@ function viewHistory(record: PartRecord, quantity: number) {
   <div>
     <div class="detail-table">
       <h1 class="detail-title">
-        {{ `${part.manufacturer} ${part.name}` }}
+        {{
+          `${part.manufacturer ? part.manufacturer : ''} ${
+            part.name ? part.name : ''
+          }`
+        }}
       </h1>
       <p class="detail-label">NXID:</p>
-      <p class="detail-data">{{ part.nxid }}</p>
+      <p class="detail-data">{{ part.nxid ? part.nxid : '' }}</p>
       <p class="detail-label">Shelf Location:</p>
-      <p class="detail-data">{{ part.shelf_location }}</p>
+      <p class="detail-data">
+        {{ part.shelf_location ? part.shelf_location : '' }}
+      </p>
       <p class="detail-label">Parts Room Quantity:</p>
-      <p class="detail-data">{{ part.quantity }}</p>
+      <p class="detail-data">{{ part.quantity ? part.quantity : '' }}</p>
       <p class="detail-label">Total Quantity:</p>
-      <p class="detail-data">{{ part.total_quantity }}</p>
+      <p class="detail-data">
+        {{ part.total_quantity ? part.total_quantity : '' }}
+      </p>
       <p class="detail-label">Type:</p>
-      <p class="detail-data">{{ part.type }}</p>
+      <p class="detail-data">{{ part.type ? part.type : '' }}</p>
       <div class="detail-row" v-if="part.type == 'Motherboard'">
         <p>Chipset:</p>
         <p>{{ part.chipset }}</p>

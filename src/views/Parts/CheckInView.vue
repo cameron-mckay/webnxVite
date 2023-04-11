@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, watch } from 'vue';
+import { Ref, onBeforeMount, ref, watch } from 'vue';
 
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -14,6 +14,7 @@ import {
 import type {
   CartItem,
   LoadedCartItem,
+  PartCache,
   PartSchema,
   User,
   UserState,
@@ -59,7 +60,25 @@ function loadUsers() {
 async function loadInventory() {
   getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
     if (err) return errorHandler(err);
-    inventory.value = data as LoadedCartItem[];
+    let res = data as any;
+    let partsArr = res.parts as PartCache;
+    let parts = new Map<string, PartSchema>();
+    partsArr.map((obj) => {
+      parts.set(obj.nxid, obj.part);
+    });
+    let records = res.records as CartItem[];
+    inventory.value = records.map((item) => {
+      if (item.serial) {
+        return {
+          part: parts.get(item.nxid),
+          serial: item.serial,
+        } as LoadedCartItem;
+      }
+      return {
+        part: parts.get(item.nxid),
+        quantity: item.quantity,
+      } as LoadedCartItem;
+    });
     checkInList.value = [] as LoadedCartItem[];
   });
 }
@@ -81,52 +100,28 @@ function localCheckin() {
 }
 
 function moveToInventory(part: PartSchema, quantity: number) {
-  let item = {} as LoadedCartItem;
-  for (let checkin_item of checkInList.value) {
-    if (part.nxid == checkin_item.part.nxid) {
-      item = checkin_item;
-      break;
-    }
-  }
-  if (item.quantity > 0) {
-    item.quantity -= quantity;
-    for (let inventory_item of inventory.value) {
-      if (inventory_item.part.nxid == item.part.nxid) {
-        inventory_item.quantity += quantity;
-        break;
-      }
-    }
-    if (item.quantity == 0) {
-      checkInList.value.splice(checkInList.value.indexOf(item), 1);
-    }
-  }
+  move(checkInList, inventory, part, quantity);
 }
 
 function moveToCheckin(part: PartSchema, quantity: number) {
-  let item = {} as LoadedCartItem;
-  for (let inventory_item of inventory.value) {
-    if (part.nxid == inventory_item.part.nxid) {
-      item = inventory_item;
-      break;
-    }
+  move(inventory, checkInList, part, quantity);
+}
+
+function move(
+  array1: Ref<LoadedCartItem[]>,
+  array2: Ref<LoadedCartItem[]>,
+  part: PartSchema,
+  quantity: number
+) {
+  let item1 = array1.value.find((e) => e.part.nxid == part.nxid);
+  if (!item1) {
+    return;
   }
-  if (item.quantity > 0) {
-    item.quantity -= quantity;
-    let found = false;
-    for (let checkin_item of checkInList.value) {
-      if (checkin_item.part.nxid == item.part.nxid) {
-        found = true;
-        checkin_item.quantity += quantity;
-        break;
-      }
-    }
-    if (!found) {
-      checkInList.value.push({
-        part: JSON.parse(JSON.stringify(item.part)),
-        quantity,
-      });
-    }
-  }
+  item1.quantity! -= quantity;
+  if (item1.quantity! < 1) array1.value.splice(array1.value.indexOf(item1), 1);
+  let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
+  if (!item2) array2.value.push({ part, quantity });
+  else item2.quantity! += quantity;
 }
 
 watch(currentUser, () => {

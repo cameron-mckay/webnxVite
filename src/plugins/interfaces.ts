@@ -135,6 +135,13 @@ export interface AssetEvent {
   removed: CartItem[];
 }
 
+export interface PartCacheEntry {
+  nxid: string;
+  part: PartSchema;
+}
+
+export type PartCache = PartCacheEntry[];
+
 export interface SNAvailable {
   serial: string;
   available: boolean;

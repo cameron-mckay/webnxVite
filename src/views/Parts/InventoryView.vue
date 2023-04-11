@@ -16,7 +16,7 @@ import {
 import type { AxiosError, AxiosInstance } from 'axios';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import type { UserState } from '../../plugins/interfaces';
+import type { CartItem, PartCache, UserState } from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -37,14 +37,28 @@ let transferUser = ref({} as User);
 let users = ref([] as User[]);
 let processingMove = false;
 
-function loadInventory() {
-  // Get user inventory
+async function loadInventory() {
   getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
-    if (err) {
-      return errorHandler(err);
-    }
-    // Push to reactive var
-    items.value = data as LoadedCartItem[];
+    if (err) return errorHandler(err);
+    let res = data as any;
+    let partsArr = res.parts as PartCache;
+    let parts = new Map<string, PartSchema>();
+    partsArr.map((obj) => {
+      parts.set(obj.nxid, obj.part);
+    });
+    let records = res.records as CartItem[];
+    items.value = records.map((item) => {
+      if (item.serial) {
+        return {
+          part: parts.get(item.nxid),
+          serial: item.serial,
+        } as LoadedCartItem;
+      }
+      return {
+        part: parts.get(item.nxid),
+        quantity: item.quantity,
+      } as LoadedCartItem;
+    });
   });
 }
 
@@ -104,34 +118,17 @@ function move(
   part: PartSchema,
   quantity: number
 ) {
+  let item1 = array1.value.find((e) => e.part.nxid == part.nxid);
+  if (!item1) {
+    return;
+  }
+  item1.quantity! -= quantity;
   // Find the part in the list
-  for (let item of array1.value) {
-    // Check if nxid matches
-    if (item.part.nxid == part.nxid) {
-      // Found, change quantity
-      item.quantity -= quantity;
-      // Splice if quantity less than 1
-      if (item.quantity < 1) array1.value.splice(array1.value.indexOf(item), 1);
-      // Early return from loop
-      break;
-    }
-  }
+  if (item1.quantity! < 1) array1.value.splice(array1.value.indexOf(item1), 1);
   // Set index to sentinel value
-  let index = -1;
-  // Loop through second array
-  for (let item of array2.value) {
-    // Check if nxid matches
-    if (item.part.nxid == part.nxid) {
-      // Update index when found
-      index = array2.value.indexOf(item);
-      // Early return from loop
-      break;
-    }
-  }
-  // If found, add quantity to existing item
-  if (index != -1) array2.value[index].quantity += quantity;
-  // If not found, push new item to array
-  else array2.value.push({ part, quantity });
+  let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
+  if (!item2) array2.value.push({ part, quantity });
+  else item2.quantity! += quantity;
 }
 
 function submit() {
@@ -150,7 +147,7 @@ function submit() {
     for (let item of transferList.value) {
       from.nxid = item.part.nxid!;
       to.nxid = item.part.nxid!;
-      movePart(http, to, from, item.quantity, (data, err) => {
+      movePart(http, to, from, item.quantity!, (data, err) => {
         if (err) {
           // Handle errors
           errorHandler(err);

@@ -3,7 +3,7 @@ import { PartSchema } from '../../plugins/interfaces';
 
 interface Props {
   part: PartSchema;
-  quantity: number;
+  quantity?: number;
   isCurrentUser: boolean;
 }
 const { part, quantity, isCurrentUser } = defineProps<Props>();

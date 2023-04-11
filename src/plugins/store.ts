@@ -107,6 +107,19 @@ export function createGlobalStore(app: App): Store<UserState> {
           serial: test.serial,
         };
       },
+      removeSerialized(state: UserState, index: number) {
+        if (index >= 0 && state.cart.serialized.length > index) {
+          state.cart.serialized.splice(index, 1);
+        }
+      },
+      duplicateSerialized(state: UserState, index: number) {
+        if (index >= 0 && state.cart.serialized.length > index) {
+          state.cart.serialized.splice(index + 1, 0, {
+            nxid: state.cart.serialized[index].nxid,
+            serial: '',
+          });
+        }
+      },
       // Uses token to fetch user data from the API
       updateUserData(state: UserState, user: object) {
         getCurrentUser(app.config.globalProperties.$http, (data, err) => {
