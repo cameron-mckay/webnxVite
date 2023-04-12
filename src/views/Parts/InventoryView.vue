@@ -16,7 +16,7 @@ import {
 import type { AxiosError, AxiosInstance } from 'axios';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import type { CartItem, PartCache, UserState } from '../../plugins/interfaces';
+import type { UserState } from '../../plugins/interfaces';
 
 interface Props {
   http: AxiosInstance;
@@ -40,25 +40,8 @@ let processingMove = false;
 async function loadInventory() {
   getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
     if (err) return errorHandler(err);
-    let res = data as any;
-    let partsArr = res.parts as PartCache;
-    let parts = new Map<string, PartSchema>();
-    partsArr.map((obj) => {
-      parts.set(obj.nxid, obj.part);
-    });
-    let records = res.records as CartItem[];
-    items.value = records.map((item) => {
-      if (item.serial) {
-        return {
-          part: parts.get(item.nxid),
-          serial: item.serial,
-        } as LoadedCartItem;
-      }
-      return {
-        part: parts.get(item.nxid),
-        quantity: item.quantity,
-      } as LoadedCartItem;
-    });
+    items.value = data as LoadedCartItem[];
+    transferList.value = [] as LoadedCartItem[];
   });
 }
 
@@ -88,72 +71,100 @@ function firstLoad() {
       // Push to reactive var
       users.value = data as User[];
       // Find and remove current user or kiosks
-      for (let i = 0; i < users.value.length; i++) {
-        // Delete
-        if (
-          users.value[i]._id == store.state.user._id ||
-          users.value[i].role == 'kiosk'
-        ) {
-          // remove current user and kiosk
-          users.value.splice(i, 1);
-          // Change the index since array size has changed
-          i--;
-        }
-      }
+      users.value = users.value.filter(
+        (u) => !(u._id == store.state.user._id || u.role == 'kiosk')
+      );
     });
   }
 }
 
-function moveFromInventory(part: PartSchema, quantity: number) {
-  move(items, transferList, part, quantity);
+function moveFromInventory(part: PartSchema, quantity: number, serial: string) {
+  move(items, transferList, part, quantity, serial);
 }
 
-function moveFromTransferList(part: PartSchema, quantity: number) {
-  move(transferList, items, part, quantity);
+function moveFromTransferList(
+  part: PartSchema,
+  quantity: number,
+  serial: string
+) {
+  move(transferList, items, part, quantity, serial);
 }
 
 function move(
   array1: Ref<LoadedCartItem[]>,
   array2: Ref<LoadedCartItem[]>,
   part: PartSchema,
-  quantity: number
+  quantity: number,
+  serial: string
 ) {
-  let item1 = array1.value.find((e) => e.part.nxid == part.nxid);
-  if (!item1) {
-    return;
+  // Create var for item to move
+  let item1 = {} as LoadedCartItem | undefined;
+  // If item is serialized
+  if (serial != undefined) {
+    // Find existing item
+    item1 = array1.value.find((e) => e.serial == serial);
+    // Return if not found
+    if (!item1) {
+      return;
+    }
+    // Remove from array 1
+    array1.value.splice(array1.value.indexOf(item1), 1);
+    // Push to array 2
+    console.log(serial);
+    array2.value.push({ part, serial: serial });
+  } else {
+    // Find matching part in array 1
+    item1 = array1.value.find((e) => e.part.nxid == part.nxid);
+    // Return if not found
+    if (!item1 || !quantity) {
+      return;
+    }
+    // subtract quantity
+    item1.quantity! -= quantity;
+    // Remove from array if quantity < 1
+    if (item1.quantity! < 1)
+      array1.value.splice(array1.value.indexOf(item1), 1);
+    // Find in array 2
+    let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
+    // If it doesn't exist, push a new entry
+    if (!item2) array2.value.push({ part, quantity });
+    // Otherwise increment existing entry
+    else item2.quantity! += quantity;
   }
-  item1.quantity! -= quantity;
-  // Find the part in the list
-  if (item1.quantity! < 1) array1.value.splice(array1.value.indexOf(item1), 1);
-  // Set index to sentinel value
-  let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
-  if (!item2) array2.value.push({ part, quantity });
-  else item2.quantity! += quantity;
 }
 
 function submit() {
   if (!processingMove) {
     processingMove = true;
-    let from = {
-      owner: currentUser.value._id,
-      building: currentUser.value.building,
-      nxid: '',
-    };
-    let to = {
-      owner: transferUser.value._id,
-      building: transferUser.value.building,
-      nxid: '',
-    } as PartRecord;
-    for (let item of transferList.value) {
-      from.nxid = item.part.nxid!;
-      to.nxid = item.part.nxid!;
+    transferList.value.map(async (item) => {
+      let from = {
+        owner: currentUser.value._id,
+        building: currentUser.value.building,
+        nxid: item.part.nxid,
+      } as PartRecord;
+
+      let to = {
+        owner: transferUser.value._id,
+        building: transferUser.value.building,
+        nxid: item.part.nxid,
+      } as PartRecord;
+
+      if (item.serial) {
+        to.serial = item.serial;
+        from.serial = item.serial;
+        item.quantity = 1;
+      } else {
+        delete to.serial;
+        delete from.serial;
+      }
+
       movePart(http, to, from, item.quantity!, (data, err) => {
         if (err) {
           // Handle errors
           errorHandler(err);
         }
       });
-    }
+    });
     transferList.value = [];
     processingMove = false;
   }
@@ -212,6 +223,7 @@ watch(currentUser, () => {
             v-for="item in items"
             :part="item.part"
             :quantity="item.quantity"
+            :serial="item.serial"
             @movePart="moveFromInventory"
           />
         </div>
@@ -274,6 +286,7 @@ watch(currentUser, () => {
             v-for="item in transferList"
             :part="item.part"
             :quantity="item.quantity"
+            :serial="item.serial"
             @movePart="moveFromTransferList"
           />
           <div class="flex justify-center">

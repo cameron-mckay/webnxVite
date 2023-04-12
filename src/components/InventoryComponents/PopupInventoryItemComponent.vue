@@ -15,7 +15,8 @@ const { item } = defineProps<Props>();
       <p class="hidden break-words md:block">{{ item.part.nxid }}</p>
       <p class="break-words">{{ item.part.manufacturer }}</p>
       <p class="break-words">{{ item.part.name }}</p>
-      <p class="break-words">{{ item.quantity }}</p>
+      <p class="break-words" v-if="item.serial">{{ item.serial }}</p>
+      <p class="break-words" v-else>{{ item.quantity }}</p>
       <div class="flex justify-end">
         <!-- Plus -->
         <svg

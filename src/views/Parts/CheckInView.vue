@@ -14,7 +14,6 @@ import {
 import type {
   CartItem,
   LoadedCartItem,
-  PartCache,
   PartSchema,
   User,
   UserState,
@@ -60,34 +59,16 @@ function loadUsers() {
 async function loadInventory() {
   getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
     if (err) return errorHandler(err);
-    let res = data as any;
-    let partsArr = res.parts as PartCache;
-    let parts = new Map<string, PartSchema>();
-    partsArr.map((obj) => {
-      parts.set(obj.nxid, obj.part);
-    });
-    let records = res.records as CartItem[];
-    inventory.value = records.map((item) => {
-      if (item.serial) {
-        return {
-          part: parts.get(item.nxid),
-          serial: item.serial,
-        } as LoadedCartItem;
-      }
-      return {
-        part: parts.get(item.nxid),
-        quantity: item.quantity,
-      } as LoadedCartItem;
-    });
+    inventory.value = data as LoadedCartItem[];
     checkInList.value = [] as LoadedCartItem[];
   });
 }
 
 function localCheckin() {
-  let unloadedParts = [] as CartItem[];
-  for (let item of checkInList.value) {
-    unloadedParts.push({ nxid: item.part.nxid!, quantity: item.quantity });
-  }
+  let unloadedParts = checkInList.value.map((i) => {
+    if (i.serial) return { nxid: i.part.nxid, serial: i.serial } as CartItem;
+    else return { nxid: i.part.nxid, quantity: i.quantity } as CartItem;
+  });
   checkin(http, unloadedParts, currentUser.value._id!, (data, err) => {
     if (err) {
       return errorHandler(err);
@@ -99,29 +80,54 @@ function localCheckin() {
   });
 }
 
-function moveToInventory(part: PartSchema, quantity: number) {
-  move(checkInList, inventory, part, quantity);
+function moveToInventory(part: PartSchema, quantity: number, serial: string) {
+  move(checkInList, inventory, part, quantity, serial);
 }
 
-function moveToCheckin(part: PartSchema, quantity: number) {
-  move(inventory, checkInList, part, quantity);
+function moveToCheckin(part: PartSchema, quantity: number, serial: string) {
+  move(inventory, checkInList, part, quantity, serial);
 }
 
 function move(
   array1: Ref<LoadedCartItem[]>,
   array2: Ref<LoadedCartItem[]>,
   part: PartSchema,
-  quantity: number
+  quantity: number,
+  serial: string
 ) {
-  let item1 = array1.value.find((e) => e.part.nxid == part.nxid);
-  if (!item1) {
-    return;
+  // Create var for item to move
+  let item1 = {} as LoadedCartItem | undefined;
+  // If item is serialized
+  if (serial) {
+    // Find existing item
+    item1 = array1.value.find((e) => e.serial == serial);
+    // Return if not found
+    if (!item1) {
+      return;
+    }
+    // Remove from array 1
+    array1.value.splice(array1.value.indexOf(item1), 1);
+    // Push to array 2
+    array2.value.push({ part, serial: serial });
+  } else {
+    // Find matching part in array 1
+    item1 = array1.value.find((e) => e.part.nxid == part.nxid);
+    // Return if not found
+    if (!item1 || !quantity) {
+      return;
+    }
+    // subtract quantity
+    item1.quantity! -= quantity;
+    // Remove from array if quantity < 1
+    if (item1.quantity! < 1)
+      array1.value.splice(array1.value.indexOf(item1), 1);
+    // Find in array 2
+    let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
+    // If it doesn't exist, push a new entry
+    if (!item2) array2.value.push({ part, quantity });
+    // Otherwise increment existing entry
+    else item2.quantity! += quantity;
   }
-  item1.quantity! -= quantity;
-  if (item1.quantity! < 1) array1.value.splice(array1.value.indexOf(item1), 1);
-  let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
-  if (!item2) array2.value.push({ part, quantity });
-  else item2.quantity! += quantity;
 }
 
 watch(currentUser, () => {
@@ -159,6 +165,7 @@ watch(currentUser, () => {
           :isCurrentUser="false"
           v-for="item in inventory"
           :part="item.part"
+          :serial="item.serial"
           :quantity="item.quantity"
           @movePart="moveToCheckin"
         />
@@ -185,6 +192,7 @@ watch(currentUser, () => {
           :isCurrentUser="true"
           v-for="item in checkInList"
           :part="item.part"
+          :serial="item.serial"
           :quantity="item.quantity"
           @movePart="moveToInventory"
         />

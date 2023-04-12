@@ -1,5 +1,12 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
-import type { apiResponse, AssetSchema, CartItem } from '../interfaces';
+import type {
+  apiResponse,
+  AssetSchema,
+  CartItem,
+  LoadedCartItem,
+  PartCache,
+  PartSchema,
+} from '../interfaces';
 
 /**
  * @brief Get a list of 50 assets from a keyword search string
@@ -154,8 +161,26 @@ export async function getPartsOnAsset(
   await http
     .get('/api/asset/parts', { params: { asset_tag } })
     .then((res: AxiosResponse) => {
-      // Success - send results to callback
-      callback(res.data, null);
+      // Success - send response to callback
+      let partsArr = res.data.parts as PartCache;
+      let records = res.data.records as CartItem[];
+      let parts = new Map<string, PartSchema>();
+      partsArr.map((obj) => {
+        parts.set(obj.nxid, obj.part);
+      });
+      let returnValue = records.map((item) => {
+        if (item.serial) {
+          return {
+            part: parts.get(item.nxid),
+            serial: item.serial,
+          } as LoadedCartItem;
+        }
+        return {
+          part: parts.get(item.nxid),
+          quantity: item.quantity,
+        } as LoadedCartItem;
+      });
+      callback(returnValue, null);
     })
     .catch((err: Error | AxiosError) => {
       // Error - send error to callback

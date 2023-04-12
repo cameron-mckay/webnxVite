@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
-import { onBeforeMount, ref, watch } from 'vue';
+import { Ref, onBeforeMount, ref, watch } from 'vue';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetManagerComponent from '../../components/AssetComponents/AssetManagerComponent.vue';
@@ -14,6 +14,7 @@ import type {
   AssetSchema,
   CartItem,
   LoadedCartItem,
+  PartSchema,
   UserState,
 } from '../../plugins/interfaces';
 
@@ -102,15 +103,14 @@ onBeforeMount(() => {
 
 function assetSubmit() {
   // Use create part method from API commands
-  let unloadedParts = [] as CartItem[];
+  let unloadedParts = partsOnAsset.value.map((part) => {
+    if (part.serial) {
+      return { nxid: part.part.nxid as string, serial: part.serial };
+    }
+    return { nxid: part.part.nxid as string, quantity: part.quantity };
+  }) as CartItem[];
   console.log(oldAsset.value);
   // Iterate through list of parts and strip only the NXID and quantity
-  for (const part of partsOnAsset.value) {
-    unloadedParts.push({
-      nxid: part.part.nxid as string,
-      quantity: part.quantity,
-    });
-  }
   updateAsset(http, oldAsset.value, unloadedParts, (data, err) => {
     if (err) {
       return errorHandler(err);
@@ -120,73 +120,53 @@ function assetSubmit() {
 }
 
 function plusPart(item: LoadedCartItem) {
-  // If part is not already in array (checks by reference not by value)
-  if (partsOnAsset.value.indexOf(item) == -1) {
-    // Set sentinel value
-    let found = false;
-    // Loop through all parts on asset
-    for (let existingItem of partsOnAsset.value) {
-      // Check if part matches by value
-      if (item.part._id == existingItem.part._id) {
-        found = true;
-        item.quantity -= 1;
-        existingItem.quantity += 1;
-        break;
-      }
-    }
-    // If part isn't found, push it to the array
-    if (!found) {
-      partsOnAsset.value.push({
-        part: JSON.parse(JSON.stringify(item.part)),
-        quantity: 1,
-      });
-      // Decrement quantity
-      item.quantity -= 1;
-    }
-    // If item quantity is now less than 1, splice it from the inventory array
-    if (item.quantity < 1)
-      inventory.value.splice(inventory.value.indexOf(item), 1);
-  } else {
-    // Set sentinel value
-    let found = false;
-    // loop through inventory
-    for (let existingItem of inventory.value) {
-      // Find part that matches by value
-      if (item.part._id == existingItem.part._id) {
-        found = true;
-        // Increment item on asset
-        item.quantity += 1;
-        // Decrement item in inventory
-        existingItem.quantity -= 1;
-        // If inventory quanity is less than 1, splice it from the array
-        if (existingItem.quantity < 1)
-          inventory.value.splice(inventory.value.indexOf(existingItem), 1);
-        // Exit the loop
-        break;
-      }
-    }
-    if (!found) {
-      errorHandler('Not enough parts in your inventory.');
-    }
-  }
+  move(inventory, partsOnAsset, item.part, 1, item.serial!);
 }
 
 function minusPart(item: LoadedCartItem) {
-  if (item.quantity > 1) {
-    item.quantity -= 1;
-  } else {
-    partsOnAsset.value.splice(partsOnAsset.value.indexOf(item), 1);
-  }
-  let found = false;
-  for (let inventoryItem of inventory.value) {
-    if (item.part._id == inventoryItem.part._id) {
-      inventoryItem.quantity += 1;
-      found = true;
-      break;
+  move(partsOnAsset, inventory, item.part, 1, item.serial!);
+}
+
+function move(
+  array1: Ref<LoadedCartItem[]>,
+  array2: Ref<LoadedCartItem[]>,
+  part: PartSchema,
+  quantity: number,
+  serial: string
+) {
+  // Create var for item to move
+  let item1 = {} as LoadedCartItem | undefined;
+  // If item is serialized
+  if (serial != undefined) {
+    // Find existing item
+    item1 = array1.value.find((e) => e.serial == serial);
+    // Return if not found
+    if (!item1) {
+      return;
     }
-  }
-  if (!found) {
-    inventory.value.push({ part: item.part, quantity: 1 });
+    // Remove from array 1
+    array1.value.splice(array1.value.indexOf(item1), 1);
+    // Push to array 2
+    console.log(serial);
+    array2.value.push({ part, serial: serial });
+  } else {
+    // Find matching part in array 1
+    item1 = array1.value.find((e) => e.part.nxid == part.nxid);
+    // Return if not found
+    if (!item1 || !quantity) {
+      return;
+    }
+    // subtract quantity
+    item1.quantity! -= quantity;
+    // Remove from array if quantity < 1
+    if (item1.quantity! < 1)
+      array1.value.splice(array1.value.indexOf(item1), 1);
+    // Find in array 2
+    let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
+    // If it doesn't exist, push a new entry
+    if (!item2) array2.value.push({ part, quantity });
+    // Otherwise increment existing entry
+    else item2.quantity! += quantity;
   }
 }
 

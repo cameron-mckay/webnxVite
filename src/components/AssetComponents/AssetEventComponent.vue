@@ -52,6 +52,7 @@ let removed = ref([] as LoadedCartItem[]);
 function loadPart(part: CartItem) {
   return {
     part: parts.get(part.nxid),
+    serial: part.serial,
     quantity: part.quantity,
   } as LoadedCartItem;
 }

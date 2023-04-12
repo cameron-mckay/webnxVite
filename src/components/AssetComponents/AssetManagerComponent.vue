@@ -26,6 +26,7 @@ interface Props {
   partSearch?: boolean;
   inventorySearch?: boolean;
   inventory?: LoadedCartItem[];
+  untracked?: boolean;
 }
 
 // Begin props
@@ -41,6 +42,7 @@ const {
   partSearch,
   inventorySearch,
   inventory,
+  untracked,
 } = defineProps<Props>();
 // End props
 
@@ -289,13 +291,14 @@ function addPartFromInventory(item: LoadedCartItem) {
           <p class="hidden md:block">NXID</p>
           <p>Manufacturer</p>
           <p>Name</p>
-          <p>Quantity</p>
+          <p>Quantity/SN</p>
           <p></p>
         </div>
         <AssetCartItemComponent
           class="col-span-2"
           v-for="part in parts"
           :item="part"
+          :untracked="untracked"
           @plus="$emit('plusPart', part)"
           @minus="$emit('minusPart', part)"
           @delete="$emit('deletePart', part)"

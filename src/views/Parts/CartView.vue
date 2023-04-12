@@ -9,6 +9,7 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import SerializedCartItemComponent from '../../components/KioskComponents/SerializedCartItemComponent.vue';
 import {
+  checkout,
   getPartByID,
   getUniqueOnPartRecord,
 } from '../../plugins/dbCommands/partManager';
@@ -211,14 +212,14 @@ function localCheckout() {
     cart.push({ nxid: e.nxid, serial: e.serial } as CartItem);
   });
   console.log(cart);
-  // checkout(http, cart, currentUser.value._id!, (data, err) => {
-  //   if (err) {
-  //     return errorHandler(err);
-  //   }
-  //   displayMessage('Successfully checked out.');
-  //   store.commit('emptyCart');
-  //   loadCart();
-  // });
+  checkout(http, cart, currentUser.value._id!, (data, err) => {
+    if (err) {
+      return errorHandler(err);
+    }
+    displayMessage('Successfully checked out.');
+    store.commit('emptyCart');
+    loadCart();
+  });
 }
 </script>
 

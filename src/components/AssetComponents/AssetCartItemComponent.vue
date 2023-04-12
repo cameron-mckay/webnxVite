@@ -4,8 +4,9 @@ import { LoadedCartItem } from '../../plugins/interfaces';
 interface Props {
   item: LoadedCartItem;
   hideButtons?: boolean;
+  untracked?: boolean;
 }
-const { item, hideButtons } = defineProps<Props>();
+const { item, hideButtons, untracked } = defineProps<Props>();
 const emit = defineEmits(['plus', 'minus', 'delete']);
 </script>
 
@@ -17,13 +18,25 @@ const emit = defineEmits(['plus', 'minus', 'delete']);
       <p class="hidden md:block">{{ item.part.nxid }}</p>
       <p class="break-words">{{ item.part.manufacturer }}</p>
       <p class="break-words">{{ item.part.name }}</p>
-      <p class="break-words">{{ item.quantity }}</p>
+      <input
+        class="textbox pl-2"
+        v-if="untracked && item.part.serialized"
+        required
+        v-model="item.serial"
+        type="text"
+        placeholder="Serial"
+      />
+      <p class="break-words" v-else-if="item.part.serialized || item.serial">
+        {{ item.serial }}
+      </p>
+      <p class="break-words" v-else>{{ item.quantity }}</p>
       <div v-if="hideButtons != true" class="my-auto flex justify-end">
         <!-- Plus -->
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"
           class="button-icon hover:button-icon-hover active:button-icon-active"
+          v-if="!(item.part.serialized || item.serial)"
           v-on:click="$emit('plus')"
         >
           <path
@@ -32,10 +45,12 @@ const emit = defineEmits(['plus', 'minus', 'delete']);
             d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"
           />
         </svg>
+        <div v-else class="button-icon opacity-0"></div>
         <!-- Minus -->
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"
+          v-if="!(item.part.serialized || item.serial)"
           class="button-icon hover:button-icon-hover active:button-icon-active no-margin-on-mobile"
           v-on:click="$emit('minus')"
         >
@@ -45,6 +60,7 @@ const emit = defineEmits(['plus', 'minus', 'delete']);
             d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"
           />
         </svg>
+        <div v-else class="button-icon opacity-0"></div>
         <!-- X icon -->
         <svg
           xmlns="http://www.w3.org/2000/svg"

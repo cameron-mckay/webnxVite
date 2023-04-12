@@ -25,9 +25,9 @@ export function createGlobalStore(app: App): Store<UserState> {
           return state.cart.unserialized.get(id);
         } else {
           let count = 0;
-          for (let item of state.cart.serialized) {
+          state.cart.serialized.map((item) => {
             if (item.nxid == id) count++;
-          }
+          });
           return count;
         }
       },
@@ -70,7 +70,6 @@ export function createGlobalStore(app: App): Store<UserState> {
         if (state.cart.unserialized.has(id)) {
           state.cart.unserialized.set(id, state.cart.unserialized.get(id)! + 1);
         }
-        state.cart.serialized.push({ nxid: id, serial: '' });
       },
       // Remove item of ID from
       removeOne(state: UserState, id: string) {

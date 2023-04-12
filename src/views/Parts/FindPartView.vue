@@ -18,8 +18,11 @@ let currentBuilding = ref(3);
 let add = ref({ show: false });
 
 onMounted(() => {
+  // Wait for user state to load into store (for reloads)
   setTimeout(() => {
+    // Set local variables to user state
     currentBuilding.value = store.state.user.building!;
+    // If user is kiosk, show add to cart buttons
     add.value.show = store.state.user.role == 'kiosk';
   }, 500);
 });
@@ -29,8 +32,19 @@ const { http, store, router, errorHandler, displayMessage } =
 // END OF PROPS
 
 function addToCart(part: PartSchema) {
-  displayMessage(`Added ${part.manufacturer} ${part.name} to cart`);
-  store.commit('addToCart', part);
+  // Check if cart quantity < available quantity
+  if (
+    part.quantity &&
+    part.nxid &&
+    store.getters.getQuantity(part.nxid) < part.quantity
+  ) {
+    // Add to cart
+    displayMessage(`Added ${part.manufacturer} ${part.name} to cart`);
+    store.commit('addToCart', part);
+  } else {
+    // Not enough stock
+    errorHandler(`Not enough stock`);
+  }
 }
 
 function viewPart(part: PartSchema) {

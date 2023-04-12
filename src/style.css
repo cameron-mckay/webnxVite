@@ -47,13 +47,13 @@
     @apply my-1 cursor-pointer rounded-lg bg-green-500 px-5 py-2 text-white shadow-lg transition-colors hover:bg-green-600 active:bg-green-700;
   }
   .button-icon {
-    @apply mx-0.5 my-auto h-8 w-8 shrink-0 cursor-pointer rounded-md bg-gray-400 p-2 shadow-lg transition-colors first:ml-0 last:mr-0 only:mr-0 dark:bg-zinc-600 dark:text-gray-200 md:mx-1 md:h-10 md:w-10;
+    @apply mx-0.5 my-auto h-8 w-8 shrink-0 rounded-md bg-gray-400 p-2 shadow-lg transition-colors first:ml-0 last:mr-0 only:mr-0 dark:bg-zinc-600 dark:text-gray-200 md:mx-1 md:h-10 md:w-10;
   }
   .button-icon-hover {
-    @apply bg-green-400;
+    @apply cursor-pointer bg-green-400;
   }
   .button-icon-active {
-    @apply bg-green-500;
+    @apply cursor-pointer bg-green-500;
   }
 
   /* Header styles */

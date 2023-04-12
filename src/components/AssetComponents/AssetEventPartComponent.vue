@@ -85,7 +85,8 @@ const { item } = defineProps<Props>();
         <p class="break-words">{{ item.part.manufacturer }}</p>
       </div>
       <p class="break-words">{{ item.part.name }}</p>
-      <p class="break-words">{{ item.quantity }}</p>
+      <p v-if="item.serial" class="break-words">{{ item.serial }}</p>
+      <p v-else class="break-words">{{ item.quantity }}</p>
     </div>
     <div class="group-hover:bab-drop-hover bab-drop">
       <p class="block md:hidden">{{ `NXID: ${item.part.nxid}` }}</p>

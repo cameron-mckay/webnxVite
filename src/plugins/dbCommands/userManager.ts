@@ -1,5 +1,12 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
-import type { apiResponse, User } from '../interfaces';
+import type {
+  apiResponse,
+  CartItem,
+  LoadedCartItem,
+  PartCache,
+  PartSchema,
+  User,
+} from '../interfaces';
 
 /**
  * @brief Get the current user's object from the API
@@ -130,7 +137,25 @@ export async function getUserInventory(
     .get('/api/user/inventory')
     .then((res: AxiosResponse) => {
       // Success - send response to callback
-      callback(res.data, null);
+      let partsArr = res.data.parts as PartCache;
+      let records = res.data.records as CartItem[];
+      let parts = new Map<string, PartSchema>();
+      partsArr.map((obj) => {
+        parts.set(obj.nxid, obj.part);
+      });
+      let returnValue = records.map((item) => {
+        if (item.serial) {
+          return {
+            part: parts.get(item.nxid),
+            serial: item.serial,
+          } as LoadedCartItem;
+        }
+        return {
+          part: parts.get(item.nxid),
+          quantity: item.quantity,
+        } as LoadedCartItem;
+      });
+      callback(returnValue, null);
     })
     .catch((err: Error | AxiosError) => {
       // Error - send error to callback
@@ -158,7 +183,27 @@ export async function getUserInventoryByID(
     })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
-      callback(res.data, null);
+      console.log(res.data);
+      let partsArr = res.data.parts as PartCache;
+      console.log(partsArr);
+      let records = res.data.records as CartItem[];
+      let parts = new Map<string, PartSchema>();
+      partsArr.map((obj) => {
+        parts.set(obj.nxid, obj.part);
+      });
+      let returnValue = records.map((item) => {
+        if (item.serial) {
+          return {
+            part: parts.get(item.nxid),
+            serial: item.serial,
+          } as LoadedCartItem;
+        }
+        return {
+          part: parts.get(item.nxid),
+          quantity: item.quantity,
+        } as LoadedCartItem;
+      });
+      callback(returnValue, null);
     })
     .catch((err: Error | AxiosError) => {
       // Error - send error to callback

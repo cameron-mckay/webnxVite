@@ -70,31 +70,39 @@ onMounted(() => {
   );
 });
 
-function plusPart(part: LoadedCartItem) {
-  let index = partsOnAsset.value.indexOf(part);
-  if (index == -1) {
-    let found = false;
-    for (let i = 0; i < partsOnAsset.value.length; i++) {
-      if (partsOnAsset.value[i].part._id == part.part._id) {
-        found = true;
-        partsOnAsset.value[i].quantity += 1;
-        break;
-      }
-    }
-    if (!found) {
-      partsOnAsset.value.push({ part: part.part, quantity: 1 });
-      displayMessage(
-        `Added ${part.part.manufacturer} ${part.part.name} to asset`
-      );
-    }
+function plusPart(item: LoadedCartItem) {
+  if (item.part.serialized) {
+    // Find existing item
+    partsOnAsset.value.push({
+      part: item.part,
+      serial: item.serial ? item.serial : '',
+    });
   } else {
-    partsOnAsset.value[index].quantity += 1;
+    // Find matching part in array 1
+    let item2 = partsOnAsset.value.find((e) => e.part.nxid == item.part.nxid);
+    // If it doesn't exist, push a new entry
+    if (!item2) partsOnAsset.value.push({ part: item.part, quantity: 1 });
+    // Otherwise increment existing entry
+    else item2.quantity! += 1;
   }
 }
-function minusPart(part: LoadedCartItem) {
-  part.quantity -= 1;
-  if (part.quantity < 1) {
-    partsOnAsset.value.splice(partsOnAsset.value.indexOf(part), 1);
+
+function minusPart(item: LoadedCartItem) {
+  if (item.part.serialized) {
+    // Find existing item
+    let i = partsOnAsset.value.indexOf(item);
+    partsOnAsset.value.splice(i, 1);
+  } else {
+    // Find matching part in array 1
+    let item2 = partsOnAsset.value.find((e) => e.part.nxid == item.part.nxid);
+    // If it doesn't exist, push a new entry
+    if (!item2) return;
+    // Otherwise increment existing entry
+    else item2.quantity! -= 1;
+    if (item.quantity! < 1) {
+      let i = partsOnAsset.value.indexOf(item2);
+      partsOnAsset.value.splice(i, 1);
+    }
   }
 }
 
@@ -115,6 +123,7 @@ function deletePart(part: LoadedCartItem) {
     :errorHandler="errorHandler"
     :displayMessage="displayMessage"
     :partSearch="true"
+    :untracked="true"
     @assetSubmit="assetSubmit"
     @plusPart="plusPart"
     @minusPart="minusPart"
