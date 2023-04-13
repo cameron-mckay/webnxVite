@@ -83,7 +83,8 @@ onMounted(() => {
         // Filters out blank lines
         .filter((sn) => sn != '')
         // Gets rid of duplicates
-        .filter((sn, i, arr) => i == arr.indexOf(sn));
+        .filter((sn, i, arr) => i == arr.indexOf(sn))
+        .map((sn: string) => sn.replace(/[, ]+/g, " ").trim());
     }
   });
   watch(

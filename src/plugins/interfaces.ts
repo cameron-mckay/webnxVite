@@ -77,7 +77,7 @@ export interface PartRecord {
   _id?: string;
   nxid?: string;
   prev?: string;
-  next?: string;
+  next?: string|null;
   building?: Number;
   location?: string;
   asset_tag?: string;

@@ -3,14 +3,14 @@ import { Ref, onMounted, ref, watch } from 'vue';
 import InventoryPartComponent from '../../components/InventoryComponents/InventoryPartComponent.vue';
 import { movePart } from '../../plugins/dbCommands/partManager';
 import {
-  getAllUsers,
-  getUserInventoryByID,
+getAllUsers,
+getUserInventoryByID,
 } from '../../plugins/dbCommands/userManager';
 import {
-  LoadedCartItem,
-  PartRecord,
-  PartSchema,
-  User,
+LoadedCartItem,
+PartRecord,
+PartSchema,
+User,
 } from '../../plugins/interfaces';
 
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -185,9 +185,9 @@ watch(currentUser, () => {
   <div>
     <form @submit.prevent="submit">
       <div>
-        <div class="flex flex-wrap justify-between">
+        <div class="flex flex-wrap justify-between mb-4">
           <h1
-            class="mb-4 inline-block w-full text-4xl md:w-fit"
+            class="inline-block w-full text-4xl md:w-fit my-2 md:my-0"
             v-if="currentUser._id != 'all'"
           >
             {{ currentUser.first_name }}'s Inventory
@@ -196,7 +196,7 @@ watch(currentUser, () => {
             All Tech's Inventory
           </h1>
           <div class="flex">
-            <p class="mr-2 mt-auto">User:</p>
+            <p class="mr-2 my-auto">User:</p>
             <select required v-model="currentUser" class="mt-auto">
               <option disabled :value="{}"></option>
               <option :value="store.state.user" selected>Your Inventory</option>
@@ -215,7 +215,7 @@ watch(currentUser, () => {
             <p>Manufacturer</p>
             <p>Name</p>
             <p class="hidden md:block">Location</p>
-            <p>Quantity</p>
+            <p>Quantity/SN</p>
             <p></p>
           </div>
           <InventoryPartComponent
@@ -234,12 +234,12 @@ watch(currentUser, () => {
           <p>Inventory is empty...</p>
         </div>
         <div v-if="transferList.length > 0">
-          <div class="flex flex-wrap justify-between">
-            <h1 class="my-4 inline-block w-full text-4xl md:w-fit">
+          <div class="my-4 flex flex-wrap justify-between">
+            <h1 class="inline-block w-full text-4xl md:w-fit my-2 md:my-0">
               Transfer List
             </h1>
             <div class="flex">
-              <p class="mr-2 mt-auto">To:</p>
+              <p class="mr-2 my-auto">To:</p>
               <select required v-model="transferUser" class="mt-auto">
                 <option
                   v-if="currentUser._id != store.state.user._id"
@@ -278,7 +278,7 @@ watch(currentUser, () => {
             <p>Manufacturer</p>
             <p>Name</p>
             <p class="hidden md:block">Location</p>
-            <p>Quantity</p>
+            <p>Quantity/SN</p>
             <p></p>
           </div>
           <InventoryPartComponent

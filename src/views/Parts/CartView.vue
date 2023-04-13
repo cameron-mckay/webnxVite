@@ -9,18 +9,18 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import SerializedCartItemComponent from '../../components/KioskComponents/SerializedCartItemComponent.vue';
 import {
-  checkout,
-  getPartByID,
-  getUniqueOnPartRecord,
+checkout,
+getPartByID,
+getUniqueOnPartRecord,
 } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
-  CartItem,
-  LoadedCartItem,
-  PartSchema,
-  SNAvailable,
-  User,
-  UserState,
+CartItem,
+LoadedCartItem,
+PartSchema,
+SNAvailable,
+User,
+UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -113,6 +113,7 @@ async function loadCart() {
                 nxid: part.nxid,
                 location: 'Parts Room',
                 building: store.state.user.building,
+                next: "null"
               },
               (data, err) => {
                 if (err) {
@@ -172,7 +173,7 @@ async function addOne(id: string) {
       if (part.quantity! > store.getters.getQuantity(id)) {
         store.commit('addOne', part.nxid);
       } else {
-        errorHandler('Not enough stock.');
+        errorHandler('Not enough stock');
       }
     }
   );

@@ -18,7 +18,7 @@ const { item } = defineProps<Props>();
       <div class="hidden md:flex">
         <!-- Plus -->
         <svg
-          class="mx-0.5 my-auto h-8 w-8 shrink-0 p-2 text-green-500 shadow-lg md:mx-1 md:h-10 md:w-10"
+          class="mx-0.5 my-auto h-8 w-8 shrink-0 p-2 text-green-500 shadow-none md:mx-1 md:h-10 md:w-10"
           v-if="plus"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
@@ -31,7 +31,7 @@ const { item } = defineProps<Props>();
         </svg>
         <!-- Minus -->
         <svg
-          class="mx-0.5 my-auto h-8 w-8 shrink-0 p-2 text-red-500 shadow-lg md:mx-1 md:h-10 md:w-10"
+          class="mx-0.5 my-auto h-8 w-8 shrink-0 p-2 text-red-500 shadow-none md:mx-1 md:h-10 md:w-10"
           v-else-if="minus"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
@@ -43,7 +43,7 @@ const { item } = defineProps<Props>();
           />
         </svg>
         <svg
-          class="mx-0.5 my-auto h-8 w-8 shrink-0 p-2 text-green-500 shadow-lg md:mx-1 md:h-10 md:w-10"
+          class="mx-0.5 my-auto h-8 w-8 shrink-0 p-2 text-green-500 shadow-none md:mx-1 md:h-10 md:w-10"
           v-else
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
@@ -52,7 +52,7 @@ const { item } = defineProps<Props>();
       </div>
       <div class="flex justify-start md:justify-center">
         <svg
-          class="mx-0.5 my-auto block h-8 w-8 shrink-0 p-2 text-green-500 shadow-lg md:mx-1 md:hidden md:h-10 md:w-10"
+          class="mx-0.5 my-auto block h-8 w-8 shrink-0 p-2 text-green-500 shadow-none md:mx-1 md:hidden md:h-10 md:w-10"
           v-if="plus"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
@@ -65,7 +65,7 @@ const { item } = defineProps<Props>();
         </svg>
         <!-- Minus -->
         <svg
-          class="mx-0.5 my-auto block h-8 w-8 shrink-0 p-2 text-red-500 shadow-lg md:mx-1 md:hidden md:h-10 md:w-10"
+          class="mx-0.5 my-auto block h-8 w-8 shrink-0 p-2 text-red-500 md:mx-1 md:hidden md:h-10 md:w-10 shadow-none"
           v-else-if="minus"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
@@ -77,7 +77,7 @@ const { item } = defineProps<Props>();
           />
         </svg>
         <svg
-          class="mx-0.5 my-auto block h-8 w-8 shrink-0 p-2 text-green-500 shadow-lg md:mx-1 md:hidden md:h-10 md:w-10"
+          class="mx-0.5 my-auto block h-8 w-8 shrink-0 p-2 text-green-500 shadow-none md:mx-1 md:hidden md:h-10 md:w-10"
           v-else
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"

@@ -4,16 +4,17 @@ import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
+import SerializedPartRecordComponent from '../../components/PartComponents/SerializedPartRecordComponent.vue';
 import {
-  getPartByID,
-  getPartRecords,
+getPartByID,
+getPartRecords,
 } from '../../plugins/dbCommands/partManager';
 import { getUserByID } from '../../plugins/dbCommands/userManager';
 import type {
-  PartRecord,
-  PartSchema,
-  User,
-  UserState,
+PartRecord,
+PartSchema,
+User,
+UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -115,7 +116,7 @@ onBeforeMount(() => {
   }
 });
 
-function viewHistory(record: PartRecord, quantity: number) {
+function viewHistory(record: PartRecord, quantity?: number) {
   router.push({
     name: 'Part History',
     query: { id: record._id, nxid: record.nxid },
@@ -146,6 +147,9 @@ function viewHistory(record: PartRecord, quantity: number) {
       </p>
       <p class="detail-label">Type:</p>
       <p class="detail-data">{{ part.type ? part.type : '' }}</p>
+      <p class="detail-label">Serialized:</p>
+      <p class="detail-data" v-if="part.serialized">Yes</p>
+      <p class="detail-data" v-else>No</p>
       <div class="detail-row" v-if="part.type == 'Motherboard'">
         <p>Chipset:</p>
         <p>{{ part.chipset }}</p>
@@ -209,7 +213,15 @@ function viewHistory(record: PartRecord, quantity: number) {
       {{ pageTitle }}
     </h1>
     <div
-      v-if="partRecords.length > 0"
+      v-if="partRecords.length > 0&&part.serialized"
+      class="relative my-2 grid grid-cols-3 rounded-xl p-2 text-center font-bold leading-8 transition md:leading-10"
+    >
+      <p>Serial</p>
+      <p class="hidden md:block">Date Updated</p>
+      <p></p>
+    </div>
+    <div
+      v-else-if="partRecords.length > 0"
       class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
     >
       <p>Building</p>
@@ -218,11 +230,22 @@ function viewHistory(record: PartRecord, quantity: number) {
       <p class="hidden md:block">Date Updated</p>
       <p></p>
     </div>
-    <PartRecordComponent
+    <SerializedPartRecordComponent
+      v-if="part.serialized"
       v-for="record in partRecords"
       :users="users"
       :record="record"
       :view="true"
+      :showSerial="true"
+      @viewPartAction="viewHistory"
+    />
+    <PartRecordComponent
+      v-else
+      v-for="record in partRecords"
+      :users="users"
+      :record="record"
+      :view="true"
+      :showSerial="true"
       @viewPartAction="viewHistory"
     />
   </div>

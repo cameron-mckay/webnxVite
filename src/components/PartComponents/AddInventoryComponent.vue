@@ -15,14 +15,15 @@ const { users, part } = defineProps<Props>();
 // Request as cart item
 let request = ref({
   nxid: part.nxid!,
-  quantity: 0,
   building: 3,
   location: 'Parts Room',
 } as CartItem);
 
 // Owner
 let owner = ref({} as User);
-
+let quantity = ref(0)
+let serials = ref("")
+let emit = defineEmits(['submitRequest'])
 // Reset form
 function resetForm() {
   request.value.quantity = 0;
@@ -30,8 +31,21 @@ function resetForm() {
   request.value.location = 'Parts Room';
 }
 
+function submit() {
+  console.log(part.serialized)
+  if(part.serialized) {
+    console.log("tests")
+    request.value.serial = serials.value
+  }
+  else {
+    request.value.quantity = quantity.value
+  }
+  emit("submitRequest", request.value, owner)
+}
+
 // When component mounted
 onMounted(() => {
+  console.log(part)
   // Set value of request to props
   request.value.nxid = part.nxid!;
   // Register watch on the request object
@@ -73,18 +87,30 @@ onMounted(() => {
     <h1 class="mb-4 text-4xl">Add Parts to Inventory</h1>
     <form
       id="form"
-      @submit.prevent="$emit('submitRequest', request, owner)"
+      @submit.prevent="submit"
       @reset.prevent="resetForm"
       class="grid grid-cols-2"
     >
-      <label>Quantity:</label>
+      <label v-if="!part.serialized">Quantity:</label>
       <input
+        v-if="!part.serialized"
         class="textbox m-1"
         required
-        v-model="request.quantity"
+        v-model="quantity"
         type="number"
         min="0"
         placeholder="Quantity"
+      />
+      <label
+        v-if="part.serialized"
+      >
+        Serial numbers:
+      </label>
+      <textarea
+        class="textbox m-1"
+        v-if="part.serialized"
+        v-model="serials"
+        placeholder="One per line.  Drag to resize"
       />
       <label>Building:</label>
       <select required v-model="request.building" class="textbox m-1">

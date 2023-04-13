@@ -6,7 +6,6 @@ interface Props {
   record: PartRecord;
   users: User[];
   view?: boolean;
-  quantity?: number;
 }
 
 const { record, users, view } = defineProps<Props>();
@@ -25,30 +24,18 @@ onMounted(() => {
 <template>
   <div class="group relative my-1">
     <div
-      class="background-and-border group-hover:bab-hover grid grid-cols-5 p-1 text-center leading-8 md:grid-cols-6 md:p-2 md:leading-10"
-      v-bind:class="{ 'group-hover:rounded-md': quantity }"
+      class="background-and-border group-hover:bab-hover grid grid-cols-3 p-1 text-center leading-8 md:p-2 md:leading-10"
     >
-      <p class="break-words">{{ record.building }}</p>
-      <p class="break-words">{{ record.location }}</p>
-      <p class="col-span-2" v-if="owner">
-        {{ `${owner?.first_name} ${owner?.last_name}` }}
-      </p>
-      <p class="col-span-2" v-else-if="record.asset_tag">
-        {{ record.asset_tag }}
-      </p>
-      <p class="col-span-2 break-words" v-else></p>
-      <p class="hidden break-words md:block" v-if="quantity">
-        {{ quantity }}
-      </p>
-      <p class="hidden break-words md:block" v-else>
-        {{ `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}` }}
+      <p class="break-words">{{ record.serial }}</p>
+      <p class="hidden break-words md:block" >
+        {{ `${date.toLocaleString()}` }}
       </p>
       <div class="my-auto flex justify-end">
         <!-- Eyeball -->
         <svg
           v-if="view === true"
           class="button-icon hover:button-icon-hover active:button-icon-active"
-          v-on:click="$emit('viewPartAction', record, quantity)"
+          v-on:click="$emit('viewPartAction', record)"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 576 512"
         >
@@ -62,17 +49,10 @@ onMounted(() => {
     </div>
     <div
       class="group-hover:bab-drop-hover bab-drop"
-      v-if="quantity==undefined"
     >
-      <p class="block">
-        {{
-          `Date Updated: ${date.toLocaleString()}`
-        }}
-      </p>
       <p>{{ `ID: ${record._id}` }}</p>
       <p v-if="record.prev != null">{{ `Previous: ${record.prev}` }}</p>
       <p v-if="record.next != null">{{ `Next: ${record.next}` }}</p>
-      <p v-if="record.serial">{{ `Serial#: ${record.serial}` }}</p>
       <p>{{ `By: ${by.first_name} ${by.last_name}` }}</p>
     </div>
   </div>

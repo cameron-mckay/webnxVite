@@ -5,11 +5,11 @@ import type {
   AxiosResponse,
 } from 'axios';
 import type {
-  apiResponse,
   CartItem,
   PartRecord,
   PartSchema,
   User,
+  apiResponse,
 } from '../interfaces';
 
 /**
@@ -278,6 +278,7 @@ export function getUniqueOnPartRecord(
   where: PartRecord,
   callback: apiResponse
 ) {
+  console.log(where)
   http
     .get('/api/partRecord/distinct', {
       params: {
