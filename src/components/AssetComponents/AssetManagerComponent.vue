@@ -3,9 +3,9 @@ import { AxiosError, AxiosInstance } from 'axios';
 import { ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-  AssetSchema,
-  LoadedCartItem,
-  PartSchema,
+AssetSchema,
+LoadedCartItem,
+PartSchema,
 } from '../../plugins/interfaces';
 import AssetCartItemComponent from '../AssetComponents/AssetCartItemComponent.vue';
 import AssetPartSearchComponent from '../AssetComponents/SearchPartOnAssetComponent.vue';
@@ -141,6 +141,7 @@ function addPartFromInventory(item: LoadedCartItem) {
       >
         <label>Status:</label>
         <select :required="strict" v-model="oldAsset.live" class="textbox m-1">
+          <option :value="undefined" selected disabled>Select</option>
           <option :value="true">Live</option>
           <option :value="false">Inactive</option>
         </select>
@@ -172,7 +173,7 @@ function addPartFromInventory(item: LoadedCartItem) {
             :defaultValue="oldAsset.chassis_type"
           />
           <div
-            v-if="!oldAsset.live && oldAsset.live != undefined"
+            v-if="oldAsset.chassis_type=='Rack'"
             class="col-span-2 grid grid-cols-2"
           >
             <label>Rails:</label>
@@ -181,11 +182,12 @@ function addPartFromInventory(item: LoadedCartItem) {
               v-model="oldAsset.rails"
               class="textbox m-1"
             >
+            <option :value="undefined" selected disabled>Select</option>
               <option :value="true">Yes</option>
               <option :value="false">No</option>
             </select>
             <div
-              v-if="oldAsset.rails && oldAsset.rails != undefined"
+              v-if="oldAsset.rails"
               class="col-span-2 grid grid-cols-2"
             >
               <label>In Rack:</label>
@@ -196,7 +198,7 @@ function addPartFromInventory(item: LoadedCartItem) {
             </div>
           </div>
           <div
-            v-if="oldAsset.live || inRack || oldAsset.power_port"
+            v-if="(oldAsset.live&&oldAsset.chassis_type=='Rack')||inRack||oldAsset.power_port"
             class="col-span-2 grid grid-cols-2"
           >
             <label>Power Port:</label>

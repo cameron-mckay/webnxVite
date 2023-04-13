@@ -120,7 +120,7 @@ function edit() {
         <p v-if="asset.ipmi_port">{{ asset.ipmi_port }}</p>
         <p>Last Updated:</p>
         <p>
-          {{ new Date(Date.parse(asset.date_created!)).toLocaleString() }}
+          {{ new Date(Date.parse(asset.date_updated!)).toLocaleString() }}
         </p>
       </div>
     </div>
