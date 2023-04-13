@@ -153,6 +153,8 @@ function viewHistory(record: PartRecord, quantity?: number) {
       <div class="detail-row" v-if="part.type == 'Motherboard'">
         <p>Chipset:</p>
         <p>{{ part.chipset }}</p>
+        <p>Memory Generation:</p>
+        <p>{{ part.memory_gen }}</p>
       </div>
       <div v-if="part.type == 'CPU'" class="detail-row">
         <p>Chipset:</p>
@@ -167,6 +169,8 @@ function viewHistory(record: PartRecord, quantity?: number) {
         <p>{{ part.capacity + 'GB' }}</p>
         <p>Memory Type:</p>
         <p>{{ part.memory_type }}</p>
+        <p>Memory Generation:</p>
+        <p>{{ part.memory_gen }}</p>
       </div>
       <div v-if="part.type == 'Peripheral Card'" class="detail-row">
         <p>Card Type:</p>

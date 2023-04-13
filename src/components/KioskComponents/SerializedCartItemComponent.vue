@@ -91,6 +91,7 @@ function remove() {
       <p>{{ `Type: ${part ? part.type : ''}` }}</p>
       <div v-if="part && part.type == 'Motherboard'">
         <p>{{ `Chipset: ${part ? part.chipset : ''}` }}</p>
+        <p>{{ `Memory Generation: ${part.memory_gen}` }}</p>
       </div>
       <div v-if="part && part.type == 'CPU'">
         <p>{{ `Chipset: ${part ? part.chipset : ''}` }}</p>
@@ -100,6 +101,7 @@ function remove() {
         <p>{{ `Frequency: ${part ? part.frequency : ''}MHz` }}</p>
         <p>{{ `Capacity: ${part ? part.capacity : ''}GB` }}</p>
         <p>{{ `Mem Type: ${part ? part.memory_type : ''}` }}</p>
+        <p>{{ `Memory Generation: ${part.memory_gen}` }}</p>
       </div>
       <div v-if="part && part.type == 'Peripheral Card'">
         <p>{{ `Card type: ${part ? part.peripheral_type : ''}` }}</p>

@@ -38,6 +38,7 @@ const { item } = defineProps<Props>();
       <p>{{ `Type: ${item.part.type}` }}</p>
       <div v-if="item.part.type == 'Motherboard'">
         <p>{{ `Chipset: ${item.part.chipset}` }}</p>
+        <p>{{ `Memory Generation: ${item.part.memory_gen}` }}</p>
       </div>
       <div v-if="item.part.type == 'CPU'">
         <p>{{ `Chipset: ${item.part.chipset}` }}</p>
@@ -47,6 +48,7 @@ const { item } = defineProps<Props>();
         <p>{{ `Frequency: ${item.part.frequency}MHz` }}</p>
         <p>{{ `Capacity: ${item.part.capacity}GB` }}</p>
         <p>{{ `Mem Type: ${item.part.memory_type}` }}</p>
+        <p>{{ `Memory Generation: ${item.part.memory_gen}` }}</p>
       </div>
       <div v-if="item.part.type == 'Peripheral Card'">
         <p>{{ `Card type: ${item.part.peripheral_type}` }}</p>

@@ -84,6 +84,7 @@ function minus() {
       <p>{{ `Type: ${part.type}` }}</p>
       <div v-if="part.type == 'Motherboard'">
         <p>{{ `Chipset: ${part.chipset}` }}</p>
+        <p>{{ `Memory Generation: ${part.memory_gen}` }}</p>
       </div>
       <div v-if="part.type == 'CPU'">
         <p>{{ `Chipset: ${part.chipset}` }}</p>
@@ -93,6 +94,7 @@ function minus() {
         <p>{{ `Frequency: ${part.frequency}MHz` }}</p>
         <p>{{ `Capacity: ${part.capacity}GB` }}</p>
         <p>{{ `Mem Type: ${part.memory_type}` }}</p>
+        <p>{{ `Memory Generation: ${part.memory_gen}` }}</p>
       </div>
       <div v-if="part.type == 'Peripheral Card'">
         <p>{{ `Card type: ${part.peripheral_type}` }}</p>

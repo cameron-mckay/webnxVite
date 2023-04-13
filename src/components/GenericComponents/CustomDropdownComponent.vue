@@ -73,8 +73,8 @@ onMounted(async () => {
     class="textbox m-1"
   >
     <option disabled value="">Select</option>
-    <option value="Custom">Custom</option>
     <option v-for="option in options" :value="option">{{ option }}</option>
+    <option value="Custom">Custom</option>
   </select>
   <div class="flex" v-else>
     <input

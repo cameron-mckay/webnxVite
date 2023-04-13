@@ -64,6 +64,7 @@ onMounted(() => {
       delete part.value.frequency;
       delete part.value.chipset;
       delete part.value.memory_type;
+      delete part.value.memory_gen;
       delete part.value.peripheral_type;
       delete part.value.storage_interface;
       delete part.value.capacity;
@@ -254,6 +255,23 @@ onMounted(() => {
           type="text"
           placeholder="Chipset"
         />
+        <label>Memory Generation:</label>
+        <CustomDropdownComponent
+        :required="strict"
+        :defaultValue="part.memory_gen"
+        :options="[
+          'DDR5',
+          'DDR4',
+          'DDR3',
+          'DDR2',
+          'DDR',
+        ]"
+        @updateValue="
+          (value) => {
+            part.memory_gen = value;
+          }
+        "
+      />
       </div>
 
       <div v-if="part.type == 'CPU'" class="col-span-2 grid grid-cols-2">
@@ -287,6 +305,23 @@ onMounted(() => {
           min="0"
           placeholder="Frequency"
         />
+        <label>Memory Generation:</label>
+        <CustomDropdownComponent
+        :required="strict"
+        :defaultValue="part.memory_gen"
+        :options="[
+          'DDR5',
+          'DDR4',
+          'DDR3',
+          'DDR2',
+          'DDR',
+        ]"
+        @updateValue="
+          (value) => {
+            part.memory_gen = value;
+          }
+        "
+      />
         <label>Capacity(GB):</label>
         <input
           class="textbox m-1"
