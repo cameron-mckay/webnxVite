@@ -100,16 +100,21 @@ function edit() {
         <p v-if="asset.model">{{ asset.model }}</p>
         <p v-if="asset.serial">Serial:</p>
         <p v-if="asset.serial">{{ asset.serial }}</p>
+        <p v-if="asset.bay">Bay:</p>
+        <p v-if="asset.bay">{{ asset.bay }}</p>
+
         <p v-if="asset.live != undefined">Status:</p>
         <p v-if="asset.live">Live</p>
         <p v-else-if="asset.live != undefined">Inactive</p>
+
         <p v-if="asset.rails != undefined">Rails:</p>
         <p v-if="asset.rails">Yes</p>
         <p v-else-if="asset.rails != undefined">No</p>
-        <p v-if="asset.bay">Bay:</p>
-        <p v-if="asset.bay">{{ asset.bay }}</p>
-        <p v-if="asset.power_port">Power Port:</p>
-        <p v-if="asset.power_port">{{ asset.power_port }}</p>
+        
+        <p v-if="asset.in_rack != undefined">In Rack:</p>
+        <p v-if="asset.in_rack">Yes</p>
+        <p v-else-if="asset.in_rack != undefined">No</p>
+
         <p v-if="asset.public_port">Public Port:</p>
         <p v-if="asset.public_port">{{ asset.public_port }}</p>
         <p v-if="asset.private_port">Private Port:</p>
@@ -118,6 +123,8 @@ function edit() {
         </p>
         <p v-if="asset.ipmi_port">IPMI Port:</p>
         <p v-if="asset.ipmi_port">{{ asset.ipmi_port }}</p>
+        <p v-if="asset.power_port">Power Port:</p>
+        <p v-if="asset.power_port">{{ asset.power_port }}</p>
         <p>Last Updated:</p>
         <p>
           {{ new Date(Date.parse(asset.date_updated!)).toLocaleString() }}

@@ -129,7 +129,7 @@ onMounted(() => {
       <label v-if="strict">Image:</label>
       <div v-if="strict">
         <input
-          class="m-1"
+          class="m-1 text-black dark:text-gray-200"
           type="file"
           accept="image/*"
           id="imageUpload"
@@ -378,6 +378,18 @@ onMounted(() => {
           "
           :defaultValue="part.port_type"
         />
+
+        <label>
+        Num Ports:
+        </label>
+      <input
+        class="textbox m-1"
+        :required="strict"
+        v-model="part.num_ports"
+        type="number"
+        min="0"
+        placeholder="Num Ports"
+      />
       </div>
       <div v-if="part.type == 'Storage'" class="col-span-2 grid grid-cols-2">
         <label>Storage interface:</label>

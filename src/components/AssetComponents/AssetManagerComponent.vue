@@ -46,7 +46,6 @@ const {
 } = defineProps<Props>();
 // End props
 
-let inRack = ref(false);
 let partSearchPopup = ref(false);
 let inventorySearchPopup = ref(false);
 
@@ -191,14 +190,14 @@ function addPartFromInventory(item: LoadedCartItem) {
               class="col-span-2 grid grid-cols-2"
             >
               <label>In Rack:</label>
-              <select :required="strict" v-model="inRack" class="textbox m-1">
+              <select :required="strict" v-model="oldAsset.in_rack" class="textbox m-1">
                 <option :value="true">Yes</option>
                 <option :value="false">No</option>
               </select>
             </div>
           </div>
           <div
-            v-if="(oldAsset.live&&oldAsset.chassis_type=='Rack')||inRack||oldAsset.power_port"
+            v-if="(oldAsset.live&&oldAsset.chassis_type=='Rack')||oldAsset.in_rack||oldAsset.power_port"
             class="col-span-2 grid grid-cols-2"
           >
             <label>Power Port:</label>

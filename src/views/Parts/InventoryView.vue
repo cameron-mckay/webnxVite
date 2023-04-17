@@ -192,7 +192,7 @@ watch(currentUser, () => {
           >
             {{ currentUser.first_name }}'s Inventory
           </h1>
-          <h1 class="mb-4 inline-block w-full text-4xl md:w-fit" v-else>
+          <h1 class="inline-block w-full text-4xl md:w-fit my-2 md:my-0" v-else>
             All Tech's Inventory
           </h1>
           <div class="flex">

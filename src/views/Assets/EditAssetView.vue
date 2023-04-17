@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
-import { Ref, onBeforeMount, ref, watch } from 'vue';
+import { Ref, onBeforeMount, ref } from 'vue';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetManagerComponent from '../../components/AssetComponents/AssetManagerComponent.vue';
 import {
-  getAssetByID,
-  getPartsOnAsset,
-  updateAsset,
+getAssetByID,
+getPartsOnAsset,
+updateAsset,
 } from '../../plugins/dbCommands/assetManager';
 import { getUserInventory } from '../../plugins/dbCommands/userManager';
 import type {
-  AssetSchema,
-  CartItem,
-  LoadedCartItem,
-  PartSchema,
-  UserState,
+AssetSchema,
+CartItem,
+LoadedCartItem,
+PartSchema,
+UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -50,35 +50,35 @@ onBeforeMount(() => {
       // Save a copy for reset value
       assetCopy = JSON.parse(JSON.stringify(oldAsset.value));
       // Register watchers
-      watch(
-        () => oldAsset.value.asset_type,
-        () => {
-          if (!resetting) {
-            delete oldAsset.value.rails;
-            delete oldAsset.value.live;
-            delete oldAsset.value.public_port;
-            delete oldAsset.value.private_port;
-            delete oldAsset.value.ipmi_port;
-            delete oldAsset.value.power_port;
-            delete oldAsset.value.sid;
-          } else {
-            resetting = false;
-          }
-        }
-      );
-      watch(
-        () => oldAsset.value.live,
-        () => {
-          if (!resetting) {
-            // If server and live, asset has rails
-            if (oldAsset.value.asset_type == 'Server' && oldAsset.value.live) {
-              oldAsset.value.rails = true;
-            } else {
-              delete oldAsset.value.rails;
-            }
-          }
-        }
-      );
+      // watch(
+      //   () => oldAsset.value.asset_type,
+      //   () => {
+      //     if (!resetting) {
+      //       delete oldAsset.value.rails;
+      //       delete oldAsset.value.live;
+      //       delete oldAsset.value.public_port;
+      //       delete oldAsset.value.private_port;
+      //       delete oldAsset.value.ipmi_port;
+      //       delete oldAsset.value.power_port;
+      //       delete oldAsset.value.sid;
+      //     } else {
+      //       resetting = false;
+      //     }
+      //   }
+      // );
+      // watch(
+      //   () => oldAsset.value.live,
+      //   () => {
+      //     if (!resetting) {
+      //       // If server and live, asset has rails
+      //       if (oldAsset.value.asset_type == 'Server' && oldAsset.value.live) {
+      //         oldAsset.value.rails = true;
+      //       } else {
+      //         delete oldAsset.value.rails;
+      //       }
+      //     }
+      //   }
+      // );
       // Get parts from api
       getPartsOnAsset(http, oldAsset.value.asset_tag!, (res, err) => {
         if (err) {

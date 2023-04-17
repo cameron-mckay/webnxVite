@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import {
-  AssetEvent,
-  AssetSchema,
-  CartItem,
-  LoadedCartItem,
-  PartSchema,
-  User,
+AssetEvent,
+AssetSchema,
+CartItem,
+LoadedCartItem,
+PartSchema,
+User,
 } from '../../plugins/interfaces';
 import AssetEventPartComponent from './AssetEventPartComponent.vue';
 
@@ -149,59 +149,6 @@ onMounted(() => {
           {{ asset.serial }}
         </p>
         <p v-else-if="asset.serial">{{ asset.serial }}</p>
-
-        <p v-if="asset.live != undefined">Status:</p>
-        <p
-          v-if="
-            (asset.live && prevAsset.live) ||
-            (asset.live && prevAsset.live == undefined)
-          "
-        >
-          Live
-        </p>
-        <p
-          v-else-if="
-            (!asset.live && !prevAsset.live) ||
-            (!asset.live && prevAsset.live == undefined)
-          "
-        >
-          Inactive
-        </p>
-        <p v-else-if="!asset.live && prevAsset.live">
-          <del>Live</del>
-          Inactive
-        </p>
-        <p v-else-if="asset.live && !prevAsset.live">
-          <del>Inactive</del>
-          Live
-        </p>
-
-        <p v-if="asset.rails != undefined">Rails:</p>
-        <p
-          v-if="
-            (asset.rails && prevAsset.rails) ||
-            (asset.rails && prevAsset.rails == undefined)
-          "
-        >
-          Yes
-        </p>
-        <p
-          v-else-if="
-            (!asset.rails && !prevAsset.rails) ||
-            (!asset.rails && prevAsset.rails == undefined)
-          "
-        >
-          No
-        </p>
-        <p v-else-if="!asset.rails && prevAsset.rails">
-          <del>No</del>
-          Yes
-        </p>
-        <p v-else-if="asset.rails && !prevAsset.rails">
-          <del>Yes</del>
-          No
-        </p>
-
         <p v-if="asset.bay">Bay:</p>
         <p v-if="asset.bay && prevAsset.bay && asset.bay != prevAsset.bay">
           <del>{{ prevAsset.bay }}</del>
@@ -209,62 +156,147 @@ onMounted(() => {
         </p>
         <p v-else-if="asset.bay">{{ asset.bay }}</p>
 
-        <p v-if="asset.power_port">Power Port:</p>
-        <p
-          v-if="
-            asset.power_port &&
-            prevAsset.power_port &&
-            asset.power_port != prevAsset.power_port
-          "
-        >
-          <del>{{ prevAsset.power_port }}</del>
-          {{ asset.power_port }}
-        </p>
-        <p v-else-if="asset.power_port">{{ asset.power_port }}</p>
 
-        <p v-if="asset.public_port">Public Port:</p>
-        <p
+        
+        <div v-if="asset.asset_type!='Laptop'" class="detail-row col-span-2">
+          <p>In Rack:</p>
+          <p
           v-if="
-            asset.public_port &&
+            (asset.in_rack && prevAsset.in_rack) ||
+            (asset.in_rack && prevAsset.in_rack == undefined)
+            "
+            >
+            Yes
+          </p>
+          <p
+          v-else-if="
+                (!asset.in_rack && !prevAsset.in_rack) ||
+                (!asset.in_rack && prevAsset.in_rack == undefined)
+              "
+            >
+            No
+          </p>
+          <p v-else-if="!asset.in_rack && prevAsset.in_rack">
+            <del>Yes</del>
+            No
+          </p>
+          <p v-else-if="asset.in_rack && !prevAsset.in_rack">
+            <del>No</del>
+            Yes
+          </p>
+        </div>
+
+
+        <div v-if="asset.asset_type=='Server'" class="detail-row col-span-2">
+
+          <p>Status:</p>
+          <p
+            v-if="(asset.live && prevAsset.live) ||
+              (asset.live && prevAsset.live == undefined)">
+            Live
+          </p>
+          <p
+            v-else-if="
+              (!asset.live && !prevAsset.live) ||
+              (!asset.live && prevAsset.live == undefined)
+            "
+          >
+            Inactive
+          </p>
+          <p v-else-if="!asset.live && prevAsset.live">
+            <del>Live</del>
+            Inactive
+          </p>
+          <p v-else-if="asset.live && !prevAsset.live">
+            <del>Inactive</del>
+            Live
+          </p>
+        </div>
+
+        <div v-if="asset.asset_type=='Server'" class="detail-row col-span-2"> 
+          <p>Rails:</p>
+          <p
+          v-if="
+                    (asset.rails && prevAsset.rails) ||
+                    (asset.rails && prevAsset.rails == undefined)
+                    "
+                >
+            Yes
+          </p>
+          <p
+          v-else-if="
+                (!asset.rails && !prevAsset.rails) ||
+                (!asset.rails && prevAsset.rails == undefined)
+                "
+            >
+            No
+          </p>
+          <p v-else-if="asset.rails && !prevAsset.rails">
+            <del>No</del>
+            Yes
+          </p>
+          <p v-else-if="!asset.rails && prevAsset.rails">
+            <del>Yes</del>
+            No
+          </p>
+        </div>
+      
+      
+      
+      <div v-if="asset.in_rack||prevAsset.in_rack" class="detail-row col-span-2">
+        <p v-if="asset.power_port||prevAsset.power_port">Power Port:</p>
+        <p
+      v-if="
+            asset.power_port||prevAsset.power_port
+            "
+        >
+        <del>{{ prevAsset.power_port }}</del>
+        {{ asset.power_port }}
+      </p>
+      <p v-if="asset.public_port||prevAsset.public_port">Public Port:</p>
+      <p
+      v-if="
             prevAsset.public_port &&
             asset.public_port != prevAsset.public_port
           "
         >
-          <del>{{ prevAsset.public_port }}</del>
-          {{ asset.public_port }}
-        </p>
-        <p v-else-if="asset.public_port">{{ asset.public_port }}</p>
-
-        <p v-if="asset.private_port">Private Port:</p>
-        <p
-          v-if="
-            asset.private_port &&
+        <del>{{ prevAsset.public_port }}</del>
+        {{ asset.public_port }}
+      </p>
+      <p v-else-if="asset.public_port">{{ asset.public_port }}</p>
+      
+      <p v-if="asset.private_port||prevAsset.private_port">Private Port:</p>
+      <p
+      v-if="
             prevAsset.private_port &&
             asset.private_port != prevAsset.private_port
-          "
+            "
         >
-          <del>{{ prevAsset.private_port }}</del>
-          {{ asset.private_port }}
-        </p>
+        <del>{{ prevAsset.private_port }}</del>
+        {{ asset.private_port }}
+      </p>
         <p v-else-if="asset.private_port">{{ asset.private_port }}</p>
 
-        <p v-if="prevAsset.ipmi_port">IPMI Port:</p>
+        <p v-if="prevAsset.ipmi_port||asset.ipmi_port">IPMI Port:</p>
         <p
           v-if="
-            asset.ipmi_port &&
             prevAsset.ipmi_port &&
             asset.ipmi_port != prevAsset.ipmi_port
-          "
+            "
         >
-          <del>{{ prevAsset.ipmi_port }}</del>
-          {{ asset.ipmi_port }}
-        </p>
-        <p v-else-if="asset.ipmi_port">{{ asset.ipmi_port }}</p>
-      </div>
+        <del>{{ prevAsset.ipmi_port }}</del>
+        {{ asset.ipmi_port }}
+      </p>
+      <p v-else-if="asset.ipmi_port">{{ asset.ipmi_port }}</p>
+    </div>
+  </div>
+    
+    
       <div v-else class="detail-row col-span-1">
         <h1 class="col-span-2 mb-4 text-4xl leading-8 md:leading-10">
           {{ asset.asset_tag }}
         </h1>
+        <div class="hidden"></div>
         <p>Building:</p>
         <p>{{ asset.building }}</p>
         <p>Asset Type:</p>
@@ -307,7 +339,7 @@ onMounted(() => {
         >
           Parts:
         </h1>
-        <div class="grid grid-cols-3 text-center font-bold md:grid-cols-4">
+        <div class="grid grid-cols-3 text-center font-bold md:grid-cols-4" v-if="existing.length > 0 || added.length > 0 || removed.length > 0">
           <p class="hidden md:block">NXID</p>
           <p>Manufacturer</p>
           <p>Name</p>

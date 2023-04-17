@@ -68,16 +68,16 @@ const { asset, edit, add, view } = defineProps<Props>();
       </div>
     </div>
     <div class="group-hover:bab-drop-hover bab-drop">
-      <p>{{ 'Type: ' + asset.asset_type }}</p>
-      <p>{{ 'Chassis: ' + asset.chassis_type }}</p>
-      <p>{{ 'Manufacturer: ' + asset.manufacturer }}</p>
-      <p>{{ 'Model: ' + asset.model }}</p>
       <p>
         {{
           'Date Updated: ' +
           new Date(Date.parse(asset.date_updated!)).toLocaleString()
         }}
       </p>
+      <p>{{ 'Type: ' + asset.asset_type }}</p>
+      <p>{{ 'Chassis: ' + asset.chassis_type }}</p>
+      <p>{{ 'Manufacturer: ' + asset.manufacturer }}</p>
+      <p>{{ 'Model: ' + asset.model }}</p>
     </div>
   </div>
 </template>
