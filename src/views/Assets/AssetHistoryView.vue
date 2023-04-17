@@ -69,6 +69,7 @@ async function checkForAsset(historyEvent: keyedEvent) {
   historyEvent.key = keyNum;
   // Increment
   keyNum++;
+  checkUser(historyEvent.by)
   // Check if asset is already cached
   if (!assets.value.has(historyEvent.asset_id)) {
     // Set temporary value
@@ -88,7 +89,7 @@ async function checkForAsset(historyEvent: keyedEvent) {
       // Key switch
       historyEvent.key += 1000;
       // Check for user on "By" attribute
-      checkUser(temp);
+      checkUser(temp.by!);
     });
   }
   // Map all existing parts
@@ -100,23 +101,23 @@ async function checkForAsset(historyEvent: keyedEvent) {
 }
 
 // Check if user is in map and add if it isn't
-function checkUser(asset: AssetSchema) {
+function checkUser(by: string) {
   // Check if user is already mapped
-  if (!users.value.has(asset.by!)) {
+  if (!users.value.has(by)) {
     // Set temporary value to prevent other threads from
     // working on the same thing
-    users.value.set(asset.by!, {});
+    users.value.set(by, {});
     // Fetch the user
-    getUserByID(http, asset.by!, (data, err) => {
+    getUserByID(http, by, (data, err) => {
       // Handle the error
       if (err) {
         // Clear value so other threads can try again
-        users.value.delete(asset.by!);
+        users.value.delete(by);
         errorHandler(err);
         return;
       }
       // Set the user to API response
-      users.value.set(asset.by!, data as User);
+      users.value.set(by, data as User);
       // Key swap to reload components
       keySwap();
     });
@@ -133,7 +134,6 @@ onBeforeMount(() => {
       }
       history.value = data as keyedEvent[];
       await Promise.all(history.value.map(checkForAsset));
-      assets.value.forEach(checkUser);
     });
   }
   if (router.currentRoute.value.query.pageNum) {

@@ -130,6 +130,7 @@ export interface AssetEvent {
   date_begin: Date;
   date_end: Date;
   asset_id: string;
+  by: string;
   asset_info?: AssetSchema;
   info_updated: boolean;
   existing: CartItem[];

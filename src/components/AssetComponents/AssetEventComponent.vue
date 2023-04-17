@@ -73,9 +73,12 @@ onMounted(() => {
 </script>
 <template>
   <div class="background-and-border my-4 p-4">
-    <h1 class="mb-8 text-4xl leading-8 md:leading-10">
-      {{ new Date(event.date_begin).toLocaleString() }}
-    </h1>
+    <div class="flex justify-between">
+      <h1 class="mb-8 text-4xl leading-8 md:leading-10">
+        {{ new Date(event.date_begin).toLocaleString() }}
+      </h1>
+      <p>By: {{ users.get(event.by)?.first_name + ' ' + users.get(event.by)?.last_name }}</p>
+    </div>
     <div class="grid md:grid-cols-3">
       <div
         v-if="event.info_updated && asset.prev != null"
