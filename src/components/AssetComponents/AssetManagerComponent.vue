@@ -3,9 +3,9 @@ import { AxiosError, AxiosInstance } from 'axios';
 import { ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-AssetSchema,
-LoadedCartItem,
-PartSchema,
+  AssetSchema,
+  LoadedCartItem,
+  PartSchema,
 } from '../../plugins/interfaces';
 import AssetCartItemComponent from '../AssetComponents/AssetCartItemComponent.vue';
 import AssetPartSearchComponent from '../AssetComponents/SearchPartOnAssetComponent.vue';
@@ -172,7 +172,7 @@ function addPartFromInventory(item: LoadedCartItem) {
             :defaultValue="oldAsset.chassis_type"
           />
           <div
-            v-if="oldAsset.chassis_type=='Rack'"
+            v-if="oldAsset.chassis_type == 'Rack'"
             class="col-span-2 grid grid-cols-2"
           >
             <label>Rails:</label>
@@ -181,23 +181,28 @@ function addPartFromInventory(item: LoadedCartItem) {
               v-model="oldAsset.rails"
               class="textbox m-1"
             >
-            <option :value="undefined" selected disabled>Select</option>
+              <option :value="undefined" selected disabled>Select</option>
               <option :value="true">Yes</option>
               <option :value="false">No</option>
             </select>
-            <div
-              v-if="oldAsset.rails"
-              class="col-span-2 grid grid-cols-2"
-            >
+            <div v-if="oldAsset.rails" class="col-span-2 grid grid-cols-2">
               <label>In Rack:</label>
-              <select :required="strict" v-model="oldAsset.in_rack" class="textbox m-1">
+              <select
+                :required="strict"
+                v-model="oldAsset.in_rack"
+                class="textbox m-1"
+              >
                 <option :value="true">Yes</option>
                 <option :value="false">No</option>
               </select>
             </div>
           </div>
           <div
-            v-if="(oldAsset.live&&oldAsset.chassis_type=='Rack')||oldAsset.in_rack||oldAsset.power_port"
+            v-if="
+              (oldAsset.live && oldAsset.chassis_type == 'Rack') ||
+              oldAsset.in_rack ||
+              oldAsset.power_port
+            "
             class="col-span-2 grid grid-cols-2"
           >
             <label>Power Port:</label>
@@ -241,6 +246,17 @@ function addPartFromInventory(item: LoadedCartItem) {
               v-model="oldAsset.sid"
               type="number"
               placeholder="Service ID"
+            />
+          </div>
+          <div v-if="strict" class="col-span-2 my-4">
+            <h1 class="inline-block text-4xl leading-8 md:leading-10">
+              Notes:
+            </h1>
+            <textarea
+              class="textbox m-1"
+              rows="4"
+              v-model="oldAsset.notes"
+              placeholder="Drag to resize"
             />
           </div>
           <!-- Part Search here -->
@@ -314,3 +330,8 @@ function addPartFromInventory(item: LoadedCartItem) {
     </form>
   </div>
 </template>
+<style scoped>
+label {
+  @apply my-auto;
+}
+</style>

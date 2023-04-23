@@ -27,7 +27,7 @@ onMounted(() => {
       class="background-and-border group-hover:bab-hover grid grid-cols-3 p-1 text-center leading-8 md:p-2 md:leading-10"
     >
       <p class="break-words">{{ record.serial }}</p>
-      <p class="hidden break-words md:block" >
+      <p class="hidden break-words md:block">
         {{ `${date.toLocaleString()}` }}
       </p>
       <div class="my-auto flex justify-end">
@@ -47,9 +47,7 @@ onMounted(() => {
         </svg>
       </div>
     </div>
-    <div
-      class="group-hover:bab-drop-hover bab-drop"
-    >
+    <div class="group-hover:bab-drop-hover bab-drop">
       <p>{{ `ID: ${record._id}` }}</p>
       <p v-if="record.prev != null">{{ `Previous: ${record.prev}` }}</p>
       <p v-if="record.next != null">{{ `Next: ${record.next}` }}</p>

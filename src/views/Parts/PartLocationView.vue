@@ -6,15 +6,15 @@ import type { Store } from 'vuex';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
 import SerializedPartRecordComponent from '../../components/PartComponents/SerializedPartRecordComponent.vue';
 import {
-getPartByID,
-getPartRecords,
+  getPartByID,
+  getPartRecords,
 } from '../../plugins/dbCommands/partManager';
 import { getUserByID } from '../../plugins/dbCommands/userManager';
 import type {
-PartRecord,
-PartSchema,
-User,
-UserState,
+  PartRecord,
+  PartSchema,
+  User,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -217,7 +217,7 @@ function viewHistory(record: PartRecord, quantity?: number) {
       {{ pageTitle }}
     </h1>
     <div
-      v-if="partRecords.length > 0&&part.serialized"
+      v-if="partRecords.length > 0 && part.serialized"
       class="relative my-2 grid grid-cols-3 rounded-xl p-2 text-center font-bold leading-8 transition md:leading-10"
     >
       <p>Serial</p>

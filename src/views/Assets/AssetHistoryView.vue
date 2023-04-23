@@ -5,18 +5,18 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetEventComponent from '../../components/AssetComponents/AssetEventComponent.vue';
 import {
-getAssetByID,
-getAssetHistory,
+  getAssetByID,
+  getAssetHistory,
 } from '../../plugins/dbCommands/assetManager';
 import { getPartByID } from '../../plugins/dbCommands/partManager';
 import { getUserByID } from '../../plugins/dbCommands/userManager';
 import {
-AssetEvent,
-AssetSchema,
-CartItem,
-PartSchema,
-User,
-UserState,
+  AssetEvent,
+  AssetSchema,
+  CartItem,
+  PartSchema,
+  User,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -69,7 +69,7 @@ async function checkForAsset(historyEvent: keyedEvent) {
   historyEvent.key = keyNum;
   // Increment
   keyNum++;
-  checkUser(historyEvent.by)
+  checkUser(historyEvent.by);
   // Check if asset is already cached
   if (!assets.value.has(historyEvent.asset_id)) {
     // Set temporary value
@@ -171,7 +171,7 @@ function prevPage() {
 </script>
 <template>
   <div>
-    <div class="flex justify-between mb-4">
+    <div class="mb-4 flex justify-between">
       <h1 class="text-4xl leading-8 md:leading-10">Asset History</h1>
       <div class="float-right flex select-none">
         <p class="my-auto mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>

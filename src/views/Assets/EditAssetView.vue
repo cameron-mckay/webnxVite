@@ -5,17 +5,17 @@ import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetManagerComponent from '../../components/AssetComponents/AssetManagerComponent.vue';
 import {
-getAssetByID,
-getPartsOnAsset,
-updateAsset,
+  getAssetByID,
+  getPartsOnAsset,
+  updateAsset,
 } from '../../plugins/dbCommands/assetManager';
 import { getUserInventory } from '../../plugins/dbCommands/userManager';
 import type {
-AssetSchema,
-CartItem,
-LoadedCartItem,
-PartSchema,
-UserState,
+  AssetSchema,
+  CartItem,
+  LoadedCartItem,
+  PartSchema,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {

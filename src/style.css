@@ -69,7 +69,7 @@
 
   /* Used for lists and backgrounds for some views */
   .background-and-border {
-    @apply nx-border-color header-color rounded-md border-2 shadow-md transition-colors;
+    @apply nx-border-color header-color rounded-md border-2 shadow-md transition;
   }
 
   .background-and-border > p {

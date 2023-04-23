@@ -5,15 +5,15 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
 import {
-getPartByID,
-getPartHistoryByID,
+  getPartByID,
+  getPartHistoryByID,
 } from '../../plugins/dbCommands/partManager';
 import { getUserByID } from '../../plugins/dbCommands/userManager';
 import type {
-PartRecord,
-PartSchema,
-User,
-UserState,
+  PartRecord,
+  PartSchema,
+  User,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -107,7 +107,9 @@ function viewHistory(id: string) {
       <p class="detail-label">Type:</p>
       <p class="detail-data">{{ part.type }}</p>
       <p class="detail-label" v-if="part.serialized">Serial:</p>
-      <p class="detail-data" v-if="part.serialized">{{ partRecords[0].serial }}</p>
+      <p class="detail-data" v-if="part.serialized">
+        {{ partRecords[0].serial }}
+      </p>
       <div class="detail-row" v-if="part.type == 'Motherboard'">
         <p>Chipset:</p>
         <p>{{ part.chipset }}</p>

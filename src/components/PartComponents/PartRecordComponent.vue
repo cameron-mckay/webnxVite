@@ -62,12 +62,10 @@ onMounted(() => {
     </div>
     <div
       class="group-hover:bab-drop-hover bab-drop"
-      v-if="quantity==undefined"
+      v-if="quantity == undefined"
     >
       <p class="block">
-        {{
-          `Date Updated: ${date.toLocaleString()}`
-        }}
+        {{ `Date Updated: ${date.toLocaleString()}` }}
       </p>
       <p>{{ `ID: ${record._id}` }}</p>
       <p v-if="record.prev != null">{{ `Previous: ${record.prev}` }}</p>

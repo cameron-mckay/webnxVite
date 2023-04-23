@@ -63,7 +63,7 @@ export interface AssetSchema {
   serial?: string;
   rails?: Boolean;
   live?: Boolean;
-  in_rack?: Boolean,
+  in_rack?: Boolean;
   bay?: string | number;
   power_port?: string;
   public_port?: string;
@@ -71,6 +71,7 @@ export interface AssetSchema {
   ipmi_port?: string;
   by?: string;
   sid?: number;
+  notes?: string;
   date_created?: string;
   date_replaced?: string;
 }
@@ -79,7 +80,7 @@ export interface PartRecord {
   _id?: string;
   nxid?: string;
   prev?: string;
-  next?: string|null;
+  next?: string | null;
   building?: Number;
   location?: string;
   asset_tag?: string;

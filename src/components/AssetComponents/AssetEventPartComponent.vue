@@ -65,7 +65,7 @@ const { item } = defineProps<Props>();
         </svg>
         <!-- Minus -->
         <svg
-          class="mx-0.5 my-auto block h-8 w-8 shrink-0 p-2 text-red-500 md:mx-1 md:hidden md:h-10 md:w-10 shadow-none"
+          class="mx-0.5 my-auto block h-8 w-8 shrink-0 p-2 text-red-500 shadow-none md:mx-1 md:hidden md:h-10 md:w-10"
           v-else-if="minus"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"

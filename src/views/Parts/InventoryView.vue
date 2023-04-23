@@ -3,14 +3,14 @@ import { Ref, onMounted, ref, watch } from 'vue';
 import InventoryPartComponent from '../../components/InventoryComponents/InventoryPartComponent.vue';
 import { movePart } from '../../plugins/dbCommands/partManager';
 import {
-getAllUsers,
-getUserInventoryByID,
+  getAllUsers,
+  getUserInventoryByID,
 } from '../../plugins/dbCommands/userManager';
 import {
-LoadedCartItem,
-PartRecord,
-PartSchema,
-User,
+  LoadedCartItem,
+  PartRecord,
+  PartSchema,
+  User,
 } from '../../plugins/interfaces';
 
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -185,18 +185,18 @@ watch(currentUser, () => {
   <div>
     <form @submit.prevent="submit">
       <div>
-        <div class="flex flex-wrap justify-between mb-4">
+        <div class="mb-4 flex flex-wrap justify-between">
           <h1
-            class="inline-block w-full text-4xl md:w-fit my-2 md:my-0"
+            class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
             v-if="currentUser._id != 'all'"
           >
             {{ currentUser.first_name }}'s Inventory
           </h1>
-          <h1 class="inline-block w-full text-4xl md:w-fit my-2 md:my-0" v-else>
+          <h1 class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit" v-else>
             All Tech's Inventory
           </h1>
           <div class="flex">
-            <p class="mr-2 my-auto">User:</p>
+            <p class="my-auto mr-2">User:</p>
             <select required v-model="currentUser" class="mt-auto">
               <option disabled :value="{}"></option>
               <option :value="store.state.user" selected>Your Inventory</option>
@@ -235,11 +235,11 @@ watch(currentUser, () => {
         </div>
         <div v-if="transferList.length > 0">
           <div class="my-4 flex flex-wrap justify-between">
-            <h1 class="inline-block w-full text-4xl md:w-fit my-2 md:my-0">
+            <h1 class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit">
               Transfer List
             </h1>
             <div class="flex">
-              <p class="mr-2 my-auto">To:</p>
+              <p class="my-auto mr-2">To:</p>
               <select required v-model="transferUser" class="mt-auto">
                 <option
                   v-if="currentUser._id != store.state.user._id"

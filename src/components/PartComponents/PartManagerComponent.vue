@@ -85,7 +85,7 @@ onMounted(() => {
         .filter((sn) => sn != '')
         // Gets rid of duplicates
         .filter((sn, i, arr) => i == arr.indexOf(sn))
-        .map((sn: string) => sn.replace(/[, ]+/g, " ").trim());
+        .map((sn: string) => sn.replace(/[, ]+/g, ' ').trim());
     }
   });
   watch(
@@ -257,21 +257,15 @@ onMounted(() => {
         />
         <label>Memory Generation:</label>
         <CustomDropdownComponent
-        :required="strict"
-        :defaultValue="part.memory_gen"
-        :options="[
-          'DDR5',
-          'DDR4',
-          'DDR3',
-          'DDR2',
-          'DDR',
-        ]"
-        @updateValue="
-          (value) => {
-            part.memory_gen = value;
-          }
-        "
-      />
+          :required="strict"
+          :defaultValue="part.memory_gen"
+          :options="['DDR5', 'DDR4', 'DDR3', 'DDR2', 'DDR']"
+          @updateValue="
+            (value) => {
+              part.memory_gen = value;
+            }
+          "
+        />
       </div>
 
       <div v-if="part.type == 'CPU'" class="col-span-2 grid grid-cols-2">
@@ -307,21 +301,15 @@ onMounted(() => {
         />
         <label>Memory Generation:</label>
         <CustomDropdownComponent
-        :required="strict"
-        :defaultValue="part.memory_gen"
-        :options="[
-          'DDR5',
-          'DDR4',
-          'DDR3',
-          'DDR2',
-          'DDR',
-        ]"
-        @updateValue="
-          (value) => {
-            part.memory_gen = value;
-          }
-        "
-      />
+          :required="strict"
+          :defaultValue="part.memory_gen"
+          :options="['DDR5', 'DDR4', 'DDR3', 'DDR2', 'DDR']"
+          @updateValue="
+            (value) => {
+              part.memory_gen = value;
+            }
+          "
+        />
         <label>Capacity(GB):</label>
         <input
           class="textbox m-1"
@@ -379,17 +367,15 @@ onMounted(() => {
           :defaultValue="part.port_type"
         />
 
-        <label>
-        Num Ports:
-        </label>
-      <input
-        class="textbox m-1"
-        :required="strict"
-        v-model="part.num_ports"
-        type="number"
-        min="0"
-        placeholder="Num Ports"
-      />
+        <label>Num Ports:</label>
+        <input
+          class="textbox m-1"
+          :required="strict"
+          v-model="part.num_ports"
+          type="number"
+          min="0"
+          placeholder="Num Ports"
+        />
       </div>
       <div v-if="part.type == 'Storage'" class="col-span-2 grid grid-cols-2">
         <label>Storage interface:</label>
@@ -493,3 +479,8 @@ onMounted(() => {
     </form>
   </div>
 </template>
+<style scoped>
+label {
+  @apply my-auto;
+}
+</style>

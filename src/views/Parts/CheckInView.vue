@@ -8,15 +8,15 @@ import type { Store } from 'vuex';
 import InventoryPartComponent from '../../components/InventoryComponents/InventoryPartComponent.vue';
 import { checkin } from '../../plugins/dbCommands/partManager';
 import {
-getAllUsers,
-getUserInventoryByID,
+  getAllUsers,
+  getUserInventoryByID,
 } from '../../plugins/dbCommands/userManager';
 import type {
-CartItem,
-LoadedCartItem,
-PartSchema,
-User,
-UserState,
+  CartItem,
+  LoadedCartItem,
+  PartSchema,
+  User,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -138,10 +138,12 @@ watch(currentUser, () => {
 <template>
   <form @submit.prevent="localCheckin">
     <div>
-      <div class="flex flex-wrap justify-between mb-4">
-        <h1 class="inline-block w-full text-4xl md:w-fit my-2 md:my-0">Inventory:</h1>
+      <div class="mb-4 flex flex-wrap justify-between">
+        <h1 class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit">
+          Inventory:
+        </h1>
         <div class="flex">
-          <p class="mr-2 my-auto">User:</p>
+          <p class="my-auto mr-2">User:</p>
           <select required v-model="currentUser" class="mt-auto">
             <option disabled :value="{}"></option>
             <option v-for="user in users" :value="user">
@@ -177,7 +179,9 @@ watch(currentUser, () => {
         <p>Inventory is empty...</p>
       </div>
       <div class="my-4" v-if="checkInList.length > 0">
-        <h1 class="inline-block w-full text-4xl md:w-fit my-2 md:my-0">Checking In:</h1>
+        <h1 class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit">
+          Checking In:
+        </h1>
         <div
           class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
         >

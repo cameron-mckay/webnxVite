@@ -9,18 +9,18 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import SerializedCartItemComponent from '../../components/KioskComponents/SerializedCartItemComponent.vue';
 import {
-checkout,
-getPartByID,
-getUniqueOnPartRecord,
+  checkout,
+  getPartByID,
+  getUniqueOnPartRecord,
 } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
-CartItem,
-LoadedCartItem,
-PartSchema,
-SNAvailable,
-User,
-UserState,
+  CartItem,
+  LoadedCartItem,
+  PartSchema,
+  SNAvailable,
+  User,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -113,7 +113,7 @@ async function loadCart() {
                 nxid: part.nxid,
                 location: 'Parts Room',
                 building: store.state.user.building,
-                next: "null"
+                next: 'null',
               },
               (data, err) => {
                 if (err) {
@@ -227,10 +227,12 @@ function localCheckout() {
 <template>
   <form @submit.prevent="localCheckout">
     <div v-if="parts.length != 0 || store.state.cart.serialized.length != 0">
-      <div class="flex flex-wrap justify-between mb-4">
-        <h1 class="inline-block w-full text-4xl md:w-fit my-2 md:my-0">Check Out:</h1>
+      <div class="mb-4 flex flex-wrap justify-between">
+        <h1 class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit">
+          Check Out:
+        </h1>
         <div class="flex">
-          <p class="mr-2 my-auto">User:</p>
+          <p class="my-auto mr-2">User:</p>
           <select required v-model="currentUser" class="mt-auto">
             <option disabled :value="''"></option>
             <option v-for="user in users" :value="user">

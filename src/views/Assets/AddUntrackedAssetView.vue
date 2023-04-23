@@ -6,10 +6,10 @@ import type { Store } from 'vuex';
 import AssetManagerComponent from '../../components/AssetComponents/AssetManagerComponent.vue';
 import { createAsset } from '../../plugins/dbCommands/assetManager';
 import type {
-AssetSchema,
-CartItem,
-LoadedCartItem,
-UserState,
+  AssetSchema,
+  CartItem,
+  LoadedCartItem,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -30,13 +30,12 @@ function assetSubmit() {
   let unloadedParts = [] as CartItem[];
   // Iterate through list of parts and strip only the NXID and quantity
   for (const part of partsOnAsset.value) {
-    if(part.serial) {
+    if (part.serial) {
       unloadedParts.push({
         nxid: part.part.nxid as string,
         serial: part.serial,
       });
-    }
-    else {
+    } else {
       unloadedParts.push({
         nxid: part.part.nxid as string,
         quantity: part.quantity,

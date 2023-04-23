@@ -5,13 +5,13 @@ import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetCartItemComponent from '../../components/AssetComponents/AssetCartItemComponent.vue';
 import {
-getAssetByID,
-getPartsOnAsset,
+  getAssetByID,
+  getPartsOnAsset,
 } from '../../plugins/dbCommands/assetManager';
 import type {
-AssetSchema,
-LoadedCartItem,
-UserState,
+  AssetSchema,
+  LoadedCartItem,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -60,9 +60,9 @@ function edit() {
 <template>
   <div class="body">
     <div
-      class="relative grid grid-cols-2 rounded-lg p-1 group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-4 md:p-2"
+      class="relative grid grid-cols-2 rounded-lg group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-4"
     >
-      <div class="col-span-2 flex md:col-span-4 mb-4">
+      <div class="col-span-2 mb-4 flex md:col-span-4">
         <h1 class="my-auto text-4xl leading-8 md:leading-10">
           {{ asset.asset_tag + ':' }}
         </h1>
@@ -79,7 +79,10 @@ function edit() {
             d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"
           />
         </svg>
-        <RouterLink class="ml-2 my-auto font-bold p-2 rounded-md hover:hover-color" :to="`/assets/history?nxid=${asset.asset_tag}`">
+        <RouterLink
+          class="my-auto ml-2 rounded-md p-2 font-bold transition-colors hover:bg-gray-400 hover:dark:bg-zinc-700"
+          :to="`/assets/history?nxid=${asset.asset_tag}`"
+        >
           View History
         </RouterLink>
       </div>
@@ -110,7 +113,7 @@ function edit() {
         <p v-if="asset.rails != undefined">Rails:</p>
         <p v-if="asset.rails">Yes</p>
         <p v-else-if="asset.rails != undefined">No</p>
-        
+
         <p v-if="asset.in_rack != undefined">In Rack:</p>
         <p v-if="asset.in_rack">Yes</p>
         <p v-else-if="asset.in_rack != undefined">No</p>
@@ -129,10 +132,14 @@ function edit() {
         <p>
           {{ new Date(Date.parse(asset.date_updated!)).toLocaleString() }}
         </p>
+        <div class="col-span-2 my-4" v-if="asset.notes">
+          <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
+          <p>{{ asset.notes }}</p>
+        </div>
       </div>
     </div>
     <div v-if="parts.length > 0">
-      <h1 class="col-span-2 mb-4 text-4xl">Parts</h1>
+      <h1 class="col-span-2 mb-4 text-4xl">Parts:</h1>
       <div
         v-if="(parts!.length > 0)"
         class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-5 md:leading-10"

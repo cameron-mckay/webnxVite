@@ -21,9 +21,9 @@ let request = ref({
 
 // Owner
 let owner = ref({} as User);
-let quantity = ref(0)
-let serials = ref("")
-let emit = defineEmits(['submitRequest'])
+let quantity = ref(0);
+let serials = ref('');
+let emit = defineEmits(['submitRequest']);
 // Reset form
 function resetForm() {
   request.value.quantity = 0;
@@ -32,20 +32,19 @@ function resetForm() {
 }
 
 function submit() {
-  console.log(part.serialized)
-  if(part.serialized) {
-    console.log("tests")
-    request.value.serial = serials.value
+  console.log(part.serialized);
+  if (part.serialized) {
+    console.log('tests');
+    request.value.serial = serials.value;
+  } else {
+    request.value.quantity = quantity.value;
   }
-  else {
-    request.value.quantity = quantity.value
-  }
-  emit("submitRequest", request.value, owner)
+  emit('submitRequest', request.value, owner);
 }
 
 // When component mounted
 onMounted(() => {
-  console.log(part)
+  console.log(part);
   // Set value of request to props
   request.value.nxid = part.nxid!;
   // Register watch on the request object
@@ -101,11 +100,7 @@ onMounted(() => {
         min="0"
         placeholder="Quantity"
       />
-      <label
-        v-if="part.serialized"
-      >
-        Serial numbers:
-      </label>
+      <label v-if="part.serialized">Serial numbers:</label>
       <textarea
         class="textbox m-1"
         v-if="part.serialized"
