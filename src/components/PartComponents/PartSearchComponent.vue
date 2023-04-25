@@ -128,8 +128,8 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-  getPartsByData,
-  getPartsByTextSearch,
+getPartsByData,
+getPartsByTextSearch,
 } from '../../plugins/dbCommands/partManager';
 import type { PartSchema } from '../../plugins/interfaces';
 import QRCodeScannerPopupComponent from '../GenericComponents/QRCodeScannerPopupComponent.vue';
@@ -326,7 +326,7 @@ async function search() {
       // typecast
       parts.value = data as PartSchema[];
       if (parts.value.length > 50) {
-        parts.value.pop;
+        parts.value.pop();
         multiplePages.value = true;
       } else if (parts.value.length === 0 && pageNum.value != 1) {
         pageNum.value = 1;

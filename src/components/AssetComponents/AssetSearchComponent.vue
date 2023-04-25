@@ -89,49 +89,49 @@
     <div v-else>
       <p>No results...</p>
     </div>
-    <div class="float-right flex select-none">
-      <p class="mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
-      <!-- Left Caret -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="button-icon hover:button-icon-hover active:button-icon-active"
-        viewBox="0 0 256 512"
-        v-on:click="prevPage"
-        v-if="multiplePages || pageNum > 1"
-      >
-        <path
-          fill="currentColor"
-          stroke="currentColor"
-          d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
-        />
-      </svg>
-      <div v-else-if="multiplePages" class="button-icon opacity-0"></div>
-      <!-- Right Caret -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="button-icon hover:button-icon-hover active:button-icon-active"
-        viewBox="0 0 256 512"
-        v-if="multiplePages"
-        v-on:click="nextPage"
-      >
-        <path
-          fill="currentColor"
-          stroke="currentColor"
-          d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
-        />
-      </svg>
-      <div v-else-if="multiplePages" class="button-icon opacity-0"></div>
+      <div v-if="multiplePages" class="float-right flex select-none">
+        <p class="my-auto mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
+        <!-- Left Caret -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
+          viewBox="0 0 256 512"
+          v-on:click="prevPage"
+          v-if="pageNum > 1"
+        >
+          <path
+            fill="currentColor"
+            stroke="currentColor"
+            d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
+          />
+        </svg>
+        <div v-else class="button-icon opacity-0"></div>
+        <!-- Right Caret -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
+          viewBox="0 0 256 512"
+          v-if="multiplePages"
+          v-on:click="nextPage"
+        >
+          <path
+            fill="currentColor"
+            stroke="currentColor"
+            d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
+          />
+        </svg>
+        <div v-else class="button-icon opacity-0"></div>
+      </div>
     </div>
-  </div>
 </template>
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-  getAssetByID,
-  getAssetsByData,
-  getAssetsByTextSearch,
+getAssetByID,
+getAssetsByData,
+getAssetsByTextSearch,
 } from '../../plugins/dbCommands/assetManager';
 import type { AssetSchema } from '../../plugins/interfaces';
 import QRCodeScannerPopupComponent from '../GenericComponents/QRCodeScannerPopupComponent.vue';
@@ -281,9 +281,9 @@ async function advancedSearch(asset: AssetSchema) {
 }
 
 // Search function
-async function search() {
+function search() {
   // Reset dis shit
-  multiplePages.value = false;
+  let current_page = pageNum.value
   // Check for webnx regex
   if (/WNX([0-9]{7})+/.test(searchText.value)) {
     // temp value
@@ -329,13 +329,16 @@ async function search() {
         // API will send 51 objects to indicate more pages
         if (assets.value.length > 50) {
           // Pop the extra object
-          assets.value.pop;
+          assets.value.pop();
           // Set multiple pages
           multiplePages.value = true;
         } else if (assets.value.length === 0 && pageNum.value != 1) {
           // Extra redundancy just in case query string is malformed
           pageNum.value = 1;
           search();
+        }
+        else {
+          pageNum.value = current_page
         }
       }
     );
