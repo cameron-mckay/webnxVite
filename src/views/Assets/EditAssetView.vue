@@ -5,17 +5,17 @@ import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetManagerComponent from '../../components/AssetComponents/AssetManagerComponent.vue';
 import {
-  getAssetByID,
-  getPartsOnAsset,
-  updateAsset,
+getAssetByID,
+getPartsOnAsset,
+updateAsset,
 } from '../../plugins/dbCommands/assetManager';
 import { getUserInventory } from '../../plugins/dbCommands/userManager';
 import type {
-  AssetSchema,
-  CartItem,
-  LoadedCartItem,
-  PartSchema,
-  UserState,
+AssetSchema,
+CartItem,
+LoadedCartItem,
+PartSchema,
+UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -120,10 +120,38 @@ function assetSubmit() {
 }
 
 function plusPart(item: LoadedCartItem) {
+  if(assetCopy.migrated) {
+    if(item.part.serialized) {
+      partsOnAsset.value.push(item)
+      return
+    }
+    let i = partsOnAsset.value.findIndex((e) => e.part.nxid == item.part.nxid);
+    if(i<0) {
+      item.quantity = 1
+      partsOnAsset.value.push(item)
+      return
+    }
+    partsOnAsset.value[i].quantity! += 1
+    return
+  }
   move(inventory, partsOnAsset, item.part, 1, item.serial!);
 }
 
 function minusPart(item: LoadedCartItem) {
+  if(assetCopy.migrated) {
+    if (item.part.serialized) {
+      let i = partsOnAsset.value.findIndex((e) => e.serial == item.serial);
+      partsOnAsset.value.splice(i,1)
+      return
+    }
+    let i = partsOnAsset.value.findIndex((e) => e.part.nxid == item.part.nxid);
+    if(i<0)
+      return
+    partsOnAsset.value[i].quantity! -= 1
+    if(partsOnAsset.value[i].quantity! < 1)
+      partsOnAsset.value.splice(i,1)
+    return
+  }
   move(partsOnAsset, inventory, item.part, 1, item.serial!);
 }
 

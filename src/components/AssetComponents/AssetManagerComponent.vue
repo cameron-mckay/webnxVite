@@ -3,9 +3,9 @@ import { AxiosError, AxiosInstance } from 'axios';
 import { ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-  AssetSchema,
-  LoadedCartItem,
-  PartSchema,
+AssetSchema,
+LoadedCartItem,
+PartSchema,
 } from '../../plugins/interfaces';
 import AssetCartItemComponent from '../AssetComponents/AssetCartItemComponent.vue';
 import AssetPartSearchComponent from '../AssetComponents/SearchPartOnAssetComponent.vue';
@@ -69,6 +69,7 @@ function addPartFromInventory(item: LoadedCartItem) {
 </script>
 <template>
   <div class="body">
+    <p class="w-full bg-red-400 p-2 rounded-md my-2" v-if="oldAsset.migrated">This asset was automatically migrated from the old asset tracking system and is incomplete.  Please edit and update the information if you can.</p>
     <h1 class="mb-4 text-4xl leading-8 md:leading-10">{{ title }}</h1>
     <form
       id="form"
@@ -280,7 +281,7 @@ function addPartFromInventory(item: LoadedCartItem) {
           </svg>
         </div>
         <FullScreenPopupComponent
-          v-if="partSearch"
+          v-if="partSearch||oldAsset.migrated"
           v-show="partSearchPopup"
           @toggle="togglePopup"
         >
@@ -292,7 +293,7 @@ function addPartFromInventory(item: LoadedCartItem) {
           />
         </FullScreenPopupComponent>
         <FullScreenPopupComponent
-          v-if="inventorySearch && inventory"
+          v-if="inventorySearch && inventory&&!oldAsset.migrated"
           v-show="inventorySearchPopup"
           @toggle="togglePopup"
         >
@@ -311,11 +312,14 @@ function addPartFromInventory(item: LoadedCartItem) {
           <p>Quantity/SN</p>
           <p></p>
         </div>
+        <div v-else class="my-2">
+          <p>No parts yet..</p>
+        </div>
         <AssetCartItemComponent
           class="col-span-2"
           v-for="part in parts"
           :item="part"
-          :untracked="untracked"
+          :untracked="untracked||oldAsset.migrated"
           @plus="$emit('plusPart', part)"
           @minus="$emit('minusPart', part)"
           @delete="$emit('deletePart', part)"

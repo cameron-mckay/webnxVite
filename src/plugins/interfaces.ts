@@ -72,6 +72,18 @@ export interface AssetSchema {
   by?: string;
   sid?: number;
   notes?: string;
+
+  units?: number,
+  num_psu?: number,
+  psu_model?: string,
+  long?: boolean,
+  num_bays?: number,
+  bay_type?: string,
+  pallet?: string,
+  fw_rev?: string,
+  old_by?: string,
+  migrated?: boolean,
+
   date_created?: string;
   date_replaced?: string;
 }
