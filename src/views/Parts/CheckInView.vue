@@ -169,7 +169,7 @@ watch(currentUser, () => {
           <p>Quantity/SN</p>
           <p></p>
         </div>
-        <div class="animate-bottom">
+        <div class="md:animate-bottom">
           <InventoryPartComponent
           :isCurrentUser="false"
           v-for="item in inventory"
@@ -183,7 +183,7 @@ watch(currentUser, () => {
       <div v-else-if="JSON.stringify(currentUser) == JSON.stringify({})">
         <p>Please select a user to get started...</p>
       </div>
-      <div v-else class="animate-bottom">
+      <div v-else class="md:animate-bottom">
         <p>Inventory is empty...</p>
       </div>
       <div class="my-4" v-if="checkInList.length > 0">

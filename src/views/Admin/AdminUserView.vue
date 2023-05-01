@@ -77,7 +77,7 @@ onMounted(() => {
     <div v-if="loading" class="flex justify-center my-4">
       <div class="loader text-center"></div>
     </div>
-    <div v-else class="animate-bottom">
+    <div v-else class="md:animate-bottom">
       <UserComponent
       class="relative grid grid-cols-5 text-center text-sm leading-10 transition"
       v-for="user in users"

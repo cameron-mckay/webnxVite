@@ -224,7 +224,7 @@ watch(currentUser, () => {
             <p>Quantity/SN</p>
             <p></p>
           </div>
-          <div class="animate-bottom">
+          <div class="md:animate-bottom">
             <InventoryPartComponent
               :isCurrentUser="false"
               v-for="item in items"

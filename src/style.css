@@ -185,8 +185,8 @@ body {
 }
 
 @-webkit-keyframes animatebottom {
-  from { bottom:-50px; opacity:0 } 
-  to { bottom:0px; opacity:1 }
+  from { bottom:-50px;} 
+  to { bottom:0px;}
 }
 
 @keyframes animatebottom { 

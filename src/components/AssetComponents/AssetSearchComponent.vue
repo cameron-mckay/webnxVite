@@ -109,7 +109,7 @@
           <div v-else class="button-icon opacity-0"></div>
         </div>
       </div>
-      <div class="animate-bottom">
+      <div class="md:animate-bottom">
         <AssetComponent
           :add="add"
           :edit="edit"

@@ -108,7 +108,7 @@
       <div v-else-if="multiplePages" class="button-icon opacity-0"></div>
     </div>
       </div>
-      <div class="animate-bottom">
+      <div class="md:animate-bottom">
       <PartComponent
         :add="add || add_object!.show == true"
         :edit="edit"
@@ -122,7 +122,7 @@
       />
     </div>
     </div>
-    <div v-else class="animate-bottom my-4">
+    <div v-else class="md:animate-bottom my-4">
       <p>No results...</p>
     </div>
     <div class="float-right flex select-none">
