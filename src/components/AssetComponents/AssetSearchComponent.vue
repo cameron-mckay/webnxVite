@@ -1,10 +1,10 @@
 <template>
   <div>
-    <form class="flex justify-between" @submit.prevent="search">
+    <form class="flex justify-between" @submit.prevent="searchButtonPressed">
       <input
         class="search ml-0"
         type="text"
-        v-model="searchText"
+        v-model="visibleSearchText"
         placeholder="🔍 keywords..."
       />
       <select v-if="changeBuilding === true" v-model="building" class="w-32">
@@ -75,7 +75,7 @@
         <p class="hidden md:block">Type</p>
         <p class="hidden md:block">Chassis</p>
         <p>Status</p>
-        <div v-if="multiplePages" class="float-right flex select-none">
+        <div v-if="multiplePages||pageNum>1" class="float-right flex select-none">
           <p class="my-auto mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
           <!-- Left Caret -->
           <svg
@@ -126,7 +126,7 @@
     <div v-else>
       <p>No results...</p>
     </div>
-      <div v-if="multiplePages&&!loading" class="float-right flex select-none">
+      <div v-if="(multiplePages||pageNum>1)&&!loading" class="float-right flex select-none">
         <p class="my-auto mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
         <!-- Left Caret -->
         <svg
@@ -214,13 +214,15 @@ let {
   changeBuilding,
 } = props;
 let building = ref(props.building);
-let searchText = ref('');
+let visibleSearchText = ref('');
+let invisibleSearchText = '';
 let pageNum = ref(1);
 let assets: Ref<AssetSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let showQR = ref(false);
 let multiplePages = ref(false);
 let loading = ref(false);
+let pageCache = new Map<number, AssetSchema[]>();
 
 // Before component is mounted
 onBeforeMount(async () => {
@@ -246,7 +248,8 @@ onBeforeMount(async () => {
     // Check for search text
     if (query.text) {
       // Get text search from query string
-      searchText.value = query.text as string;
+      visibleSearchText.value = query.text as string;
+      invisibleSearchText = visibleSearchText.value
     }
     // Check if pageNum exists
     if (query.pageNum) {
@@ -293,7 +296,7 @@ function toggleQR() {
 
 function decodedQR(nxid: string) {
   showQR.value = false;
-  searchText.value = nxid;
+  visibleSearchText.value = nxid;
   search();
 }
 
@@ -322,13 +325,15 @@ async function advancedSearch(asset: AssetSchema) {
 
 // Search function
 function search() {
-  loading.value = true
   // Reset dis shit
   let current_page = pageNum.value
+  // loading.value = true
+  multiplePages.value = false
   // Check for webnx regex
-  if (/WNX([0-9]{7})+/.test(searchText.value)) {
+  if (/WNX([0-9]{7})+/.test(invisibleSearchText)) {
+    loading.value = true
     // temp value
-    let query = searchText.value;
+    let query = invisibleSearchText;
     // Search and add to cart
     getAssetByID(http, query, (data, err) => {
       loading.value = false
@@ -344,52 +349,127 @@ function search() {
         return errorHandler('Asset not found.');
       }
       // Emit actions
-      // Triple equals because Truthy and Falsy piss me off
       if (add === true) {
         emit('addAssetAction', asset);
       } else if (view === true) {
         emit('viewAssetAction', asset);
       } else if (edit == true) {
-        emit('viewAssetAction', asset);
+        emit('editAssetAction', asset);
       }
     });
   } else {
     // Text search
-    router.push({ query: { text: searchText.value, pageNum: pageNum.value } });
-    // Send the API text search query
-    getAssetsByTextSearch(
-      http,
-      searchText.value,
-      pageNum.value,
-      (data: any, err) => {
-        loading.value = false
-        if (err) {
-          // Send error to error handler
-          return errorHandler(err);
-        }
-        // typecast
-        assets.value = data as AssetSchema[];
-        // API will send 51 objects to indicate more pages
+    router.push({ query: { text: invisibleSearchText, pageNum: pageNum.value } });
+
+    if (pageCache.has(pageNum.value)&&pageCache.get(pageNum.value)!.length>0) {
+      assets.value = JSON.parse(JSON.stringify(pageCache.get(pageNum.value)!))
+      if (assets.value.length > 50) {
+        multiplePages.value = true;
+        // Pop the extra object
+        assets.value.pop();
+        // Set multiple pages
+        checkCache()
+      }
+    }
+    else {
+      loading.value = true
+      // Send the API text search query
+      getPage(current_page, invisibleSearchText)
+      .then((ass)=>{
+        assets.value = JSON.parse(JSON.stringify(ass))
         if (assets.value.length > 50) {
+          multiplePages.value = true;
           // Pop the extra object
           assets.value.pop();
           // Set multiple pages
-          multiplePages.value = true;
-        } else if (assets.value.length === 0 && pageNum.value != 1) {
-          // Extra redundancy just in case query string is malformed
-          pageNum.value = 1;
-          search();
         }
-        else {
-          pageNum.value = current_page
-        }
-      }
-    );
+        loading.value = false
+        pageCache.set(current_page, ass)
+        checkCache()
+      })
+      .catch(()=>{
+        pageNum.value = 1;
+        search();
+      })
+    }
+    }
+
+}
+
+
+async function checkCache(){
+  console.log("test1")
+  let page = pageNum.value
+  while(page > 0 && page >= (pageNum.value - 5)) {
+    let localPage = page
+    if(pageCache.has(localPage)) {
+      page -= 1
+      continue
+    }
+    else {
+      pageCache.set(localPage, [])
+      getPage(localPage, invisibleSearchText)
+        .then((ass: AssetSchema[])=>{
+          pageCache.set(localPage, ass)
+        })
+        .catch(()=>{pageCache.delete(localPage)})
+      page -= 1
+    }
   }
+  page = pageNum.value
+  while(page <= (pageNum.value + 5)) {
+    let localPage = page
+    if(pageCache.has(localPage)) {
+      page++
+      continue
+    }
+    else {
+      pageCache.set(localPage, [])
+      getPage(localPage, invisibleSearchText)
+        .then((ass)=>{
+          pageCache.set(localPage, ass)
+        })
+        .catch(()=>{pageCache.delete(localPage)})
+      page++
+    }
+  }
+}
+
+function searchButtonPressed() {
+  if(invisibleSearchText!=visibleSearchText.value) {
+    invisibleSearchText = visibleSearchText.value
+    pageCache = new Map<number, AssetSchema[]>()
+    pageNum.value = 1
+  }
+  search()
 }
 
 function addUntrackedAsset() {
   // Redirect
   router.push({ name: 'Add Untracked Asset' });
 }
+
+function getPage(page: number, text: string) {
+  return new Promise<AssetSchema[]>((res, rej)=>{
+    getAssetsByTextSearch(
+        http,
+        text,
+        page,
+        (data: any, err) => {
+          if (err) {
+            // Send error to error handler
+            rej()
+          }
+        // typecast
+        if (data&&data.length === 0 && page != 1) {
+          // Extra redundancy just in case query string is malformed
+          console.log("HUH?")
+          rej()
+        }
+        res(data as AssetSchema[])
+      }
+      );
+  })
+}
+
 </script>
