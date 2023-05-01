@@ -34,7 +34,6 @@ let partsOnAsset = ref([] as LoadedCartItem[]);
 let partsOnAssetCopy = [] as AssetSchema[];
 let inventory = ref([] as LoadedCartItem[]);
 let inventoryCopy = [] as LoadedCartItem[];
-let resetting = false;
 
 onBeforeMount(() => {
   if (router.currentRoute.value.query.asset_tag) {
@@ -49,36 +48,6 @@ onBeforeMount(() => {
       oldAsset.value = res as AssetSchema;
       // Save a copy for reset value
       assetCopy = JSON.parse(JSON.stringify(oldAsset.value));
-      // Register watchers
-      // watch(
-      //   () => oldAsset.value.asset_type,
-      //   () => {
-      //     if (!resetting) {
-      //       delete oldAsset.value.rails;
-      //       delete oldAsset.value.live;
-      //       delete oldAsset.value.public_port;
-      //       delete oldAsset.value.private_port;
-      //       delete oldAsset.value.ipmi_port;
-      //       delete oldAsset.value.power_port;
-      //       delete oldAsset.value.sid;
-      //     } else {
-      //       resetting = false;
-      //     }
-      //   }
-      // );
-      // watch(
-      //   () => oldAsset.value.live,
-      //   () => {
-      //     if (!resetting) {
-      //       // If server and live, asset has rails
-      //       if (oldAsset.value.asset_type == 'Server' && oldAsset.value.live) {
-      //         oldAsset.value.rails = true;
-      //       } else {
-      //         delete oldAsset.value.rails;
-      //       }
-      //     }
-      //   }
-      // );
       // Get parts from api
       getPartsOnAsset(http, oldAsset.value.asset_tag!, (res, err) => {
         if (err) {
@@ -109,7 +78,6 @@ function assetSubmit() {
     }
     return { nxid: part.part.nxid as string, quantity: part.quantity };
   }) as CartItem[];
-  console.log(oldAsset.value);
   // Iterate through list of parts and strip only the NXID and quantity
   updateAsset(http, oldAsset.value, unloadedParts, (data, err) => {
     if (err) {
@@ -175,7 +143,6 @@ function move(
     // Remove from array 1
     array1.value.splice(array1.value.indexOf(item1), 1);
     // Push to array 2
-    console.log(serial);
     array2.value.push({ part, serial: serial });
   } else {
     // Find matching part in array 1
@@ -204,7 +171,6 @@ function deletePart(part: LoadedCartItem) {
 }
 
 function reset() {
-  resetting = true;
   oldAsset.value = JSON.parse(JSON.stringify(assetCopy));
   partsOnAsset.value = JSON.parse(JSON.stringify(partsOnAssetCopy));
   inventory.value = JSON.parse(JSON.stringify(inventoryCopy));

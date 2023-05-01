@@ -8,15 +8,15 @@ import type { Store } from 'vuex';
 import InventoryPartComponent from '../../components/InventoryComponents/InventoryPartComponent.vue';
 import { checkin } from '../../plugins/dbCommands/partManager';
 import {
-  getAllUsers,
-  getUserInventoryByID,
+getAllUsers,
+getUserInventoryByID,
 } from '../../plugins/dbCommands/userManager';
 import type {
-  CartItem,
-  LoadedCartItem,
-  PartSchema,
-  User,
-  UserState,
+CartItem,
+LoadedCartItem,
+PartSchema,
+User,
+UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -35,6 +35,7 @@ let users = ref([] as User[]);
 let currentUser = ref({} as User);
 let inventory = ref([] as LoadedCartItem[]);
 let checkInList = ref([] as LoadedCartItem[]);
+let loading = ref(false)
 
 onBeforeMount(() => {
   loadUsers();
@@ -57,7 +58,9 @@ function loadUsers() {
 }
 
 async function loadInventory() {
+  loading.value = true
   getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
+    loading.value = false
     if (err) return errorHandler(err);
     inventory.value = data as LoadedCartItem[];
     checkInList.value = [] as LoadedCartItem[];
@@ -152,7 +155,10 @@ watch(currentUser, () => {
           </select>
         </div>
       </div>
-      <div v-if="inventory.length > 0">
+      <div v-if="loading" class="flex justify-center my-4">
+          <div class="loader text-center"></div>
+        </div>
+      <div v-else-if="inventory.length > 0">
         <div
           class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
         >
@@ -160,22 +166,24 @@ watch(currentUser, () => {
           <p>Manufacturer</p>
           <p>Name</p>
           <p class="hidden md:block">Location</p>
-          <p>Quantity</p>
+          <p>Quantity/SN</p>
           <p></p>
         </div>
-        <InventoryPartComponent
+        <div class="animate-bottom">
+          <InventoryPartComponent
           :isCurrentUser="false"
           v-for="item in inventory"
           :part="item.part"
           :serial="item.serial"
           :quantity="item.quantity"
           @movePart="moveToCheckin"
-        />
+          />
+        </div>
       </div>
       <div v-else-if="JSON.stringify(currentUser) == JSON.stringify({})">
         <p>Please select a user to get started...</p>
       </div>
-      <div v-else>
+      <div v-else class="animate-bottom">
         <p>Inventory is empty...</p>
       </div>
       <div class="my-4" v-if="checkInList.length > 0">
@@ -189,7 +197,7 @@ watch(currentUser, () => {
           <p>Manufacturer</p>
           <p>Name</p>
           <p class="hidden md:block">Location</p>
-          <p>Quantity</p>
+          <p>Quantity/SN</p>
           <p></p>
         </div>
         <InventoryPartComponent

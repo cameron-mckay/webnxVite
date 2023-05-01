@@ -160,3 +160,36 @@ body {
   height: 100%;
   overscroll-behavior-y: none;
 }
+
+.loader {
+  border: 8px solid rgb(209 213 219); /* Light grey */
+  border-top: 8px solid rgb(34 197 94); /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+.animate-bottom {
+  position: relative;
+  -webkit-animation-name: animatebottom;
+  -webkit-animation-duration: .75s;
+  animation-name: animatebottom;
+  animation-duration: .75s
+}
+
+@-webkit-keyframes animatebottom {
+  from { bottom:-50px; opacity:0 } 
+  to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom { 
+  from{ bottom:-50px; opacity:0 } 
+  to{ bottom:0; opacity:1 }
+}

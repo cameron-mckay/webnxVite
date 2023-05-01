@@ -63,7 +63,10 @@
         @decoded="decodedQR"
       />
     </form>
-    <div v-if="assets.length != 0">
+    <div v-if="loading" class="flex justify-center my-4">
+      <div class="loader text-center"></div>
+    </div>
+    <div v-else-if="assets.length != 0">
       <div
         class="relative grid grid-cols-4 p-1 text-center font-bold leading-8 transition md:grid-cols-6 md:p-2 md:leading-10"
       >
@@ -72,24 +75,58 @@
         <p class="hidden md:block">Type</p>
         <p class="hidden md:block">Chassis</p>
         <p>Status</p>
-        <p></p>
+        <div v-if="multiplePages" class="float-right flex select-none">
+          <p class="my-auto mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
+          <!-- Left Caret -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="button-icon hover:button-icon-hover active:button-icon-active"
+            viewBox="0 0 256 512"
+            v-on:click="prevPage"
+            v-if="pageNum > 1"
+          >
+            <path
+              fill="currentColor"
+              stroke="currentColor"
+              d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
+            />
+          </svg>
+          <div v-else class="button-icon opacity-0"></div>
+          <!-- Right Caret -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="button-icon hover:button-icon-hover active:button-icon-active"
+            viewBox="0 0 256 512"
+            v-if="multiplePages"
+            v-on:click="nextPage"
+          >
+            <path
+              fill="currentColor"
+              stroke="currentColor"
+              d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
+            />
+          </svg>
+          <div v-else class="button-icon opacity-0"></div>
+        </div>
       </div>
-      <AssetComponent
-        :add="add"
-        :edit="edit"
-        :view="view"
-        v-for="asset in assets"
-        v-bind:key="asset._id"
-        @editPartAction="$emit('editAssetAction', asset)"
-        @addPartAction="$emit('addAssetAction', asset)"
-        @viewPartAction="$emit('viewAssetAction', asset)"
-        :asset="asset"
-      />
+      <div class="animate-bottom">
+        <AssetComponent
+          :add="add"
+          :edit="edit"
+          :view="view"
+          v-for="asset in assets"
+          v-bind:key="asset._id"
+          @editPartAction="$emit('editAssetAction', asset)"
+          @addPartAction="$emit('addAssetAction', asset)"
+          @viewPartAction="$emit('viewAssetAction', asset)"
+          :asset="asset"
+        />
+      </div>
     </div>
     <div v-else>
       <p>No results...</p>
     </div>
-      <div v-if="multiplePages" class="float-right flex select-none">
+      <div v-if="multiplePages&&!loading" class="float-right flex select-none">
         <p class="my-auto mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
         <!-- Left Caret -->
         <svg
@@ -183,6 +220,7 @@ let assets: Ref<AssetSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let showQR = ref(false);
 let multiplePages = ref(false);
+let loading = ref(false);
 
 // Before component is mounted
 onBeforeMount(async () => {
@@ -262,13 +300,15 @@ function decodedQR(nxid: string) {
 // Advanced search
 async function advancedSearch(asset: AssetSchema) {
   // Add new attribute to asset (this a wizard trick to make adding data to router easier)
+  showAdvanced.value = false;
+  loading.value = true
   asset['advanced'] = 'true';
   // Push asset to router
   router.push({ query: asset });
   // Query the API
   getAssetsByData(http, asset, (data, err) => {
     // Hide advanced search
-    showAdvanced.value = false;
+    loading.value = false
     // Error
     if (err) {
       // Handle the error
@@ -282,6 +322,7 @@ async function advancedSearch(asset: AssetSchema) {
 
 // Search function
 function search() {
+  loading.value = true
   // Reset dis shit
   let current_page = pageNum.value
   // Check for webnx regex
@@ -290,6 +331,7 @@ function search() {
     let query = searchText.value;
     // Search and add to cart
     getAssetByID(http, query, (data, err) => {
+      loading.value = false
       if (err) {
         // Part not found
         return errorHandler(err);
@@ -320,6 +362,7 @@ function search() {
       searchText.value,
       pageNum.value,
       (data: any, err) => {
+        loading.value = false
         if (err) {
           // Send error to error handler
           return errorHandler(err);

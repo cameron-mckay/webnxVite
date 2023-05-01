@@ -3,14 +3,14 @@ import { Ref, onMounted, ref, watch } from 'vue';
 import InventoryPartComponent from '../../components/InventoryComponents/InventoryPartComponent.vue';
 import { movePart } from '../../plugins/dbCommands/partManager';
 import {
-  getAllUsers,
-  getUserInventoryByID,
+getAllUsers,
+getUserInventoryByID,
 } from '../../plugins/dbCommands/userManager';
 import {
-  LoadedCartItem,
-  PartRecord,
-  PartSchema,
-  User,
+LoadedCartItem,
+PartRecord,
+PartSchema,
+User,
 } from '../../plugins/interfaces';
 
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -36,9 +36,12 @@ let currentUser = ref({} as User);
 let transferUser = ref({} as User);
 let users = ref([] as User[]);
 let processingMove = false;
+let loading = ref(false);
 
 async function loadInventory() {
+  loading.value = true;
   getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
+    loading.value = false
     if (err) return errorHandler(err);
     items.value = data as LoadedCartItem[];
     transferList.value = [] as LoadedCartItem[];
@@ -207,7 +210,10 @@ watch(currentUser, () => {
             </select>
           </div>
         </div>
-        <div v-if="items.length > 0">
+        <div v-if="loading" class="flex justify-center">
+          <div class="loader text-center"></div>
+        </div>
+        <div v-else-if="items.length > 0">
           <div
             class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
           >
@@ -218,14 +224,16 @@ watch(currentUser, () => {
             <p>Quantity/SN</p>
             <p></p>
           </div>
-          <InventoryPartComponent
-            :isCurrentUser="false"
-            v-for="item in items"
-            :part="item.part"
-            :quantity="item.quantity"
-            :serial="item.serial"
-            @movePart="moveFromInventory"
-          />
+          <div class="animate-bottom">
+            <InventoryPartComponent
+              :isCurrentUser="false"
+              v-for="item in items"
+              :part="item.part"
+              :quantity="item.quantity"
+              :serial="item.serial"
+              @movePart="moveFromInventory"
+            />
+          </div>
         </div>
         <div v-else-if="JSON.stringify(currentUser) == JSON.stringify({})">
           <p>Please select a user to get started...</p>

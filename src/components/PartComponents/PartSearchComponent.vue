@@ -62,7 +62,10 @@
         @decoded="decodedQR"
       />
     </form>
-    <div v-if="parts.length != 0">
+    <div v-if="loading" class="flex justify-center my-4">
+      <div class="loader text-center"></div>
+    </div>
+    <div v-else-if="parts.length != 0" >
       <div
         class="relative grid grid-cols-4 p-1 text-center font-bold leading-8 transition md:grid-cols-6 md:p-2 md:leading-10"
       >
@@ -71,8 +74,41 @@
         <p>Name</p>
         <p class="hidden md:block">Location</p>
         <p>Quantity</p>
-        <p></p>
+        <div class="float-right flex select-none">
+      <p class="mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
+      <!-- Left Caret -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="button-icon hover:button-icon-hover active:button-icon-active"
+        viewBox="0 0 256 512"
+        v-on:click="prevPage"
+        v-if="multiplePages || pageNum > 1"
+      >
+        <path
+          fill="currentColor"
+          stroke="currentColor"
+          d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
+        />
+      </svg>
+      <div v-else-if="multiplePages" class="button-icon opacity-0"></div>
+      <!-- Right Caret -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="button-icon hover:button-icon-hover active:button-icon-active"
+        viewBox="0 0 256 512"
+        v-if="multiplePages"
+        v-on:click="nextPage"
+      >
+        <path
+          fill="currentColor"
+          stroke="currentColor"
+          d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
+        />
+      </svg>
+      <div v-else-if="multiplePages" class="button-icon opacity-0"></div>
+    </div>
       </div>
+      <div class="animate-bottom">
       <PartComponent
         :add="add || add_object!.show == true"
         :edit="edit"
@@ -85,7 +121,8 @@
         :part="part"
       />
     </div>
-    <div v-else>
+    </div>
+    <div v-else class="animate-bottom my-4">
       <p>No results...</p>
     </div>
     <div class="float-right flex select-none">
@@ -181,6 +218,7 @@ let parts: Ref<PartSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let showQR = ref(false);
 let multiplePages = ref(false);
+let loading = ref(false);
 
 // Before component is mounted
 onBeforeMount(async () => {
@@ -249,6 +287,7 @@ function decodedQR(nxid: string) {
 
 // Advanced search
 async function advancedSearch(part: PartSchema) {
+  loading.value = true;
   part['advanced'] = 'true';
   part['location'] = location;
   part['building'] = building.value.toString();
@@ -260,6 +299,7 @@ async function advancedSearch(part: PartSchema) {
   delete part['nxid'];
   getPartsByData(http, part, building.value, location, (data, err) => {
     // Hide advanced search
+    loading.value = false
     showAdvanced.value = false;
     // Error
     if (err) {
@@ -302,6 +342,7 @@ async function search() {
   //     })
   // }
   // else {
+  loading.value = true;
   multiplePages.value = false;
   // Text search
   router.push({
@@ -319,6 +360,7 @@ async function search() {
     building.value,
     location,
     (data: any, err) => {
+      loading.value = false
       if (err) {
         // Send error to error handler
         return errorHandler(err);

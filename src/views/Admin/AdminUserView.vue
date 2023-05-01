@@ -24,9 +24,12 @@ const { http, errorHandler, displayMessage } = defineProps<Props>();
 let users: Ref<Array<User>> = ref([]);
 let editUser = ref(false);
 let currentUser: Ref<User> = ref({});
+let loading = ref(false)
 
 function getUsers() {
+  loading.value = true
   getAllUsers(http, (data, err) => {
+    loading.value = false
     if (err) {
       return errorHandler(err);
     }
@@ -71,13 +74,18 @@ onMounted(() => {
       <p class="grid md:hidden">Name</p>
       <p>Role</p>
     </div>
-    <UserComponent
+    <div v-if="loading" class="flex justify-center my-4">
+      <div class="loader text-center"></div>
+    </div>
+    <div v-else class="animate-bottom">
+      <UserComponent
       class="relative grid grid-cols-5 text-center text-sm leading-10 transition"
       v-for="user in users"
       :user="user"
       @edit="toggleEdit(user)"
-    />
-    <UserManagerComponent
+      />
+    </div>
+      <UserManagerComponent
       v-if="editUser"
       class="pointer-events-auto"
       :user="currentUser"

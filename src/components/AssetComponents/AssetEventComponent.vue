@@ -96,9 +96,6 @@ onMounted(() => {
         v-if="event.info_updated && asset.prev != null"
         class="detail-row col-span-1"
       >
-        <h1 v-if="asset.migrated" class="col-span-2 mb-4 text-4xl leading-8 md:leading-10 bg-green-400">
-          MIGRATED
-        </h1>
         <h1 class="col-span-2 mb-4 text-4xl leading-8 md:leading-10">
           {{ asset.asset_tag }}
         </h1>

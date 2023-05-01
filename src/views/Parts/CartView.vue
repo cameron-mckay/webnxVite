@@ -9,18 +9,18 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import SerializedCartItemComponent from '../../components/KioskComponents/SerializedCartItemComponent.vue';
 import {
-  checkout,
-  getPartByID,
-  getUniqueOnPartRecord,
+checkout,
+getPartByID,
+getUniqueOnPartRecord,
 } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
-  CartItem,
-  LoadedCartItem,
-  PartSchema,
-  SNAvailable,
-  User,
-  UserState,
+CartItem,
+LoadedCartItem,
+PartSchema,
+SNAvailable,
+User,
+UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -248,7 +248,7 @@ function localCheckout() {
         <p>Manufacturer</p>
         <p>Name</p>
         <p class="hidden md:block">Location</p>
-        <p>Quantity</p>
+        <p>Quantity/SN</p>
         <p></p>
       </div>
       <SerializedCartItemComponent

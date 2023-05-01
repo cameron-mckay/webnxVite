@@ -139,28 +139,9 @@ function addPartFromInventory(item: LoadedCartItem) {
         "
         class="col-span-2 grid grid-cols-2"
       >
-        <label>Status:</label>
-        <select :required="strict" v-model="oldAsset.live" class="textbox m-1">
-          <option :value="undefined" selected disabled>Select</option>
-          <option :value="true">Live</option>
-          <option :value="false">Inactive</option>
-        </select>
-        <div
-          v-if="
-            (oldAsset.asset_type == 'PDU' || oldAsset.asset_type == 'Switch') &&
-            oldAsset.live
-          "
-          class="col-span-2 grid grid-cols-2"
-        >
-          <label>Rack Location:</label>
-          <input
-            class="textbox m-1"
-            :required="strict"
-            v-model="oldAsset.power_port"
-            type="text"
-            placeholder="Rack Location"
-          />
-        </div>
+
+
+      
         <div
           v-if="oldAsset.asset_type == 'Server'"
           class="col-span-2 grid grid-cols-2"
@@ -173,9 +154,77 @@ function addPartFromInventory(item: LoadedCartItem) {
             :defaultValue="oldAsset.chassis_type"
           />
           <div
-            v-if="oldAsset.chassis_type == 'Rack'"
+            v-if="oldAsset.chassis_type != 'Tower'"
             class="col-span-2 grid grid-cols-2"
           >
+            <label>Rack Units:</label>
+            <input
+              class="textbox m-1"
+              :required="strict"
+              v-model="oldAsset.units"
+              type="number"
+              min="1"
+              placeholder="Rack Units"
+            />
+            <label>Num Bays:</label>
+            <input
+              class="textbox m-1"
+              :required="strict"
+              v-model="oldAsset.num_bays"
+              type="number"
+              min="0"
+              placeholder="Num Bays"
+            />
+
+            <div
+              v-if="oldAsset.num_bays&&oldAsset.num_bays>0"
+              class="col-span-2 grid grid-cols-2"
+            >
+              <label>Bay Size:</label>
+              <select
+              :required="strict"
+              v-model="oldAsset.bay_type"
+              class="textbox m-1"
+              >
+                <option :value="undefined" selected disabled>Select</option>
+                <option :value="'3.5'">3.5"</option>
+                <option :value="'2.5'">2.5"</option>
+                <option :value="'Both'">Both</option>
+              </select>
+          </div>
+          <label>PDU Cables::</label>
+          <select
+          :required="strict"
+          v-model="oldAsset.cable_type"
+          class="textbox m-1"
+          >
+            <option :value="undefined" selected disabled>Select</option>
+            <option :value="'short'">Short</option>
+            <option :value="'long'">Long</option>
+            <option :value="'none'">None</option>
+          </select>
+
+          <label>Num PSUs:</label>
+            <input
+              class="textbox m-1"
+              :required="strict"
+              v-model="oldAsset.num_psu"
+              type="number"
+              min="0"
+              placeholder="Num PSUs"
+            />
+          <div
+              v-if="oldAsset.num_psu&&oldAsset.num_psu>0"
+              class="col-span-2 grid grid-cols-2"
+            >
+            <label>PSU Model:</label>
+            <CustomDropdownComponent
+            :required="strict"
+            :options="['PWS-501P-1R', 'PWS-741P-1R', 'PWS-920P-1R', 'PWS-920P-SQ', 'PWS-1K28P-SQ', 'PWS-504P-1R']"
+            @updateValue="(value: string) => { oldAsset.psu_model = value }"
+            :defaultValue="oldAsset.psu_model"
+            />
+          </div>
             <label>Rails:</label>
             <select
               :required="strict"
@@ -193,14 +242,65 @@ function addPartFromInventory(item: LoadedCartItem) {
                 v-model="oldAsset.in_rack"
                 class="textbox m-1"
               >
+                <option :value="undefined" selected disabled>Select</option>
                 <option :value="true">Yes</option>
                 <option :value="false">No</option>
               </select>
             </div>
           </div>
+          <div v-else-if="oldAsset.chassis_type=='Tower'" class="col-span-2 grid grid-cols-2">
+            <label>Status:</label>
+            <select :required="strict" v-model="oldAsset.live" class="textbox m-1">
+              <option :value="undefined" selected disabled>Select</option>
+              <option :value="true">Live</option>
+              <option :value="false">Inactive</option>
+            </select>
+            <div v-if="oldAsset.live==true" class="col-span-2 grid grid-cols-2">
+              <label>Power Port:</label>
+              <input
+                class="textbox m-1"
+                :required="strict"
+                v-model="oldAsset.power_port"
+                type="text"
+                placeholder="Power Port"
+              />
+              <label>Public Port:</label>
+              <input
+                class="textbox m-1"
+                :required="strict"
+                v-model="oldAsset.public_port"
+                type="text"
+                placeholder="Public Port"
+              />
+              <label>Private Port:</label>
+              <input
+                class="textbox m-1"
+                :required="strict"
+                v-model="oldAsset.private_port"
+                type="text"
+                placeholder="Private Port"
+              />
+              <label>IPMI Port:</label>
+              <input
+                class="textbox m-1"
+                :required="strict"
+                v-model="oldAsset.ipmi_port"
+                type="text"
+                placeholder="IPMI Port"
+              />
+              <label>SID:</label>
+              <input
+              class="textbox m-1"
+              :required="strict"
+              v-model="oldAsset.sid"
+              type="number"
+              placeholder="Service ID"
+              />
+            </div>
+          
+          </div>
           <div
             v-if="
-              (oldAsset.live && oldAsset.chassis_type == 'Rack') ||
               oldAsset.in_rack ||
               oldAsset.power_port
             "
@@ -238,31 +338,103 @@ function addPartFromInventory(item: LoadedCartItem) {
               type="text"
               placeholder="IPMI Port"
             />
-          </div>
-          <div v-if="oldAsset.live" class="col-span-2 grid grid-cols-2">
-            <label>SID:</label>
-            <input
+            <label>Status:</label>
+            <select :required="strict" v-model="oldAsset.live" class="textbox m-1">
+              <option :value="undefined" selected disabled>Select</option>
+              <option :value="true">Live</option>
+              <option :value="false">Inactive</option>
+            </select>
+            <div v-if="oldAsset.live" class="col-span-2 grid grid-cols-2">
+              <label>SID:</label>
+              <input
               class="textbox m-1"
               :required="strict"
               v-model="oldAsset.sid"
               type="number"
               placeholder="Service ID"
-            />
-          </div>
-          <div v-if="strict" class="col-span-2 my-4">
-            <h1 class="inline-block text-4xl leading-8 md:leading-10">
-              Notes:
-            </h1>
-            <textarea
-              class="textbox m-1"
-              rows="4"
-              v-model="oldAsset.notes"
-              placeholder="Drag to resize"
-            />
+              />
+            </div>          
           </div>
           <!-- Part Search here -->
+          <div v-if="oldAsset.in_rack==false&&oldAsset.live==false"
+          class="col-span-2 grid grid-cols-2">
+            <label>Pallet:</label>
+            <input
+              class="textbox m-1"
+              :required="strict"
+              v-model="oldAsset.pallet"
+              type="text"
+              placeholder="Pallet"
+            />
+          
+          </div>
         </div>
+        <div v-else class="col-span-2 grid grid-cols-2">
+          <label>FW Revision:</label>
+            <input
+              class="textbox m-1"
+              :required="strict"
+              v-model="oldAsset.fw_rev"
+              type="text"
+              placeholder="FW Revision"
+            />
+          </div>
+          <label>Status:</label>
+          <select :required="strict" v-model="oldAsset.live" class="textbox m-1">
+            <option :value="undefined" selected disabled>Select</option>
+            <option :value="true">Live</option>
+            <option :value="false">Inactive</option>
+          </select>
+        <div
+            v-if="
+              oldAsset.asset_type == 'PDU' ||
+              oldAsset.asset_type == 'Switch'
+            "
+            class="col-span-2 grid grid-cols-2"
+          >
+          
+          <div
+            v-if="oldAsset.live"
+            class="col-span-2 grid grid-cols-2"
+          >
+            <label>Rack Location:</label>
+            <input
+              class="textbox m-1"
+              :required="strict"
+              v-model="oldAsset.power_port"
+              type="text"
+              placeholder=" Rack Location"
+              />
+          </div>
+          <div v-if="oldAsset.live==false"
+          class="col-span-2 grid grid-cols-2">
+            <label>Pallet:</label>
+            <input
+              class="textbox m-1"
+              :required="strict"
+              v-model="oldAsset.pallet"
+              type="text"
+              placeholder="Pallet"
+            />
+          </div>
       </div>
+    </div>
+      <div v-if="strict" class="col-span-2 my-4">
+        <h1 class="inline-block text-4xl leading-8 md:leading-10">
+          Notes:
+        </h1>
+        <textarea
+          class="textbox m-1"
+          rows="4"
+          v-model="oldAsset.notes"
+          placeholder="Drag to resize"
+        />
+      </div>
+      
+      
+      
+      
+      
       <div v-if="http != undefined" class="col-span-2">
         <div v-show="oldAsset.asset_type == 'Server'" class="flex">
           <h1 class="inline-block text-4xl leading-8 md:leading-10">Parts:</h1>
