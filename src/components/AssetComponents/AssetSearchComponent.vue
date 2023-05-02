@@ -329,6 +329,7 @@ function toggleQR() {
 function decodedQR(nxid: string) {
   showQR.value = false;
   visibleSearchText.value = nxid;
+  invisibleSearchText = nxid;
   search();
 }
 
