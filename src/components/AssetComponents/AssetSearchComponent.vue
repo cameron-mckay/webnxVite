@@ -482,10 +482,10 @@ function checkCacheAdvanced(){
 
 function searchButtonPressed() {
   if(invisibleSearchText!=visibleSearchText.value) {
-    invisibleSearchText = visibleSearchText.value
     pageCache = new Map<number, AssetSchema[]>()
-    pageNum.value = 1
+    invisibleSearchText = visibleSearchText.value
   }
+  pageNum.value = 1
   search()
 }
 
