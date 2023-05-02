@@ -54,7 +54,7 @@
       <input class="search-button mr-0" type="submit" value="Search" />
       <AdvancedSearchComponent
         v-if="showAdvanced"
-        @assetSearch="advancedSearch"
+        @assetSearch="advancedSearchButtonPressed"
         @toggle="toggleAdvanced"
       />
       <QRCodeScannerPopupComponent
@@ -75,9 +75,12 @@
         <p class="hidden md:block">Type</p>
         <p class="hidden md:block">Chassis</p>
         <p>Status</p>
-        <div v-if="multiplePages||pageNum>1" class="float-right flex select-none">
-          <p class="my-auto mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
+        <div v-if="multiplePages||pageNum>1" class="float-right flex select-none justify-between">
+          <p class="my-auto inline-block">{{ `Page: ${pageNum}` }}</p>
           <!-- Left Caret -->
+          <div class=" shrink-0 flex">
+
+          
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="button-icon hover:button-icon-hover active:button-icon-active"
@@ -95,7 +98,7 @@
           <!-- Right Caret -->
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="button-icon hover:button-icon-hover active:button-icon-active"
+            class="button-icon hover:button-icon-hover active:button-icon-active mr-0"
             viewBox="0 0 256 512"
             v-if="multiplePages"
             v-on:click="nextPage"
@@ -106,7 +109,8 @@
               d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
             />
           </svg>
-          <div v-else class="button-icon opacity-0"></div>
+          <div v-else class="button-icon opacity-0 mr-0"></div>
+        </div>
         </div>
       </div>
       <div class="md:animate-bottom">
@@ -124,7 +128,7 @@
       </div>
     </div>
     <div v-else>
-      <p>No results...</p>
+      <p class=" my-4">No results...</p>
     </div>
       <div v-if="(multiplePages||pageNum>1)&&!loading" class="float-right flex select-none">
         <p class="my-auto mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
@@ -237,6 +241,10 @@ onBeforeMount(async () => {
   if (query.advanced === 'true') {
     // Define variable to store Asset attributes
     let searchAsset = {} as AssetSchema;
+    if (query.pageNum) {
+      // Parse page number from query string
+      pageNum.value = parseInt(query.pageNum as string);
+    }
     // Loop through query to create part object
     for (const key in query) {
       // Copy
@@ -262,23 +270,47 @@ onBeforeMount(async () => {
 
 // Previous search page
 function prevPage() {
+  let { query } = router.currentRoute.value;
   // Check current page num
   if (pageNum.value > 1) {
     // Decrement
     pageNum.value -= 1;
     // Send search query
-    search();
+    if(query.advanced === 'true') {
+      let searchAsset = {} as AssetSchema;
+      // Loop through query to create part object
+      for (const key in query) {
+        // Copy
+        searchAsset[key] = query[key];
+      }
+      advancedSearch(searchAsset)
+    }
+    else {
+      search();
+    }
   }
 }
 
 // Next search page
 function nextPage() {
+  let { query } = router.currentRoute.value;
   // Check if results have multiple pages
   if (multiplePages) {
     // Increment page num
     pageNum.value += 1;
     // Send search query
-    search();
+    if(query.advanced === 'true') {
+      let searchAsset = {} as AssetSchema;
+      // Loop through query to create part object
+      for (const key in query) {
+        // Copy
+        searchAsset[key] = query[key];
+      }
+      advancedSearch(searchAsset)
+    }
+    else {
+      search();
+    }
   }
 }
 
@@ -306,6 +338,9 @@ async function advancedSearch(asset: AssetSchema) {
   showAdvanced.value = false;
   loading.value = true
   asset['advanced'] = 'true';
+  asset['pageNum'] = pageNum.value;
+  asset['pageSize'] = 50;
+  multiplePages.value = false
   // Push asset to router
   router.push({ query: asset });
   // Query the API
@@ -319,6 +354,12 @@ async function advancedSearch(asset: AssetSchema) {
     } else if (data) {
       // Set parts list to API response
       assets.value = data as AssetSchema[];
+      if (assets.value.length > 50) {
+        multiplePages.value = true;
+        // Pop the extra object
+        assets.value.pop();
+        // Set multiple pages
+      }
     }
   });
 }
@@ -435,6 +476,10 @@ async function checkCache(){
   }
 }
 
+function checkCacheAdvanced(){
+
+}
+
 function searchButtonPressed() {
   if(invisibleSearchText!=visibleSearchText.value) {
     invisibleSearchText = visibleSearchText.value
@@ -442,6 +487,11 @@ function searchButtonPressed() {
     pageNum.value = 1
   }
   search()
+}
+
+function advancedSearchButtonPressed(asset: AssetSchema) {
+  pageNum.value = 1
+  advancedSearch(asset)
 }
 
 function addUntrackedAsset() {

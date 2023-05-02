@@ -39,7 +39,7 @@ function submit() {
   } else {
     request.value.quantity = quantity.value;
   }
-  emit('submitRequest', request.value, owner);
+  emit('submitRequest', request.value, owner.value);
 }
 
 // When component mounted
