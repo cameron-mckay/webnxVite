@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { PartSchema } from '../../plugins/interfaces';
+import { LoadedCartItem, PartSchema } from '../../plugins/interfaces';
 
 interface Props {
   part: PartSchema;
   quantity?: number;
   isCurrentUser: boolean;
   serial?: string;
+  untracked?: boolean;
+  item?: LoadedCartItem;
 }
-const { part, quantity, serial, isCurrentUser } = defineProps<Props>();
+const { part, quantity, serial, isCurrentUser, item } = defineProps<Props>();
 </script>
 
 <template>
@@ -19,8 +21,24 @@ const { part, quantity, serial, isCurrentUser } = defineProps<Props>();
       <p class="break-words">{{ part.manufacturer }}</p>
       <p class="break-words">{{ part.name }}</p>
       <p class="hidden break-words md:block">{{ part.shelf_location }}</p>
-      <p class="break-words" v-if="serial">{{ serial }}</p>
+      <!-- <p class="break-words" v-if="serial">{{ serial }}</p>
+      <p class="break-words" v-else>{{ quantity }}</p> -->
+
+      <input
+        class="textbox pl-2"
+        v-if="untracked"
+        required
+        v-model="item!.serial"
+        type="text"
+        placeholder="Serial"
+      />
+      <p class="break-words" v-else-if="part.serialized">
+        {{ serial }}
+      </p>
       <p class="break-words" v-else>{{ quantity }}</p>
+
+
+
       <div v-if="isCurrentUser" class="my-auto flex justify-end">
         <!-- Single arrow up -->
         <svg

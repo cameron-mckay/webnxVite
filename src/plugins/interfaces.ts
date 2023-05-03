@@ -98,6 +98,7 @@ export interface PartRecord {
   asset_tag?: string;
   serial?: string;
   owner?: string;
+  ebay?: string;
   by?: string;
   date_created?: string;
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, onMounted, ref, watch } from 'vue';
+import { Ref, onMounted, ref } from 'vue';
 import InventoryPartComponent from '../../components/InventoryComponents/InventoryPartComponent.vue';
 import { movePart } from '../../plugins/dbCommands/partManager';
 import {
@@ -31,9 +31,9 @@ const { http, store, router, errorHandler, displayMessage } =
 
 let items = ref([] as LoadedCartItem[]);
 let transferList = ref([] as LoadedCartItem[]);
-let isCurrentUser = ref(true);
+let orderID = ref("");
 let currentUser = ref({} as User);
-let transferUser = ref({} as User);
+
 let users = ref([] as User[]);
 let processingMove = false;
 let loading = ref(false);
@@ -82,7 +82,43 @@ function firstLoad() {
 }
 
 function moveFromInventory(part: PartSchema, quantity: number, serial: string) {
-  move(items, transferList, part, quantity, serial);
+    let array1 = items
+    let array2 = transferList
+
+  // Create var for item to move
+  let item1 = {} as LoadedCartItem | undefined;
+  // If item is serialized
+  if (serial != undefined) {
+    // Find existing item
+    item1 = array1.value.find((e) => e.serial == serial);
+    // Return if not found
+    if (!item1) {
+      return;
+    }
+    // Remove from array 1
+    array1.value.splice(array1.value.indexOf(item1), 1);
+    // Push to array 2
+    console.log(serial);
+    array2.value.push({ part, serial: serial });
+  } else {
+    // Find matching part in array 1
+    item1 = array1.value.find((e) => e.part.nxid == part.nxid);
+    // Return if not found
+    if (!item1 || !quantity) {
+      return;
+    }
+    // subtract quantity
+    item1.quantity! -= quantity;
+    // Remove from array if quantity < 1
+    if (item1.quantity! < 1)
+      array1.value.splice(array1.value.indexOf(item1), 1);
+    // Find in array 2
+    let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
+    // If it doesn't exist, push a new entry
+    for (let i = 0; i < quantity; i++) {
+        array2.value.push({ part, serial: '' });
+    }
+  }
 }
 
 function moveFromTransferList(
@@ -100,21 +136,34 @@ function move(
   quantity: number,
   serial: string
 ) {
-  // Create var for item to move
-  let item1 = {} as LoadedCartItem | undefined;
-  // If item is serialized
-  if (serial != undefined) {
-    // Find existing item
-    item1 = array1.value.find((e) => e.serial == serial);
-    // Return if not found
-    if (!item1) {
+    // Create var for item to move
+    let item1 = {} as LoadedCartItem | undefined;
+    // If item is serialized
+    if (serial != undefined) {
+        // Find existing item
+        item1 = array1.value.find((e) => e.serial == serial);
+        // Return if not found
+    if (!item1&&part.serialized) {
+        console.log(serial)
+        console.log(array1)
+        console.log('test1234')
       return;
     }
     // Remove from array 1
-    array1.value.splice(array1.value.indexOf(item1), 1);
+    array1.value.splice(array1.value.indexOf(item1!), 1);
     // Push to array 2
     console.log(serial);
-    array2.value.push({ part, serial: serial });
+    if (part.serialized) {
+        array2.value.push({ part, serial: serial });
+    }
+    else {
+        console.log("TEST")
+        let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
+        // If it doesn't exist, push a new entry
+        if (!item2) array2.value.push({ part, quantity: 1 });
+        // Otherwise increment existing entry
+        else item2.quantity! += 1;    
+    }
   } else {
     // Find matching part in array 1
     item1 = array1.value.find((e) => e.part.nxid == part.nxid);
@@ -147,14 +196,16 @@ function submit() {
       } as PartRecord;
 
       let to = {
-        owner: transferUser.value._id,
-        building: transferUser.value.building,
+        owner: 'sold',
+        building: currentUser.value.building,
         nxid: item.part.nxid,
+        ebay: orderID.value
       } as PartRecord;
-
+      console.log(to)
       if (item.serial) {
         to.serial = item.serial;
-        from.serial = item.serial;
+        if(item.part.serialized)
+            from.serial = item.serial;
         item.quantity = 1;
       } else {
         delete to.serial;
@@ -173,53 +224,18 @@ function submit() {
     processingMove = false;
   }
 }
-
-watch(currentUser, () => {
-  isCurrentUser.value =
-    currentUser.value._id === store.state.user._id ? true : false;
-  loadInventory();
-  transferList.value = [];
-  transferUser.value =
-    currentUser.value._id != store.state.user._id
-      ? store.state.user
-      : { _id: 'all', building: store.state.user.building };
-});
 </script>
 <template>
   <div>
     <form @submit.prevent="submit">
       <div>
         <div class="mb-4 flex flex-wrap justify-between">
+          
           <h1
             class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
-            v-if="currentUser._id == 'all'"
           >
-          All Tech's Inventory
+            Your Inventory
           </h1>
-          <h1
-            class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
-            v-if="currentUser._id == 'testing'"
-          >
-            Testing Center
-          </h1>
-          <h1
-            class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
-            v-else
-          >
-            {{ currentUser.first_name }}'s Inventory
-          </h1>
-          <div class="flex">
-            <p class="my-auto mr-2">User:</p>
-            <select required v-model="currentUser" class="mt-auto">
-              <option disabled :value="{}"></option>
-              <option :value="store.state.user" selected>Your Inventory</option>
-              <option :value="{ _id: 'all' }">All Tech's</option>
-              <option v-if="store.state.user.role!='tech'" :value="{ _id: 'testing' }">Testing Center</option>
-              <option v-for="user in users" :value="user">
-                {{ `${user.first_name} ${user.last_name}` }}
-              </option>
-            </select>
-          </div>
         </div>
         <div v-if="loading" class="flex justify-center">
           <div class="loader text-center"></div>
@@ -253,43 +269,11 @@ watch(currentUser, () => {
           <p>Inventory is empty...</p>
         </div>
         <div v-if="transferList.length > 0">
-          <div class="my-4 flex flex-wrap justify-between">
+          <div class="my-4 flex flex-wrap">
             <h1 class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit">
-              Transfer List
+              Order:
             </h1>
-            <div class="flex">
-              <p class="my-auto mr-2">To:</p>
-              <select required v-model="transferUser" class="mt-auto">
-                <option
-                  v-if="currentUser._id != store.state.user._id"
-                  :value="store.state.user"
-                  :disabled="store.state.user._id == currentUser._id"
-                  selected
-                >
-                  Your Inventory
-                </option>
-                <option
-                  v-if="currentUser._id != 'all'"
-                  :value="{ _id: 'all', building: store.state.user.building }"
-                  :disabled="currentUser._id == 'all'"
-                  selected
-                >
-                  All Tech's
-                </option>
-                <option :value="{ _id: 'testing', building: store.state.user.building }" :disabled="currentUser._id == 'testing'">Testing Center</option>
-                <option
-                  v-if="
-                    store.state.user.role == 'admin' ||
-                    store.state.user.role == 'clerk'
-                  "
-                  v-for="user in users"
-                  :disabled="user._id == currentUser._id"
-                  :value="user"
-                >
-                  {{ `${user.first_name} ${user.last_name}` }}
-                </option>
-              </select>
-            </div>
+            <input type="text" placeholder="eBay Order ID" v-model="orderID" class="textbox max-w-sm">
           </div>
           <div
             class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
@@ -305,12 +289,14 @@ watch(currentUser, () => {
             :isCurrentUser="true"
             v-for="item in transferList"
             :part="item.part"
+            :untracked="!item.part.serialized"
             :quantity="item.quantity"
             :serial="item.serial"
+            :item="item"
             @movePart="moveFromTransferList"
           />
           <div class="flex justify-center">
-            <input type="submit" class="submit mx-1" value="Move Parts" />
+            <input type="submit" class="submit mx-1" value="Mark As Sold" />
           </div>
         </div>
       </div>

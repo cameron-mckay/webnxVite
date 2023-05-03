@@ -14,6 +14,12 @@
       >
         Manage Parts
       </RouterLink>
+      <RouterLink
+        to="/manage/ebay"
+        class="m-2 block rounded-lg bg-green-400 p-4 text-center hover:bg-green-500 active:bg-green-600"
+      >
+        Sell On eBay
+      </RouterLink>
     </div>
   </div>
 </template>

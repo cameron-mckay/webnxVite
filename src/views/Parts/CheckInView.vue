@@ -48,6 +48,7 @@ function loadUsers() {
     }
     users.value = data as User[];
     users.value.push({ first_name: 'All', last_name: 'Techs', _id: 'all' });
+    users.value.push({ first_name: 'Testing', last_name: 'Center', _id: 'testing' });
     for (let i = 0; i < users.value.length; i++) {
       if (users.value[i].role == 'kiosk') {
         users.value.splice(i, 1);

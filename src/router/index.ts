@@ -82,6 +82,11 @@ const routes = [
     component: () => import('../views/Admin/AdminPartSearchView.vue'),
   },
   {
+    path: '/manage/ebay',
+    name: 'Sell On eBay',
+    component: () => import('../views/Parts/SellOnEbay.vue'),
+  },
+  {
     path: '/manage/parts/create',
     name: 'Create Part',
     component: () => import('../views/Admin/CreatePartView.vue'),
