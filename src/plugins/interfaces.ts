@@ -73,16 +73,16 @@ export interface AssetSchema {
   sid?: number;
   notes?: string;
 
-  units?: number,
-  num_psu?: number,
-  psu_model?: string,
-  cable_type?: string,
-  num_bays?: number,
-  bay_type?: string,
-  pallet?: string,
-  fw_rev?: string,
-  old_by?: string,
-  migrated?: boolean,
+  units?: number;
+  num_psu?: number;
+  psu_model?: string;
+  cable_type?: string;
+  num_bays?: number;
+  bay_type?: string;
+  pallet?: string;
+  fw_rev?: string;
+  old_by?: string;
+  migrated?: boolean;
 
   date_created?: string;
   date_replaced?: string;

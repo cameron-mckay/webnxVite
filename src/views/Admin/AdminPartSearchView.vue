@@ -8,16 +8,16 @@ import AddInventoryComponent from '../../components/PartComponents/AddInventoryC
 import EditPartComponent from '../../components/PartComponents/EditPartComponent.vue';
 import SearchComponent from '../../components/PartComponents/PartSearchComponent.vue';
 import {
-createNewPartRecords,
-updatePart,
-updatePartImage,
+  createNewPartRecords,
+  updatePart,
+  updatePartImage,
 } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
-CartItem,
-PartSchema,
-User,
-UserState,
+  CartItem,
+  PartSchema,
+  User,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -49,7 +49,7 @@ function getUsers() {
     if (err) {
       return errorHandler(err);
     }
-    console.log(data)
+    console.log(data);
     users.value = data as User[];
   });
 }

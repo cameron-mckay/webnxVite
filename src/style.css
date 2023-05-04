@@ -171,25 +171,38 @@ body {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-
 
 .animate-bottom {
   position: relative;
   -webkit-animation-name: animatebottom;
-  -webkit-animation-duration: .75s;
+  -webkit-animation-duration: 0.75s;
   animation-name: animatebottom;
-  animation-duration: .75s
+  animation-duration: 0.75s;
 }
 
 @-webkit-keyframes animatebottom {
-  from { bottom:-50px;} 
-  to { bottom:0px;}
+  from {
+    bottom: -50px;
+  }
+  to {
+    bottom: 0px;
+  }
 }
 
-@keyframes animatebottom { 
-  from{ bottom:-50px; opacity:0 } 
-  to{ bottom:0; opacity:1 }
+@keyframes animatebottom {
+  from {
+    bottom: -50px;
+    opacity: 0;
+  }
+  to {
+    bottom: 0;
+    opacity: 1;
+  }
 }

@@ -3,14 +3,14 @@ import { Ref, onMounted, ref, watch } from 'vue';
 import InventoryPartComponent from '../../components/InventoryComponents/InventoryPartComponent.vue';
 import { movePart } from '../../plugins/dbCommands/partManager';
 import {
-getAllUsers,
-getUserInventoryByID,
+  getAllUsers,
+  getUserInventoryByID,
 } from '../../plugins/dbCommands/userManager';
 import {
-LoadedCartItem,
-PartRecord,
-PartSchema,
-User,
+  LoadedCartItem,
+  PartRecord,
+  PartSchema,
+  User,
 } from '../../plugins/interfaces';
 
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -41,7 +41,7 @@ let loading = ref(false);
 async function loadInventory() {
   loading.value = true;
   getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
-    loading.value = false
+    loading.value = false;
     if (err) return errorHandler(err);
     items.value = data as LoadedCartItem[];
     transferList.value = [] as LoadedCartItem[];
@@ -166,7 +166,7 @@ function submit() {
           // Handle errors
           errorHandler(err);
         }
-        displayMessage(data as string)
+        displayMessage(data as string);
       });
     });
     transferList.value = [];
@@ -194,18 +194,15 @@ watch(currentUser, () => {
             class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
             v-if="currentUser._id == 'all'"
           >
-          All Tech's Inventory
+            All Tech's Inventory
           </h1>
           <h1
             class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
-            v-if="currentUser._id == 'testing'"
+            v-else-if="currentUser._id == 'testing'"
           >
             Testing Center
           </h1>
-          <h1
-            class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
-            v-else
-          >
+          <h1 class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit" v-else>
             {{ currentUser.first_name }}'s Inventory
           </h1>
           <div class="flex">
@@ -214,7 +211,12 @@ watch(currentUser, () => {
               <option disabled :value="{}"></option>
               <option :value="store.state.user" selected>Your Inventory</option>
               <option :value="{ _id: 'all' }">All Tech's</option>
-              <option v-if="store.state.user.role!='tech'" :value="{ _id: 'testing' }">Testing Center</option>
+              <option
+                v-if="store.state.user.role != 'tech'"
+                :value="{ _id: 'testing' }"
+              >
+                Testing Center
+              </option>
               <option v-for="user in users" :value="user">
                 {{ `${user.first_name} ${user.last_name}` }}
               </option>
@@ -276,7 +278,42 @@ watch(currentUser, () => {
                 >
                   All Tech's
                 </option>
-                <option :value="{ _id: 'testing', building: store.state.user.building }" :disabled="currentUser._id == 'testing'">Testing Center</option>
+                <option
+                  :value="{
+                    _id: 'testing',
+                    building: store.state.user.building,
+                  }"
+                  :disabled="currentUser._id == 'testing'"
+                >
+                  Testing Center
+                </option>
+                <option
+                  :value="{ _id: 'lost', building: store.state.user.building }"
+                  :disabled="currentUser._id == 'lost'"
+                  v-if="store.state.user.role == 'admin'"
+                >
+                  Lost
+                </option>
+                <option
+                  :value="{
+                    _id: 'broken',
+                    building: store.state.user.building,
+                  }"
+                  :disabled="currentUser._id == 'broken'"
+                  v-if="store.state.user.role == 'admin'"
+                >
+                  Broken
+                </option>
+                <option
+                  :value="{
+                    _id: 'deleted',
+                    building: store.state.user.building,
+                  }"
+                  :disabled="currentUser._id == 'deleted'"
+                  v-if="store.state.user.role == 'admin'"
+                >
+                  Delete
+                </option>
                 <option
                   v-if="
                     store.state.user.role == 'admin' ||
@@ -290,6 +327,41 @@ watch(currentUser, () => {
                 </option>
               </select>
             </div>
+          </div>
+          <div>
+            <p
+              class="my-2 w-full rounded-md bg-red-400 p-2"
+              v-if="
+                transferUser._id == 'testing' && store.state.user.role == 'tech'
+              "
+            >
+              Your current role does not allow you to transfer parts from the
+              testing center to your inventory.
+            </p>
+            <p
+              class="my-2 w-full rounded-md bg-red-400 p-2"
+              v-if="transferUser._id == 'lost'"
+            >
+              This action will mark these parts as lost and make them unusable
+            </p>
+            <p
+              class="my-2 w-full rounded-md bg-red-400 p-2"
+              v-if="transferUser._id == 'broken'"
+            >
+              This action will mark these parts as broken and make them unusable
+            </p>
+            <p
+              class="my-2 w-full rounded-md bg-red-400 p-2"
+              v-if="transferUser._id == 'deleted'"
+            >
+              This action will mark these parts as deleted and make them
+              unusable.
+              <br />
+              <span class="font-bold">
+                *** This option should only be used to correct clerical errors.
+                ***
+              </span>
+            </p>
           </div>
           <div
             class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"

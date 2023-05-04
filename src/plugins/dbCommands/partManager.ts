@@ -5,11 +5,11 @@ import type {
   AxiosResponse,
 } from 'axios';
 import type {
-  apiResponse,
   CartItem,
   PartRecord,
   PartSchema,
   User,
+  apiResponse,
 } from '../interfaces';
 
 /**
@@ -98,17 +98,11 @@ export async function getPartByID(
 export async function getPartsByData(
   http: AxiosInstance,
   part: PartSchema,
-  building: number,
-  location: string,
   callback: apiResponse
 ) {
   await http
     .get('/api/part', {
-      params: {
-        part,
-        building,
-        location,
-      },
+      params: part
     })
     .then((res: AxiosResponse) => {
       // Success - send results to callback

@@ -3,14 +3,14 @@ import { Ref, onMounted, ref } from 'vue';
 import InventoryPartComponent from '../../components/InventoryComponents/InventoryPartComponent.vue';
 import { movePart } from '../../plugins/dbCommands/partManager';
 import {
-getAllUsers,
-getUserInventoryByID,
+  getAllUsers,
+  getUserInventoryByID,
 } from '../../plugins/dbCommands/userManager';
 import {
-LoadedCartItem,
-PartRecord,
-PartSchema,
-User,
+  LoadedCartItem,
+  PartRecord,
+  PartSchema,
+  User,
 } from '../../plugins/interfaces';
 
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -31,7 +31,7 @@ const { http, store, router, errorHandler, displayMessage } =
 
 let items = ref([] as LoadedCartItem[]);
 let transferList = ref([] as LoadedCartItem[]);
-let orderID = ref("");
+let orderID = ref('');
 let currentUser = ref({} as User);
 
 let users = ref([] as User[]);
@@ -41,7 +41,7 @@ let loading = ref(false);
 async function loadInventory() {
   loading.value = true;
   getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
-    loading.value = false
+    loading.value = false;
     if (err) return errorHandler(err);
     items.value = data as LoadedCartItem[];
     transferList.value = [] as LoadedCartItem[];
@@ -82,8 +82,8 @@ function firstLoad() {
 }
 
 function moveFromInventory(part: PartSchema, quantity: number, serial: string) {
-    let array1 = items
-    let array2 = transferList
+  let array1 = items;
+  let array2 = transferList;
 
   // Create var for item to move
   let item1 = {} as LoadedCartItem | undefined;
@@ -116,7 +116,7 @@ function moveFromInventory(part: PartSchema, quantity: number, serial: string) {
     let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
     // If it doesn't exist, push a new entry
     for (let i = 0; i < quantity; i++) {
-        array2.value.push({ part, serial: '' });
+      array2.value.push({ part, serial: '' });
     }
   }
 }
@@ -136,17 +136,17 @@ function move(
   quantity: number,
   serial: string
 ) {
-    // Create var for item to move
-    let item1 = {} as LoadedCartItem | undefined;
-    // If item is serialized
-    if (serial != undefined) {
-        // Find existing item
-        item1 = array1.value.find((e) => e.serial == serial);
-        // Return if not found
-    if (!item1&&part.serialized) {
-        console.log(serial)
-        console.log(array1)
-        console.log('test1234')
+  // Create var for item to move
+  let item1 = {} as LoadedCartItem | undefined;
+  // If item is serialized
+  if (serial != undefined) {
+    // Find existing item
+    item1 = array1.value.find((e) => e.serial == serial);
+    // Return if not found
+    if (!item1 && part.serialized) {
+      console.log(serial);
+      console.log(array1);
+      console.log('test1234');
       return;
     }
     // Remove from array 1
@@ -154,15 +154,14 @@ function move(
     // Push to array 2
     console.log(serial);
     if (part.serialized) {
-        array2.value.push({ part, serial: serial });
-    }
-    else {
-        console.log("TEST")
-        let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
-        // If it doesn't exist, push a new entry
-        if (!item2) array2.value.push({ part, quantity: 1 });
-        // Otherwise increment existing entry
-        else item2.quantity! += 1;    
+      array2.value.push({ part, serial: serial });
+    } else {
+      console.log('TEST');
+      let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
+      // If it doesn't exist, push a new entry
+      if (!item2) array2.value.push({ part, quantity: 1 });
+      // Otherwise increment existing entry
+      else item2.quantity! += 1;
     }
   } else {
     // Find matching part in array 1
@@ -199,13 +198,12 @@ function submit() {
         owner: 'sold',
         building: currentUser.value.building,
         nxid: item.part.nxid,
-        ebay: orderID.value
+        ebay: orderID.value,
       } as PartRecord;
-      console.log(to)
+      console.log(to);
       if (item.serial) {
         to.serial = item.serial;
-        if(item.part.serialized)
-            from.serial = item.serial;
+        if (item.part.serialized) from.serial = item.serial;
         item.quantity = 1;
       } else {
         delete to.serial;
@@ -217,7 +215,7 @@ function submit() {
           // Handle errors
           errorHandler(err);
         }
-        displayMessage(data as string)
+        displayMessage(data as string);
       });
     });
     transferList.value = [];
@@ -230,10 +228,7 @@ function submit() {
     <form @submit.prevent="submit">
       <div>
         <div class="mb-4 flex flex-wrap justify-between">
-          
-          <h1
-            class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
-          >
+          <h1 class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit">
             Your Inventory
           </h1>
         </div>
@@ -273,7 +268,12 @@ function submit() {
             <h1 class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit">
               Order:
             </h1>
-            <input type="text" placeholder="eBay Order ID" v-model="orderID" class="textbox max-w-sm">
+            <input
+              type="text"
+              placeholder="eBay Order ID"
+              v-model="orderID"
+              class="textbox max-w-sm"
+            />
           </div>
           <div
             class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"

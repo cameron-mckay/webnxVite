@@ -37,7 +37,8 @@ let part = ref({
 } as PartSchema);
 let partRecords = ref([] as PartRecord[]);
 let users = ref([
-  { _id: 'all', first_name: 'All', last_name: 'Techs' },
+  // { _id: 'all', first_name: 'All', last_name: 'Techs' },
+  // { _id: 'testing', first_name: 'Testing', last_name: 'Center' },
 ] as User[]);
 
 onBeforeMount(() => {
@@ -60,6 +61,7 @@ onBeforeMount(() => {
         if (
           record.owner &&
           record.owner != 'all' &&
+          record.owner != 'testing' &&
           users.value.find((e) => e._id == record.owner) === undefined
         ) {
           await getUserByID(http, record.owner, (res, err) => {

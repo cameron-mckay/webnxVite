@@ -5,13 +5,13 @@ import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetCartItemComponent from '../../components/AssetComponents/AssetCartItemComponent.vue';
 import {
-getAssetByID,
-getPartsOnAsset,
+  getAssetByID,
+  getPartsOnAsset,
 } from '../../plugins/dbCommands/assetManager';
 import type {
-AssetSchema,
-LoadedCartItem,
-UserState,
+  AssetSchema,
+  LoadedCartItem,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -59,7 +59,10 @@ function edit() {
 
 <template>
   <div class="body">
-    <p class="w-full bg-red-400 p-2 rounded-md my-2" v-if="asset.migrated">This asset was automatically migrated from the old asset tracking system and is incomplete.  Please edit and update the information if you can.</p>
+    <p class="my-2 w-full rounded-md bg-red-400 p-2" v-if="asset.migrated">
+      This asset was automatically migrated from the old asset tracking system
+      and is incomplete. Please edit and update the information if you can.
+    </p>
     <div
       class="relative grid grid-cols-2 rounded-lg group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-4"
     >

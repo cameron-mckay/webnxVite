@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import {
-AssetEvent,
-AssetSchema,
-CartItem,
-LoadedCartItem,
-PartSchema,
-User,
+  AssetEvent,
+  AssetSchema,
+  CartItem,
+  LoadedCartItem,
+  PartSchema,
+  User,
 } from '../../plugins/interfaces';
 import AssetEventPartComponent from './AssetEventPartComponent.vue';
 
@@ -79,9 +79,7 @@ onMounted(() => {
       </h1>
       <p v-if="asset.migrated">
         By:
-        {{
-          asset.old_by
-        }}
+        {{ asset.old_by }}
       </p>
       <p v-else>
         By:
@@ -89,7 +87,6 @@ onMounted(() => {
           users.get(event.by)?.first_name + ' ' + users.get(event.by)?.last_name
         }}
       </p>
-      
     </div>
     <div class="grid md:grid-cols-3">
       <div
@@ -302,7 +299,10 @@ onMounted(() => {
       </div>
 
       <div v-else class="detail-row col-span-1">
-        <h1 v-if="asset.migrated" class="col-span-2 mb-4 text-4xl p-2  rounded-md leading-8 md:leading-10 bg-green-400 text-center">
+        <h1
+          v-if="asset.migrated"
+          class="col-span-2 mb-4 rounded-md bg-green-400 p-2 text-center text-4xl leading-8 md:leading-10"
+        >
           MIGRATED
         </h1>
         <h1 class="col-span-2 mb-4 text-4xl leading-8 md:leading-10">

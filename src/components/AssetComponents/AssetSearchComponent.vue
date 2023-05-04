@@ -63,7 +63,7 @@
         @decoded="decodedQR"
       />
     </form>
-    <div v-if="loading" class="flex justify-center my-4">
+    <div v-if="loading" class="my-4 flex justify-center">
       <div class="loader text-center"></div>
     </div>
     <div v-else-if="assets.length != 0">
@@ -75,42 +75,43 @@
         <p class="hidden md:block">Type</p>
         <p class="hidden md:block">Chassis</p>
         <p>Status</p>
-        <div v-if="multiplePages||pageNum>1" class="float-right flex select-none justify-between">
+        <div
+          v-if="multiplePages || pageNum > 1"
+          class="float-right flex select-none justify-between"
+        >
           <p class="my-auto inline-block">{{ `Page: ${pageNum}` }}</p>
           <!-- Left Caret -->
-          <div class=" shrink-0 flex">
-
-          
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="button-icon hover:button-icon-hover active:button-icon-active"
-            viewBox="0 0 256 512"
-            v-on:click="prevPage"
-            v-if="pageNum > 1"
-          >
-            <path
-              fill="currentColor"
-              stroke="currentColor"
-              d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
-            />
-          </svg>
-          <div v-else class="button-icon opacity-0"></div>
-          <!-- Right Caret -->
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="button-icon hover:button-icon-hover active:button-icon-active mr-0"
-            viewBox="0 0 256 512"
-            v-if="multiplePages"
-            v-on:click="nextPage"
-          >
-            <path
-              fill="currentColor"
-              stroke="currentColor"
-              d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
-            />
-          </svg>
-          <div v-else class="button-icon opacity-0 mr-0"></div>
-        </div>
+          <div class="flex shrink-0">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="button-icon hover:button-icon-hover active:button-icon-active"
+              viewBox="0 0 256 512"
+              v-on:click="prevPage"
+              v-if="pageNum > 1"
+            >
+              <path
+                fill="currentColor"
+                stroke="currentColor"
+                d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
+              />
+            </svg>
+            <div v-else class="button-icon opacity-0"></div>
+            <!-- Right Caret -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="button-icon hover:button-icon-hover active:button-icon-active mr-0"
+              viewBox="0 0 256 512"
+              v-if="multiplePages"
+              v-on:click="nextPage"
+            >
+              <path
+                fill="currentColor"
+                stroke="currentColor"
+                d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
+              />
+            </svg>
+            <div v-else class="button-icon mr-0 opacity-0"></div>
+          </div>
         </div>
       </div>
       <div class="md:animate-bottom">
@@ -128,51 +129,54 @@
       </div>
     </div>
     <div v-else>
-      <p class=" my-4">No results...</p>
+      <p class="my-4">No results...</p>
     </div>
-      <div v-if="(multiplePages||pageNum>1)&&!loading" class="float-right flex select-none">
-        <p class="my-auto mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
-        <!-- Left Caret -->
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="button-icon hover:button-icon-hover active:button-icon-active"
-          viewBox="0 0 256 512"
-          v-on:click="prevPage"
-          v-if="pageNum > 1"
-        >
-          <path
-            fill="currentColor"
-            stroke="currentColor"
-            d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
-          />
-        </svg>
-        <div v-else class="button-icon opacity-0"></div>
-        <!-- Right Caret -->
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="button-icon hover:button-icon-hover active:button-icon-active"
-          viewBox="0 0 256 512"
-          v-if="multiplePages"
-          v-on:click="nextPage"
-        >
-          <path
-            fill="currentColor"
-            stroke="currentColor"
-            d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
-          />
-        </svg>
-        <div v-else class="button-icon opacity-0"></div>
-      </div>
+    <div
+      v-if="(multiplePages || pageNum > 1) && !loading"
+      class="float-right flex select-none"
+    >
+      <p class="my-auto mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
+      <!-- Left Caret -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="button-icon hover:button-icon-hover active:button-icon-active"
+        viewBox="0 0 256 512"
+        v-on:click="prevPage"
+        v-if="pageNum > 1"
+      >
+        <path
+          fill="currentColor"
+          stroke="currentColor"
+          d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
+        />
+      </svg>
+      <div v-else class="button-icon opacity-0"></div>
+      <!-- Right Caret -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="button-icon hover:button-icon-hover active:button-icon-active"
+        viewBox="0 0 256 512"
+        v-if="multiplePages"
+        v-on:click="nextPage"
+      >
+        <path
+          fill="currentColor"
+          stroke="currentColor"
+          d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
+        />
+      </svg>
+      <div v-else class="button-icon opacity-0"></div>
     </div>
+  </div>
 </template>
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-getAssetByID,
-getAssetsByData,
-getAssetsByTextSearch,
+  getAssetByID,
+  getAssetsByData,
+  getAssetsByTextSearch,
 } from '../../plugins/dbCommands/assetManager';
 import type { AssetSchema } from '../../plugins/interfaces';
 import QRCodeScannerPopupComponent from '../GenericComponents/QRCodeScannerPopupComponent.vue';
@@ -257,7 +261,7 @@ onBeforeMount(async () => {
     if (query.text) {
       // Get text search from query string
       visibleSearchText.value = query.text as string;
-      invisibleSearchText = visibleSearchText.value
+      invisibleSearchText = visibleSearchText.value;
     }
     // Check if pageNum exists
     if (query.pageNum) {
@@ -276,16 +280,15 @@ function prevPage() {
     // Decrement
     pageNum.value -= 1;
     // Send search query
-    if(query.advanced === 'true') {
+    if (query.advanced === 'true') {
       let searchAsset = {} as AssetSchema;
       // Loop through query to create part object
       for (const key in query) {
         // Copy
         searchAsset[key] = query[key];
       }
-      advancedSearch(searchAsset)
-    }
-    else {
+      advancedSearch(searchAsset);
+    } else {
       search();
     }
   }
@@ -299,16 +302,15 @@ function nextPage() {
     // Increment page num
     pageNum.value += 1;
     // Send search query
-    if(query.advanced === 'true') {
+    if (query.advanced === 'true') {
       let searchAsset = {} as AssetSchema;
       // Loop through query to create part object
       for (const key in query) {
         // Copy
         searchAsset[key] = query[key];
       }
-      advancedSearch(searchAsset)
-    }
-    else {
+      advancedSearch(searchAsset);
+    } else {
       search();
     }
   }
@@ -337,17 +339,17 @@ function decodedQR(nxid: string) {
 async function advancedSearch(asset: AssetSchema) {
   // Add new attribute to asset (this a wizard trick to make adding data to router easier)
   showAdvanced.value = false;
-  loading.value = true
+  loading.value = true;
   asset['advanced'] = 'true';
   asset['pageNum'] = pageNum.value;
   asset['pageSize'] = 50;
-  multiplePages.value = false
+  multiplePages.value = false;
   // Push asset to router
   router.push({ query: asset });
   // Query the API
   getAssetsByData(http, asset, (data, err) => {
     // Hide advanced search
-    loading.value = false
+    loading.value = false;
     // Error
     if (err) {
       // Handle the error
@@ -368,17 +370,17 @@ async function advancedSearch(asset: AssetSchema) {
 // Search function
 function search() {
   // Reset dis shit
-  let current_page = pageNum.value
+  let current_page = pageNum.value;
   // loading.value = true
-  multiplePages.value = false
+  multiplePages.value = false;
   // Check for webnx regex
   if (/WNX([0-9]{7})+/.test(invisibleSearchText)) {
-    loading.value = true
+    loading.value = true;
     // temp value
     let query = invisibleSearchText;
     // Search and add to cart
     getAssetByID(http, query, (data, err) => {
-      loading.value = false
+      loading.value = false;
       if (err) {
         // Part not found
         return errorHandler(err);
@@ -401,98 +403,100 @@ function search() {
     });
   } else {
     // Text search
-    router.push({ query: { text: invisibleSearchText, pageNum: pageNum.value } });
+    router.push({
+      query: { text: invisibleSearchText, pageNum: pageNum.value },
+    });
 
-    if (pageCache.has(pageNum.value)&&pageCache.get(pageNum.value)!.length>0) {
-      assets.value = JSON.parse(JSON.stringify(pageCache.get(pageNum.value)!))
+    if (
+      pageCache.has(pageNum.value) &&
+      pageCache.get(pageNum.value)!.length > 0
+    ) {
+      assets.value = JSON.parse(JSON.stringify(pageCache.get(pageNum.value)!));
       if (assets.value.length > 50) {
         multiplePages.value = true;
         // Pop the extra object
         assets.value.pop();
         // Set multiple pages
-        checkCache()
+        checkCache();
       }
-    }
-    else {
-      loading.value = true
+    } else {
+      loading.value = true;
       // Send the API text search query
       getPage(current_page, invisibleSearchText)
-      .then((ass)=>{
-        assets.value = JSON.parse(JSON.stringify(ass))
-        if (assets.value.length > 50) {
-          multiplePages.value = true;
-          // Pop the extra object
-          assets.value.pop();
-          // Set multiple pages
-        }
-        loading.value = false
-        pageCache.set(current_page, ass)
-        checkCache()
-      })
-      .catch(()=>{
-        pageNum.value = 1;
-        search();
-      })
-    }
-    }
-
-}
-
-
-async function checkCache(){
-  console.log("test1")
-  let page = pageNum.value
-  while(page > 0 && page >= (pageNum.value - 5)) {
-    let localPage = page
-    if(pageCache.has(localPage)) {
-      page -= 1
-      continue
-    }
-    else {
-      pageCache.set(localPage, [])
-      getPage(localPage, invisibleSearchText)
-        .then((ass: AssetSchema[])=>{
-          pageCache.set(localPage, ass)
+        .then((ass) => {
+          assets.value = JSON.parse(JSON.stringify(ass));
+          if (assets.value.length > 50) {
+            multiplePages.value = true;
+            // Pop the extra object
+            assets.value.pop();
+            // Set multiple pages
+          }
+          loading.value = false;
+          pageCache.set(current_page, ass);
+          checkCache();
         })
-        .catch(()=>{pageCache.delete(localPage)})
-      page -= 1
-    }
-  }
-  page = pageNum.value
-  while(page <= (pageNum.value + 5)) {
-    let localPage = page
-    if(pageCache.has(localPage)) {
-      page++
-      continue
-    }
-    else {
-      pageCache.set(localPage, [])
-      getPage(localPage, invisibleSearchText)
-        .then((ass)=>{
-          pageCache.set(localPage, ass)
-        })
-        .catch(()=>{pageCache.delete(localPage)})
-      page++
+        .catch(() => {
+          pageNum.value = 1;
+          search();
+        });
     }
   }
 }
 
-function checkCacheAdvanced(){
-
+async function checkCache() {
+  console.log('test1');
+  let page = pageNum.value;
+  while (page > 0 && page >= pageNum.value - 5) {
+    let localPage = page;
+    if (pageCache.has(localPage)) {
+      page -= 1;
+      continue;
+    } else {
+      pageCache.set(localPage, []);
+      getPage(localPage, invisibleSearchText)
+        .then((ass: AssetSchema[]) => {
+          pageCache.set(localPage, ass);
+        })
+        .catch(() => {
+          pageCache.delete(localPage);
+        });
+      page -= 1;
+    }
+  }
+  page = pageNum.value;
+  while (page <= pageNum.value + 5) {
+    let localPage = page;
+    if (pageCache.has(localPage)) {
+      page++;
+      continue;
+    } else {
+      pageCache.set(localPage, []);
+      getPage(localPage, invisibleSearchText)
+        .then((ass) => {
+          pageCache.set(localPage, ass);
+        })
+        .catch(() => {
+          pageCache.delete(localPage);
+        });
+      page++;
+    }
+  }
 }
+
+function checkCacheAdvanced() {}
 
 function searchButtonPressed() {
-  if(invisibleSearchText!=visibleSearchText.value) {
-    pageCache = new Map<number, AssetSchema[]>()
-    invisibleSearchText = visibleSearchText.value
+  if (invisibleSearchText != visibleSearchText.value) {
+    pageCache = new Map<number, AssetSchema[]>();
+    invisibleSearchText = visibleSearchText.value;
   }
-  pageNum.value = 1
-  search()
+  pageNum.value = 1;
+  search();
 }
 
 function advancedSearchButtonPressed(asset: AssetSchema) {
-  pageNum.value = 1
-  advancedSearch(asset)
+  pageNum.value = 1;
+  advancedSearch(asset);
 }
 
 function addUntrackedAsset() {
@@ -501,26 +505,20 @@ function addUntrackedAsset() {
 }
 
 function getPage(page: number, text: string) {
-  return new Promise<AssetSchema[]>((res, rej)=>{
-    getAssetsByTextSearch(
-        http,
-        text,
-        page,
-        (data: any, err) => {
-          if (err) {
-            // Send error to error handler
-            rej()
-          }
-        // typecast
-        if (data&&data.length === 0 && page != 1) {
-          // Extra redundancy just in case query string is malformed
-          console.log("HUH?")
-          rej()
-        }
-        res(data as AssetSchema[])
+  return new Promise<AssetSchema[]>((res, rej) => {
+    getAssetsByTextSearch(http, text, page, (data: any, err) => {
+      if (err) {
+        // Send error to error handler
+        rej();
       }
-      );
-  })
+      // typecast
+      if (data && data.length === 0 && page != 1) {
+        // Extra redundancy just in case query string is malformed
+        console.log('HUH?');
+        rej();
+      }
+      res(data as AssetSchema[]);
+    });
+  });
 }
-
 </script>

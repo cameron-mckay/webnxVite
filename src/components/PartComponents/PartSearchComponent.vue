@@ -1,10 +1,10 @@
 <template>
   <div>
-    <form class="flex justify-between" @submit.prevent="search">
+    <form class="flex justify-between" @submit.prevent="searchButtonPressed">
       <input
         class="search ml-0"
         type="text"
-        v-model="searchText"
+        v-model="visibleSearchText"
         placeholder="🔍 keywords..."
       />
       <select
@@ -53,7 +53,7 @@
       <AdvancedSearchComponent
         :http="http"
         v-show="showAdvanced"
-        @partSearch="advancedSearch"
+        @partSearch="advancedSearchButtonPressed"
         @toggle="toggleAdvanced"
       />
       <QRCodeScannerPopupComponent
@@ -62,10 +62,10 @@
         @decoded="decodedQR"
       />
     </form>
-    <div v-if="loading" class="flex justify-center my-4">
+    <div v-if="loading" class="my-4 flex justify-center">
       <div class="loader text-center"></div>
     </div>
-    <div v-else-if="parts.length != 0" >
+    <div v-else-if="parts.length != 0">
       <div
         class="relative grid grid-cols-4 p-1 text-center font-bold leading-8 transition md:grid-cols-6 md:p-2 md:leading-10"
       >
@@ -74,66 +74,74 @@
         <p>Name</p>
         <p class="hidden md:block">Location</p>
         <p>Quantity</p>
-        <div class="float-right flex select-none">
-      <p class="mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
-      <!-- Left Caret -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="button-icon hover:button-icon-hover active:button-icon-active"
-        viewBox="0 0 256 512"
-        v-on:click="prevPage"
-        v-if="multiplePages || pageNum > 1"
-      >
-        <path
-          fill="currentColor"
-          stroke="currentColor"
-          d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
-        />
-      </svg>
-      <div v-else-if="multiplePages" class="button-icon opacity-0"></div>
-      <!-- Right Caret -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="button-icon hover:button-icon-hover active:button-icon-active"
-        viewBox="0 0 256 512"
-        v-if="multiplePages"
-        v-on:click="nextPage"
-      >
-        <path
-          fill="currentColor"
-          stroke="currentColor"
-          d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
-        />
-      </svg>
-      <div v-else-if="multiplePages" class="button-icon opacity-0"></div>
-    </div>
+        <div
+          v-if="multiplePages || pageNum > 1"
+          class="float-right flex select-none justify-between"
+        >
+          <p class="my-auto inline-block">{{ `Page: ${pageNum}` }}</p>
+          <!-- Left Caret -->
+          <div class="flex shrink-0">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="button-icon hover:button-icon-hover active:button-icon-active"
+              viewBox="0 0 256 512"
+              v-on:click="prevPage"
+              v-if="pageNum > 1"
+            >
+              <path
+                fill="currentColor"
+                stroke="currentColor"
+                d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
+              />
+            </svg>
+            <div v-else class="button-icon opacity-0"></div>
+            <!-- Right Caret -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="button-icon hover:button-icon-hover active:button-icon-active mr-0"
+              viewBox="0 0 256 512"
+              v-if="multiplePages"
+              v-on:click="nextPage"
+            >
+              <path
+                fill="currentColor"
+                stroke="currentColor"
+                d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
+              />
+            </svg>
+            <div v-else class="button-icon mr-0 opacity-0"></div>
+          </div>
+        </div>
       </div>
       <div class="md:animate-bottom">
-      <PartComponent
-        :add="add || add_object!.show == true"
-        :edit="edit"
-        :view="view"
-        v-for="part in parts"
-        v-bind:key="part._id"
-        @editPartAction="$emit('editPartAction', part)"
-        @addPartAction="$emit('addPartAction', part)"
-        @viewPartAction="$emit('viewPartAction', part)"
-        :part="part"
-      />
-    </div>
+        <PartComponent
+          :add="add || add_object!.show == true"
+          :edit="edit"
+          :view="view"
+          v-for="part in parts"
+          v-bind:key="part._id"
+          @editPartAction="$emit('editPartAction', part)"
+          @addPartAction="$emit('addPartAction', part)"
+          @viewPartAction="$emit('viewPartAction', part)"
+          :part="part"
+        />
+      </div>
     </div>
     <div v-else class="md:animate-bottom my-4">
       <p>No results...</p>
     </div>
-    <div class="float-right flex select-none">
-      <p class="mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
+    <div
+      v-if="(multiplePages || pageNum > 1) && !loading"
+      class="float-right flex select-none"
+    >
+      <p class="my-auto mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
       <!-- Left Caret -->
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="button-icon hover:button-icon-hover active:button-icon-active"
         viewBox="0 0 256 512"
         v-on:click="prevPage"
-        v-if="multiplePages || pageNum > 1"
+        v-if="pageNum > 1"
       >
         <path
           fill="currentColor"
@@ -141,7 +149,7 @@
           d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
         />
       </svg>
-      <div v-else-if="multiplePages" class="button-icon opacity-0"></div>
+      <div v-else class="button-icon opacity-0"></div>
       <!-- Right Caret -->
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -156,7 +164,7 @@
           d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
         />
       </svg>
-      <div v-else-if="multiplePages" class="button-icon opacity-0"></div>
+      <div v-else class="button-icon opacity-0"></div>
     </div>
   </div>
 </template>
@@ -212,14 +220,15 @@ defineExpose({
 // component variables
 let location = props.location;
 let building = ref(props.building);
-let searchText = ref('');
+let visibleSearchText = ref('');
+let invisibleSearchText = '';
 let pageNum = ref(1);
 let parts: Ref<PartSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let showQR = ref(false);
 let multiplePages = ref(false);
 let loading = ref(false);
-
+let pageCache = new Map<number, PartSchema[]>();
 // Before component is mounted
 onBeforeMount(async () => {
   // Fuck this
@@ -243,7 +252,8 @@ onBeforeMount(async () => {
   } else {
     // Check for search text
     if (query.text) {
-      searchText.value = query.text as string;
+      visibleSearchText.value = query.text as string;
+      invisibleSearchText = visibleSearchText.value;
     }
     if (query.pageNum) {
       pageNum.value = parseInt(query.pageNum as string);
@@ -254,17 +264,45 @@ onBeforeMount(async () => {
 
 // Previous search page
 function prevPage() {
+  let { query } = router.currentRoute.value;
+  // Check current page num
   if (pageNum.value > 1) {
+    // Decrement
     pageNum.value -= 1;
-    search();
+    // Send search query
+    if (query.advanced === 'true') {
+      let searchPart = {} as PartSchema;
+      // Loop through query to create part object
+      for (const key in query) {
+        // Copy
+        searchPart[key] = query[key];
+      }
+      advancedSearch(searchPart);
+    } else {
+      search();
+    }
   }
 }
 
 // Next search page
 function nextPage() {
+  let { query } = router.currentRoute.value;
+  // Check if results have multiple pages
   if (multiplePages) {
+    // Increment page num
     pageNum.value += 1;
-    search();
+    // Send search query
+    if (query.advanced === 'true') {
+      let searchPart = {} as PartSchema;
+      // Loop through query to create part object
+      for (const key in query) {
+        // Copy
+        searchPart[key] = query[key];
+      }
+      advancedSearch(searchPart);
+    } else {
+      search();
+    }
   }
 }
 
@@ -281,25 +319,26 @@ function toggleQR() {
 
 function decodedQR(nxid: string) {
   showQR.value = false;
-  searchText.value = nxid;
+  visibleSearchText.value = nxid;
+  invisibleSearchText = nxid;
   search();
 }
 
 // Advanced search
 async function advancedSearch(part: PartSchema) {
+  showAdvanced.value = false
   loading.value = true;
   part['advanced'] = 'true';
   part['location'] = location;
   part['building'] = building.value.toString();
+  part['pageNum'] = pageNum.value;
+  part['pageSize'] = 50;
+  multiplePages.value = false
   router.push({ query: part });
   // Query the API
-  delete part['location'];
-  delete part['building'];
-  delete part['advanced'];
-  delete part['nxid'];
-  getPartsByData(http, part, building.value, location, (data, err) => {
+  getPartsByData(http, part, (data, err) => {
     // Hide advanced search
-    loading.value = false
+    loading.value = false;
     showAdvanced.value = false;
     // Error
     if (err) {
@@ -308,6 +347,12 @@ async function advancedSearch(part: PartSchema) {
     } else if (data) {
       // Set parts list to API response
       parts.value = data as PartSchema[];
+      if (parts.value.length > 50) {
+        multiplePages.value = true;
+        // Pop the extra object
+        parts.value.pop();
+        // Set multiple pages
+      }
     }
   });
 }
@@ -342,40 +387,127 @@ async function search() {
   //     })
   // }
   // else {
-  loading.value = true;
-  multiplePages.value = false;
-  // Text search
   router.push({
     query: {
-      text: searchText.value,
+      text: invisibleSearchText,
       pageNum: pageNum.value,
       building: building.value,
       location,
     },
   });
-  getPartsByTextSearch(
-    http,
-    searchText.value,
-    pageNum.value,
-    building.value,
-    location,
-    (data: any, err) => {
-      loading.value = false
-      if (err) {
-        // Send error to error handler
-        return errorHandler(err);
-      }
-      // typecast
-      parts.value = data as PartSchema[];
-      if (parts.value.length > 50) {
-        parts.value.pop();
-        multiplePages.value = true;
-      } else if (parts.value.length === 0 && pageNum.value != 1) {
+  if (
+    pageCache.has(pageNum.value) &&
+    pageCache.get(pageNum.value)!.length > 0
+  ) {
+    parts.value = JSON.parse(JSON.stringify(pageCache.get(pageNum.value)!));
+    if (parts.value.length > 50) {
+      multiplePages.value = true;
+      // Pop the extra object
+      parts.value.pop();
+      // Set multiple pages
+      checkCache();
+    }
+  } else {
+    loading.value = true;
+    multiplePages.value = false;
+    // Text search
+    getPage(pageNum.value, invisibleSearchText)
+      .then((p) => {
+        parts.value = JSON.parse(JSON.stringify(p));
+        if (parts.value.length > 50) {
+          multiplePages.value = true;
+          // Pop the extra object
+          parts.value.pop();
+          // Set multiple pages
+        }
+        loading.value = false;
+        pageCache.set(pageNum.value, p);
+        checkCache();
+      })
+      .catch(() => {
         pageNum.value = 1;
         search();
-      }
-    }
-  );
+      });
+  }
   // }
+}
+
+function getPage(page: number, text: string) {
+  return new Promise<PartSchema[]>((res, rej) => {
+    getPartsByTextSearch(
+      http,
+      text,
+      page,
+      building.value,
+      location,
+      (data: any, err) => {
+        if (err) {
+          // Send error to error handler
+          rej();
+        }
+        // typecast
+        if (data && data.length === 0 && page != 1) {
+          // Extra redundancy just in case query string is malformed
+          console.log('HUH?');
+          rej();
+        }
+        res(data as PartSchema[]);
+      }
+    );
+  });
+}
+
+function searchButtonPressed() {
+  if (invisibleSearchText != visibleSearchText.value) {
+    pageCache = new Map<number, PartSchema[]>();
+    invisibleSearchText = visibleSearchText.value;
+  }
+  pageNum.value = 1;
+  search();
+}
+
+function advancedSearchButtonPressed(asset: PartSchema) {
+  pageNum.value = 1;
+  advancedSearch(asset);
+}
+
+async function checkCache() {
+  console.log('test1');
+  let page = pageNum.value;
+  while (page > 0 && page >= pageNum.value - 5) {
+    let localPage = page;
+    if (pageCache.has(localPage)) {
+      page -= 1;
+      continue;
+    } else {
+      pageCache.set(localPage, []);
+      getPage(localPage, invisibleSearchText)
+        .then((p: PartSchema[]) => {
+          pageCache.set(localPage, p);
+        })
+        .catch(() => {
+          pageCache.delete(localPage);
+        });
+      page -= 1;
+    }
+  }
+  page = pageNum.value;
+  while (page <= pageNum.value + 5) {
+    let localPage = page;
+    if (pageCache.has(localPage)) {
+      page++;
+      continue;
+    } else {
+      pageCache.set(localPage, []);
+      getPage(localPage, invisibleSearchText)
+        .then((p) => {
+          pageCache.set(localPage, p);
+        })
+        .catch(() => {
+          pageCache.delete(localPage);
+        });
+      page++;
+    }
+  }
 }
 </script>

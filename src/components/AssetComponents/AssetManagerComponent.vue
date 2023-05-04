@@ -3,9 +3,9 @@ import { AxiosError, AxiosInstance } from 'axios';
 import { ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-AssetSchema,
-LoadedCartItem,
-PartSchema,
+  AssetSchema,
+  LoadedCartItem,
+  PartSchema,
 } from '../../plugins/interfaces';
 import AssetCartItemComponent from '../AssetComponents/AssetCartItemComponent.vue';
 import AssetPartSearchComponent from '../AssetComponents/SearchPartOnAssetComponent.vue';
@@ -69,7 +69,10 @@ function addPartFromInventory(item: LoadedCartItem) {
 </script>
 <template>
   <div class="body">
-    <p class="w-full bg-red-400 p-2 rounded-md my-2" v-if="oldAsset.migrated">This asset was automatically migrated from the old asset tracking system and is incomplete.  Please edit and update the information if you can.</p>
+    <p class="my-2 w-full rounded-md bg-red-400 p-2" v-if="oldAsset.migrated">
+      This asset was automatically migrated from the old asset tracking system
+      and is incomplete. Please edit and update the information if you can.
+    </p>
     <h1 class="mb-4 text-4xl leading-8 md:leading-10">{{ title }}</h1>
     <form
       id="form"
@@ -139,9 +142,6 @@ function addPartFromInventory(item: LoadedCartItem) {
         "
         class="col-span-2 grid grid-cols-2"
       >
-
-
-      
         <div
           v-if="oldAsset.asset_type == 'Server'"
           class="col-span-2 grid grid-cols-2"
@@ -177,34 +177,34 @@ function addPartFromInventory(item: LoadedCartItem) {
             />
 
             <div
-              v-if="oldAsset.num_bays&&oldAsset.num_bays>0"
+              v-if="oldAsset.num_bays && oldAsset.num_bays > 0"
               class="col-span-2 grid grid-cols-2"
             >
               <label>Bay Size:</label>
               <select
-              :required="strict"
-              v-model="oldAsset.bay_type"
-              class="textbox m-1"
+                :required="strict"
+                v-model="oldAsset.bay_type"
+                class="textbox m-1"
               >
                 <option :value="undefined" selected disabled>Select</option>
                 <option :value="'3.5'">3.5"</option>
                 <option :value="'2.5'">2.5"</option>
                 <option :value="'Both'">Both</option>
               </select>
-          </div>
-          <label>PDU Cables::</label>
-          <select
-          :required="strict"
-          v-model="oldAsset.cable_type"
-          class="textbox m-1"
-          >
-            <option :value="undefined" selected disabled>Select</option>
-            <option :value="'short'">Short</option>
-            <option :value="'long'">Long</option>
-            <option :value="'none'">None</option>
-          </select>
+            </div>
+            <label>PDU Cables::</label>
+            <select
+              :required="strict"
+              v-model="oldAsset.cable_type"
+              class="textbox m-1"
+            >
+              <option :value="undefined" selected disabled>Select</option>
+              <option :value="'short'">Short</option>
+              <option :value="'long'">Long</option>
+              <option :value="'none'">None</option>
+            </select>
 
-          <label>Num PSUs:</label>
+            <label>Num PSUs:</label>
             <input
               class="textbox m-1"
               :required="strict"
@@ -213,18 +213,25 @@ function addPartFromInventory(item: LoadedCartItem) {
               min="0"
               placeholder="Num PSUs"
             />
-          <div
-              v-if="oldAsset.num_psu&&oldAsset.num_psu>0"
+            <div
+              v-if="oldAsset.num_psu && oldAsset.num_psu > 0"
               class="col-span-2 grid grid-cols-2"
             >
-            <label>PSU Model:</label>
-            <CustomDropdownComponent
-            :required="strict"
-            :options="['PWS-501P-1R', 'PWS-741P-1R', 'PWS-920P-1R', 'PWS-920P-SQ', 'PWS-1K28P-SQ', 'PWS-504P-1R']"
-            @updateValue="(value: string) => { oldAsset.psu_model = value }"
-            :defaultValue="oldAsset.psu_model"
-            />
-          </div>
+              <label>PSU Model:</label>
+              <CustomDropdownComponent
+                :required="strict"
+                :options="[
+                  'PWS-501P-1R',
+                  'PWS-741P-1R',
+                  'PWS-920P-1R',
+                  'PWS-920P-SQ',
+                  'PWS-1K28P-SQ',
+                  'PWS-504P-1R',
+                ]"
+                @updateValue="(value: string) => { oldAsset.psu_model = value }"
+                :defaultValue="oldAsset.psu_model"
+              />
+            </div>
             <label>Rails:</label>
             <select
               :required="strict"
@@ -248,14 +255,24 @@ function addPartFromInventory(item: LoadedCartItem) {
               </select>
             </div>
           </div>
-          <div v-else-if="oldAsset.chassis_type=='Tower'" class="col-span-2 grid grid-cols-2">
+          <div
+            v-else-if="oldAsset.chassis_type == 'Tower'"
+            class="col-span-2 grid grid-cols-2"
+          >
             <label>Status:</label>
-            <select :required="strict" v-model="oldAsset.live" class="textbox m-1">
+            <select
+              :required="strict"
+              v-model="oldAsset.live"
+              class="textbox m-1"
+            >
               <option :value="undefined" selected disabled>Select</option>
               <option :value="true">Live</option>
               <option :value="false">Inactive</option>
             </select>
-            <div v-if="oldAsset.live==true" class="col-span-2 grid grid-cols-2">
+            <div
+              v-if="oldAsset.live == true"
+              class="col-span-2 grid grid-cols-2"
+            >
               <label>Power Port:</label>
               <input
                 class="textbox m-1"
@@ -290,20 +307,16 @@ function addPartFromInventory(item: LoadedCartItem) {
               />
               <label>SID:</label>
               <input
-              class="textbox m-1"
-              :required="strict"
-              v-model="oldAsset.sid"
-              type="number"
-              placeholder="Service ID"
+                class="textbox m-1"
+                :required="strict"
+                v-model="oldAsset.sid"
+                type="number"
+                placeholder="Service ID"
               />
             </div>
-          
           </div>
           <div
-            v-if="
-              oldAsset.in_rack ||
-              oldAsset.power_port
-            "
+            v-if="oldAsset.in_rack || oldAsset.power_port"
             class="col-span-2 grid grid-cols-2"
           >
             <label>Power Port:</label>
@@ -339,7 +352,11 @@ function addPartFromInventory(item: LoadedCartItem) {
               placeholder="IPMI Port"
             />
             <label>Status:</label>
-            <select :required="strict" v-model="oldAsset.live" class="textbox m-1">
+            <select
+              :required="strict"
+              v-model="oldAsset.live"
+              class="textbox m-1"
+            >
               <option :value="undefined" selected disabled>Select</option>
               <option :value="true">Live</option>
               <option :value="false">Inactive</option>
@@ -347,17 +364,19 @@ function addPartFromInventory(item: LoadedCartItem) {
             <div v-if="oldAsset.live" class="col-span-2 grid grid-cols-2">
               <label>SID:</label>
               <input
-              class="textbox m-1"
-              :required="strict"
-              v-model="oldAsset.sid"
-              type="number"
-              placeholder="Service ID"
+                class="textbox m-1"
+                :required="strict"
+                v-model="oldAsset.sid"
+                type="number"
+                placeholder="Service ID"
               />
-            </div>          
+            </div>
           </div>
           <!-- Part Search here -->
-          <div v-if="oldAsset.in_rack==false&&oldAsset.live==false"
-          class="col-span-2 grid grid-cols-2">
+          <div
+            v-if="oldAsset.in_rack == false && oldAsset.live == false"
+            class="col-span-2 grid grid-cols-2"
+          >
             <label>Pallet:</label>
             <input
               class="textbox m-1"
@@ -366,37 +385,29 @@ function addPartFromInventory(item: LoadedCartItem) {
               type="text"
               placeholder="Pallet"
             />
-          
           </div>
         </div>
         <div v-else class="col-span-2 grid grid-cols-2">
           <label>FW Revision:</label>
-            <input
-              class="textbox m-1"
-              :required="strict"
-              v-model="oldAsset.fw_rev"
-              type="text"
-              placeholder="FW Revision"
-            />
-          </div>
-          <label>Status:</label>
-          <select :required="strict" v-model="oldAsset.live" class="textbox m-1">
-            <option :value="undefined" selected disabled>Select</option>
-            <option :value="true">Live</option>
-            <option :value="false">Inactive</option>
-          </select>
+          <input
+            class="textbox m-1"
+            :required="strict"
+            v-model="oldAsset.fw_rev"
+            type="text"
+            placeholder="FW Revision"
+          />
+        </div>
+        <label>Status:</label>
+        <select :required="strict" v-model="oldAsset.live" class="textbox m-1">
+          <option :value="undefined" selected disabled>Select</option>
+          <option :value="true">Live</option>
+          <option :value="false">Inactive</option>
+        </select>
         <div
-            v-if="
-              oldAsset.asset_type == 'PDU' ||
-              oldAsset.asset_type == 'Switch'
-            "
-            class="col-span-2 grid grid-cols-2"
-          >
-          
-          <div
-            v-if="oldAsset.live"
-            class="col-span-2 grid grid-cols-2"
-          >
+          v-if="oldAsset.asset_type == 'PDU' || oldAsset.asset_type == 'Switch'"
+          class="col-span-2 grid grid-cols-2"
+        >
+          <div v-if="oldAsset.live" class="col-span-2 grid grid-cols-2">
             <label>Rack Location:</label>
             <input
               class="textbox m-1"
@@ -404,10 +415,12 @@ function addPartFromInventory(item: LoadedCartItem) {
               v-model="oldAsset.power_port"
               type="text"
               placeholder=" Rack Location"
-              />
+            />
           </div>
-          <div v-if="oldAsset.live==false"
-          class="col-span-2 grid grid-cols-2">
+          <div
+            v-if="oldAsset.live == false"
+            class="col-span-2 grid grid-cols-2"
+          >
             <label>Pallet:</label>
             <input
               class="textbox m-1"
@@ -417,12 +430,10 @@ function addPartFromInventory(item: LoadedCartItem) {
               placeholder="Pallet"
             />
           </div>
+        </div>
       </div>
-    </div>
       <div v-if="strict" class="col-span-2 my-4">
-        <h1 class="inline-block text-4xl leading-8 md:leading-10">
-          Notes:
-        </h1>
+        <h1 class="inline-block text-4xl leading-8 md:leading-10">Notes:</h1>
         <textarea
           class="textbox m-1"
           rows="4"
@@ -430,11 +441,7 @@ function addPartFromInventory(item: LoadedCartItem) {
           placeholder="Drag to resize"
         />
       </div>
-      
-      
-      
-      
-      
+
       <div v-if="http != undefined" class="col-span-2">
         <div v-show="oldAsset.asset_type == 'Server'" class="flex">
           <h1 class="inline-block text-4xl leading-8 md:leading-10">Parts:</h1>
@@ -453,7 +460,7 @@ function addPartFromInventory(item: LoadedCartItem) {
           </svg>
         </div>
         <FullScreenPopupComponent
-          v-if="partSearch||oldAsset.migrated"
+          v-if="partSearch || oldAsset.migrated"
           v-show="partSearchPopup"
           @toggle="togglePopup"
         >
@@ -465,7 +472,7 @@ function addPartFromInventory(item: LoadedCartItem) {
           />
         </FullScreenPopupComponent>
         <FullScreenPopupComponent
-          v-if="inventorySearch && inventory&&!oldAsset.migrated"
+          v-if="inventorySearch && inventory && !oldAsset.migrated"
           v-show="inventorySearchPopup"
           @toggle="togglePopup"
         >
@@ -491,7 +498,7 @@ function addPartFromInventory(item: LoadedCartItem) {
           class="col-span-2"
           v-for="part in parts"
           :item="part"
-          :untracked="untracked||oldAsset.migrated"
+          :untracked="untracked || oldAsset.migrated"
           @plus="$emit('plusPart', part)"
           @minus="$emit('minusPart', part)"
           @delete="$emit('deletePart', part)"

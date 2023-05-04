@@ -37,8 +37,6 @@ const { part, quantity, serial, isCurrentUser, item } = defineProps<Props>();
       </p>
       <p class="break-words" v-else>{{ quantity }}</p>
 
-
-
       <div v-if="isCurrentUser" class="my-auto flex justify-end">
         <!-- Single arrow up -->
         <svg
