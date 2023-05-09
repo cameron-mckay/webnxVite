@@ -94,9 +94,9 @@
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import {
-  getPartByID,
-  getPartsByData,
-  getPartsByTextSearch,
+getPartByID,
+getPartsByData,
+getPartsByTextSearch,
 } from '../../plugins/dbCommands/partManager';
 import type { PartSchema } from '../../plugins/interfaces';
 import AdvancedSearchComponent from '../PartComponents/PartAdvancedSearchComponent.vue';
@@ -155,7 +155,12 @@ function toggleAdvanced() {
 // Advanced search
 async function advancedSearch(part: PartSchema) {
   // Query the API
-  getPartsByData(http, part, building, location, (data, err) => {
+  part['advanced'] = 'true';
+  part['location'] = location;
+  part['building'] = building;
+  part['pageNum'] = pageNum.value;
+  part['pageSize'] = 50;
+  getPartsByData(http, part, (data, err) => {
     // Hide advanced search
     showAdvanced.value = false;
     // Error
