@@ -444,7 +444,6 @@ function search() {
 }
 
 async function checkCache() {
-  console.log('test1');
   let page = pageNum.value;
   while (page > 0 && page >= pageNum.value - 5) {
     let localPage = page;
@@ -514,7 +513,6 @@ function getPage(page: number, text: string) {
       // typecast
       if (data && data.length === 0 && page != 1) {
         // Extra redundancy just in case query string is malformed
-        console.log('HUH?');
         rej();
       }
       res(data as AssetSchema[]);

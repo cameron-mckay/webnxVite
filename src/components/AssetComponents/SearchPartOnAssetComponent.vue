@@ -94,9 +94,9 @@
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import {
-getPartByID,
-getPartsByData,
-getPartsByTextSearch,
+  getPartByID,
+  getPartsByData,
+  getPartsByTextSearch,
 } from '../../plugins/dbCommands/partManager';
 import type { PartSchema } from '../../plugins/interfaces';
 import AdvancedSearchComponent from '../PartComponents/PartAdvancedSearchComponent.vue';

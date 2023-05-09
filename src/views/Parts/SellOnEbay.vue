@@ -98,7 +98,6 @@ function moveFromInventory(part: PartSchema, quantity: number, serial: string) {
     // Remove from array 1
     array1.value.splice(array1.value.indexOf(item1), 1);
     // Push to array 2
-    console.log(serial);
     array2.value.push({ part, serial: serial });
   } else {
     // Find matching part in array 1
@@ -144,19 +143,14 @@ function move(
     item1 = array1.value.find((e) => e.serial == serial);
     // Return if not found
     if (!item1 && part.serialized) {
-      console.log(serial);
-      console.log(array1);
-      console.log('test1234');
       return;
     }
     // Remove from array 1
     array1.value.splice(array1.value.indexOf(item1!), 1);
     // Push to array 2
-    console.log(serial);
     if (part.serialized) {
       array2.value.push({ part, serial: serial });
     } else {
-      console.log('TEST');
       let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
       // If it doesn't exist, push a new entry
       if (!item2) array2.value.push({ part, quantity: 1 });
@@ -200,7 +194,6 @@ function submit() {
         nxid: item.part.nxid,
         ebay: orderID.value,
       } as PartRecord;
-      console.log(to);
       if (item.serial) {
         to.serial = item.serial;
         if (item.part.serialized) from.serial = item.serial;

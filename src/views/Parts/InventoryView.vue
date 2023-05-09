@@ -113,7 +113,6 @@ function move(
     // Remove from array 1
     array1.value.splice(array1.value.indexOf(item1), 1);
     // Push to array 2
-    console.log(serial);
     array2.value.push({ part, serial: serial });
   } else {
     // Find matching part in array 1

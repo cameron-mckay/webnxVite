@@ -32,9 +32,7 @@ function resetForm() {
 }
 
 function submit() {
-  console.log(part.serialized);
   if (part.serialized) {
-    console.log('tests');
     request.value.serial = serials.value;
   } else {
     request.value.quantity = quantity.value;
@@ -44,7 +42,6 @@ function submit() {
 
 // When component mounted
 onMounted(() => {
-  console.log(part);
   // Set value of request to props
   request.value.nxid = part.nxid!;
   // Register watch on the request object

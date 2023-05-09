@@ -183,9 +183,7 @@ export async function getUserInventoryByID(
     })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
-      console.log(res.data);
       let partsArr = res.data.parts as PartCache;
-      console.log(partsArr);
       let records = res.data.records as CartItem[];
       let parts = new Map<string, PartSchema>();
       partsArr.map((obj) => {

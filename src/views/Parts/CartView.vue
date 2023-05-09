@@ -146,7 +146,6 @@ async function deletePart(id: string) {
 }
 
 function deleteSerialized(index: number) {
-  console.log(index);
   let { nxid, serial } = store.state.cart.serialized[index];
   let serials = allSerials.value.get(nxid);
   if (serials) {
@@ -212,7 +211,6 @@ function localCheckout() {
   store.state.cart.serialized.map((e) => {
     cart.push({ nxid: e.nxid, serial: e.serial } as CartItem);
   });
-  console.log(cart);
   checkout(http, cart, currentUser.value._id!, (data, err) => {
     if (err) {
       return errorHandler(err);

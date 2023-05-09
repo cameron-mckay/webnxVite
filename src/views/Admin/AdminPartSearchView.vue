@@ -49,7 +49,6 @@ function getUsers() {
     if (err) {
       return errorHandler(err);
     }
-    console.log(data);
     users.value = data as User[];
   });
 }
@@ -91,7 +90,6 @@ function updatePartInfo(part: PartSchema, image: File) {
       let blob = image.slice(0, image.size, image.type);
       let fileName = part.nxid!;
       let renamedImage = new File([blob], fileName, { type: image.type });
-      console.log(renamedImage.name);
       // upload image if exists
       updatePartImage(http, renamedImage, (data, err) => {
         if (err) {

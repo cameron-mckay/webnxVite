@@ -173,8 +173,8 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-getPartsByData,
-getPartsByTextSearch,
+  getPartsByData,
+  getPartsByTextSearch,
 } from '../../plugins/dbCommands/partManager';
 import type { PartSchema } from '../../plugins/interfaces';
 import QRCodeScannerPopupComponent from '../GenericComponents/QRCodeScannerPopupComponent.vue';
@@ -326,14 +326,14 @@ function decodedQR(nxid: string) {
 
 // Advanced search
 async function advancedSearch(part: PartSchema) {
-  showAdvanced.value = false
+  showAdvanced.value = false;
   loading.value = true;
   part['advanced'] = 'true';
   part['location'] = location;
   part['building'] = building.value.toString();
   part['pageNum'] = pageNum.value;
   part['pageSize'] = 50;
-  multiplePages.value = false
+  multiplePages.value = false;
   router.push({ query: part });
   // Query the API
   getPartsByData(http, part, (data, err) => {
@@ -448,7 +448,6 @@ function getPage(page: number, text: string) {
         // typecast
         if (data && data.length === 0 && page != 1) {
           // Extra redundancy just in case query string is malformed
-          console.log('HUH?');
           rej();
         }
         res(data as PartSchema[]);
@@ -472,7 +471,6 @@ function advancedSearchButtonPressed(asset: PartSchema) {
 }
 
 async function checkCache() {
-  console.log('test1');
   let page = pageNum.value;
   while (page > 0 && page >= pageNum.value - 5) {
     let localPage = page;

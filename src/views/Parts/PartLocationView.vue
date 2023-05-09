@@ -88,7 +88,6 @@ onBeforeMount(() => {
     if (query.location == 'All Techs') {
       pageTitle.value = pageTitle.value + "All Tech's inventory:";
     } else if (query.owner) {
-      console.log(users.value);
       getUserByID(http, query.owner as string, (res, err) => {
         if (err) {
           errorHandler(err);
