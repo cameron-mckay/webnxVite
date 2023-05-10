@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import { PartSchema, SNAvailable } from '../../plugins/interfaces';
+import InlinePartSpecComponent from '../PartComponents/InlinePartSpecComponent.vue';
 
 interface Props {
   part?: PartSchema;
@@ -40,7 +41,7 @@ function remove() {
       <p class="break-words">{{ part ? part.manufacturer : '' }}</p>
       <p class="break-words">{{ part ? part.name : '' }}</p>
       <p class="hidden break-words md:block">
-        {{ part ? part.shelf_location : '' }}
+        {{ part ? `${part.rack_num?part.rack_num:''}${part.shelf_location?part.shelf_location:''}` : '' }}
       </p>
       <select required v-model="serial">
         <option :value="''" disabled>Select one</option>
@@ -83,57 +84,9 @@ function remove() {
         </svg>
       </div>
     </div>
-    <div class="group-hover:bab-drop-hover bab-drop relative">
-      <p class="block md:hidden">{{ `NXID: ${part ? part.nxid : ''}` }}</p>
-      <p class="block md:hidden">
-        {{ `Shelf Location: ${part ? part.shelf_location : ''}` }}
-      </p>
-      <p>{{ `Type: ${part ? part.type : ''}` }}</p>
-      <div v-if="part && part.type == 'Motherboard'">
-        <p>{{ `Chipset: ${part ? part.chipset : ''}` }}</p>
-        <p>{{ `Memory Generation: ${part.memory_gen}` }}</p>
-      </div>
-      <div v-if="part && part.type == 'CPU'">
-        <p>{{ `Chipset: ${part ? part.chipset : ''}` }}</p>
-        <p>{{ `Frequency: ${part ? part.frequency : ''}GHz` }}</p>
-      </div>
-      <div v-if="part && part.type == 'Memory'">
-        <p>{{ `Frequency: ${part ? part.frequency : ''}MHz` }}</p>
-        <p>{{ `Capacity: ${part ? part.capacity : ''}GB` }}</p>
-        <p>{{ `Mem Type: ${part ? part.memory_type : ''}` }}</p>
-        <p>{{ `Memory Generation: ${part.memory_gen}` }}</p>
-      </div>
-      <div v-if="part && part.type == 'Peripheral Card'">
-        <p>{{ `Card type: ${part ? part.peripheral_type : ''}` }}</p>
-        <p>{{ `Port type: ${part ? part.port_type : ''}` }}</p>
-      </div>
-      <div v-if="part && part.type == 'Storage'">
-        <p>{{ `Interface: ${part ? part.storage_interface : ''}` }}</p>
-        <p>
-          {{
-            `Capacity: ${part ? part.capacity : ''}${
-              part ? part.capacity_unit : ''
-            }`
-          }}
-        </p>
-        <div v-if="part && part.storage_interface == 'NVME'">
-          <p>{{ `Connector: ${part ? part.port_type : ''}` }}</p>
-        </div>
-      </div>
-      <div v-if="part && part.type == 'GPU'">
-        <!-- Placeholder -->
-      </div>
-      <div v-if="part && part.type == 'Cable'">
-        <p>{{ `End 1: ${part ? part.cable_end1 : ''}` }}</p>
-        <p>{{ `End 2: ${part ? part.cable_end2 : ''}` }}</p>
-      </div>
-      <div v-if="part && part.type == 'Backplane'">
-        <p>{{ `Interface: ${part ? part.storage_interface : ''}` }}</p>
-        <p>{{ `Ports: ${part ? part.port_type : ''}` }}</p>
-      </div>
-      <div v-if="part && part.type == 'Misc.'">
-        <!-- Placeholder -->
-      </div>
-    </div>
+    <InlinePartSpecComponent
+      class="group-hover:bab-drop-hover bab-drop relative"
+      :part="part ? part : {}"
+    />
   </div>
 </template>

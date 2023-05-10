@@ -42,6 +42,7 @@ export default defineConfig({
             './src/views/Admin/AdminUserView.vue',
             './src/views/Admin/CreatePartView.vue',
             './src/views/Admin/InventoryManagerDashboardView.vue',
+            './src/views/Parts/SellOnEbay.vue'
           ],
         },
       },

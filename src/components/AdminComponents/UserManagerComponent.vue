@@ -36,6 +36,11 @@ user.value = props.user;
         <option>3</option>
         <option>4</option>
       </select>
+      <label>Enabled:</label>
+      <select class="textbox my-1" v-model="user.enabled">
+        <option :value="true">Yes</option>
+        <option :value="false">No</option>
+      </select>
       <input
         class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
         type="reset"

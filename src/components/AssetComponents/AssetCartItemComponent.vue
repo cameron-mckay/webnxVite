@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { LoadedCartItem } from '../../plugins/interfaces';
+import InlinePartSpecComponent from '../PartComponents/InlinePartSpecComponent.vue';
 
 interface Props {
   item: LoadedCartItem;
@@ -76,48 +77,9 @@ const emit = defineEmits(['plus', 'minus', 'delete']);
         </svg>
       </div>
     </div>
-    <div class="group-hover:bab-drop-hover bab-drop">
-      <p class="block md:hidden">{{ `NXID: ${item.part.nxid}` }}</p>
-      <p>{{ `Type: ${item.part.type}` }}</p>
-      <div v-if="item.part.type == 'Motherboard'">
-        <p>{{ `Chipset: ${item.part.chipset}` }}</p>
-        <p>{{ `Memory Generation: ${item.part.memory_gen}` }}</p>
-      </div>
-      <div v-if="item.part.type == 'CPU'">
-        <p>{{ `Chipset: ${item.part.chipset}` }}</p>
-        <p>{{ `Frequency: ${item.part.frequency}GHz` }}</p>
-      </div>
-      <div v-if="item.part.type == 'Memory'">
-        <p>{{ `Frequency: ${item.part.frequency}MHz` }}</p>
-        <p>{{ `Capacity: ${item.part.capacity}GB` }}</p>
-        <p>{{ `Mem Type: ${item.part.memory_type}` }}</p>
-        <p>{{ `Memory Generation: ${item.part.memory_gen}` }}</p>
-      </div>
-      <div v-if="item.part.type == 'Peripheral Card'">
-        <p>{{ `Card type: ${item.part.peripheral_type}` }}</p>
-        <p>{{ `Port type: ${item.part.port_type}` }}</p>
-      </div>
-      <div v-if="item.part.type == 'Storage'">
-        <p>{{ `Interface: ${item.part.storage_interface}` }}</p>
-        <p>{{ `Capacity: ${item.part.capacity}${item.part.capacity_unit}` }}</p>
-        <div v-if="item.part.storage_interface == 'NVME'">
-          <p>{{ `Connector: ${item.part.port_type}` }}</p>
-        </div>
-      </div>
-      <div v-if="item.part.type == 'GPU'">
-        <!-- Placeholder -->
-      </div>
-      <div v-if="item.part.type == 'Cable'">
-        <p>{{ `End 1: ${item.part.cable_end1}` }}</p>
-        <p>{{ `End 2: ${item.part.cable_end2}` }}</p>
-      </div>
-      <div v-if="item.part.type == 'Backplane'">
-        <p>{{ `Interface: ${item.part.storage_interface}` }}</p>
-        <p>{{ `Ports: ${item.part.port_type}` }}</p>
-      </div>
-      <div v-if="item.part.type == 'Misc.'">
-        <!-- Placeholder -->
-      </div>
-    </div>
+    <InlinePartSpecComponent
+      class="group-hover:bab-drop-hover bab-drop relative"
+      :part="item.part"
+    />
   </div>
 </template>

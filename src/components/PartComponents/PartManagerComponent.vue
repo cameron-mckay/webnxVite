@@ -214,6 +214,15 @@ onMounted(() => {
         v-model="serials"
         placeholder="One per line.  Drag to resize"
       />
+      <label>Rack Number:</label>
+      <input
+        class="textbox m-1"
+        required
+        v-model="part.rack_num"
+        type="number"
+        min="0"
+        placeholder="Rack Number"
+      />
       <label>Shelf Location:</label>
       <input
         class="textbox m-1"
@@ -237,7 +246,7 @@ onMounted(() => {
           'Backplane',
         ]"
         @updateValue="
-          (value) => {
+          (value: string) => {
             part.type = value;
           }
         "
@@ -261,7 +270,7 @@ onMounted(() => {
           :defaultValue="part.memory_gen"
           :options="['DDR5', 'DDR4', 'DDR3', 'DDR2', 'DDR']"
           @updateValue="
-            (value) => {
+            (value: string) => {
               part.memory_gen = value;
             }
           "
@@ -305,7 +314,7 @@ onMounted(() => {
           :defaultValue="part.memory_gen"
           :options="['DDR5', 'DDR4', 'DDR3', 'DDR2', 'DDR']"
           @updateValue="
-            (value) => {
+            (value: string) => {
               part.memory_gen = value;
             }
           "
@@ -403,7 +412,7 @@ onMounted(() => {
             :required="strict"
             :options="['GB', 'TB']"
             @updateValue="
-              (value) => {
+              (value: string) => {
                 part.capacity_unit = value;
               }
             "

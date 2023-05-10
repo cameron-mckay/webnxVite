@@ -56,18 +56,19 @@ import { AxiosResponse } from 'axios';
 import { onMounted } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import type { UserState } from '../plugins/interfaces';
+import type { User, UserState } from '../plugins/interfaces';
 
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 interface Props {
   http: AxiosInstance;
   store: Store<UserState>;
   router: Router;
+  user_data: User;
   errorHandler: (err: Error | AxiosError) => void;
   displayMessage: (message: string) => void;
 }
 
-const { http, store, router, errorHandler, displayMessage } =
+let { http, store, router, errorHandler, displayMessage, user_data } =
   defineProps<Props>();
 // END OF PROPS
 
@@ -87,24 +88,17 @@ onMounted(() => {
 });
 
 // Registers user with API
-async function register() {
+function register() {
   // Get email and password from input fields
   let { first_name, last_name, email, password, password2 } = form;
   // If they are not empty
   if (first_name && last_name && email && password && password == password2) {
     // Send username and password to API
-    await http
+    http
       .post('/api/register', form)
       .then((res: AxiosResponse) => {
-        // If login is successful
-        // Store cookie in local storage
-        localStorage.setItem('token', res.data.token);
-        // Add token to headers
-        http.defaults.headers.common['Authorization'] = res.data.token;
-        // Save user data to vuex store
-        store.commit('updateUserData');
-        store.commit('authenticate');
-        router.push('/');
+        displayMessage('Your account must be enabled by an admin before you can log in.')
+        router.push('/login');
       })
       .catch((err: Error | AxiosError) => {
         // Error

@@ -34,6 +34,7 @@ export interface PartSchema {
   quantity?: number;
   total_quantity?: number;
   shelf_location?: string;
+  rack_num?: number;
   frequency?: number;
   chipset?: string;
   memory_type?: string;
@@ -135,6 +136,7 @@ export interface User {
   first_name?: string;
   last_name?: string;
   building?: number;
+  enabled?: boolean;
   _v?: number;
   _id?: string;
 }

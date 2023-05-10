@@ -3,6 +3,7 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
+import GridPartSpecComponent from '../../components/PartComponents/GridPartSpecComponent.vue';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
 import {
   getPartByID,
@@ -94,86 +95,7 @@ function viewHistory(id: string) {
 </script>
 <template>
   <div>
-    <div class="detail-table">
-      <h1 class="detail-title">
-        {{ `${part.manufacturer} ${part.name}` }}
-      </h1>
-      <p class="detail-label">NXID:</p>
-      <p class="detail-data">{{ part.nxid }}</p>
-      <p class="detail-label">Shelf Location:</p>
-      <p class="detail-data">{{ part.shelf_location }}</p>
-      <p class="detail-label">Parts Room Quantity:</p>
-      <p class="detail-data">{{ part.quantity }}</p>
-      <p class="detail-label">Total Quantity:</p>
-      <p class="detail-data">{{ part.total_quantity }}</p>
-      <p class="detail-label">Type:</p>
-      <p class="detail-data">{{ part.type }}</p>
-      <p class="detail-label" v-if="part.serialized">Serial:</p>
-      <p class="detail-data" v-if="part.serialized">
-        {{ partRecords[0].serial }}
-      </p>
-      <div class="detail-row" v-if="part.type == 'Motherboard'">
-        <p>Chipset:</p>
-        <p>{{ part.chipset }}</p>
-        <p>Memory Generation:</p>
-        <p>{{ part.memory_gen }}</p>
-      </div>
-      <div v-if="part.type == 'CPU'" class="detail-row">
-        <p>Chipset:</p>
-        <p>{{ part.chipset }}</p>
-        <p>Frequency:</p>
-        <p>{{ part.frequency + 'GHz' }}</p>
-      </div>
-      <div v-if="part.type == 'Memory'" class="detail-row">
-        <p>Frequency:</p>
-        <p>{{ part.frequency + 'MHz' }}</p>
-        <p>Capacity:</p>
-        <p>{{ part.capacity + 'GB' }}</p>
-        <p>Memory Type:</p>
-        <p>{{ part.memory_type }}</p>
-        <p>Memory Generation:</p>
-        <p>{{ part.memory_gen }}</p>
-      </div>
-      <div v-if="part.type == 'Peripheral Card'" class="detail-row">
-        <p>Card Type:</p>
-        <p>{{ part.peripheral_type }}</p>
-        <p>Port Type:</p>
-        <p>{{ part.port_type }}</p>
-      </div>
-      <div v-if="part.type == 'Storage'" class="detail-row">
-        <p>Interface:</p>
-        <p>{{ part.storage_interface }}</p>
-        <p>Capacity:</p>
-        <p>
-          {{ `${part.capacity}${part.capacity_unit}` }}
-        </p>
-        <div v-if="part.storage_interface == 'NVME'" class="detail-row">
-          <p>Connector:</p>
-          <p>{{ part.port_type }}</p>
-        </div>
-      </div>
-      <div v-if="part.type == 'GPU'">
-        <!-- Placeholder -->
-      </div>
-      <div v-if="part.type == 'Cable'" class="detail-row">
-        <p>End 1:</p>
-        <p>{{ part.cable_end1 }}</p>
-        <p>End 2:</p>
-        <p>{{ part.cable_end2 }}</p>
-      </div>
-      <div v-if="part.type == 'Backplane'" class="detail-row">
-        <p>Interface:</p>
-        <p>{{ part.storage_interface }}</p>
-        <p>Ports:</p>
-        <p>{{ part.port_type }}</p>
-      </div>
-      <div v-if="part.type == 'Misc.'">
-        <!-- Placeholder -->
-      </div>
-      <div class="detail-image-container">
-        <img :src="`${url}/images/parts/${part.nxid}`" />
-      </div>
-    </div>
+    <GridPartSpecComponent :part="part" />
     <!-- PART RECORDS GO HERE -->
     <h1 class="detail-title">{{ partRecords[0].serial }} History:</h1>
     <div
