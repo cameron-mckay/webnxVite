@@ -262,11 +262,13 @@ onMounted(() => {
       window.matchMedia('(prefers-color-scheme: dark)').matches)
   ) {
     dark.value = true;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#18181b');
     // Fixes weird login bug
     if (!document.documentElement.classList.contains('dark'))
       document.documentElement.classList.add('dark');
   } else {
     dark.value = false;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#d1d5db');
   }
   // Enable watcher
   watch(dark, () => {
@@ -296,11 +298,14 @@ function updateTheme() {
   if (dark.value) {
     // Add dark mode class to document
     document.documentElement.classList.add('dark');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#18181b');
     // Save preference to localStorage
+    
     localStorage.setItem('theme', 'dark');
   } else {
     // Remove dark mode class from document
     document.documentElement.classList.remove('dark');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#d1d5db');
     // Save preference to localStorage
     localStorage.setItem('theme', 'light');
   }
