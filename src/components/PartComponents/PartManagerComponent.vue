@@ -10,9 +10,10 @@ interface Props {
   submitText: string;
   strict: boolean;
   oldPart?: PartSchema;
+  customResetText?: string;
 }
 
-const { title, submitText, strict, oldPart } = defineProps<Props>();
+const { title, submitText, strict, oldPart, customResetText } = defineProps<Props>();
 // END OF PROPS
 let part: Ref<PartSchema> = ref(
   JSON.parse(JSON.stringify(oldPart)) as PartSchema
@@ -28,6 +29,8 @@ function resetForm() {
   part.value = JSON.parse(JSON.stringify(partCopy));
   image = ref<File>();
   imageUrl.value = '';
+  if (oldPart && JSON.stringify(oldPart) != JSON.stringify({}))
+    imageUrl.value = `${url}/images/parts/${oldPart.nxid}`;
   serials.value = '';
 }
 
@@ -482,7 +485,7 @@ onMounted(() => {
       <input
         class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
         type="reset"
-        value="Reset"
+        :value="customResetText ? customResetText : 'Reset'"
       />
       <input class="submit col-span-2" type="submit" :value="submitText" />
     </form>
