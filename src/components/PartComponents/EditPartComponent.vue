@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { oldPart, show } = defineProps<Props>();
-const emit = defineEmits(['updatePart']);
+const emit = defineEmits(['updatePart', 'deletePart']);
 
 function submit(part: PartSchema, image: File) {
   emit('updatePart', part, image);
@@ -25,5 +25,11 @@ function submit(part: PartSchema, image: File) {
       :strict="true"
       :oldPart="oldPart"
     />
+    <input
+        class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700 w-full"
+        type="reset"
+        value="DELETE PART"
+        v-on:click="$emit('deletePart', oldPart?.nxid)"
+      />
   </FullScreenPopupComponent>
 </template>

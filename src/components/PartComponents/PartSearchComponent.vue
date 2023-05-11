@@ -173,8 +173,8 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-  getPartsByData,
-  getPartsByTextSearch,
+getPartsByData,
+getPartsByTextSearch,
 } from '../../plugins/dbCommands/partManager';
 import type { PartSchema } from '../../plugins/interfaces';
 import QRCodeScannerPopupComponent from '../GenericComponents/QRCodeScannerPopupComponent.vue';
@@ -214,7 +214,7 @@ let {
 } = props;
 const emit = defineEmits(['addPartAction', 'editPartAction', 'viewPartAction']);
 defineExpose({
-  search,
+  externalRefresh,
 });
 
 // component variables
@@ -461,6 +461,13 @@ function searchButtonPressed() {
     pageCache = new Map<number, PartSchema[]>();
     invisibleSearchText = visibleSearchText.value;
   }
+  pageNum.value = 1;
+  search();
+}
+
+function externalRefresh() {
+  pageCache = new Map<number, PartSchema[]>();
+  invisibleSearchText = visibleSearchText.value;
   pageNum.value = 1;
   search();
 }

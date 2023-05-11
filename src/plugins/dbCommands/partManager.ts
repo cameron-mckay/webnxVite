@@ -5,11 +5,11 @@ import type {
   AxiosResponse,
 } from 'axios';
 import type {
-  apiResponse,
   CartItem,
   PartRecord,
   PartSchema,
   User,
+  apiResponse,
 } from '../interfaces';
 
 /**
@@ -447,6 +447,27 @@ export function getPartRecords(
   http
     .get('/api/part/records', {
       params,
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function deletePart(
+  http: AxiosInstance,
+  nxid: string,
+  callback: apiResponse
+) {
+  http
+    .delete('/api/part', {
+      params: {
+        nxid
+      }
     })
     .then((res: AxiosResponse) => {
       // Success - send results to callback

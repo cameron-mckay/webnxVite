@@ -8,16 +8,17 @@ import AddInventoryComponent from '../../components/PartComponents/AddInventoryC
 import EditPartComponent from '../../components/PartComponents/EditPartComponent.vue';
 import SearchComponent from '../../components/PartComponents/PartSearchComponent.vue';
 import {
-  createNewPartRecords,
-  updatePart,
-  updatePartImage,
+createNewPartRecords,
+deletePart,
+updatePart,
+updatePartImage,
 } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
-  CartItem,
-  PartSchema,
-  User,
-  UserState,
+CartItem,
+PartSchema,
+User,
+UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -56,7 +57,7 @@ function getUsers() {
 // Get search method from child component
 const searchRef = ref();
 const search = () => {
-  searchRef.value.search();
+  searchRef.value.externalRefresh();
 };
 
 // Toggle editing parts menu
@@ -105,6 +106,18 @@ function updatePartInfo(part: PartSchema, image: File) {
   });
 }
 
+function deleteClicked(nxid: string) {
+  if(window.confirm("***WARNING***\nThis will delete all associated part records, which will remove this part from all locations including user inventories and assets.  If you are trying to correct quantities or specifications, please use the appropriate tools.")) {
+    deletePart(http, nxid, (data, err)=>{
+      if(err)
+        return errorHandler(err)
+      displayMessage(data as string)
+      editPart.value = false
+      search()
+    })
+  }
+}
+
 function submitAddToInventory(request: CartItem, owner: User) {
   // Send creation details to API
   createNewPartRecords(http, request, owner, (records, err) => {
@@ -144,6 +157,7 @@ function submitAddToInventory(request: CartItem, owner: User) {
       v-if="editPart"
       @toggle="toggleEdit"
       @updatePart="updatePartInfo"
+      @deletePart="deleteClicked"
       :show="editPart"
       :oldPart="currentPart"
     />
