@@ -10,12 +10,14 @@ import SearchComponent from '../../components/PartComponents/PartSearchComponent
 import {
 createNewPartRecords,
 deletePart,
+movePart,
 updatePart,
-updatePartImage,
+updatePartImage
 } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
 CartItem,
+PartRecord,
 PartSchema,
 User,
 UserState,
@@ -118,19 +120,49 @@ function deleteClicked(nxid: string) {
   }
 }
 
-function submitAddToInventory(request: CartItem, owner: User) {
+function submitAddToInventory(request: CartItem, owner: User, part: PartSchema) {
   // Send creation details to API
-  createNewPartRecords(http, request, owner, (records, err) => {
-    if (err) {
-      return errorHandler(err);
+  if(request.quantity&&part.quantity&&request.quantity>part.quantity) {
+    request.quantity = request.quantity - part.quantity;
+    createNewPartRecords(http, request, owner, (records, err) => {
+      if (err) {
+        return errorHandler(err);
+      }
+      // Display confirmation
+      displayMessage('Successfully added to inventory');
+      // Reset
+      toggleAdd({});
+      // Refresh parts list
+      search();
+    });
+  }
+  else if(request.quantity&&part.quantity&&request.quantity<part.quantity) {
+    let from = {
+      next: null,
+      location: "Parts Room",
+      nxid: part.nxid,
+      building: request.building
     }
-    // Display confirmation
-    displayMessage('Successfully added to inventory');
-    // Reset
-    toggleAdd({});
-    // Refresh parts list
-    search();
-  });
+    let to = JSON.parse(JSON.stringify(from)) as PartRecord
+    to.owner = 'deleted';
+    console.log(from)
+    console.log(to)
+    console.log((part.quantity!-request.quantity!))
+    movePart(http, to, from, (part.quantity!-request.quantity!), (data, err) => {
+      if (err) {
+        // Handle errors
+        errorHandler(err);
+      }
+      displayMessage(data as string);
+      // Reset
+      toggleAdd({});
+      // Refresh parts list
+      search();
+    });
+  }
+  else {
+    return errorHandler("Quantity error")
+  }
 }
 </script>
 <template>

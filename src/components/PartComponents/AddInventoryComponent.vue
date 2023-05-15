@@ -21,7 +21,8 @@ let request = ref({
 
 // Owner
 let owner = ref({} as User);
-let quantity = ref(0);
+let quantity = ref(JSON.parse(JSON.stringify(part.quantity)));
+let existingQuantity = ref(part.quantity);
 let serials = ref('');
 let emit = defineEmits(['submitRequest']);
 // Reset form
@@ -37,7 +38,7 @@ function submit() {
   } else {
     request.value.quantity = quantity.value;
   }
-  emit('submitRequest', request.value, owner.value);
+  emit('submitRequest', request.value, owner.value, part);
 }
 
 // When component mounted
@@ -80,14 +81,15 @@ onMounted(() => {
 </script>
 <template>
   <FullScreenPopupComponent>
-    <h1 class="mb-4 text-4xl">Add Parts to Inventory</h1>
+    <h1 class="mb-4 text-4xl">Adjust Quantities</h1>
     <form
       id="form"
       @submit.prevent="submit"
       @reset.prevent="resetForm"
       class="grid grid-cols-2"
     >
-      <label v-if="!part.serialized">Quantity:</label>
+      <p class="col-span-2 text-xl mb-4">Current Part Room Quantity: {{ existingQuantity }}</p>
+      <label v-if="!part.serialized">New Quantity:</label>
       <input
         v-if="!part.serialized"
         class="textbox m-1"
@@ -104,53 +106,59 @@ onMounted(() => {
         v-model="serials"
         placeholder="One per line.  Drag to resize"
       />
-      <label>Building:</label>
-      <select required v-model="request.building" class="textbox m-1">
-        <option>3</option>
-        <option>1</option>
-        <option>4</option>
-      </select>
-      <label>Location:</label>
-      <select required v-model="request.location" class="textbox m-1">
-        <option>Tech Inventory</option>
-        <option>All Techs</option>
-        <option>Parts Room</option>
-        <option>Asset</option>
-      </select>
       <div
+      v-if="(existingQuantity&&quantity>existingQuantity)||part.serialized" class=" col-span-2 grid grid-cols-2">
+        <label>Building:</label>
+        <select required v-model="request.building" class="textbox m-1">
+          <option>3</option>
+          <option>1</option>
+          <option>4</option>
+        </select>
+        <label>Location:</label>
+        <select required v-model="request.location" class="textbox m-1">
+          <option>Tech Inventory</option>
+          <option>All Techs</option>
+          <option>Parts Room</option>
+          <option>Asset</option>
+        </select>
+        <div
         class="col-span-2 grid grid-cols-2"
         v-if="request.location == 'Tech Inventory'"
-      >
+        >
         <label>Owner:</label>
         <select v-model="owner">
           <option
-            v-for="user in users"
-            v-bind:key="user._id"
-            :value="user"
-            class="textbox m-1"
+          v-for="user in users"
+          v-bind:key="user._id"
+          :value="user"
+          class="textbox m-1"
           >
             {{ user.first_name + ' ' + user.last_name }}
           </option>
         </select>
       </div>
       <div
-        class="col-span-2 grid grid-cols-2"
-        v-if="request.location == 'Asset'"
+      class="col-span-2 grid grid-cols-2"
+      v-if="request.location == 'Asset'"
       >
-        <label>Asset Tag:</label>
-        <input
-          type="text"
-          placeholder="Asset Tag"
-          v-model="owner._id"
-          class="textbox m-1"
-        />
-      </div>
+      <label>Asset Tag:</label>
       <input
-        class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
-        type="reset"
-        value="Reset"
+      type="text"
+      placeholder="Asset Tag"
+      v-model="owner._id"
+      class="textbox m-1"
       />
-      <input class="submit col-span-2" type="submit" value="Add" />
-    </form>
-  </FullScreenPopupComponent>
+    </div>
+  </div>
+  <p v-if="existingQuantity&&quantity>existingQuantity&&!part.serialized" class="col-span-2 text-xl mb-4">Adding {{ quantity-existingQuantity }} to {{ request.location }} {{ request.location == 'Asset' ? owner._id : "" }}</p>
+  <p v-else-if="existingQuantity&&quantity<existingQuantity&&!part.serialized" class="col-span-2 text-xl mb-4">Removing {{ existingQuantity-quantity }} from Parts Room</p>
+  <p v-else-if="existingQuantity&&!part.serialized" class="col-span-2 text-xl mb-4">No change.</p>
+    <input
+    class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
+    type="reset"
+    value="Reset"
+    />
+    <input class="submit col-span-2" type="submit" value="Update"/>
+  </form>
+</FullScreenPopupComponent>
 </template>

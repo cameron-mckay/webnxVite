@@ -220,7 +220,7 @@ onMounted(() => {
       <label>Rack Number:</label>
       <input
         class="textbox m-1"
-        required
+        :required="strict"
         v-model="part.rack_num"
         type="number"
         min="0"
