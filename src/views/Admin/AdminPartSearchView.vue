@@ -122,7 +122,7 @@ function deleteClicked(nxid: string) {
 
 function submitAddToInventory(request: CartItem, owner: User, part: PartSchema) {
   // Send creation details to API
-  if(request.quantity&&part.quantity&&request.quantity>part.quantity) {
+  if(request.quantity!=undefined&&part.quantity!=undefined&&request.quantity>part.quantity) {
     request.quantity = request.quantity - part.quantity;
     createNewPartRecords(http, request, owner, (records, err) => {
       if (err) {
@@ -136,7 +136,7 @@ function submitAddToInventory(request: CartItem, owner: User, part: PartSchema) 
       search();
     });
   }
-  else if(request.quantity&&part.quantity&&request.quantity<part.quantity) {
+  else if(request.quantity!=undefined&&part.quantity!=undefined&&request.quantity<part.quantity) {
     let from = {
       next: null,
       location: "Parts Room",

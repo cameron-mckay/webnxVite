@@ -150,9 +150,9 @@ onMounted(() => {
       />
     </div>
   </div>
-  <p v-if="existingQuantity&&quantity>existingQuantity&&!part.serialized" class="col-span-2 text-xl mb-4">Adding {{ quantity-existingQuantity }} to {{ request.location }} {{ request.location == 'Asset' ? owner._id : "" }}</p>
-  <p v-else-if="existingQuantity&&quantity<existingQuantity&&!part.serialized" class="col-span-2 text-xl mb-4">Removing {{ existingQuantity-quantity }} from Parts Room</p>
-  <p v-else-if="existingQuantity&&!part.serialized" class="col-span-2 text-xl mb-4">No change.</p>
+  <p v-if="existingQuantity!=undefined&&quantity>existingQuantity&&!part.serialized" class="col-span-2 text-xl mb-4">Adding {{ quantity-existingQuantity }} to {{ request.location }} {{ request.location == 'Asset' ? owner._id : "" }}</p>
+  <p v-else-if="existingQuantity!=undefined&&quantity<existingQuantity&&!part.serialized" class="col-span-2 text-xl mb-4">Removing {{ existingQuantity-quantity }} from Parts Room</p>
+  <p v-else-if="existingQuantity!=undefined&&!part.serialized" class="col-span-2 text-xl mb-4">No change.</p>
     <input
     class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
     type="reset"
