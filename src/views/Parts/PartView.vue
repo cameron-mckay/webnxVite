@@ -99,7 +99,7 @@ onBeforeMount(() => {
       groupedRecords.value.sort((r1, r2) =>
         r1.quantity < r2.quantity ? 1 : -1
       );
-      // Advanced key switch to fix owners (hackerman)
+      // Advanced key switch to fix owners (hacker man)
       groupedRecords.value.map((group) => {
         group.key += 1;
         group.key -= 1;

@@ -33,7 +33,13 @@ function minus() {
       <p class="hidden md:block">{{ part.nxid }}</p>
       <p class="break-words">{{ part.manufacturer }}</p>
       <p class="break-words">{{ part.name }}</p>
-      <p class="hidden break-words md:block">{{ `${part.rack_num?part.rack_num:''}${part.shelf_location?part.shelf_location:''}` }}</p>
+      <p class="hidden break-words md:block">
+        {{
+          `${part.rack_num ? part.rack_num : ''}${
+            part.shelf_location ? part.shelf_location : ''
+          }`
+        }}
+      </p>
       <p class="break-words">{{ `${item_quantity}/${part.quantity}` }}</p>
       <div class="my-auto flex justify-end">
         <!-- Plus -->

@@ -4,5 +4,23 @@
   },
   "files.insertFinalNewline": true,
   "editor.formatOnSave": false,
-  "cSpell.words": ["textbox"]
+  "cSpell.words": [
+    "Axios",
+    "Backplane",
+    "checkin",
+    "Chipset",
+    "deauthenticate",
+    "Heatsink",
+    "JBOD",
+    "NVME",
+    "NXID",
+    "SATA",
+    "textbox",
+    "typedefs",
+    "UDIMM",
+    "unserialized",
+    "VITE",
+    "vuex",
+    "webnx"
+  ]
 }

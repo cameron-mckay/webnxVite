@@ -66,7 +66,7 @@ function firstLoad() {
   loadInventory();
   // If admin - get other users
   if (store.state.user.role == 'admin') {
-    // Get all userse
+    // Get all users
     getAllUsers(http, (data, err) => {
       if (err) {
         return errorHandler(err);

@@ -21,7 +21,13 @@ const { part, quantity, serial, isCurrentUser, item } = defineProps<Props>();
       <p class="hidden md:block">{{ part.nxid }}</p>
       <p class="break-words">{{ part.manufacturer }}</p>
       <p class="break-words">{{ part.name }}</p>
-      <p class="hidden break-words md:block">{{ `${part.rack_num?part.rack_num:''}${part.shelf_location?part.shelf_location:''}` }}</p>
+      <p class="hidden break-words md:block">
+        {{
+          `${part.rack_num ? part.rack_num : ''}${
+            part.shelf_location ? part.shelf_location : ''
+          }`
+        }}
+      </p>
       <!-- <p class="break-words" v-if="serial">{{ serial }}</p>
       <p class="break-words" v-else>{{ quantity }}</p> -->
 

@@ -3,14 +3,14 @@ import { Ref, onMounted, ref, watch } from 'vue';
 import InventoryPartComponent from '../../components/InventoryComponents/InventoryPartComponent.vue';
 import { movePart } from '../../plugins/dbCommands/partManager';
 import {
-getAllUsers,
-getUserInventoryByID,
+  getAllUsers,
+  getUserInventoryByID,
 } from '../../plugins/dbCommands/userManager';
 import {
-LoadedCartItem,
-PartRecord,
-PartSchema,
-User,
+  LoadedCartItem,
+  PartRecord,
+  PartSchema,
+  User,
 } from '../../plugins/interfaces';
 
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -159,9 +159,9 @@ function submit() {
         delete to.serial;
         delete from.serial;
       }
-      console.log(from)
-      console.log(to)
-      console.log(item.quantity!)
+      console.log(from);
+      console.log(to);
+      console.log(item.quantity!);
       movePart(http, to, from, item.quantity!, (data, err) => {
         if (err) {
           // Handle errors
@@ -291,7 +291,10 @@ watch(currentUser, () => {
                 <option
                   :value="{ _id: 'lost', building: store.state.user.building }"
                   :disabled="currentUser._id == 'lost'"
-                  v-if="store.state.user.role == 'admin'||store.state.user.role=='inventory'"
+                  v-if="
+                    store.state.user.role == 'admin' ||
+                    store.state.user.role == 'inventory'
+                  "
                 >
                   Lost
                 </option>
@@ -301,7 +304,10 @@ watch(currentUser, () => {
                     building: store.state.user.building,
                   }"
                   :disabled="currentUser._id == 'broken'"
-                  v-if="store.state.user.role == 'admin'||store.state.user.role=='inventory'"
+                  v-if="
+                    store.state.user.role == 'admin' ||
+                    store.state.user.role == 'inventory'
+                  "
                 >
                   Broken
                 </option>
@@ -311,7 +317,10 @@ watch(currentUser, () => {
                     building: store.state.user.building,
                   }"
                   :disabled="currentUser._id == 'deleted'"
-                  v-if="store.state.user.role == 'admin'||store.state.user.role=='inventory'"
+                  v-if="
+                    store.state.user.role == 'admin' ||
+                    store.state.user.role == 'inventory'
+                  "
                 >
                   Delete
                 </option>

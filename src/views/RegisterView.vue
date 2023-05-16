@@ -97,7 +97,9 @@ function register() {
     http
       .post('/api/register', form)
       .then((res: AxiosResponse) => {
-        displayMessage('Your account must be enabled by an admin before you can log in.')
+        displayMessage(
+          'Your account must be enabled by an admin before you can log in.'
+        );
         router.push('/login');
       })
       .catch((err: Error | AxiosError) => {

@@ -5,11 +5,11 @@ import type {
   AxiosResponse,
 } from 'axios';
 import type {
+  apiResponse,
   CartItem,
   PartRecord,
   PartSchema,
   User,
-  apiResponse,
 } from '../interfaces';
 
 /**
@@ -466,8 +466,8 @@ export function deletePart(
   http
     .delete('/api/part', {
       params: {
-        nxid
-      }
+        nxid,
+      },
     })
     .then((res: AxiosResponse) => {
       // Success - send results to callback

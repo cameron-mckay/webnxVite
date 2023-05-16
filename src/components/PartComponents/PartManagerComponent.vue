@@ -13,7 +13,8 @@ interface Props {
   customResetText?: string;
 }
 
-const { title, submitText, strict, oldPart, customResetText } = defineProps<Props>();
+const { title, submitText, strict, oldPart, customResetText } =
+  defineProps<Props>();
 // END OF PROPS
 let part: Ref<PartSchema> = ref(
   JSON.parse(JSON.stringify(oldPart)) as PartSchema
@@ -247,6 +248,8 @@ onMounted(() => {
           'GPU',
           'Cable',
           'Backplane',
+          'Heatsink',
+          'Optic',
         ]"
         @updateValue="
           (value: string) => {
@@ -288,16 +291,6 @@ onMounted(() => {
           v-model="part.chipset"
           type="text"
           placeholder="Chipset"
-        />
-        <label>Frequency(GHz):</label>
-        <input
-          class="textbox m-1"
-          :required="strict"
-          v-model="part.frequency"
-          type="number"
-          step="any"
-          min="0"
-          placeholder="Frequency"
         />
       </div>
       <div v-if="part.type == 'Memory'" class="col-span-2 grid grid-cols-2">
@@ -429,7 +422,7 @@ onMounted(() => {
           <label>Connector Type:</label>
           <CustomDropdownComponent
             :required="strict"
-            :options="['SAS', 'M.2']"
+            :options="['U.2', 'U.3', 'M.2']"
             @updateValue="
               (value: string) => {
                 part.port_type = value;
@@ -440,6 +433,12 @@ onMounted(() => {
         </div>
       </div>
       <div v-if="part.type == 'GPU'" class="col-span-2 grid grid-cols-2">
+        <!--   -->
+      </div>
+      <div v-if="part.type == 'Heatsink'" class="col-span-2 grid grid-cols-2">
+        <!--   -->
+      </div>
+      <div v-if="part.type == 'Optic'" class="col-span-2 grid grid-cols-2">
         <!--   -->
       </div>
       <div v-if="part.type == 'Cable'" class="col-span-2 grid grid-cols-2">

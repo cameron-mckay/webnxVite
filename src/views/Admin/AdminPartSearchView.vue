@@ -8,19 +8,19 @@ import AddInventoryComponent from '../../components/PartComponents/AddInventoryC
 import EditPartComponent from '../../components/PartComponents/EditPartComponent.vue';
 import SearchComponent from '../../components/PartComponents/PartSearchComponent.vue';
 import {
-createNewPartRecords,
-deletePart,
-movePart,
-updatePart,
-updatePartImage
+  createNewPartRecords,
+  deletePart,
+  movePart,
+  updatePart,
+  updatePartImage,
 } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
-CartItem,
-PartRecord,
-PartSchema,
-User,
-UserState,
+  CartItem,
+  PartRecord,
+  PartSchema,
+  User,
+  UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -109,20 +109,31 @@ function updatePartInfo(part: PartSchema, image: File) {
 }
 
 function deleteClicked(nxid: string) {
-  if(window.confirm("***WARNING***\nThis will delete all associated part records, which will remove this part from all locations including user inventories and assets.  If you are trying to correct quantities or specifications, please use the appropriate tools.")) {
-    deletePart(http, nxid, (data, err)=>{
-      if(err)
-        return errorHandler(err)
-      displayMessage(data as string)
-      editPart.value = false
-      search()
-    })
+  if (
+    window.confirm(
+      '***WARNING***\nThis will delete all associated part records, which will remove this part from all locations including user inventories and assets.  If you are trying to correct quantities or specifications, please use the appropriate tools.'
+    )
+  ) {
+    deletePart(http, nxid, (data, err) => {
+      if (err) return errorHandler(err);
+      displayMessage(data as string);
+      editPart.value = false;
+      search();
+    });
   }
 }
 
-function submitAddToInventory(request: CartItem, owner: User, part: PartSchema) {
+function submitAddToInventory(
+  request: CartItem,
+  owner: User,
+  part: PartSchema
+) {
   // Send creation details to API
-  if(request.quantity!=undefined&&part.quantity!=undefined&&request.quantity>part.quantity) {
+  if (
+    request.quantity != undefined &&
+    part.quantity != undefined &&
+    request.quantity > part.quantity
+  ) {
     request.quantity = request.quantity - part.quantity;
     createNewPartRecords(http, request, owner, (records, err) => {
       if (err) {
@@ -135,33 +146,41 @@ function submitAddToInventory(request: CartItem, owner: User, part: PartSchema) 
       // Refresh parts list
       search();
     });
-  }
-  else if(request.quantity!=undefined&&part.quantity!=undefined&&request.quantity<part.quantity) {
+  } else if (
+    request.quantity != undefined &&
+    part.quantity != undefined &&
+    request.quantity < part.quantity
+  ) {
     let from = {
       next: null,
-      location: "Parts Room",
+      location: 'Parts Room',
       nxid: part.nxid,
-      building: request.building
-    }
-    let to = JSON.parse(JSON.stringify(from)) as PartRecord
+      building: request.building,
+    };
+    let to = JSON.parse(JSON.stringify(from)) as PartRecord;
     to.owner = 'deleted';
-    console.log(from)
-    console.log(to)
-    console.log((part.quantity!-request.quantity!))
-    movePart(http, to, from, (part.quantity!-request.quantity!), (data, err) => {
-      if (err) {
-        // Handle errors
-        errorHandler(err);
+    console.log(from);
+    console.log(to);
+    console.log(part.quantity! - request.quantity!);
+    movePart(
+      http,
+      to,
+      from,
+      part.quantity! - request.quantity!,
+      (data, err) => {
+        if (err) {
+          // Handle errors
+          errorHandler(err);
+        }
+        displayMessage(data as string);
+        // Reset
+        toggleAdd({});
+        // Refresh parts list
+        search();
       }
-      displayMessage(data as string);
-      // Reset
-      toggleAdd({});
-      // Refresh parts list
-      search();
-    });
-  }
-  else {
-    return errorHandler("Quantity error")
+    );
+  } else {
+    return errorHandler('Quantity error');
   }
 }
 </script>

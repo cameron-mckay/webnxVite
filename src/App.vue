@@ -171,7 +171,7 @@ async function displayMessage(message: string) {
   let messageRef: Message;
   // Search all messages
   for (const existingMessage of messages.value) {
-    // If message aleady exists
+    // If message already exists
     if (message == existingMessage.text) {
       // Increment existing message
       existingMessage.quantity += 1;

@@ -41,7 +41,13 @@ function remove() {
       <p class="break-words">{{ part ? part.manufacturer : '' }}</p>
       <p class="break-words">{{ part ? part.name : '' }}</p>
       <p class="hidden break-words md:block">
-        {{ part ? `${part.rack_num?part.rack_num:''}${part.shelf_location?part.shelf_location:''}` : '' }}
+        {{
+          part
+            ? `${part.rack_num ? part.rack_num : ''}${
+                part.shelf_location ? part.shelf_location : ''
+              }`
+            : ''
+        }}
       </p>
       <select required v-model="serial">
         <option :value="''" disabled>Select one</option>

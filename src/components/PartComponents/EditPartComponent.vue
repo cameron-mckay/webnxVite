@@ -12,7 +12,7 @@ interface Props {
 const { oldPart, show } = defineProps<Props>();
 const emit = defineEmits(['updatePart', 'deletePart']);
 
-let showDelete = ref(false)
+let showDelete = ref(false);
 
 function submit(part: PartSchema, image: File) {
   emit('updatePart', part, image);
@@ -31,11 +31,11 @@ function submit(part: PartSchema, image: File) {
     />
     <div class="flex justify-center">
       <label class="mr-2">I want to delete this part</label>
-      <input type="checkbox" v-model="showDelete">
+      <input type="checkbox" v-model="showDelete" />
     </div>
     <div class="flex justify-center">
       <input
-        class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700 mt-4"
+        class="submit col-span-2 mt-4 bg-red-500 hover:bg-red-600 active:bg-red-700"
         type="reset"
         value="DELETE PART"
         v-if="showDelete"
