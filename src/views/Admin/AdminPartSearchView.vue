@@ -8,19 +8,19 @@ import AddInventoryComponent from '../../components/PartComponents/AddInventoryC
 import EditPartComponent from '../../components/PartComponents/EditPartComponent.vue';
 import SearchComponent from '../../components/PartComponents/PartSearchComponent.vue';
 import {
-  createNewPartRecords,
-  deletePart,
-  movePart,
-  updatePart,
-  updatePartImage,
+createNewPartRecords,
+deletePart,
+movePart,
+updatePart,
+updatePartImage,
 } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
-  CartItem,
-  PartRecord,
-  PartSchema,
-  User,
-  UserState,
+CartItem,
+PartRecord,
+PartSchema,
+User,
+UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -129,7 +129,20 @@ function submitAddToInventory(
   part: PartSchema
 ) {
   // Send creation details to API
-  if (
+  if(part.serialized) {
+    createNewPartRecords(http, request, owner, (records, err) => {
+      if (err) {
+        return errorHandler(err);
+      }
+      // Display confirmation
+      displayMessage('Successfully added to inventory');
+      // Reset
+      toggleAdd({});
+      // Refresh parts list
+      search();
+    });
+  }
+  else if (
     request.quantity != undefined &&
     part.quantity != undefined &&
     request.quantity > part.quantity
