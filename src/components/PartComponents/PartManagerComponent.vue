@@ -270,6 +270,14 @@ onMounted(() => {
           type="text"
           placeholder="Chipset"
         />
+        <label>Socket:</label>
+        <input
+          class="textbox m-1"
+          :required="strict"
+          v-model="part.socket"
+          type="text"
+          placeholder="Socket"
+        />
         <label>Memory Generation:</label>
         <CustomDropdownComponent
           :required="strict"
@@ -284,13 +292,13 @@ onMounted(() => {
       </div>
 
       <div v-if="part.type == 'CPU'" class="col-span-2 grid grid-cols-2">
-        <label>Chipset:</label>
+        <label>Socket:</label>
         <input
           class="textbox m-1"
           :required="strict"
-          v-model="part.chipset"
+          v-model="part.socket"
           type="text"
-          placeholder="Chipset"
+          placeholder="Socket"
         />
       </div>
       <div v-if="part.type == 'Memory'" class="col-span-2 grid grid-cols-2">
@@ -326,11 +334,18 @@ onMounted(() => {
           placeholder="Capacity"
         />
         <label>Type:</label>
-        <select v-model="part.memory_type" class="textbox m-1">
-          <option disabled value="">Memory type</option>
+        <select v-model="part.memory_type" class="textbox m-1" required="strict">
+          <option selected disabled value="">Memory type</option>
           <option>UDIMM</option>
           <option>ECC</option>
           <option>REG</option>
+        </select>
+        <label>Rank(Optional):</label>
+        <select v-model="part.mem_rank" class="textbox m-1">
+          <option value="" disabled selected>Rank</option>
+          <option>Quad</option>
+          <option>Dual</option>
+          <option>Single</option>
         </select>
       </div>
       <div
@@ -437,9 +452,48 @@ onMounted(() => {
       </div>
       <div v-if="part.type == 'Heatsink'" class="col-span-2 grid grid-cols-2">
         <!--   -->
+        <label>Socket:</label>
+        <input
+          class="textbox m-1"
+          :required="strict"
+          v-model="part.socket"
+          type="text"
+          placeholder="Socket"
+        />
+        <label>Size:</label>
+        <select
+          :required="strict"
+          v-model="part.size"
+          class="textbox m-1"
+        >
+          <option disabled value="">Pick one</option>
+          <option>1U</option>
+          <option>2U</option>
+          <option>Fullsize</option>
+        </select>
+        <label>Active:</label>
+        <select
+          :required="strict"
+          v-model="part.active"
+          class="textbox m-1"
+        >
+          <option disabled value="">Pick one</option>
+          <option :value="true">Yes</option>
+          <option :value="false">No</option>
+        </select>
       </div>
       <div v-if="part.type == 'Optic'" class="col-span-2 grid grid-cols-2">
         <!--   -->
+        <label>Optic Type:</label>
+        <select
+          :required="strict"
+          v-model="part.cable_end1"
+          class="textbox m-1"
+        >
+          <option disabled value="">Pick one</option>
+          <option>SFP</option>
+          <option>QSFP</option>
+        </select>
       </div>
       <div v-if="part.type == 'Cable'" class="col-span-2 grid grid-cols-2">
         <label>Cable end 1:</label>

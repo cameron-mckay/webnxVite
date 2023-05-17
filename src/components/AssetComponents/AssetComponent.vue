@@ -21,6 +21,7 @@ const { asset, edit, add, view } = defineProps<Props>();
       <p class="hidden break-words md:block">{{ asset.asset_type }}</p>
       <p class="hidden break-words md:block">{{ asset.chassis_type }}</p>
       <p v-if="asset.live">Live</p>
+      <p v-else-if="asset.asset_type=='Server'&&asset.in_rack">AVAIL</p>
       <p v-else>Inactive</p>
       <div class="my-auto flex justify-end">
         <!-- Pencil -->

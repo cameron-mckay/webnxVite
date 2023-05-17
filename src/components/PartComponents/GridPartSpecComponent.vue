@@ -56,6 +56,8 @@ let url = import.meta.env.VITE_API_URL;
       <p>{{ part.memory_type }}</p>
       <p>Memory Generation:</p>
       <p>{{ part.memory_gen }}</p>
+      <p>Rank:</p>
+      <p>{{ part.mem_rank }}</p>
     </div>
     <div v-if="part.type == 'Peripheral Card'" class="detail-row">
       <p>Card Type:</p>

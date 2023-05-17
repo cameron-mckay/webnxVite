@@ -37,8 +37,12 @@ export interface PartSchema {
   rack_num?: number;
   frequency?: number;
   chipset?: string;
+  socket?: string;
+  size?: string;
+  active?: boolean;
   memory_type?: string;
   memory_gen?: string;
+  mem_rank?: string;
   peripheral_type?: string;
   storage_interface?: string;
   capacity?: number;
