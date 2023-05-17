@@ -6,10 +6,10 @@ import type { Store } from 'vuex';
 import AssetManagerComponent from '../../components/AssetComponents/AssetManagerComponent.vue';
 import { createAsset } from '../../plugins/dbCommands/assetManager';
 import type {
-  AssetSchema,
-  CartItem,
-  LoadedCartItem,
-  UserState,
+AssetSchema,
+CartItem,
+LoadedCartItem,
+UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -65,16 +65,16 @@ onMounted(() => {
     }
   );
 
-  watch(
-    () => oldAsset.value.live,
-    () => {
-      if (oldAsset.value.asset_type == 'Server' && oldAsset.value.live) {
-        oldAsset.value.rails = true;
-      } else {
-        delete oldAsset.value.rails;
-      }
-    }
-  );
+  // watch(
+  //   () => oldAsset.value.live,
+  //   () => {
+  //     if (oldAsset.value.asset_type == 'Server' && oldAsset.value.live) {
+  //       oldAsset.value.rails = true;
+  //     } else {
+  //       delete oldAsset.value.rails;
+  //     }
+  //   }
+  // );
 });
 
 function plusPart(item: LoadedCartItem) {

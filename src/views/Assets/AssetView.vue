@@ -5,13 +5,13 @@ import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetCartItemComponent from '../../components/AssetComponents/AssetCartItemComponent.vue';
 import {
-  getAssetByID,
-  getPartsOnAsset,
+getAssetByID,
+getPartsOnAsset,
 } from '../../plugins/dbCommands/assetManager';
 import type {
-  AssetSchema,
-  LoadedCartItem,
-  UserState,
+AssetSchema,
+LoadedCartItem,
+UserState,
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -95,7 +95,7 @@ function edit() {
         <p>{{ asset.building }}</p>
         <p>Asset Type:</p>
         <p>{{ asset.asset_type }}</p>
-        <p v-if="asset.chassis_type">Chassis Type</p>
+        <p v-if="asset.chassis_type">Chassis Type:</p>
         <p v-if="asset.chassis_type">
           {{ asset.chassis_type }}
         </p>

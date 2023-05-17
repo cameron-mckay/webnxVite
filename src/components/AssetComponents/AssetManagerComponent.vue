@@ -3,9 +3,9 @@ import { AxiosError, AxiosInstance } from 'axios';
 import { ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-  AssetSchema,
-  LoadedCartItem,
-  PartSchema,
+AssetSchema,
+LoadedCartItem,
+PartSchema,
 } from '../../plugins/interfaces';
 import AssetCartItemComponent from '../AssetComponents/AssetCartItemComponent.vue';
 import AssetPartSearchComponent from '../AssetComponents/SearchPartOnAssetComponent.vue';
@@ -397,8 +397,8 @@ function addPartFromInventory(item: LoadedCartItem) {
             placeholder="FW Revision"
           />
         </div>
-        <label>Status:</label>
-        <select :required="strict" v-model="oldAsset.live" class="textbox m-1">
+        <label v-if="!(oldAsset.in_rack || oldAsset.power_port)">Status:</label>
+        <select :required="strict" v-model="oldAsset.live" class="textbox m-1" v-if="!(oldAsset.in_rack || oldAsset.power_port)">
           <option :value="undefined" selected disabled>Select</option>
           <option :value="true">Live</option>
           <option :value="false">Inactive</option>
