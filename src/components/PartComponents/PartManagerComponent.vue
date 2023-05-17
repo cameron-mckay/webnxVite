@@ -334,7 +334,7 @@ onMounted(() => {
           placeholder="Capacity"
         />
         <label>Type:</label>
-        <select v-model="part.memory_type" class="textbox m-1" required="strict">
+        <select v-model="part.memory_type" class="textbox m-1" :required="strict">
           <option selected disabled value="">Memory type</option>
           <option>UDIMM</option>
           <option>ECC</option>
