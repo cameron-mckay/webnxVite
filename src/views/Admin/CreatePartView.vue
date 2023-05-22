@@ -45,9 +45,7 @@ async function submitPart(part: PartSchema, image: File) {
         // Rename image file
         let blob = image.slice(0, image.size, image.type);
         let fileName = newPart.nxid!;
-        displayMessage(`Filename: ${fileName}`);
         let renamedImage = new File([blob], fileName, { type: image.type });
-        displayMessage(`Filename: ${renamedImage.name}`)
         // upload image if exists
         updatePartImage(http, renamedImage, (data, err) => {
           if (err) {
