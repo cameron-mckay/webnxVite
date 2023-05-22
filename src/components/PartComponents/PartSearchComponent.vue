@@ -173,8 +173,9 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import {
-  getPartsByData,
-  getPartsByTextSearch,
+getPartByID,
+getPartsByData,
+getPartsByTextSearch
 } from '../../plugins/dbCommands/partManager';
 import type { PartSchema } from '../../plugins/interfaces';
 import QRCodeScannerPopupComponent from '../GenericComponents/QRCodeScannerPopupComponent.vue';
@@ -214,7 +215,7 @@ let {
 } = props;
 const emit = defineEmits(['addPartAction', 'editPartAction', 'viewPartAction']);
 defineExpose({
-  externalRefresh,
+  externalRefresh
 });
 
 // component variables
@@ -360,33 +361,34 @@ async function advancedSearch(part: PartSchema) {
 // Search function
 async function search() {
   // Check for webnx regex
-  // if (/WNX([0-9]{7})+/.test(searchText.value)) {
-  //     // temp value
-  //     let query = searchText.value
-  //     searchText.value = ""
-  //     // Search and add to cart
-  //     getPartByID(http, query, building.value, location, (data, err) => {
-  //         if (err) {
-  //             // Part not found
-  //             return errorHandler(err)
-  //         }
-  //         // Typecast data
-  //         let part = data as PartSchema
-  //         if (part == null) {
-  //             // If no part was found
-  //             return errorHandler("Part not found.")
-  //         }
-  //         // Emit actions
-  //         if (add === true) {
-  //             emit("addPartAction", part)
-  //         } else if (view === true) {
-  //             emit("viewPartAction", part)
-  //         } else if (edit == true) {
-  //             emit("viewPartAction", part)
-  //         }
-  //     })
-  // }
-  // else {
+  if (/PNX([0-9]{7})+/.test(invisibleSearchText)) {
+      // temp value
+      let query = invisibleSearchText
+      visibleSearchText.value = ""
+      invisibleSearchText = ""
+      // Search and add to cart
+      getPartByID(http, query, building.value, location, (data, err) => {
+          if (err) {
+              // Part not found
+              return errorHandler(err)
+          }
+          // Typecast data
+          let part = data as PartSchema
+          if (part == null) {
+              // If no part was found
+              return errorHandler("Part not found.")
+          }
+          // Emit actions
+          if (add === true) {
+              emit("addPartAction", part)
+          } else if (view === true) {
+              emit("viewPartAction", part)
+          } else if (edit == true) {
+              emit("viewPartAction", part)
+          }
+      })
+  }
+  else {
   router.push({
     query: {
       text: invisibleSearchText,
@@ -395,6 +397,7 @@ async function search() {
       location,
     },
   });
+  multiplePages.value = false;
   if (
     pageCache.has(pageNum.value) &&
     pageCache.get(pageNum.value)!.length > 0
@@ -429,7 +432,7 @@ async function search() {
         search();
       });
   }
-  // }
+  }
 }
 
 function getPage(page: number, text: string) {
