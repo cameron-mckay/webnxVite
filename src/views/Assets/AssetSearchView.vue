@@ -43,6 +43,7 @@ function viewAsset(asset: AssetSchema) {
       :http="http"
       :router="router"
       :edit="true"
+      :add="store.state.user.role!='sales'"
       :view="true"
       :errorHandler="errorHandler"
       :location="'Parts Room'"

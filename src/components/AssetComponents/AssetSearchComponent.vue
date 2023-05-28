@@ -43,6 +43,7 @@
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 448 512"
         @click="addUntrackedAsset"
+        v-if="add"
       >
         <path
           fill="currentColor"
@@ -116,7 +117,7 @@
       </div>
       <div class="md:animate-bottom">
         <AssetComponent
-          :add="add"
+          :add="false"
           :edit="edit"
           :view="view"
           v-for="asset in assets"

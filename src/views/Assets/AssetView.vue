@@ -73,6 +73,7 @@ function edit() {
         <!-- Pencil -->
         <svg
           v-on:click="edit"
+            v-if="store.state.user.role!='sales'"
           class="button-icon hover:button-icon-hover active:button-icon-active"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"

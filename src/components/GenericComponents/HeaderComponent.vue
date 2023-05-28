@@ -75,7 +75,7 @@
             Check In
           </RouterLink>
           <RouterLink
-            v-if="store.state.user.role != 'kiosk'"
+            v-if="store.state.user.role != 'kiosk'&& store.state.user.role != 'sales'"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/inventory"
           >
@@ -188,11 +188,11 @@
       </RouterLink>
       <RouterLink
         v-if="store.state.user.role == 'kiosk'"
+        class="mobile-nav-button"
         v-show="
           store.state.cart.unserialized.size < 1 &&
           store.state.cart.serialized.length < 1
         "
-        class="header-button-colors w-24 text-center leading-10 transition"
         to="/cart"
       >
         Check Out
@@ -205,7 +205,7 @@
         Check In
       </RouterLink>
       <RouterLink
-        v-if="store.state.user.role != 'kiosk'"
+        v-if="store.state.user.role != 'kiosk' && store.state.user.role != 'sales'"
         class="mobile-nav-button"
         to="/inventory"
       >
