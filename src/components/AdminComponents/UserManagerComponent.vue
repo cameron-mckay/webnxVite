@@ -26,6 +26,9 @@ user.value = props.user;
       <label>Role:</label>
       <select class="textbox my-1" v-model="user.role">
         <option>tech</option>
+        <option>sales</option>
+        <option>testing</option>
+        <option>ebay</option>
         <option>kiosk</option>
         <option>inventory</option>
         <option>admin</option>

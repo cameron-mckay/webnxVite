@@ -36,14 +36,16 @@ let url = import.meta.env.VITE_API_URL;
       {{ serial }}
     </p>
     <div class="detail-row" v-if="part.type == 'Motherboard'">
-      <p>Chipset:</p>
-      <p>{{ part.chipset }}</p>
+      <p v-if="part.chipset">Chipset:</p>
+      <p v-if="part.chipset">{{ part.chipset }}</p>
+      <p>Socket:</p>
+      <p>{{ part.socket }}</p>
       <p>Memory Generation:</p>
       <p>{{ part.memory_gen }}</p>
     </div>
     <div v-if="part.type == 'CPU'" class="detail-row">
-      <p>Chipset:</p>
-      <p>{{ part.chipset }}</p>
+      <p>Socket:</p>
+      <p>{{ part.socket }}</p>
       <p>Frequency:</p>
       <p>{{ part.frequency + 'GHz' }}</p>
     </div>
