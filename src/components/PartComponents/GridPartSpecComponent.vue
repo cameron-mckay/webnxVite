@@ -46,8 +46,6 @@ let url = import.meta.env.VITE_API_URL;
     <div v-if="part.type == 'CPU'" class="detail-row">
       <p>Socket:</p>
       <p>{{ part.socket }}</p>
-      <p>Frequency:</p>
-      <p>{{ part.frequency + 'GHz' }}</p>
     </div>
     <div v-if="part.type == 'Memory'" class="detail-row">
       <p>Frequency:</p>

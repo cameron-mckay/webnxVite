@@ -22,7 +22,6 @@ let { part } = defineProps<Props>();
     </div>
     <div v-if="part.type == 'CPU'">
       <p>{{ `Socket: ${part.socket}` }}</p>
-      <p>{{ `Frequency: ${part.frequency}GHz` }}</p>
     </div>
     <div v-if="part.type == 'Memory'">
       <p>{{ `Frequency: ${part.frequency}MHz` }}</p>
