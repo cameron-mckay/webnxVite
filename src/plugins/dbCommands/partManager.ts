@@ -91,8 +91,6 @@ export async function getPartByID(
  *
  * @param http
  * @param part
- * @param building
- * @param location
  * @param callback
  */
 export async function getPartsByData(
@@ -204,8 +202,8 @@ export async function checkout(
  * @brief Check in parts from the current user's inventory
  *
  * @param http
- * @param cart
- * @param building
+ * @param inventory 
+ * @param user_id 
  * @param callback
  */
 export async function checkin(
@@ -408,7 +406,6 @@ export function movePart(
  *
  * @param http
  * @param image
- * @param nxid
  * @param callback
  */
 export function updatePartImage(

@@ -3,6 +3,7 @@
 import { Ref, onMounted, ref, watch } from 'vue';
 import type { PartSchema } from '../../plugins/interfaces';
 import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponent.vue';
+import StringArrayComponent from '../GenericComponents/StringArrayComponent.vue';
 
 // Props interface
 interface Props {
@@ -271,13 +272,17 @@ onMounted(() => {
           placeholder="Chipset"
         />
         <label>Socket:</label>
-        <input
-          class="textbox m-1"
+        <StringArrayComponent
           :required="strict"
-          v-model="part.socket"
-          type="text"
-          placeholder="Socket"
+          :defaultValue="part.socket"
+          :placeholder="'Socket'"
+          @updateValue="
+            (value: string[]) => {
+              part.socket = value;
+            }
+          "
         />
+        
         <label>Memory Generation:</label>
         <CustomDropdownComponent
           :required="strict"
