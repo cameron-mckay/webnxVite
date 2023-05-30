@@ -45,7 +45,7 @@ onMounted(()=>{
       />
         <!-- Plus -->
         <svg
-          v-if="index == textValues.length - 1"
+          v-if="index == 0"
           v-on:click='textValues.push("")'
           class="button-icon hover:button-icon-hover active:button-icon-active mt-1 mr-0 h-8 w-8 md:h-10 md:w-10"
           xmlns="http://www.w3.org/2000/svg"

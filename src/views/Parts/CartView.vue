@@ -54,13 +54,7 @@ function loadUsers() {
       return errorHandler(err);
     }
     users.value = data as User[];
-    users.value.push({ first_name: 'All', last_name: 'Techs', _id: 'all' });
-    for (let i = 0; i < users.value.length; i++) {
-      if (users.value[i].role == 'kiosk') {
-        users.value.splice(i, 1);
-        i--;
-      }
-    }
+    users.value = users.value.filter((u)=>!(u.role=='kiosk'||u.role=='sales'))
   });
 }
 

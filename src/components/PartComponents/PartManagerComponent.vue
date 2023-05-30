@@ -458,12 +458,15 @@ onMounted(() => {
       <div v-if="part.type == 'Heatsink'" class="col-span-2 grid grid-cols-2">
         <!--   -->
         <label>Socket:</label>
-        <input
-          class="textbox m-1"
+        <StringArrayComponent
           :required="strict"
-          v-model="part.socket"
-          type="text"
-          placeholder="Socket"
+          :defaultValue="part.socket"
+          :placeholder="'Socket'"
+          @updateValue="
+            (value: string[]) => {
+              part.socket = value;
+            }
+          "
         />
         <label>Size:</label>
         <select

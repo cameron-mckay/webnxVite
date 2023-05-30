@@ -75,7 +75,7 @@ function firstLoad() {
       users.value = data as User[];
       // Find and remove current user or kiosks
       users.value = users.value.filter(
-        (u) => !(u._id == store.state.user._id || u.role == 'kiosk')
+        (u) => !(u._id == store.state.user._id || u.role == 'kiosk' || u.role == 'sales')
       );
     });
   }
