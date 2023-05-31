@@ -13,7 +13,7 @@ let url = import.meta.env.VITE_API_URL;
 <template>
   <div class="detail-table">
     <h1 class="detail-title">
-      {{ `${part.manufacturer} ${part.name}` }}
+      {{ part.type!='Cable' ? part.manufacturer : '' }} {{ part.name }}
     </h1>
     <p class="detail-label">NXID:</p>
     <p class="detail-data">{{ part.nxid }}</p>
