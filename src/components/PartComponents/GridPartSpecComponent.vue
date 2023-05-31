@@ -92,6 +92,15 @@ let url = import.meta.env.VITE_API_URL;
       <p>Ports:</p>
       <p>{{ part.port_type }}</p>
     </div>
+    <div v-if="part.type == 'Heatsink'">
+      <p>Socket:</p>
+      <p>{{ part.socket }}</p>
+      <p>Size:</p>
+      <p>{{ part.size }}</p>
+      <p>Active:</p>
+      <p v-if="part.active">Yes</p>
+      <p v-else>No</p>
+    </div>
     <div v-if="part.type == 'Misc.'">
       <!-- Placeholder -->
     </div>
