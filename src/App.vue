@@ -21,7 +21,7 @@ import MessageComponent from './components/GenericComponents/MessageComponent.vu
 
 // Import dependencies
 import type { AxiosError, AxiosInstance } from 'axios';
-import { Ref, inject, onMounted, ref, onBeforeMount } from 'vue';
+import { Ref, inject, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { injectionKey } from './plugins/axios';
 import { checkAuth } from './plugins/dbCommands/userManager';
@@ -54,6 +54,7 @@ onMounted(() => {
     }, 100);
   }
 });
+
 // Before app is created
 checkAuth(http, (data, err) => {
   // If not authenticated
@@ -61,9 +62,11 @@ checkAuth(http, (data, err) => {
     // set status
     store.commit('deauthenticate');
     // redirect
-    if (route.name == 'Register')
-      return;
-    router.push({ name: 'Login' });
+    if (route.name != 'Register') {
+      router.push({ name: 'Login' });
+    }
+    // return
+    return;
   }
   // If authenticated, set status
   displayMessage('Successfully logged in.');
