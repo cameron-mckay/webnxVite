@@ -54,46 +54,45 @@ onMounted(() => {
     }, 100);
   }
 });
-onBeforeMount(()=>{
 // Before app is created
-  checkAuth(http, (data, err) => {
-    // If not authenticated
-    if (err) {
-      // set status
-      store.commit('deauthenticate');
-      // redirect
-      if (route.name == 'Register')
-        return;
-      router.push({ name: 'Login' });
+checkAuth(http, (data, err) => {
+  // If not authenticated
+  if (err) {
+    // set status
+    store.commit('deauthenticate');
+    // redirect
+    if (route.name == 'Register')
+      return;
+    router.push({ name: 'Login' });
+  }
+  // If authenticated, set status
+  displayMessage('Successfully logged in.');
+  store.commit('authenticate');
+  store.commit('updateUserData');
+  // Check if user is a non admin trying to access admin route
+  user_data.value = data as User;
+  router.beforeEach((to, from, next) => {
+    // Make sure they are admin for admin routes
+    if (user_data.value.role != 'admin' && /\/admin\/*/.test(to.path)) {
+      router.push({ name: 'Parts' });
+      errorHandler('You are not authorized to access this page.');
     }
-    // If authenticated, set status
-    displayMessage('Successfully logged in.');
-    store.commit('authenticate');
-    store.commit('updateUserData');
-    // Check if user is a non admin trying to access admin route
-    user_data.value = data as User;
-    router.beforeEach((to, from, next) => {
-      // Make sure they are admin for admin routes
-      if (user_data.value.role != 'admin' && /\/admin\/*/.test(to.path)) {
-        router.push({ name: 'Parts' });
-        errorHandler('You are not authorized to access this page.');
-      }
-      if (
-        user_data.value.role != 'admin' &&
-        user_data.value.role != 'inventory' &&
-        /\/manage\/*/.test(to.path)
-      ) {
-        router.push({ name: 'Parts' });
-        errorHandler('You are not authorized to access this page.');
-      }
-      // This goes through the matched routes from last to first, finding the closest route with a title.
-      // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
-      // `/nested`'s will be chosen.
-      document.title = `WebNX - ${to.name?.toString()}`;
-      next();
-    });
+    if (
+      user_data.value.role != 'admin' &&
+      user_data.value.role != 'inventory' &&
+      /\/manage\/*/.test(to.path)
+    ) {
+      router.push({ name: 'Parts' });
+      errorHandler('You are not authorized to access this page.');
+    }
+    // This goes through the matched routes from last to first, finding the closest route with a title.
+    // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
+    // `/nested`'s will be chosen.
+    document.title = `WebNX - ${to.name?.toString()}`;
+    next();
   });
-})
+});
+
 /**
  * @brief Briefly print an error to an on screen popup
  *
