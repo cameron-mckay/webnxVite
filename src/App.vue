@@ -21,7 +21,7 @@ import MessageComponent from './components/GenericComponents/MessageComponent.vu
 
 // Import dependencies
 import type { AxiosError, AxiosInstance } from 'axios';
-import { Ref, inject, onMounted, ref } from 'vue';
+import { Ref, inject, onMounted, ref, onBeforeMount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { injectionKey } from './plugins/axios';
 import { checkAuth } from './plugins/dbCommands/userManager';
@@ -56,46 +56,47 @@ onMounted(() => {
 });
 
 // Before app is created
-checkAuth(http, (data, err) => {
-  // If not authenticated
-  if (err) {
-    // set status
-    store.commit('deauthenticate');
-    // redirect
-    if (route.name != 'Register') {
-      router.push({ name: 'Login' });
+onBeforeMount(()=>{
+  checkAuth(http, (data, err) => {
+    // If not authenticated
+    if (err) {
+      // set status
+      store.commit('deauthenticate');
+      // redirect
+      if (route.name != 'Register') {
+        router.push({ name: 'Login' });
+      }
+      // return
+      return;
     }
-    // return
-    return;
-  }
-  // If authenticated, set status
-  displayMessage('Successfully logged in.');
-  store.commit('authenticate');
-  store.commit('updateUserData');
-  // Check if user is a non admin trying to access admin route
-  user_data.value = data as User;
-  router.beforeEach((to, from, next) => {
-    // Make sure they are admin for admin routes
-    if (user_data.value.role != 'admin' && /\/admin\/*/.test(to.path)) {
-      router.push({ name: 'Parts' });
-      errorHandler('You are not authorized to access this page.');
-    }
-    if (
-      user_data.value.role != 'admin' &&
-      user_data.value.role != 'inventory' &&
-      /\/manage\/*/.test(to.path)
-    ) {
-      router.push({ name: 'Parts' });
-      errorHandler('You are not authorized to access this page.');
-    }
-    // This goes through the matched routes from last to first, finding the closest route with a title.
-    // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
-    // `/nested`'s will be chosen.
-    document.title = `WebNX - ${to.name?.toString()}`;
-    next();
+    // If authenticated, set status
+    displayMessage('Successfully logged in.');
+    store.commit('authenticate');
+    store.commit('updateUserData');
+    // Check if user is a non admin trying to access admin route
+    user_data.value = data as User;
+    router.beforeEach((to, from, next) => {
+      // Make sure they are admin for admin routes
+      if (user_data.value.role != 'admin' && /\/admin\/*/.test(to.path)) {
+        router.push({ name: 'Parts' });
+        errorHandler('You are not authorized to access this page.');
+      }
+      if (
+        user_data.value.role != 'admin' &&
+        user_data.value.role != 'inventory' &&
+        /\/manage\/*/.test(to.path)
+      ) {
+        router.push({ name: 'Parts' });
+        errorHandler('You are not authorized to access this page.');
+      }
+      // This goes through the matched routes from last to first, finding the closest route with a title.
+      // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
+      // `/nested`'s will be chosen.
+      document.title = `WebNX - ${to.name?.toString()}`;
+      next();
+    });
   });
-});
-
+})
 /**
  * @brief Briefly print an error to an on screen popup
  *
