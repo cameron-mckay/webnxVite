@@ -29,6 +29,7 @@ interface Props {
   router: Router;
   errorHandler: (err: Error | AxiosError | string) => void;
   displayMessage: (message: string) => void;
+  revokeLogin: () => void;
 }
 const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
@@ -215,6 +216,7 @@ function submitAddToInventory(
       @addPartAction="toggleAdd"
       @viewPartAction="viewPart"
       :router="router"
+      :revokeLogin="revokeLogin"
     />
 
     <EditPartComponent
