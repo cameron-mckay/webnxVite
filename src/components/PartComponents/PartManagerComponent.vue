@@ -389,7 +389,7 @@ onMounted(() => {
               part.port_type = value;
             }
           "
-          :defaultValue="part.port_type"
+          :defaultValue="part.port_type as string"
         />
 
         <label>Num Ports:</label>
@@ -403,6 +403,27 @@ onMounted(() => {
         />
       </div>
       <div v-if="part.type == 'Storage'" class="col-span-2 grid grid-cols-2">
+
+        <label>Form Factor:</label>
+        <select
+          :required="strict"
+          v-model="part.size"
+          class="textbox m-1"
+        >
+          <option disabled value="">Pick one</option>
+          <option>2.5"</option>
+          <option>3.5"</option>
+        </select>
+        <label>Storage Type:</label>
+        <select
+          :required="strict"
+          v-model="part.storage_type"
+          class="textbox m-1"
+        >
+          <option disabled value="">Pick one</option>
+          <option>SSD</option>
+          <option>HDD</option>
+        </select>
         <label>Storage interface:</label>
         <select
           :required="strict"
@@ -412,7 +433,7 @@ onMounted(() => {
           <option disabled value="">Pick one</option>
           <option>SATA</option>
           <option>SAS</option>
-          <option>NVME</option>
+          <option v-if="part.storage_type='SSD'">NVME</option>
         </select>
         <label>Capacity:</label>
         <div class="flex justify-between">
@@ -448,7 +469,7 @@ onMounted(() => {
                 part.port_type = value;
               }
             "
-            :defaultValue="part.port_type"
+            :defaultValue="part.port_type as string"
           />
         </div>
       </div>
@@ -523,7 +544,7 @@ onMounted(() => {
         <label>Storage interface:</label>
         <CustomDropdownComponent
           :required="strict"
-          :options="['SAS', 'NVME']"
+          :options="['SATA','SAS', 'NVME']"
           @updateValue="
             (value: string) => {
               part.storage_interface = value;
@@ -531,16 +552,25 @@ onMounted(() => {
           "
           :defaultValue="part.storage_interface"
         />
-        <label>Ports:</label>
-        <CustomDropdownComponent
+        <label>Num Slots:</label>
+        <input
+          class="textbox m-1"
           :required="strict"
-          :options="['SAS', 'Mini SAS HD']"
+          v-model="part.num_ports"
+          type="number"
+          min="0"
+          placeholder="Num Slots"
+        />
+        <label>Ports:</label>
+        <StringArrayComponent
+          :required="strict"
+          :defaultValue="part.port_type"
+          :placeholder="'Port'"
           @updateValue="
-            (value: string) => {
+            (value: string[]) => {
               part.port_type = value;
             }
           "
-          :defaultValue="part.port_type"
         />
       </div>
       <input

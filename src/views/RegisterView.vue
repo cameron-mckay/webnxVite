@@ -63,12 +63,11 @@ interface Props {
   http: AxiosInstance;
   store: Store<UserState>;
   router: Router;
-  user_data: User;
   errorHandler: (err: Error | AxiosError) => void;
   displayMessage: (message: string) => void;
 }
 
-let { http, store, router, errorHandler, displayMessage, user_data } =
+let { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 // END OF PROPS
 

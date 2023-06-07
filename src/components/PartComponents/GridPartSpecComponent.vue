@@ -39,13 +39,13 @@ let url = import.meta.env.VITE_API_URL;
       <p v-if="part.chipset">Chipset:</p>
       <p v-if="part.chipset">{{ part.chipset }}</p>
       <p>Socket:</p>
-      <p>{{ part.socket }}</p>
+      <p>{{ Array.isArray(part.socket)?(part.socket as string[]).join(', '):part.socket }}</p>
       <p>Memory Generation:</p>
       <p>{{ part.memory_gen }}</p>
     </div>
     <div v-if="part.type == 'CPU'" class="detail-row">
       <p>Socket:</p>
-      <p>{{ part.socket }}</p>
+      <p>{{ Array.isArray(part.socket)?(part.socket as string[]).join(', '):part.socket }}</p>
     </div>
     <div v-if="part.type == 'Memory'" class="detail-row">
       <p>Frequency:</p>
@@ -63,9 +63,13 @@ let url = import.meta.env.VITE_API_URL;
       <p>Card Type:</p>
       <p>{{ part.peripheral_type }}</p>
       <p>Port Type:</p>
-      <p>{{ part.port_type }}</p>
+      <p>{{ Array.isArray(part.port_type)?(part.port_type as string[]).join(', '):part.port_type }}</p>
     </div>
     <div v-if="part.type == 'Storage'" class="detail-row">
+      <p>Form Factor:</p>
+      <p>{{ part.size }}</p>
+      <p>Storage Type:</p>
+      <p>{{ part.storage_type }}</p>
       <p>Interface:</p>
       <p>{{ part.storage_interface }}</p>
       <p>Capacity:</p>
@@ -74,7 +78,7 @@ let url = import.meta.env.VITE_API_URL;
       </p>
       <div v-if="part.storage_interface == 'NVME'" class="detail-row">
         <p>Connector:</p>
-        <p>{{ part.port_type }}</p>
+        <p>{{ Array.isArray(part.port_type)?(part.port_type as string[]).join(', '):part.port_type }}</p>
       </div>
     </div>
     <div v-if="part.type == 'GPU'">
@@ -89,8 +93,10 @@ let url = import.meta.env.VITE_API_URL;
     <div v-if="part.type == 'Backplane'" class="detail-row">
       <p>Interface:</p>
       <p>{{ part.storage_interface }}</p>
+      <p>Num Slots:</p>
+      <p>{{ part.num_ports }}</p>
       <p>Ports:</p>
-      <p>{{ part.port_type }}</p>
+      <p>{{ Array.isArray(part.port_type)?(part.port_type as string[]).join(', '):part.port_type }}</p>
     </div>
     <div v-if="part.type == 'Heatsink'" class="detail-row">
       <p>Socket:</p>

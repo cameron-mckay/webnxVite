@@ -16,12 +16,12 @@ let { part } = defineProps<Props>();
     </p>
     <p>{{ `Type: ${part.type}` }}</p>
     <div v-if="part.type == 'Motherboard'">
-      <p>{{ `Socket: ${part.socket}` }}</p>
+      <p>{{ `Socket: ${ Array.isArray(part.socket) ? part.socket.join(", ") : part.socket}` }}</p>
       <p v-if="part.chipset">{{ `Chipset: ${part.chipset}` }}</p>
       <p>{{ `Memory Generation: ${part.memory_gen}` }}</p>
     </div>
     <div v-if="part.type == 'CPU'">
-      <p>{{ `Socket: ${part.socket}` }}</p>
+      <p>{{ `Socket: ${ Array.isArray(part.socket) ? part.socket.join(", ") : part.socket}` }}</p>
     </div>
     <div v-if="part.type == 'Memory'">
       <p>{{ `Frequency: ${part.frequency}MHz` }}</p>
@@ -35,6 +35,8 @@ let { part } = defineProps<Props>();
       <p>{{ `Port type: ${part.port_type}` }}</p>
     </div>
     <div v-if="part.type == 'Storage'">
+      <p v-if="part.size">{{ `Form Factor: ${part.size}` }}</p>
+      <p v-if="part.storage_type">{{ `Storage Type: ${part.storage_type}` }}</p>
       <p>{{ `Interface: ${part.storage_interface}` }}</p>
       <p>{{ `Capacity: ${part.capacity}${part.capacity_unit}` }}</p>
       <div v-if="part.storage_interface == 'NVME'">
@@ -50,11 +52,12 @@ let { part } = defineProps<Props>();
     </div>
     <div v-if="part.type == 'Backplane'">
       <p>{{ `Interface: ${part.storage_interface}` }}</p>
-      <p>{{ `Ports: ${part.port_type}` }}</p>
+      <p>{{ `Num Slots: ${part.num_ports}` }}</p>
+      <p>{{ `Ports: ${ Array.isArray(part.port_type) ? part.port_type.join(', ') : part.port_type }` }}</p>
     </div>
     <div v-if="part.type == 'Heatsink'">
       <!-- Placeholder -->
-      <p>{{ `Socket: ${part.socket}` }}</p>
+      <p>{{ `Socket: ${ Array.isArray(part.socket) ? part.socket.join(", ") : part.socket}` }}</p>
       <p>{{ `Size: ${part.size}` }}</p>
       <p v-if="part.active">Active: Yes</p>
       <p v-else>Active: No</p>

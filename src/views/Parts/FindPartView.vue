@@ -13,6 +13,7 @@ interface Props {
   router: Router;
   errorHandler: (err: Error | AxiosError | string) => void;
   displayMessage: (message: string) => void;
+  revokeLogin: () => void;
 }
 let currentBuilding = ref(3);
 let add = ref({ show: false });
@@ -64,6 +65,7 @@ function viewPart(part: PartSchema) {
       :location="'Parts Room'"
       :building="currentBuilding"
       :displayMessage="displayMessage"
+      :revokeLogin="revokeLogin"
       @addPartAction="addToCart"
     />
   </div>

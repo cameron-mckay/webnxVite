@@ -14,10 +14,11 @@ interface Props {
   router: Router;
   errorHandler: (err: Error | AxiosError | string) => void;
   displayMessage: (message: string) => void;
+  revokeLogin: () => void;
 }
 let editPart = ref(false);
 
-const { http, store, router, errorHandler, displayMessage } =
+const { http, store, router, errorHandler, displayMessage, revokeLogin } =
   defineProps<Props>();
 // END OF PROPS
 let currentPart: Ref<PartSchema> = ref({});
@@ -54,6 +55,7 @@ function update(part: PartSchema) {
       :displayMessage="displayMessage"
       @partAction="toggleEdit"
       :router="router"
+      :revokeLogin="revokeLogin"
       :building="store.state.user.building ? store.state.user.building : 3"
     />
     <div

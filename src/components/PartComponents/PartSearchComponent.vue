@@ -198,6 +198,7 @@ interface Props {
   view?: boolean;
   changeBuilding?: boolean;
   add_object?: AddObject;
+  revokeLogin: () => void;
 }
 
 // Define shit

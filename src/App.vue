@@ -6,11 +6,10 @@
       class="my-16 mx-4 w-[calc(100%-2rem)] text-sm md:mx-auto md:max-w-5xl md:text-base"
       :http="http"
       :store="store"
-      :errorHandler="errorHandler"
       :router="router"
+      :errorHandler="errorHandler"
       :displayMessage="displayMessage"
-      :user_data="user_data"
-      :routeLocation="route"
+      :revokeLogin="revokeLogin"
     />
   </div>
 </template>
@@ -59,16 +58,8 @@ onMounted(() => {
 onBeforeMount(()=>{
   checkAuth(http, (data, err) => {
     // If not authenticated
-    if (err) {
-      // set status
-      store.commit('deauthenticate');
-      // redirect
-      if (route.name != 'Register') {
-        router.push({ name: 'Login' });
-      }
-      // return
-      return;
-    }
+    if (err)
+      return revokeLogin()
     // If authenticated, set status
     displayMessage('Successfully logged in.');
     store.commit('authenticate');
@@ -102,7 +93,7 @@ onBeforeMount(()=>{
  *
  * @param err
  */
-async function errorHandler(err: AxiosError | string) {
+function errorHandler(err: AxiosError | string) {
   // string variable for message text
   let message: string;
   // if error is already a string
@@ -165,7 +156,7 @@ async function errorHandler(err: AxiosError | string) {
  *
  * @param message
  */
-async function displayMessage(message: string) {
+function displayMessage(message: string) {
   // Sentinel value
   let match = false;
   // Reference to message for timeout
@@ -202,5 +193,15 @@ async function displayMessage(message: string) {
       messageRef.quantity -= 1;
     }
   }, 5000);
+}
+
+function revokeLogin() {
+  errorHandler('Login expired')
+  // set status
+  store.commit('deauthenticate');
+  // redirect
+  if (route.name != 'Register') {
+    router.push({ name: 'Login' });
+  }
 }
 </script>

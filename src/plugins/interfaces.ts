@@ -45,10 +45,11 @@ export interface PartSchema {
   mem_rank?: string;
   peripheral_type?: string;
   storage_interface?: string;
+  storage_type?: string;
   capacity?: number;
   capacity_unit?: string;
   num_ports?: number;
-  port_type?: string;
+  port_type?: string|string[];
   cable_end1?: string;
   cable_end2?: string;
   serialized?: boolean;
