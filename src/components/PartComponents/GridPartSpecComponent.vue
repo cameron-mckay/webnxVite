@@ -66,10 +66,10 @@ let url = import.meta.env.VITE_API_URL;
       <p>{{ Array.isArray(part.port_type)?(part.port_type as string[]).join(', '):part.port_type }}</p>
     </div>
     <div v-if="part.type == 'Storage'" class="detail-row">
-      <p>Form Factor:</p>
-      <p>{{ part.size }}</p>
-      <p>Storage Type:</p>
-      <p>{{ part.storage_type }}</p>
+      <p v-if="part.size">Form Factor:</p>
+      <p v-if="part.size">>{{ part.size }}</p>
+      <p v-if="part.storage_type">>Storage Type:</p>
+      <p v-if="part.storage_type">>{{ part.storage_type }}</p>
       <p>Interface:</p>
       <p>{{ part.storage_interface }}</p>
       <p>Capacity:</p>
@@ -81,9 +81,6 @@ let url = import.meta.env.VITE_API_URL;
         <p>{{ Array.isArray(part.port_type)?(part.port_type as string[]).join(', '):part.port_type }}</p>
       </div>
     </div>
-    <div v-if="part.type == 'GPU'">
-      <!-- Placeholder -->
-    </div>
     <div v-if="part.type == 'Cable'" class="detail-row">
       <p>End 1:</p>
       <p>{{ part.cable_end1 }}</p>
@@ -91,8 +88,6 @@ let url = import.meta.env.VITE_API_URL;
       <p>{{ part.cable_end2 }}</p>
     </div>
     <div v-if="part.type == 'Backplane'" class="detail-row">
-      <p>Interface:</p>
-      <p>{{ part.storage_interface }}</p>
       <p>Num Slots:</p>
       <p>{{ part.num_ports }}</p>
       <p>Ports:</p>

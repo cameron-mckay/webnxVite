@@ -246,7 +246,6 @@ onMounted(() => {
           'Memory',
           'Storage',
           'Peripheral Card',
-          'GPU',
           'Cable',
           'Backplane',
           'Heatsink',
@@ -463,9 +462,6 @@ onMounted(() => {
           />
         </div>
       </div>
-      <div v-if="part.type == 'GPU'" class="col-span-2 grid grid-cols-2">
-        <!--   -->
-      </div>
       <div v-if="part.type == 'Heatsink'" class="col-span-2 grid grid-cols-2">
         <!--   -->
         <label>Socket:</label>
@@ -531,18 +527,7 @@ onMounted(() => {
         />
       </div>
       <div v-if="part.type == 'Backplane'" class="col-span-2 grid grid-cols-2">
-        <label>Storage interface:</label>
-        <CustomDropdownComponent
-          :required="strict"
-          :options="['SATA','SAS', 'NVME']"
-          @updateValue="
-            (value: string) => {
-              part.storage_interface = value;
-            }
-          "
-          :defaultValue="part.storage_interface"
-        />
-        <label>Num Slots:</label>
+	<label>Num Slots:</label>
         <input
           class="textbox m-1"
           :required="strict"
