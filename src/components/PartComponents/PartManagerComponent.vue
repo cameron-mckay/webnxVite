@@ -381,7 +381,6 @@ onMounted(() => {
         />
         <label>Ports(Optional):</label>
         <StringArrayComponent
-          :required="strict"
           :defaultValue="part.port_type"
           :placeholder="'Port'"
           @updateValue="
