@@ -68,13 +68,13 @@ onBeforeMount(()=>{
     user_data.value = data as User;
     router.beforeEach((to, from, next) => {
       // Make sure they are admin for admin routes
-      if (user_data.value.role != 'admin' && /\/admin\/*/.test(to.path)) {
+      if (!user_data.value.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
         router.push({ name: 'Parts' });
         errorHandler('You are not authorized to access this page.');
       }
       if (
-        user_data.value.role != 'admin' &&
-        user_data.value.role != 'inventory' &&
+        !(user_data.value.roles?.includes('admin')||
+        user_data.value.roles?.includes('clerk')) &&
         /\/manage\/*/.test(to.path)
       ) {
         router.push({ name: 'Parts' });
@@ -196,10 +196,10 @@ function displayMessage(message: string) {
 }
 
 function revokeLogin() {
-  errorHandler('Login expired')
   // set status
   store.commit('deauthenticate');
   // redirect
+  router.replace({ query: undefined })
   if (route.name != 'Register') {
     router.push({ name: 'Login' });
   }

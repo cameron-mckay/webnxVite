@@ -47,7 +47,7 @@ function loadUsers() {
       return errorHandler(err);
     }
     users.value = data as User[];
-    users.value = users.value.filter((u)=>!(u.role=='kiosk'||u.role=='sales'))
+    users.value = users.value.filter((u)=>!(u.roles!.includes('kiosk')||u.roles!.includes('sales')))
   });
 }
 

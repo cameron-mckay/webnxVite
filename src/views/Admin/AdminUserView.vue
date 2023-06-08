@@ -34,6 +34,7 @@ function getUsers() {
       return errorHandler(err);
     }
     users.value = data as Array<User>;
+    console.log(data)
   });
 }
 

@@ -42,8 +42,8 @@ function viewAsset(asset: AssetSchema) {
     <AssetSearchComponent
       :http="http"
       :router="router"
-      :edit="true"
-      :add="store.state.user.role!='sales'"
+      :add="!store.state.user.roles?.includes('sales')"
+      :edit="!store.state.user.roles?.includes('sales')"
       :view="true"
       :errorHandler="errorHandler"
       :location="'Parts Room'"

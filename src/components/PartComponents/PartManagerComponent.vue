@@ -357,10 +357,22 @@ onMounted(() => {
         v-if="part.type == 'Peripheral Card'"
         class="col-span-2 grid grid-cols-2"
       >
+        <label>Mainboard Connector:</label>
+        <CustomDropdownComponent
+          :required="strict"
+          :options="['PCI x1', 'PCI x4', 'PCI x8', 'PCI x16', 'Mezzanine']"
+          @updateValue="
+            (value: string) => {
+              // part.peripheral_type = value;
+            }
+          "
+          :defaultValue="''"
+        />
+
         <label>Card type:</label>
         <CustomDropdownComponent
           :required="strict"
-          :options="['RAID', 'JBOD', 'NIC', 'Adapter']"
+          :options="['RAID', 'JBOD', 'NIC', 'NVME Adapter', 'Riser']"
           @updateValue="
             (value: string) => {
               part.peripheral_type = value;
@@ -368,38 +380,16 @@ onMounted(() => {
           "
           :defaultValue="part.peripheral_type"
         />
-        <label>Port Type:</label>
-        <CustomDropdownComponent
-          v-if="part.port_type == 'NIC'"
+        <label>Ports(Optional):</label>
+        <StringArrayComponent
           :required="strict"
-          :options="['SFP', 'RJ45']"
-          @updateValue="
-            (value: string) => {
-              part.port_type = value;
-            }
-          "
           :defaultValue="part.port_type"
-        />
-        <CustomDropdownComponent
-          v-else
-          :required="strict"
-          :options="['SAS', 'Mini SAS HD']"
+          :placeholder="'Port'"
           @updateValue="
-            (value: string) => {
+            (value: string[]) => {
               part.port_type = value;
             }
           "
-          :defaultValue="part.port_type as string"
-        />
-
-        <label>Num Ports:</label>
-        <input
-          class="textbox m-1"
-          :required="strict"
-          v-model="part.num_ports"
-          type="number"
-          min="0"
-          placeholder="Num Ports"
         />
       </div>
       <div v-if="part.type == 'Storage'" class="col-span-2 grid grid-cols-2">

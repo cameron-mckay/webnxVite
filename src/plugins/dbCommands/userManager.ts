@@ -228,3 +228,19 @@ export async function getAllTechsInventory(
       callback({}, err);
     });
 }
+
+export async function checkRoles(http: AxiosInstance, roles: string[], callback: apiResponse) {
+  await http.get('/api/user/roles', {
+    params: {
+      roles
+    }
+  })
+  .then((res: AxiosResponse) => {
+      // Success - send response to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}

@@ -9,9 +9,17 @@ interface Props {
 const emit = defineEmits(['update']);
 
 const props = defineProps<Props>();
-
+const roles = ['sales', 'tech', 'clerk', 'kiosk', 'admin'];
 let user: Ref<User> = ref({});
 user.value = props.user;
+
+function toggleRole(role: string) {
+  if(user.value.roles?.includes(role)) {
+    return user.value.roles.splice(user.value.roles.indexOf(role), 1)
+  }
+  user.value.roles?.push(role)
+}
+
 </script>
 <template>
   <FullScreenPopupComponent>
@@ -23,16 +31,13 @@ user.value = props.user;
       <input class="textbox my-1" type="text" v-model="user.first_name" />
       <label>Last Name:</label>
       <input class="textbox my-1" type="text" v-model="user.last_name" />
-      <label>Role:</label>
-      <select class="textbox my-1" v-model="user.role">
-        <option>tech</option>
-        <option>sales</option>
-        <option>testing **NOT IMPLEMENTED**</option>
-        <option>ebay **NOT IMPLEMENTED**</option>
-        <option>kiosk</option>
-        <option>inventory</option>
-        <option>admin</option>
-      </select>
+      <label class="col-span-2">Roles:</label>
+      <div class="col-span-2">
+        <div class="ml-4 flex" v-for="role in roles">
+          <input type="checkbox" v-on:click="toggleRole(role)" class="text-white my-1" :checked='user.roles?.includes(role)'>
+          <p>{{ role }}</p>
+        </div>
+      </div>
       <label>Building:</label>
       <select class="textbox my-1" v-model="user.building">
         <option>1</option>

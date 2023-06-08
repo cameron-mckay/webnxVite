@@ -5,6 +5,7 @@ import { onMounted, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import SearchComponent from '../../components/PartComponents/PartSearchComponent.vue';
+import { checkRoles } from '../../plugins/dbCommands/userManager';
 import type { PartSchema, UserState } from '../../plugins/interfaces';
 
 interface Props {
@@ -24,7 +25,8 @@ onMounted(() => {
     // Set local variables to user state
     currentBuilding.value = store.state.user.building!;
     // If user is kiosk, show add to cart buttons
-    add.value.show = store.state.user.role == 'kiosk';
+    if(store.state.user.roles&&store.state.user.roles.includes('kiosk'))
+      add.value.show = true
   }, 500);
 });
 

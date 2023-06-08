@@ -135,7 +135,7 @@ export interface UserState {
 
 // User schema
 export interface User {
-  role?: string;
+  roles?: string[];
   date_created?: string;
   email?: string;
   first_name?: string;

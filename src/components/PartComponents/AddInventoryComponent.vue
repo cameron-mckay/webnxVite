@@ -110,7 +110,7 @@ onMounted(() => {
       />
       <div
         v-if="
-          (existingQuantity && quantity > existingQuantity) || part.serialized
+          (quantity > existingQuantity!) || part.serialized
         "
         class="col-span-2 grid grid-cols-2"
       >

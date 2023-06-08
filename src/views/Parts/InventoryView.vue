@@ -65,7 +65,7 @@ function firstLoad() {
   // Load inventory
   loadInventory();
   // If admin - get other users
-  if (store.state.user.role == 'admin') {
+  if (store.state.user.roles?.includes('admin')) {
     // Get all userse
     getAllUsers(http, (data, err) => {
       if (err) {
@@ -75,7 +75,7 @@ function firstLoad() {
       users.value = data as User[];
       // Find and remove current user or kiosks
       users.value = users.value.filter(
-        (u) => !(u._id == store.state.user._id || u.role == 'kiosk' || u.role == 'sales')
+        (u) => !(u._id == store.state.user._id || u.roles?.includes('kiosk') || u.roles?.includes('sales'))
       );
     });
   }
@@ -213,7 +213,7 @@ watch(currentUser, () => {
               <option :value="store.state.user" selected>Your Inventory</option>
               <option :value="{ _id: 'all' }">All Tech's</option>
               <option
-                v-if="store.state.user.role != 'tech'"
+                v-if="store.state.user.roles?.includes('admin')"
                 :value="{ _id: 'testing' }"
               >
                 Testing Center
@@ -292,8 +292,8 @@ watch(currentUser, () => {
                   :value="{ _id: 'lost', building: store.state.user.building }"
                   :disabled="currentUser._id == 'lost'"
                   v-if="
-                    store.state.user.role == 'admin' ||
-                    store.state.user.role == 'inventory'
+                    store.state.user.roles?.includes('admin')||
+                    store.state.user.roles?.includes('clerk')
                   "
                 >
                   Lost
@@ -305,8 +305,8 @@ watch(currentUser, () => {
                   }"
                   :disabled="currentUser._id == 'broken'"
                   v-if="
-                    store.state.user.role == 'admin' ||
-                    store.state.user.role == 'inventory'
+                    store.state.user.roles?.includes('admin')||
+                    store.state.user.roles?.includes('clerk')
                   "
                 >
                   Broken
@@ -318,16 +318,16 @@ watch(currentUser, () => {
                   }"
                   :disabled="currentUser._id == 'deleted'"
                   v-if="
-                    store.state.user.role == 'admin' ||
-                    store.state.user.role == 'inventory'
+                    store.state.user.roles?.includes('admin')||
+                    store.state.user.roles?.includes('clerk')
                   "
                 >
                   Delete
                 </option>
                 <option
                   v-if="
-                    store.state.user.role == 'admin' ||
-                    store.state.user.role == 'clerk'
+                    store.state.user.roles?.includes('admin')||
+                    store.state.user.roles?.includes('clerk')
                   "
                   v-for="user in users"
                   :disabled="user._id == currentUser._id"
@@ -342,7 +342,7 @@ watch(currentUser, () => {
             <p
               class="my-2 w-full rounded-md bg-red-400 p-2"
               v-if="
-                transferUser._id == 'testing' && store.state.user.role == 'tech'
+                transferUser._id == 'testing' && !store.state.user.roles?.includes('admin')
               "
             >
               Your current role does not allow you to transfer parts from the

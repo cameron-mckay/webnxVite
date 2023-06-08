@@ -65,7 +65,7 @@ function firstLoad() {
   // Load inventory
   loadInventory();
   // If admin - get other users
-  if (store.state.user.role == 'admin') {
+  if (store.state.user.roles?.includes('admin')) {
     // Get all users
     getAllUsers(http, (data, err) => {
       if (err) {
@@ -75,7 +75,7 @@ function firstLoad() {
       users.value = data as User[];
       // Find and remove current user or kiosks
       users.value = users.value.filter(
-        (u) => !(u._id == store.state.user._id || u.role == 'kiosk')
+        (u) => !(u._id == store.state.user._id || u.roles?.includes('kiosk'))
       );
     });
   }

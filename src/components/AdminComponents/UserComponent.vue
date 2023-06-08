@@ -15,7 +15,7 @@ const { user } = defineProps<Props>();
       <p class="hidden md:grid">{{ user.first_name }}</p>
       <p class="hidden md:grid">{{ user.last_name }}</p>
       <p class="grid md:hidden">{{ `${user.first_name} ${user.last_name}` }}</p>
-      <p>{{ user.role }}</p>
+      <p>{{ user.roles?.join(', ') }}</p>
       <div class="flex justify-end">
         <!-- Pencil -->
         <svg
