@@ -362,10 +362,10 @@ onMounted(() => {
           :options="['PCI x1', 'PCI x4', 'PCI x8', 'PCI x16', 'Mezzanine']"
           @updateValue="
             (value: string) => {
-              // part.peripheral_type = value;
+              part.mainboard_con = value;
             }
           "
-          :defaultValue="''"
+          :defaultValue="part.mainboard_con'
         />
 
         <label>Card type:</label>

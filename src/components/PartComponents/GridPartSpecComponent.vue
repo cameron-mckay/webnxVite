@@ -60,10 +60,12 @@ let url = import.meta.env.VITE_API_URL;
       <p>{{ part.mem_rank }}</p>
     </div>
     <div v-if="part.type == 'Peripheral Card'" class="detail-row">
+      <p>Mainboard Connector:</p>
+      <p>{{ part.mainboard_con }}</p>
       <p>Card Type:</p>
       <p>{{ part.peripheral_type }}</p>
-      <p>Port Type:</p>
-      <p>{{ Array.isArray(part.port_type)?(part.port_type as string[]).join(', '):part.port_type }}</p>
+      <p v-if="part.port_type">Port Type:</p>
+      <p v-if="part.port_type">{{ Array.isArray(part.port_type)?(part.port_type as string[]).join(', '):part.port_type }}</p>
     </div>
     <div v-if="part.type == 'Storage'" class="detail-row">
       <p v-if="part.size">Form Factor:</p>

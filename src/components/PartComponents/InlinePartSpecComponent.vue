@@ -31,6 +31,7 @@ let { part } = defineProps<Props>();
       <p v-if="part.mem_rank">{{ `Rank: ${part.mem_rank}` }}</p>
     </div>
     <div v-if="part.type == 'Peripheral Card'">
+      <p>{{ `Mainboard Connector: ${part.mainboard_con}` }}</p>
       <p>{{ `Card type: ${part.peripheral_type}` }}</p>
       <p>{{ `Port type: ${part.port_type}` }}</p>
     </div>
@@ -43,15 +44,11 @@ let { part } = defineProps<Props>();
         <p>{{ `Connector: ${part.port_type}` }}</p>
       </div>
     </div>
-    <div v-if="part.type == 'GPU'">
-      <!-- Placeholder -->
-    </div>
     <div v-if="part.type == 'Cable'">
       <p>{{ `End 1: ${part.cable_end1}` }}</p>
       <p>{{ `End 2: ${part.cable_end2}` }}</p>
     </div>
     <div v-if="part.type == 'Backplane'">
-      <p>{{ `Interface: ${part.storage_interface}` }}</p>
       <p>{{ `Num Slots: ${part.num_ports}` }}</p>
       <p>{{ `Ports: ${ Array.isArray(part.port_type) ? part.port_type.join(', ') : part.port_type }` }}</p>
     </div>
