@@ -365,7 +365,7 @@ onMounted(() => {
               part.mainboard_con = value;
             }
           "
-          :defaultValue="part.mainboard_con'
+          :defaultValue="part.mainboard_con"
         />
 
         <label>Card type:</label>
