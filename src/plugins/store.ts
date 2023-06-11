@@ -41,14 +41,6 @@ export function createGlobalStore(app: App): Store<UserState> {
       },
     },
     mutations: {
-      // Sets global authentication to true
-      authenticate(state: UserState) {
-        state.isAuth = true;
-      },
-      // Sets global authentication to false
-      deauthenticate(state: UserState) {
-        state.isAuth = false;
-      },
       // Logout user
       logout(state: UserState, http: AxiosInstance) {
         localStorage.removeItem('token');
@@ -120,14 +112,16 @@ export function createGlobalStore(app: App): Store<UserState> {
         }
       },
       // Uses token to fetch user data from the API
-      updateUserData(state: UserState, user: object) {
-        getCurrentUser(app.config.globalProperties.$http, (data, err) => {
+      updateUserData(state: UserState, http: AxiosInstance) {
+        getCurrentUser(http, (data, err) => {
           if (err) {
             // Error occured - update nothing
+            store.commit('logout') 
             return;
           }
           // Success - update global user component
           state.user = data as User;
+          state.isAuth = true;
         });
       },
     },

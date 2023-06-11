@@ -82,6 +82,13 @@
             Inventory
           </RouterLink>
           <RouterLink
+            v-if="store.state.user.roles?.includes('ebay')||store.state.user.roles?.includes('admin')"
+            class="header-button-colors w-24 text-center leading-10 transition"
+            to="/ebay/sell"
+          >
+            eBay
+          </RouterLink>
+            <RouterLink
             v-if="
               store.state.user.roles?.includes('clerk') ||
               store.state.user.roles?.includes('admin')
@@ -153,7 +160,7 @@
         </div>
         <p
           class="hover:hover-color cursor-pointer rounded-md p-2"
-          v-on:click="logout"
+          v-on:click="revokeLogin"
           href="#"
         >
           Logout
@@ -212,6 +219,13 @@
         Inventory
       </RouterLink>
       <RouterLink
+        v-if="store.state.user.roles?.includes('ebay')||store.state.user.roles?.includes('admin')"
+        class="mobile-nav-button"
+        to="/ebay/sell"
+      >
+        eBay
+      </RouterLink>
+      <RouterLink
         v-if="
               store.state.user.roles?.includes('clerk') ||
               store.state.user.roles?.includes('admin')
@@ -244,16 +258,13 @@ document.documentElement.classList.remove('dark');
 interface Props {
   http: AxiosInstance;
   store: Store<UserState>;
+  revokeLogin: () => void;
 }
-const { http, store } = defineProps<Props>();
+const { http, store, revokeLogin } = defineProps<Props>();
 
 let showMenu = ref(false);
 let dark = ref(false);
 let showProfile = ref(false);
-
-onBeforeMount(() => {
-  store.commit('updateUserData');
-});
 
 onMounted(() => {
   // Load theme preference
@@ -280,11 +291,6 @@ onMounted(() => {
     updateTheme();
   });
 });
-
-async function logout() {
-  await store.commit('logout', http);
-  router.push('/login');
-}
 
 function toggle() {
   showMenu.value = !showMenu.value;

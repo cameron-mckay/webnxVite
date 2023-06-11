@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeaderComponent v-if="store.state.isAuth" :http="http" :store="store" />
+    <HeaderComponent v-if="store.state.isAuth" :http="http" :store="store" :revokeLogin="revokeLogin" />
     <MessageComponent :messages="messages" :errors="errorMessages" />
     <router-view
       class="my-16 mx-4 w-[calc(100%-2rem)] text-sm md:mx-auto md:max-w-5xl md:text-base"
@@ -36,7 +36,6 @@ const store = useStore();
 // Global list of messages for the MessageComponent to render
 var messages: Ref<Message[]> = ref([]);
 var errorMessages: Ref<Message[]> = ref([]);
-let user_data = ref({} as User);
 
 onMounted(() => {
   if (
@@ -54,31 +53,39 @@ onMounted(() => {
   }
 });
 
+function redirect() {
+  router.push({ name: 'Parts' });
+  errorHandler('You are not authorized to access this page.');
+}
+
 // Before app is created
 onBeforeMount(()=>{
+
   checkAuth(http, (data, err) => {
     // If not authenticated
     if (err)
       return revokeLogin()
     // If authenticated, set status
     displayMessage('Successfully logged in.');
-    store.commit('authenticate');
-    store.commit('updateUserData');
+    store.commit('updateUserData', http);
     // Check if user is a non admin trying to access admin route
-    user_data.value = data as User;
     router.beforeEach((to, from, next) => {
       // Make sure they are admin for admin routes
-      if (!user_data.value.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
-        router.push({ name: 'Parts' });
-        errorHandler('You are not authorized to access this page.');
+      if (!store.state.user.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
+        redirect()
       }
       if (
-        !(user_data.value.roles?.includes('admin')||
-        user_data.value.roles?.includes('clerk')) &&
+        !(store.state.user.roles?.includes('admin')||
+        store.state.user.roles?.includes('clerk')) &&
         /\/manage\/*/.test(to.path)
       ) {
-        router.push({ name: 'Parts' });
-        errorHandler('You are not authorized to access this page.');
+        redirect()
+      }
+      if (!(store.state.user.roles?.includes('admin')||
+        store.state.user.roles?.includes('ebay')) &&
+        /\/ebay\/*/.test(to.path)
+      ) {
+        redirect()
       }
       // This goes through the matched routes from last to first, finding the closest route with a title.
       // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
@@ -197,7 +204,7 @@ function displayMessage(message: string) {
 
 function revokeLogin() {
   // set status
-  store.commit('deauthenticate');
+  store.commit('logout', http);
   // redirect
   router.replace({ query: undefined })
   if (route.name != 'Register') {

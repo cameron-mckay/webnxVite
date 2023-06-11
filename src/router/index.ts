@@ -82,7 +82,7 @@ const routes = [
     component: () => import('../views/Admin/AdminPartSearchView.vue'),
   },
   {
-    path: '/manage/ebay',
+    path: '/ebay/sell',
     name: 'Sell On eBay',
     component: () => import('../views/Parts/SellOnEbay.vue'),
   },

@@ -371,7 +371,7 @@ onMounted(() => {
         <label>Card type:</label>
         <CustomDropdownComponent
           :required="strict"
-          :options="['RAID', 'JBOD', 'NIC', 'NVME Adapter', 'Riser']"
+          :options="['RAID', 'JBOD', 'NIC', 'NVME Adapter', 'Riser', 'GPU']"
           @updateValue="
             (value: string) => {
               part.peripheral_type = value;

@@ -76,8 +76,7 @@ async function login() {
         // Add token to headers
         http.defaults.headers['Authorization'] = res.data.token;
         // Save user data to vuex store
-        store.commit('updateUserData');
-        store.commit('authenticate');
+        store.commit('updateUserData', http);
         router.push('/');
       })
       .catch((err: Error | AxiosError) => {
