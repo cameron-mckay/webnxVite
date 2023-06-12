@@ -13,6 +13,7 @@ deletePart,
 movePart,
 updatePart,
 updatePartImage,
+deleteFromPartsRoom
 } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
@@ -165,37 +166,18 @@ function submitAddToInventory(
     part.quantity != undefined &&
     request.quantity < part.quantity
   ) {
-    let from = {
-      next: null,
-      location: 'Parts Room',
-      nxid: part.nxid,
-      building: request.building,
-    };
-    let to = JSON.parse(JSON.stringify(from)) as PartRecord;
-    to.owner = 'deleted';
-    console.log(from);
-    console.log(to);
-    console.log(part.quantity! - request.quantity!);
-    movePart(
-      http,
-      "deleted",
-      'parts', [{
-        nxid: part.nxid!,
-        unserialized: part.quantity! - request.quantity!,
-        serials: []
-      }],
-      (data, err) => {
-        if (err) {
-          // Handle errors
-          errorHandler(err);
+    deleteFromPartsRoom(http, part.nxid!, part.quantity! - request.quantity, store.state.user.building!, (data, err)=>{
+      if (err) {
+            // Handle errors
+          return errorHandler(err);
         }
         displayMessage(data as string);
         // Reset
         toggleAdd({});
         // Refresh parts list
         search();
-      }
-    );
+
+    }) 
   } else {
     return errorHandler('Quantity error');
   }

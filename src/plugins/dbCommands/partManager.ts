@@ -469,3 +469,28 @@ export function deletePart(
       callback({}, err);
     });
 }
+
+export function deleteFromPartsRoom(
+  http: AxiosInstance,
+  nxid: string,
+  new_quantity: number,
+  building: number,
+  callback: apiResponse
+) {
+  http
+    .delete('/api/partRecord', {
+      params: {
+        nxid,
+        new_quantity,
+        building
+      },
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
