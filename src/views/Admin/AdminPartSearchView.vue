@@ -178,9 +178,11 @@ function submitAddToInventory(
     console.log(part.quantity! - request.quantity!);
     movePart(
       http,
-      to,
-      from,
-      part.quantity! - request.quantity!,
+      "deleted",
+      'parts', {
+        nxid: part.nxid,
+        unserialized: part.quantity! - request.quantity!,
+      },
       (data, err) => {
         if (err) {
           // Handle errors

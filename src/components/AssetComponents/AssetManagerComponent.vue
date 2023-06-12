@@ -43,7 +43,6 @@ const {
   inventorySearch,
   inventory,
   untracked,
-  removeAllParts
 } = defineProps<Props>();
 // End props
 
