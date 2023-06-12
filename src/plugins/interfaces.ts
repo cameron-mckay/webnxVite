@@ -55,6 +55,7 @@ export interface PartSchema {
   cable_end2?: string;
   serialized?: boolean;
   serials?: string[];
+  consumable?: boolean;
 }
 export interface AssetSchema {
   [index: string]: any;
@@ -83,6 +84,7 @@ export interface AssetSchema {
   units?: number;
   num_psu?: number;
   psu_model?: string;
+  parent?: string;
   cable_type?: string;
   num_bays?: number;
   bay_type?: string;
@@ -176,3 +178,11 @@ export interface Cart {
   serialized: CartItem[];
   unserialized: Map<string, number>;
 }
+
+export interface InventoryEntry {
+    nxid?: string,
+    unserialized: number,
+    serials: string[],
+    newSerials?: string[]
+}
+

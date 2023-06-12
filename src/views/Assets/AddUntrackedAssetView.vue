@@ -55,15 +55,16 @@ onMounted(() => {
   watch(
     () => oldAsset.value.asset_type,
     () => {
-      delete oldAsset.value.rails;
-      delete oldAsset.value.live;
-      delete oldAsset.value.public_port;
-      delete oldAsset.value.private_port;
-      delete oldAsset.value.ipmi_port;
-      delete oldAsset.value.power_port;
-      delete oldAsset.value.sid;
+      if(oldAsset.value.asset_type!='Server') {
+        partsOnAsset.value = []
+      }
     }
   );
+  watch(()=>oldAsset.value.chassis_type, ()=>{
+    if(oldAsset.value.chassis_type=='Node Chassis') {
+      partsOnAsset.value = []
+    }
+  })
 
   // watch(
   //   () => oldAsset.value.live,

@@ -11,6 +11,7 @@ import {
   PartRecord,
   PartSchema,
   User,
+  InventoryEntry
 } from '../../plugins/interfaces';
 
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -181,38 +182,41 @@ function move(
 function submit() {
   if (!processingMove) {
     processingMove = true;
-    transferList.value.map(async (item) => {
-      let from = {
-        owner: currentUser.value._id,
-        building: currentUser.value.building,
-        nxid: item.part.nxid,
-      } as PartRecord;
-
-      let to = {
-        owner: 'sold',
-        building: currentUser.value.building,
-        nxid: item.part.nxid,
-        ebay: orderID.value,
-      } as PartRecord;
-      if (item.serial) {
-        to.serial = item.serial;
-        if (item.part.serialized) from.serial = item.serial;
-        item.quantity = 1;
-      } else {
-        delete to.serial;
-        delete from.serial;
+    let transferListHash = new Map<string, InventoryEntry>()
+    // Process transfer list
+    transferList.value.map((item)=> {
+      // Create boilerplate
+      let invEntry = { serials: [], unserialized: 0} as InventoryEntry
+      // Check if it already exists in map
+      if(transferListHash.has(item.part.nxid!))
+        invEntry = transferListHash.get(item.part.nxid!)!
+      // Update values
+      if(item.serial)
+        // Push serial to array
+        invEntry.serials.push(item.serial)
+      else
+        // Increment unserialized
+        invEntry.unserialized+=item.quantity!
+      // Update hash
+      transferListHash.set(item.part.nxid!, invEntry)
+    })
+    // Turn hash map back into array
+    let partList = [] as InventoryEntry[]
+    transferListHash.forEach((v, k)=>{
+      v.nxid = k
+      partList.push(v)
+    })
+    // Move parts
+    movePart(http, 'sold', currentUser.value._id!, partList, (data, err) => {
+      if (err) {
+        // Handle errors
+        processingMove = false;
+        return errorHandler(err);
       }
-
-      movePart(http, to, from, item.quantity!, (data, err) => {
-        if (err) {
-          // Handle errors
-          errorHandler(err);
-        }
-        displayMessage(data as string);
-      });
-    });
-    transferList.value = [];
-    processingMove = false;
+      displayMessage(data as string);
+      transferList.value = [];
+      processingMove = false;
+    }, orderID.value);
   }
 }
 </script>

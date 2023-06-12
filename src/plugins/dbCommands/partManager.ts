@@ -10,6 +10,7 @@ import type {
   PartRecord,
   PartSchema,
   User,
+  InventoryEntry
 } from '../interfaces';
 
 /**
@@ -371,33 +372,26 @@ export function getPartHistoryByID(
     });
 }
 
-/**
- * @brief Move ownership and location of a part record
- *
- * @param http
- * @param to
- * @param from
- * @param callback
- */
 export function movePart(
   http: AxiosInstance,
-  to: PartRecord,
-  from: PartRecord,
-  quantity: number,
-  callback: apiResponse
+  new_owner: string,
+  old_owner: string,
+  parts: InventoryEntry[],
+  callback: apiResponse,
+  orderID?: string
 ) {
   http
     .post('/api/part/move', {
-      to,
-      from,
-      quantity,
+      new_owner,
+      old_owner,
+      parts,
+      orderID
     })
     .then((res: AxiosResponse) => {
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
-      // Error - send error to callback
+    .catch((err: Error | AxiosError) => { // Error - send error to callback
       callback({}, err);
     });
 }

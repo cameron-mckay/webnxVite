@@ -38,7 +38,7 @@
             Parts
           </RouterLink>
           <RouterLink
-            v-if="!store.state.user.roles?.includes('kiosk')"
+            v-if="!kiosk"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/assets"
           >
@@ -46,7 +46,7 @@
           </RouterLink>
           <!-- <RouterLink to="/assets">Assets</RouterLink> -->
           <RouterLink
-            v-if="store.state.user.roles?.includes('kiosk')"
+            v-if="kiosk"
             v-show="
               store.state.cart.unserialized.size > 0 ||
               store.state.cart.serialized.length > 0
@@ -57,7 +57,7 @@
             {{ `Check Out(${store.getters.getTotalNumItems})` }}
           </RouterLink>
           <RouterLink
-            v-if="store.state.user.roles?.includes('kiosk')"
+            v-if="kiosk"
             v-show="
               store.state.cart.unserialized.size < 1 &&
               store.state.cart.serialized.length < 1
@@ -68,38 +68,35 @@
             Check Out
           </RouterLink>
           <RouterLink
-            v-if="store.state.user.roles?.includes('kiosk')"
+            v-if="kiosk"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/checkin"
           >
             Check In
           </RouterLink>
           <RouterLink
-            v-if="!(store.state.user.roles?.includes('kiosk')||store.state.user.roles?.includes('sales'))"
+            v-if="tech||clerk||ebay||admin"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/inventory"
           >
             Inventory
           </RouterLink>
           <RouterLink
-            v-if="store.state.user.roles?.includes('ebay')||store.state.user.roles?.includes('admin')"
+            v-if="ebay||admin"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/ebay/sell"
           >
             eBay
           </RouterLink>
             <RouterLink
-            v-if="
-              store.state.user.roles?.includes('clerk') ||
-              store.state.user.roles?.includes('admin')
-            "
+            v-if="clerk||admin"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/manage"
           >
             Manage
           </RouterLink>
           <RouterLink
-            v-if="store.state.user.roles?.includes('admin')"
+            v-if="admin"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/admin"
           >
@@ -175,7 +172,7 @@
     >
       <RouterLink class="mobile-nav-button" to="/parts">Parts</RouterLink>
       <RouterLink
-            v-if="!store.state.user.roles?.includes('kiosk')"
+        v-if="!kiosk"
         class="mobile-nav-button"
         to="/assets"
       >
@@ -183,7 +180,7 @@
       </RouterLink>
       <!-- <RouterLink to="/assets">Assets</RouterLink> -->
       <RouterLink
-            v-if="store.state.user.roles?.includes('kiosk')"
+        v-if="kiosk"
         v-show="
           store.state.cart.unserialized.size > 0 ||
           store.state.cart.serialized.length > 0
@@ -194,7 +191,7 @@
         {{ `Check Out(${store.getters.getTotalNumItems})` }}
       </RouterLink>
       <RouterLink
-            v-if="store.state.user.roles?.includes('kiosk')"
+        v-if="kiosk"
         class="mobile-nav-button"
         v-show="
           store.state.cart.unserialized.size < 1 &&
@@ -205,38 +202,35 @@
         Check Out
       </RouterLink>
       <RouterLink
-            v-if="store.state.user.roles?.includes('kiosk')"
+        v-if="kiosk"
         class="mobile-nav-button"
         to="/checkin"
       >
         Check In
       </RouterLink>
       <RouterLink
-        v-if="!(store.state.user.roles?.includes('kiosk')||store.state.user.roles?.includes('sales'))"
+        v-if="tech||clerk||admin||ebay"
         class="mobile-nav-button"
         to="/inventory"
       >
         Inventory
       </RouterLink>
       <RouterLink
-        v-if="store.state.user.roles?.includes('ebay')||store.state.user.roles?.includes('admin')"
+        v-if="ebay||admin"
         class="mobile-nav-button"
         to="/ebay/sell"
       >
         eBay
       </RouterLink>
       <RouterLink
-        v-if="
-              store.state.user.roles?.includes('clerk') ||
-              store.state.user.roles?.includes('admin')
-            "
+        v-if="clerk||admin"
         class="mobile-nav-button"
         to="/manage"
       >
         Manage
       </RouterLink>
       <RouterLink
-        v-if="store.state.user.roles?.includes('admin')"
+        v-if="admin"
 
         class="mobile-nav-button"
         to="/admin"
@@ -250,7 +244,7 @@
 
 <script setup lang="ts">
 import type { AxiosInstance } from 'axios';
-import { onBeforeMount, onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { Store } from 'vuex';
 import { UserState } from '../../plugins/interfaces';
 import router from '../../router';
@@ -260,14 +254,28 @@ interface Props {
   store: Store<UserState>;
   revokeLogin: () => void;
 }
-const { http, store, revokeLogin } = defineProps<Props>();
+const { store, revokeLogin } = defineProps<Props>();
 
 let showMenu = ref(false);
 let dark = ref(false);
 let showProfile = ref(false);
 
+let kiosk = ref(false);
+let tech = ref(false);
+let clerk = ref(false);
+let ebay = ref(false);
+let admin = ref(false);
+
 onMounted(() => {
   // Load theme preference
+  let roles = store.state.user.roles
+  if(roles) {
+    kiosk.value = roles.includes("kiosk")
+    tech.value = roles.includes("tech")
+    clerk.value = roles.includes("clerk")
+    ebay.value = roles.includes("ebay")
+    admin.value = roles.includes("admin")
+  }
   if (
     localStorage.getItem('theme') == 'dark' ||
     (localStorage.getItem('theme') == null &&

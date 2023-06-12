@@ -548,6 +548,31 @@ onMounted(() => {
           "
         />
       </div>
+      <div v-if="part.type&&![
+          'Motherboard',
+          'CPU',
+          'Memory',
+          'Storage',
+          'Peripheral Card',
+          'Cable',
+          'Backplane',
+          'Heatsink',
+          'Optic',
+        ].includes(part.type)"
+      class="col-span-2 grid grid-cols-2"
+      >
+        <label>Consumable:</label>
+        <select
+          :required="strict"
+          v-model="part.consumable"
+          class="textbox m-1"
+        >
+          <option disabled value="">Pick one</option>
+          <option :value="true">Yes</option>
+          <option :value="false">No</option>
+        </select>
+
+      </div>
       <input
         class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
         type="reset"

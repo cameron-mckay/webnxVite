@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AxiosError, AxiosInstance } from 'axios';
-import { ref } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { Router } from 'vue-router';
 import {
 AssetSchema,
@@ -43,6 +43,7 @@ const {
   inventorySearch,
   inventory,
   untracked,
+  removeAllParts
 } = defineProps<Props>();
 // End props
 
@@ -84,14 +85,17 @@ function addPartFromInventory(item: LoadedCartItem) {
       <input
         class="textbox m-1"
         :required="strict"
+        :disabled="strict&&!untracked"
         v-model="oldAsset.asset_tag"
         type="text"
-        placeholder="Asset Tag"
+        pattern="WNX([0-9]{7})"
+        placeholder="WNX0000000"
       />
       <label>Manufacturer:</label>
       <input
         class="textbox m-1"
         :required="strict"
+        :disabled="strict&&!untracked"
         v-model="oldAsset.manufacturer"
         type="text"
         placeholder="Manufacturer"
@@ -100,6 +104,7 @@ function addPartFromInventory(item: LoadedCartItem) {
       <input
         class="textbox m-1"
         :required="strict"
+        :disabled="strict&&!untracked"
         v-model="oldAsset.model"
         type="text"
         placeholder="Model"
@@ -123,6 +128,7 @@ function addPartFromInventory(item: LoadedCartItem) {
       <input
         class="textbox m-1"
         :required="strict"
+        :disabled="strict&&!untracked"
         v-model="oldAsset.serial"
         type="text"
         placeholder="Serial Number"
@@ -130,6 +136,7 @@ function addPartFromInventory(item: LoadedCartItem) {
       <label>Asset Type:</label>
       <CustomDropdownComponent
         :required="strict"
+        :disabled="strict&&!untracked"
         :options="['Server', 'Laptop', 'Switch', 'PDU']"
         @updateValue="(value: string) => { oldAsset.asset_type = value }"
         :defaultValue="oldAsset.asset_type"
@@ -149,17 +156,19 @@ function addPartFromInventory(item: LoadedCartItem) {
           <label>Chassis Type:</label>
           <CustomDropdownComponent
             :required="strict"
-            :options="['Rack', 'Node', 'Tower']"
+            :disabled="strict&&!untracked"
+            :options="['Rack', 'Node', 'Node Chassis', 'Tower']"
             @updateValue="(value: string) => { oldAsset.chassis_type = value }"
             :defaultValue="oldAsset.chassis_type"
           />
           <div
-            v-if="oldAsset.chassis_type != 'Tower'"
+            v-if="oldAsset.chassis_type == 'Rack'||oldAsset.chassis_type=='Node Chassis'"
             class="col-span-2 grid grid-cols-2"
           >
             <label>Rack Units:</label>
             <input
               class="textbox m-1"
+              :disabled="strict&&!untracked"
               :required="strict"
               v-model="oldAsset.units"
               type="number"
@@ -170,6 +179,7 @@ function addPartFromInventory(item: LoadedCartItem) {
             <input
               class="textbox m-1"
               :required="strict"
+              :disabled="strict&&!untracked"
               v-model="oldAsset.num_bays"
               type="number"
               min="0"
@@ -183,6 +193,7 @@ function addPartFromInventory(item: LoadedCartItem) {
               <label>Bay Size:</label>
               <select
                 :required="strict"
+                :disabled="strict&&!untracked"
                 v-model="oldAsset.bay_type"
                 class="textbox m-1"
               >
@@ -195,6 +206,7 @@ function addPartFromInventory(item: LoadedCartItem) {
             <label>PDU Cables::</label>
             <select
               :required="strict"
+              :disabled="strict&&!untracked"
               v-model="oldAsset.cable_type"
               class="textbox m-1"
             >
@@ -219,7 +231,7 @@ function addPartFromInventory(item: LoadedCartItem) {
             >
               <label>PSU Model:</label>
               <CustomDropdownComponent
-                :required="strict"
+                :required="oldAsset.num_psu>0"
                 :options="[
                   'PWS-501P-1R',
                   'PWS-741P-1R',
@@ -255,6 +267,33 @@ function addPartFromInventory(item: LoadedCartItem) {
               </select>
             </div>
           </div>
+
+          <div v-else-if="oldAsset.chassis_type == 'Node'" class="col-span-2 grid grid-cols-2">
+            <label>Chassis Tag:</label>
+            <input
+              class="textbox m-1"
+              :required="false"
+              v-model="oldAsset.parent"
+              type="text"
+              pattern="WNX([0-9]{7})"
+              placeholder="WNX0000000"
+            />
+            <div v-if="oldAsset.parent" class="col-span-2 grid grid-cols-2">
+              <label>In Rack:</label>
+              <select
+                :required="strict"
+                v-model="oldAsset.in_rack"
+                class="textbox m-1"
+              >
+                <option :value="undefined" selected disabled>Select</option>
+                <option :value="true">Yes</option>
+                <option :value="false">No</option>
+              </select>
+            </div>
+
+
+          </div>
+
           <div
             v-else-if="oldAsset.chassis_type == 'Tower'"
             class="col-span-2 grid grid-cols-2"
@@ -374,7 +413,7 @@ function addPartFromInventory(item: LoadedCartItem) {
           </div>
           <!-- Part Search here -->
           <div
-            v-if="oldAsset.in_rack == false && oldAsset.live == false"
+            v-if="oldAsset.in_rack == false"
             class="col-span-2 grid grid-cols-2"
           >
             <label>Pallet:</label>
@@ -396,13 +435,13 @@ function addPartFromInventory(item: LoadedCartItem) {
             type="text"
             placeholder="FW Revision"
           />
+          <label v-if="!(oldAsset.in_rack || oldAsset.power_port)">Status:</label>
+          <select :required="strict" v-model="oldAsset.live" class="textbox m-1" v-if="!(oldAsset.in_rack || oldAsset.power_port)">
+            <option :value="undefined" selected disabled>Select</option>
+            <option :value="true">Live</option>
+            <option :value="false">Inactive</option>
+          </select>
         </div>
-        <label v-if="!(oldAsset.in_rack || oldAsset.power_port)">Status:</label>
-        <select :required="strict" v-model="oldAsset.live" class="textbox m-1" v-if="!(oldAsset.in_rack || oldAsset.power_port)">
-          <option :value="undefined" selected disabled>Select</option>
-          <option :value="true">Live</option>
-          <option :value="false">Inactive</option>
-        </select>
         <div
           v-if="oldAsset.asset_type == 'PDU' || oldAsset.asset_type == 'Switch'"
           class="col-span-2 grid grid-cols-2"
@@ -442,8 +481,8 @@ function addPartFromInventory(item: LoadedCartItem) {
         />
       </div>
 
-      <div v-if="http != undefined" class="col-span-2">
-        <div v-show="oldAsset.asset_type == 'Server'" class="flex">
+      <div v-if="http != undefined" v-show="oldAsset.asset_type == 'Server'&&oldAsset.chassis_type!='Node Chassis'"  class="col-span-2">
+        <div class="flex">
           <h1 class="inline-block text-4xl leading-8 md:leading-10">Parts:</h1>
           <!-- Plus -->
           <svg

@@ -111,6 +111,9 @@ function edit() {
         <p v-if="asset.bay">Bay:</p>
         <p v-if="asset.bay">{{ asset.bay }}</p>
 
+        <p v-if="asset.parent">Chassis Tag:</p>
+        <p v-if="asset.parent">{{ asset.parent }}</p>
+
         <p v-if="asset.live != undefined">Status:</p>
         <p v-if="asset.live">Live</p>
         <p v-else-if="asset.live != undefined">Inactive</p>
