@@ -179,10 +179,11 @@ function submitAddToInventory(
     movePart(
       http,
       "deleted",
-      'parts', {
-        nxid: part.nxid,
+      'parts', [{
+        nxid: part.nxid!,
         unserialized: part.quantity! - request.quantity!,
-      },
+        serials: []
+      }],
       (data, err) => {
         if (err) {
           // Handle errors
