@@ -394,13 +394,7 @@ function search() {
         return errorHandler('Asset not found.');
       }
       // Emit actions
-      if (add === true) {
-        emit('addAssetAction', asset);
-      } else if (view === true) {
-        emit('viewAssetAction', asset);
-      } else if (edit == true) {
-        emit('editAssetAction', asset);
-      }
+      emit('viewAssetAction', asset);
     });
   } else {
     // Text search
