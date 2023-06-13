@@ -187,6 +187,7 @@ function reset() {
     :inventory="inventory"
     :displayMessage="displayMessage"
     :inventorySearch="true"
+    :untracked="assetCopy.migrated?true:false"
     @assetSubmit="assetSubmit"
     @plusPart="plusPart"
     @minusPart="minusPart"
