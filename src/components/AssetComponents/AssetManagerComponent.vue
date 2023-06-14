@@ -81,7 +81,7 @@ watch(correction, ()=>{
       and is incomplete. Please edit and update the information if you can.
     </p>
     <h1 class="mb-4 text-4xl leading-8 md:leading-10">{{ title }}</h1>
-    <div class="flex" v-if="isAdmin">
+    <div class="flex" v-if="isAdmin&&!oldAsset.migrated">
       <label class="mr-1">Correction mode:</label>
       <input type="checkbox" v-model="correction" class="text-white my-1">
     </div>
