@@ -51,11 +51,11 @@ let correction = ref(false)
 let partSearchPopup = ref(false);
 let inventorySearchPopup = ref(false);
 
-let emit = defineEmits(['assetSubmit', 'plusPart', 'minusPart', 'deletePart']);
+let emit = defineEmits(['assetSubmit', 'assetReset', 'plusPart', 'minusPart', 'deletePart']);
 
 // Emit add part to asset as new record
 function addToAsset(part: PartSchema) {
-  emit('plusPart', { part, quantity: 1 });
+  emit('plusPart', { part, quantity: 1 }, correction.value);
 }
 
 // Toggle popup menus
@@ -66,8 +66,13 @@ function togglePopup() {
 
 // Add Part from user inventory
 function addPartFromInventory(item: LoadedCartItem) {
-  emit('plusPart', item);
+  emit('plusPart', item, correction.value);
 }
+
+watch(correction, ()=>{
+  if(!correction.value)
+    emit("assetReset")
+})
 </script>
 <template>
   <div class="body">
@@ -82,7 +87,7 @@ function addPartFromInventory(item: LoadedCartItem) {
     </div>
     <form
       id="form"
-      @submit.prevent="$emit('assetSubmit')"
+      @submit.prevent="$emit('assetSubmit', correction)"
       @reset.prevent="$emit('assetReset')"
       class="grid grid-cols-2"
     >
@@ -544,9 +549,9 @@ function addPartFromInventory(item: LoadedCartItem) {
           v-for="part in parts"
           :item="part"
           :untracked="untracked || oldAsset.migrated"
-          @plus="$emit('plusPart', part)"
-          @minus="$emit('minusPart', part)"
-          @delete="$emit('deletePart', part)"
+          @plus="$emit('plusPart', part, correction)"
+          @minus="$emit('minusPart', part, correction)"
+          @delete="$emit('deletePart', part, correction)"
         />
       </div>
       <input

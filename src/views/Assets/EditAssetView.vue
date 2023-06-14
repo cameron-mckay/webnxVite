@@ -34,7 +34,6 @@ let partsOnAsset = ref([] as LoadedCartItem[]);
 let partsOnAssetCopy = [] as AssetSchema[];
 let inventory = ref([] as LoadedCartItem[]);
 let inventoryCopy = [] as LoadedCartItem[];
-let correctionMode = ref(false)
 onBeforeMount(() => {
   if (router.currentRoute.value.query.asset_tag) {
     // get asset tag from url
@@ -72,7 +71,7 @@ onBeforeMount(() => {
   }
 });
 
-function assetSubmit() {
+function assetSubmit(correction: boolean) {
   // Use create part method from API commands
   let unloadedParts = partsOnAsset.value.map((part) => {
     if (part.serial) {
@@ -81,7 +80,7 @@ function assetSubmit() {
     return { nxid: part.part.nxid as string, quantity: part.quantity };
   }) as CartItem[];
   // Iterate through list of parts and strip only the NXID and quantity
-  updateAsset(http, oldAsset.value, unloadedParts, correctionMode.value, (data, err) => {
+  updateAsset(http, oldAsset.value, unloadedParts, correction, (data, err) => {
     if (err) {
       return errorHandler(err);
     }
@@ -89,9 +88,9 @@ function assetSubmit() {
   });
 }
 
-function plusPart(item: LoadedCartItem) {
+function plusPart(item: LoadedCartItem, correction: boolean) {
   // Check asset edit mode
-  if (assetCopy.migrated||correctionMode.value) {
+  if (assetCopy.migrated||correction) {
     // If serialized part
     if (item.part.serialized) {
       // Push to asset and return
@@ -116,8 +115,8 @@ function plusPart(item: LoadedCartItem) {
   move(inventory, partsOnAsset, item.part, 1, item.serial!);
 }
 
-function minusPart(item: LoadedCartItem) {
-  if (assetCopy.migrated||correctionMode.value) {
+function minusPart(item: LoadedCartItem, correction: boolean) {
+  if (assetCopy.migrated||correction) {
     // If part is serialized
     if (item.part.serialized) {
       // Find and splice serialized part
@@ -206,7 +205,6 @@ function reset() {
     :displayMessage="displayMessage"
     :inventorySearch="true"
     :untracked="assetCopy.migrated?true:false"
-    :correction="correctionMode"
     :isAdmin="(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('admin'))?true:false"
     @assetSubmit="assetSubmit"
     @plusPart="plusPart"
