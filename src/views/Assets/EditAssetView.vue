@@ -34,11 +34,12 @@ let partsOnAsset = ref([] as LoadedCartItem[]);
 let partsOnAssetCopy = [] as AssetSchema[];
 let inventory = ref([] as LoadedCartItem[]);
 let inventoryCopy = [] as LoadedCartItem[];
-
+let correctionMode = ref(false)
 onBeforeMount(() => {
   if (router.currentRoute.value.query.asset_tag) {
     // get asset tag from url
     let nxid = router.currentRoute.value.query.asset_tag as string;
+    // Check mode
     // Get asset from API
     getAssetByID(http, nxid, (res, err) => {
       if (err) {
@@ -57,6 +58,7 @@ onBeforeMount(() => {
         partsOnAsset.value = res as LoadedCartItem[];
         // Save a copy for reset value
         partsOnAssetCopy = JSON.parse(JSON.stringify(partsOnAsset.value));
+
       });
     });
     // Get user inventory from api
@@ -79,7 +81,7 @@ function assetSubmit() {
     return { nxid: part.part.nxid as string, quantity: part.quantity };
   }) as CartItem[];
   // Iterate through list of parts and strip only the NXID and quantity
-  updateAsset(http, oldAsset.value, unloadedParts, (data, err) => {
+  updateAsset(http, oldAsset.value, unloadedParts, correctionMode.value, (data, err) => {
     if (err) {
       return errorHandler(err);
     }
@@ -88,36 +90,52 @@ function assetSubmit() {
 }
 
 function plusPart(item: LoadedCartItem) {
-  if (assetCopy.migrated) {
+  // Check asset edit mode
+  if (assetCopy.migrated||correctionMode.value) {
+    // If serialized part
     if (item.part.serialized) {
+      // Push to asset and return
       partsOnAsset.value.push(item);
       return;
     }
+    // Check if part already exists
     let i = partsOnAsset.value.findIndex((e) => e.part.nxid == item.part.nxid);
+    // If part does not exist
     if (i < 0) {
+      // Set quantity
       item.quantity = 1;
+      // Push to asset and return
       partsOnAsset.value.push(item);
       return;
     }
+    // Increment quantity
     partsOnAsset.value[i].quantity! += 1;
     return;
   }
+  // Use move function for inventory checks
   move(inventory, partsOnAsset, item.part, 1, item.serial!);
 }
 
 function minusPart(item: LoadedCartItem) {
-  if (assetCopy.migrated) {
+  if (assetCopy.migrated||correctionMode.value) {
+    // If part is serialized
     if (item.part.serialized) {
+      // Find and splice serialized part
       let i = partsOnAsset.value.findIndex((e) => e.serial == item.serial);
       partsOnAsset.value.splice(i, 1);
       return;
     }
+    // Find index of part
     let i = partsOnAsset.value.findIndex((e) => e.part.nxid == item.part.nxid);
+    // If part found, decrement
     if (i < 0) return;
-    partsOnAsset.value[i].quantity! -= 1;
-    if (partsOnAsset.value[i].quantity! < 1) partsOnAsset.value.splice(i, 1);
+      partsOnAsset.value[i].quantity! -= 1;
+    // Check if part needs to be spliced from part list
+    if (partsOnAsset.value[i].quantity! < 1)
+      partsOnAsset.value.splice(i, 1);
     return;
   }
+  // move with inventory checks
   move(partsOnAsset, inventory, item.part, 1, item.serial!);
 }
 
@@ -188,6 +206,8 @@ function reset() {
     :displayMessage="displayMessage"
     :inventorySearch="true"
     :untracked="assetCopy.migrated?true:false"
+    :correction="correctionMode"
+    :isAdmin="(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('admin'))?true:false"
     @assetSubmit="assetSubmit"
     @plusPart="plusPart"
     @minusPart="minusPart"

@@ -27,6 +27,7 @@ interface Props {
   inventorySearch?: boolean;
   inventory?: LoadedCartItem[];
   untracked?: boolean;
+  isAdmin?: boolean;
 }
 
 // Begin props
@@ -43,9 +44,10 @@ const {
   inventorySearch,
   inventory,
   untracked,
+  isAdmin
 } = defineProps<Props>();
 // End props
-
+let correction = ref(false)
 let partSearchPopup = ref(false);
 let inventorySearchPopup = ref(false);
 
@@ -74,6 +76,10 @@ function addPartFromInventory(item: LoadedCartItem) {
       and is incomplete. Please edit and update the information if you can.
     </p>
     <h1 class="mb-4 text-4xl leading-8 md:leading-10">{{ title }}</h1>
+    <div class="flex" v-if="isAdmin">
+      <label class="mr-1">Correction mode:</label>
+      <input type="checkbox" v-model="correction" class="text-white my-1">
+    </div>
     <form
       id="form"
       @submit.prevent="$emit('assetSubmit')"
@@ -84,7 +90,7 @@ function addPartFromInventory(item: LoadedCartItem) {
       <input
         class="textbox m-1"
         :required="strict"
-        :disabled="strict&&!untracked"
+        :disabled="strict&&!untracked&&!correction"
         v-model="oldAsset.asset_tag"
         type="text"
         pattern="WNX([0-9]{7})"
@@ -94,7 +100,7 @@ function addPartFromInventory(item: LoadedCartItem) {
       <input
         class="textbox m-1"
         :required="strict"
-        :disabled="strict&&!untracked"
+        :disabled="strict&&!untracked&&!correction"
         v-model="oldAsset.manufacturer"
         type="text"
         placeholder="Manufacturer"
@@ -103,7 +109,7 @@ function addPartFromInventory(item: LoadedCartItem) {
       <input
         class="textbox m-1"
         :required="strict"
-        :disabled="strict&&!untracked"
+        :disabled="strict&&!untracked&&!correction"
         v-model="oldAsset.model"
         type="text"
         placeholder="Model"
@@ -127,7 +133,7 @@ function addPartFromInventory(item: LoadedCartItem) {
       <input
         class="textbox m-1"
         :required="strict"
-        :disabled="strict&&!untracked"
+        :disabled="strict&&!untracked&&!correction"
         v-model="oldAsset.serial"
         type="text"
         placeholder="Serial Number"
@@ -135,7 +141,7 @@ function addPartFromInventory(item: LoadedCartItem) {
       <label>Asset Type:</label>
       <CustomDropdownComponent
         :required="strict"
-        :disabled="strict&&!untracked"
+        :disabled="strict&&!untracked&&!correction"
         :options="['Server', 'Laptop', 'Switch', 'PDU']"
         @updateValue="(value: string) => { oldAsset.asset_type = value }"
         :defaultValue="oldAsset.asset_type"
@@ -155,7 +161,7 @@ function addPartFromInventory(item: LoadedCartItem) {
           <label>Chassis Type:</label>
           <CustomDropdownComponent
             :required="strict"
-            :disabled="strict&&!untracked"
+            :disabled="strict&&!untracked&&!correction"
             :options="['Rack', 'Node', 'Node Chassis', 'Tower']"
             @updateValue="(value: string) => { oldAsset.chassis_type = value }"
             :defaultValue="oldAsset.chassis_type"
@@ -167,7 +173,7 @@ function addPartFromInventory(item: LoadedCartItem) {
             <label>Rack Units:</label>
             <input
               class="textbox m-1"
-              :disabled="strict&&!untracked"
+              :disabled="strict&&!untracked&&!correction"
               :required="strict"
               v-model="oldAsset.units"
               type="number"
@@ -178,7 +184,7 @@ function addPartFromInventory(item: LoadedCartItem) {
             <input
               class="textbox m-1"
               :required="strict"
-              :disabled="strict&&!untracked"
+              :disabled="strict&&!untracked&&!correction"
               v-model="oldAsset.num_bays"
               type="number"
               min="0"
@@ -192,7 +198,7 @@ function addPartFromInventory(item: LoadedCartItem) {
               <label>Bay Size:</label>
               <select
                 :required="strict"
-                :disabled="strict&&!untracked"
+                :disabled="strict&&!untracked&&!correction"
                 v-model="oldAsset.bay_type"
                 class="textbox m-1"
               >
@@ -205,7 +211,7 @@ function addPartFromInventory(item: LoadedCartItem) {
             <label>PDU Cables::</label>
             <select
               :required="strict"
-              :disabled="strict&&!untracked"
+              :disabled="strict&&!untracked&&!correction"
               v-model="oldAsset.cable_type"
               class="textbox m-1"
             >
@@ -257,9 +263,7 @@ function addPartFromInventory(item: LoadedCartItem) {
               <label>In Rack:</label>
               <select
                 :required="strict"
-                v-model="oldAsset.in_rack"
-                class="textbox m-1"
-              >
+                v-model="oldAsset.in_rack" class="textbox m-1" >
                 <option :value="undefined" selected disabled>Select</option>
                 <option :value="true">Yes</option>
                 <option :value="false">No</option>
@@ -498,7 +502,7 @@ function addPartFromInventory(item: LoadedCartItem) {
           </svg>
         </div>
         <FullScreenPopupComponent
-          v-if="partSearch || oldAsset.migrated"
+          v-if="partSearch || oldAsset.migrated || correction"
           v-show="partSearchPopup"
           @toggle="togglePopup"
         >
@@ -510,7 +514,7 @@ function addPartFromInventory(item: LoadedCartItem) {
           />
         </FullScreenPopupComponent>
         <FullScreenPopupComponent
-          v-if="inventorySearch && inventory && !oldAsset.migrated"
+          v-if="inventorySearch && inventory && !oldAsset.migrated && !correction"
           v-show="inventorySearchPopup"
           @toggle="togglePopup"
         >
@@ -519,6 +523,9 @@ function addPartFromInventory(item: LoadedCartItem) {
             :inventory="inventory"
           />
         </FullScreenPopupComponent>
+        <p class="my-2 w-full rounded-md bg-red-400 p-2" v-if="correction">
+          You are in asset correction mode.  Any parts added here will be treat as new inventory and removed parts will be marked as deleted.  
+        </p>
         <div
           v-if="(parts!.length > 0)"
           class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-5 md:leading-10"

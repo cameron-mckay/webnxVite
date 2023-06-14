@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// Get http and store from props
 import { Ref, onMounted, ref, watch } from 'vue';
 import type { PartSchema } from '../../plugins/interfaces';
 import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponent.vue';
@@ -422,7 +421,7 @@ onMounted(() => {
           <option disabled value="">Pick one</option>
           <option>SATA</option>
           <option>SAS</option>
-          <option v-if="part.storage_type='SSD'">NVME</option>
+          <option v-if="part.storage_type=='SSD'">NVME</option>
         </select>
         <label>Capacity:</label>
         <div class="flex justify-between">

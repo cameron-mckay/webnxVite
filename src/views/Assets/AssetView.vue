@@ -5,8 +5,8 @@ import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetCartItemComponent from '../../components/AssetComponents/AssetCartItemComponent.vue';
 import {
-getAssetByID,
-getPartsOnAsset,
+  getAssetByID,
+  getPartsOnAsset,
 } from '../../plugins/dbCommands/assetManager';
 import type {
 AssetSchema,
@@ -53,6 +53,12 @@ function edit() {
   router.push({
     name: 'Edit Asset',
     query: { asset_tag: asset.value.asset_tag },
+  });
+}
+function adminEdit(){
+  router.push({
+    name: 'Edit Asset',
+    query: { asset_tag: asset.value.asset_tag, mode: "correction" },
   });
 }
 </script>

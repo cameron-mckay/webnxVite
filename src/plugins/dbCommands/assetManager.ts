@@ -132,10 +132,11 @@ export async function updateAsset(
   http: AxiosInstance,
   asset: AssetSchema,
   parts: Array<CartItem>,
+  correction: boolean,
   callback: apiResponse
 ) {
   await http
-    .put('/api/asset', { asset, parts: parts })
+    .put('/api/asset', { asset, parts: parts, correction })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);

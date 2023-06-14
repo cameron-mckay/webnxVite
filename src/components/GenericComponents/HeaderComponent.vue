@@ -250,7 +250,6 @@ import { UserState } from '../../plugins/interfaces';
 import router from '../../router';
 document.documentElement.classList.remove('dark');
 interface Props {
-  http: AxiosInstance;
   store: Store<UserState>;
   revokeLogin: () => void;
 }

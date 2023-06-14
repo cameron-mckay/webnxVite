@@ -35,7 +35,7 @@
 
   /* Buttons and inputs */
   .textbox {
-    @apply nx-border-color mx-0.5 h-8 w-full rounded-md border bg-gray-300 p-1 shadow-sm transition-colors dark:bg-gray-100 dark:text-black md:mx-1 md:h-10 disabled:bg-gray-400 disabled:text-gray-600;
+    @apply nx-border-color mx-0.5 h-8 w-full rounded-md border bg-gray-300 p-1 shadow-sm transition-colors dark:bg-gray-100 dark:text-black md:mx-1 md:h-10 disabled:bg-gray-400 disabled:text-gray-600 dark:disabled:bg-gray-300 dark:disabled:text-gray-500;
   }
   .search {
     @apply textbox h-8 md:h-10;
