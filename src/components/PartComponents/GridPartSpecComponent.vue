@@ -69,9 +69,9 @@ let url = import.meta.env.VITE_API_URL;
     </div>
     <div v-if="part.type == 'Storage'" class="detail-row">
       <p v-if="part.size">Form Factor:</p>
-      <p v-if="part.size">>{{ part.size }}</p>
-      <p v-if="part.storage_type">>Storage Type:</p>
-      <p v-if="part.storage_type">>{{ part.storage_type }}</p>
+      <p v-if="part.size">{{ part.size }}</p>
+      <p v-if="part.storage_type">Storage Type:</p>
+      <p v-if="part.storage_type">{{ part.storage_type }}</p>
       <p>Interface:</p>
       <p>{{ part.storage_interface }}</p>
       <p>Capacity:</p>
