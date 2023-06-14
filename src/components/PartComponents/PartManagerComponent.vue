@@ -524,6 +524,17 @@ onMounted(() => {
           v-model="part.cable_end2"
           type="text"
         />
+        <label>Consumable:</label>
+        <select
+          :required="strict"
+          v-model="part.consumable"
+          class="textbox m-1"
+        >
+          <option disabled value="">Pick one</option>
+          <option :value="true">Yes</option>
+          <option :value="false">No</option>
+        </select>
+
       </div>
       <div v-if="part.type == 'Backplane'" class="col-span-2 grid grid-cols-2">
 	<label>Num Slots:</label>

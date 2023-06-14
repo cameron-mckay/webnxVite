@@ -107,6 +107,9 @@ let url = import.meta.env.VITE_API_URL;
     <div v-if="part.type == 'Misc.'">
       <!-- Placeholder -->
     </div>
+    <p v-if="part.consumable">Consumable:</p>
+    <p v-if="part.consumable">{{ part.consumable?"Yes":"No" }}</p>
+
     <div class="detail-image-container">
       <img :src="`${url}/images/parts/${part.nxid}`" />
     </div>

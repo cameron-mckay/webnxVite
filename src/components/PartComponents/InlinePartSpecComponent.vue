@@ -65,5 +65,6 @@ let { part } = defineProps<Props>();
     <div v-if="part.type == 'Misc.'">
       <!-- Placeholder -->
     </div>
+    <p v-if="part.consumable">{{ `Consumable: ${part.consumable?"Yes":"No"}` }}</p>
   </div>
 </template>
