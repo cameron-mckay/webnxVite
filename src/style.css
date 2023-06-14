@@ -8,6 +8,7 @@
   .card {
     @apply background-and-border mx-auto mt-10 rounded-lg bg-gray-200 p-10 shadow-lg transition-colors dark:bg-zinc-900;
   }
+  pre,
   p,
   h1,
   a,
@@ -124,7 +125,7 @@
 }
 
 /* Apply fonts and colors */
-* {
+*, pre {
   font-family: 'Inter', sans-serif;
   /* @apply text-black dark:text-gray-200; */
 }

@@ -148,7 +148,7 @@ function adminEdit(){
         </p>
         <div class="col-span-2 my-4" v-if="asset.notes">
           <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
-          <p>{{ asset.notes }}</p>
+          <pre>{{ asset.notes }}</pre>
         </div>
       </div>
     </div>

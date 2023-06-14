@@ -3,6 +3,7 @@ module.exports = {
   pluginSearchDirs: false,
   tabWidth: 2,
   organizeImportsSkipDestructiveCodeActions: true,
+  semi: false,
   singleQuote: true,
   trailingComma: 'es5',
   htmlWhitespaceSensitivity: 'ignore',
