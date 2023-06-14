@@ -405,6 +405,7 @@ async function search() {
   ) {
     parts.value = JSON.parse(JSON.stringify(pageCache.get(pageNum.value)!));
     if (parts.value.length > 50) {
+      console.log("Page size: "+parts.value.length)
       multiplePages.value = true;
       // Pop the extra object
       parts.value.pop();
