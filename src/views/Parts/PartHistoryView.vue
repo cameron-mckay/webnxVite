@@ -37,11 +37,9 @@ let part = ref({
   shelf_location: '',
 } as PartSchema);
 let partRecords = ref([] as PartRecord[]);
-let users = ref([
-  // { _id: 'all', first_name: 'All', last_name: 'Techs' },
-  // { _id: 'testing', first_name: 'Testing', last_name: 'Center' },
-] as User[]);
-
+let userMap = new Map<string, User>();
+let users = ref([] as User[])
+const getUserExclude = ["all", "testing", "la", "ny", "og"]
 onBeforeMount(() => {
   if (router.currentRoute.value.query.id) {
     let nxid = router.currentRoute.value.query.nxid as string;
@@ -56,35 +54,69 @@ onBeforeMount(() => {
       if (err) {
         errorHandler(err);
       }
-      partRecords.value = res as PartRecord[];
-      for (const record of res as PartRecord[]) {
-        // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
-        if (
-          record.owner &&
-          record.owner != 'all' &&
-          record.owner != 'testing' &&
-          users.value.find((e) => e._id == record.owner) === undefined
-        ) {
-          await getUserByID(http, record.owner, (res, err) => {
-            if (err) {
-              errorHandler(err);
-            }
-            users.value.push(res as User);
-          });
-        }
-        // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
-        if (
-          record.by &&
-          users.value.find((e) => e._id == record.by) === undefined
-        ) {
-          await getUserByID(http, record.by, (res, err) => {
-            if (err) {
-              errorHandler(err);
-            }
-            users.value.push(res as User);
-          });
-        }
-      }
+      let tempParts = res as PartRecord[];
+      let g = await Promise.all(tempParts.map((record)=>{
+        return new Promise((resolve)=>{
+          let unresolved = false
+          if((
+              record.owner &&
+              !getUserExclude.includes(record.owner) &&
+              userMap.has(record.owner))&&
+            (
+              record.by &&
+              userMap.has(record.by)
+            )
+          ){
+            resolve("")
+          }
+          // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
+          if (
+            record.owner &&
+            !getUserExclude.includes(record.owner) &&
+            !userMap.has(record.owner)
+          ) {
+            userMap.set(record.owner, {})
+            getUserByID(http, record.owner, (res, err) => {
+              if (err) {
+                userMap.delete(record.owner!)
+                errorHandler(err);
+                return resolve("");
+              }
+              userMap.set(record.owner!, res as User);
+              resolve("");
+            });
+          }
+          else {
+            unresolved = true
+          }
+          // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
+          if (
+            record.by &&
+            !userMap.has(record.by)
+          ) {
+            userMap.set(record.by, {})
+            getUserByID(http, record.by, (res, err) => {
+              if (err) {
+                userMap.delete(record.by!)
+                errorHandler(err);
+                return resolve("");
+              }
+              userMap.set(record.by!, res as User);
+              resolve("");
+            });
+          }
+          else if(unresolved) {
+            resolve("")
+          }
+        })
+      }))
+      console.log(userMap)
+      console.log(g)
+      userMap.forEach((val)=>{
+        users.value.push(val)
+      })
+      console.log(users.value)
+      partRecords.value = tempParts
     });
   }
 });
@@ -97,7 +129,8 @@ function viewHistory(id: string) {
   <div>
     <GridPartSpecComponent :part="part" />
     <!-- PART RECORDS GO HERE -->
-    <h1 class="detail-title">{{ partRecords[0].serial }} History:</h1>
+    <h1 class="detail-title" v-if="partRecords&&partRecords.length>0&&partRecords[0].serial != undefined">{{ partRecords[0].serial }} History:</h1>
+    <h1 class="detail-title" v-else>History:</h1>
     <div
       v-if="partRecords.length > 0"
       class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"

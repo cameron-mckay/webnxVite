@@ -39,6 +39,9 @@ let users = ref([] as User[]);
 let processingMove = false;
 let loading = ref(false);
 
+let canBuildingTransfer = ref(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('clerk'));
+let userBuilding = ref(store.state.user.building)
+
 async function loadInventory() {
   loading.value = true;
   getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
@@ -80,6 +83,8 @@ function firstLoad() {
       );
     });
   }
+
+  canBuildingTransfer = ref(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('clerk'));
 }
 
 function moveFromInventory(part: PartSchema, quantity: number, serial: string) {
@@ -204,6 +209,24 @@ watch(currentUser, () => {
           >
             Testing Center
           </h1>
+          <h1
+            class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
+            v-else-if="currentUser._id == 'la'"
+          >
+            LA Transfers
+          </h1>
+          <h1
+            class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
+            v-else-if="currentUser._id == 'ny'"
+          >
+            NY Transfers
+          </h1>
+          <h1
+            class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
+            v-else-if="currentUser._id == 'og'"
+          >
+            Ogden Transfers
+          </h1>
           <h1 class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit" v-else>
             {{ currentUser.first_name }}'s Inventory
           </h1>
@@ -213,6 +236,24 @@ watch(currentUser, () => {
               <option disabled :value="{}"></option>
               <option :value="store.state.user" selected>Your Inventory</option>
               <option :value="{ _id: 'all' }">All Tech's</option>
+              <option
+                v-if="canBuildingTransfer"
+                :value="{ _id: 'la' }"
+              >
+               LA Transfers
+              </option>
+              <option
+                v-if="canBuildingTransfer"
+                :value="{ _id: 'ny' }"
+              >
+               NY Transfers
+              </option>
+              <option
+                v-if="canBuildingTransfer"
+                :value="{ _id: 'og' }"
+              >
+               Ogden Transfers
+              </option>
               <option
                 v-if="store.state.user.roles?.includes('admin')"
                 :value="{ _id: 'testing' }"
@@ -288,6 +329,24 @@ watch(currentUser, () => {
                   :disabled="currentUser._id == 'testing'"
                 >
                   Testing Center
+                </option>
+                <option
+                  v-if="canBuildingTransfer"
+                  :value="{ _id: 'la', building: 1 }"
+                >
+                 LA Transfers
+                </option>
+                <option
+                  v-if="canBuildingTransfer"
+                  :value="{ _id: 'ny', building: 4 }"
+                >
+                 NY Transfers
+                </option>
+                <option
+                  v-if="canBuildingTransfer"
+                  :value="{ _id: 'og', building: 3 }"
+                >
+                 Ogden Transfers
                 </option>
                 <option
                   :value="{ _id: 'lost', building: store.state.user.building }"

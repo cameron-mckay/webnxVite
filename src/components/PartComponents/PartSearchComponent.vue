@@ -362,34 +362,34 @@ async function advancedSearch(part: PartSchema) {
 // Search function
 async function search() {
   // Check for webnx regex
-  if (/PNX([0-9]{7})+/.test(invisibleSearchText)) {
-      // temp value
-      let query = invisibleSearchText
-      visibleSearchText.value = ""
-      invisibleSearchText = ""
-      // Search and add to cart
-      getPartByID(http, query, building.value, location, (data, err) => {
-          if (err) {
-              // Part not found
-              return errorHandler(err)
-          }
-          // Typecast data
-          let part = data as PartSchema
-          if (part == null) {
-              // If no part was found
-              return errorHandler("Part not found.")
-          }
-          // Emit actions
-          if (add === true) {
-              emit("addPartAction", part)
-          } else if (view === true) {
-              emit("viewPartAction", part)
-          } else if (edit == true) {
-              emit("viewPartAction", part)
-          }
-      })
-  }
-  else {
+//  if (/PNX([0-9]{7})+/.test(invisibleSearchText)) {
+//      // temp value
+//      let query = invisibleSearchText
+//      visibleSearchText.value = ""
+//      invisibleSearchText = ""
+//      // Search and add to cart
+//      getPartByID(http, query, building.value, location, (data, err) => {
+//          if (err) {
+//              // Part not found
+//              return errorHandler(err)
+//          }
+//          // Typecast data
+//          let part = data as PartSchema
+//          if (part == null) {
+//              // If no part was found
+//              return errorHandler("Part not found.")
+//          }
+//          // Emit actions
+//          if (add === true) {
+//              emit("addPartAction", part)
+//          } else if (view === true) {
+//              emit("viewPartAction", part)
+//          } else if (edit == true) {
+//              emit("viewPartAction", part)
+//          }
+//      })
+//  }
+//  else {
   router.push({
     query: {
       text: invisibleSearchText,
@@ -433,8 +433,8 @@ async function search() {
         search();
       });
   }
-  }
 }
+//}
 
 function getPage(page: number, text: string) {
   return new Promise<PartSchema[]>((res, rej) => {

@@ -45,6 +45,8 @@ let users = ref([
   // { _id: 'testing', first_name: 'Testing', last_name: 'Center' },
 ] as User[]);
 
+const getUserExclude = ["all", "testing", "la", "ny", "og"]
+
 onBeforeMount(() => {
   if (router.currentRoute.value.query.nxid) {
     let nxid = router.currentRoute.value.query.nxid as string;
@@ -60,8 +62,7 @@ onBeforeMount(() => {
         // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
         if (
           record.owner &&
-          record.owner != 'all' &&
-          record.owner != 'testing' &&
+          !getUserExclude.includes(record.owner) &&
           users.value.find((e) => e._id == record.owner) === undefined
         ) {
           await getUserByID(http, record.owner, (res, err) => {
@@ -88,7 +89,7 @@ onBeforeMount(() => {
     pageTitle.value = '';
     if (query.location == 'All Techs') {
       pageTitle.value = pageTitle.value + "All Tech's inventory:";
-    } else if (query.owner) {
+    } else if (query.owner&&!getUserExclude.includes(query.owner)) {
       getUserByID(http, query.owner as string, (res, err) => {
         if (err) {
           errorHandler(err);
