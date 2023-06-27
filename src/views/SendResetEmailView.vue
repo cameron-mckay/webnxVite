@@ -15,7 +15,7 @@
         required
         autofocus
       />
-     <input class="submit my-1 w-full" type="submit" value="Login" />
+     <input class="submit my-1 w-full" type="submit" value="Submit" />
     </form>
     <div v-else>
       <p>A password reset link has been sent to your email.</p>

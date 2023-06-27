@@ -23,7 +23,7 @@
         placeholder="Confirm password"
         required
       />
-      <input class="submit w-full" type="submit" value="Register" />
+      <input class="submit w-full" type="submit" value="Update Password" />
     </form>
   </div>
 </template>
