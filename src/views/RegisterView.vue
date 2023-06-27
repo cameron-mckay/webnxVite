@@ -58,7 +58,6 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { User, UserState } from '../plugins/interfaces';
 
-// PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 interface Props {
   http: AxiosInstance;
   store: Store<UserState>;
