@@ -64,7 +64,7 @@ onBeforeMount(()=>{
   checkAuth(http, (data, err) => {
     // If not authenticated
     if (err)
-      return revokeLogin()
+      return firstLoadRevokeLogin()
     // If authenticated, set status
     displayMessage('Successfully logged in.');
     store.commit('updateUserData', http);
@@ -206,15 +206,22 @@ function revokeLogin() {
   // set status
   store.commit('logout', http);
   // redirect
+  if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Password Reset') {
+    router.replace({ query: undefined })
+    router.push({ name: 'Login' });
+  }
+}
+
+function firstLoadRevokeLogin() {
+  // set status
+  store.commit('logout', http);
+  // redirect
   setTimeout(()=> {
-    console.log(route)
-    console.log(router)
     if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Password Reset') {
-      console.log(router.currentRoute.value.name)
-      console.log("REDIRECT")
       router.replace({ query: undefined })
       router.push({ name: 'Login' });
     }
   }, 1000)
 }
+
 </script>
