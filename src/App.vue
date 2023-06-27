@@ -68,31 +68,31 @@ onBeforeMount(()=>{
     // If authenticated, set status
     displayMessage('Successfully logged in.');
     store.commit('updateUserData', http);
-    // Check if user is a non admin trying to access admin route
-    router.beforeEach((to, from, next) => {
-      // Make sure they are admin for admin routes
-      if (!store.state.user.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
-        redirect()
-      }
-      if (
-        !(store.state.user.roles?.includes('admin')||
-        store.state.user.roles?.includes('clerk')) &&
-        /\/manage\/*/.test(to.path)
-      ) {
-        redirect()
-      }
-      if (!(store.state.user.roles?.includes('admin')||
-        store.state.user.roles?.includes('ebay')) &&
-        /\/ebay\/*/.test(to.path)
-      ) {
-        redirect()
-      }
-      // This goes through the matched routes from last to first, finding the closest route with a title.
-      // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
-      // `/nested`'s will be chosen.
-      document.title = `WebNX - ${to.name?.toString()}`;
-      next();
-    });
+  });
+  // Check if user is a non admin trying to access admin route
+  router.beforeEach((to, from, next) => {
+    // Make sure they are admin for admin routes
+    if (!store.state.user.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
+      redirect()
+    }
+    if (
+      !(store.state.user.roles?.includes('admin')||
+      store.state.user.roles?.includes('clerk')) &&
+      /\/manage\/*/.test(to.path)
+    ) {
+      redirect()
+    }
+    if (!(store.state.user.roles?.includes('admin')||
+      store.state.user.roles?.includes('ebay')) &&
+      /\/ebay\/*/.test(to.path)
+    ) {
+      redirect()
+    }
+    // This goes through the matched routes from last to first, finding the closest route with a title.
+    // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
+    // `/nested`'s will be chosen.
+    document.title = `WebNX - ${to.name?.toString()}`;
+    next();
   });
 })
 /**
@@ -206,13 +206,15 @@ function revokeLogin() {
   // set status
   store.commit('logout', http);
   // redirect
-  console.log(route)
-  console.log(router)
-  if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Password Reset') {
-    console.log(router.currentRoute.value.name)
-    console.log("REDIRECT")
-    router.replace({ query: undefined })
-    router.push({ name: 'Login' });
-  }
+  setTimeout(()=> {
+    console.log(route)
+    console.log(router)
+    if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Password Reset') {
+      console.log(router.currentRoute.value.name)
+      console.log("REDIRECT")
+      router.replace({ query: undefined })
+      router.push({ name: 'Login' });
+    }
+  }, 1000)
 }
 </script>
