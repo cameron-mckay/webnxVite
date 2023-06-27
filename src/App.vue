@@ -206,6 +206,8 @@ function revokeLogin() {
   // set status
   store.commit('logout', http);
   // redirect
+  console.log(route)
+  console.log(router)
   if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Password Reset') {
     console.log(router.currentRoute.value.name)
     console.log("REDIRECT")
