@@ -122,6 +122,10 @@
   .noMarginOnMobile {
     @apply mr-0 md:mr-1;
   }
+
+  #link {
+    @apply underline text-green-400 hover:text-green-500 active:text-green-600
+  }
 }
 
 /* Apply fonts and colors */

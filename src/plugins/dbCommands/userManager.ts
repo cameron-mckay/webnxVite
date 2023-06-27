@@ -244,3 +244,36 @@ export async function checkRoles(http: AxiosInstance, roles: string[], callback:
       callback({}, err);
     });
 }
+
+export async function sendPasswordResetEmail(http: AxiosInstance, email: string, callback: apiResponse) {
+  await http.get('/api/password/reset', {
+    params: {
+      email
+    }
+  })
+  .then((res: AxiosResponse) => {
+      // Success - send response to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export async function submitNewPassword(http: AxiosInstance, user_id: string, token: string, password: string, callback: apiResponse) {
+  await http.post('/api/password/reset', {
+    user_id,
+    token,
+    password
+  })
+  .then((res: AxiosResponse) => {
+      // Success - send response to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+

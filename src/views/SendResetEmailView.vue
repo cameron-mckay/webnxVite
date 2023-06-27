@@ -5,7 +5,7 @@
       alt="WebNX logo"
       src="../assets/logo.webp"
     />
-    <form class="text-center" @submit.prevent="login">
+    <form class="text-center" @submit.prevent="sendEmail" v-if="!submitted">
       <input
         class="textbox my-1"
         type="email"
@@ -15,16 +15,12 @@
         required
         autofocus
       />
-      <input
-        class="textbox my-1"
-        type="password"
-        v-model="form.password"
-        placeholder="Password"
-        required
-      />
-      <RouterLink id="link" to="/forgotPassword">Forgot password</RouterLink>
-      <input class="submit my-1 w-full" type="submit" value="Login" />
+     <input class="submit my-1 w-full" type="submit" value="Login" />
     </form>
+    <div v-else>
+      <p>A password reset link has been sent to your email.</p>
+      <RouterLink id="link" to="/login">Return to login</RouterLink>
+    </div>
   </div>
 </template>
 
@@ -32,9 +28,11 @@
 import { onMounted } from 'vue';
 
 import type { AxiosError, AxiosInstance } from 'axios';
+import { ref } from 'vue'
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState } from '../plugins/interfaces';
+import { sendPasswordResetEmail } from '../plugins/dbCommands/userManager';
 
 interface Props {
   http: AxiosInstance;
@@ -47,11 +45,10 @@ interface Props {
 const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 // END OF PROPS
-
+let submitted = ref(false)
 // Form data binding
 let form = {
   email: '',
-  password: '',
 };
 
 // Lifecycle hook
@@ -59,30 +56,14 @@ onMounted(() => {
   redirectIfLoggedIn();
 });
 
-// Send login to API
-async function login() {
-  // Get email and password from input fields
-  let { email, password } = form;
-  // If they are not empty
-  if (email && password) {
-    // Send username and password to API
-    await http
-      .post('/api/login', { email, password })
-      .then((res) => {
-        // If login is successful
-        // Store cookie in local storage
-        localStorage.setItem('token', res.data.token);
-        // Add token to headers
-        http.defaults.headers['Authorization'] = res.data.token;
-        // Save user data to vuex store
-        store.commit('updateUserData', http);
-        router.push('/');
-      })
-      .catch((err: Error | AxiosError) => {
-        // Error
-        errorHandler(err);
-      });
-  }
+function sendEmail() {
+  sendPasswordResetEmail(http, form.email, (data, err) => {
+    if(err) {
+      return errorHandler(err)
+    }
+    submitted.value = true
+    displayMessage(data as string)
+  })
 }
 
 // Redirects if token is already present

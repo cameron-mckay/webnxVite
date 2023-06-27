@@ -37,6 +37,7 @@ const store = useStore();
 var messages: Ref<Message[]> = ref([]);
 var errorMessages: Ref<Message[]> = ref([]);
 
+// Check theme
 onMounted(() => {
   if (
     localStorage.getItem('theme') == 'dark' ||
@@ -60,7 +61,6 @@ function redirect() {
 
 // Before app is created
 onBeforeMount(()=>{
-
   checkAuth(http, (data, err) => {
     // If not authenticated
     if (err)
@@ -206,8 +206,8 @@ function revokeLogin() {
   // set status
   store.commit('logout', http);
   // redirect
-  router.replace({ query: undefined })
-  if (route.name != 'Register') {
+  if (route.name != 'Register'&&route.name != 'Password Reset') {
+    router.replace({ query: undefined })
     router.push({ name: 'Login' });
   }
 }
