@@ -54,7 +54,6 @@
           v-if="totalPages > 1"
           class="float-right flex select-none justify-between"
         >
-          <p class="my-auto inline-block">{{ `Page: ${pageNum}` }}</p>
           <!-- Left Caret -->
           <div
             v-if="totalPages > 1 && !loading"
