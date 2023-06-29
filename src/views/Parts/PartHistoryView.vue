@@ -4,6 +4,7 @@ import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import GridPartSpecComponent from '../../components/PartComponents/GridPartSpecComponent.vue';
+import BackButton from '../../components/GenericComponents/BackButton.vue';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
 import {
   getPartByID,
@@ -127,6 +128,7 @@ function viewHistory(id: string) {
 </script>
 <template>
   <div>
+    <BackButton @click="router.back()" class="mr-2"/>
     <GridPartSpecComponent :part="part" />
     <!-- PART RECORDS GO HERE -->
     <h1 class="detail-title" v-if="partRecords&&partRecords.length>0&&partRecords[0].serial != undefined">{{ partRecords[0].serial }} History:</h1>

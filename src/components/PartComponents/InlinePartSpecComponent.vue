@@ -66,5 +66,6 @@ let { part } = defineProps<Props>();
       <!-- Placeholder -->
     </div>
     <p v-if="part.consumable">{{ `Consumable: ${part.consumable?"Yes":"No"}` }}</p>
+    <p v-if="part.audited">{{ `Last Audited: ${new Date(Date.parse(part.audited!)).toLocaleString()}` }}</p>
   </div>
 </template>

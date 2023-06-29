@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
+import { auditPart } from '../../plugins/dbCommands/partManager';
 import { CartItem, PartSchema, User } from '../../plugins/interfaces';
 import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
 
@@ -24,7 +25,7 @@ let owner = ref({} as User);
 let quantity = ref(JSON.parse(JSON.stringify(part.quantity)));
 let existingQuantity = ref(part.quantity);
 let serials = ref('');
-let emit = defineEmits(['submitRequest']);
+let emit = defineEmits(['submitRequest', 'audit']);
 // Reset form
 function resetForm() {
   request.value.quantity = 0;
@@ -78,6 +79,7 @@ onMounted(() => {
     }
   });
 });
+  
 </script>
 <template>
   <FullScreenPopupComponent>
@@ -189,6 +191,14 @@ onMounted(() => {
         value="Reset"
       />
       <input class="submit col-span-2" type="submit" value="Update" />
+      <h1 class="my-4 text-4xl">Audit:</h1>
+      <div
+        class="col-span-2 grid grid-cols-2"
+      >
+        <p v-if="part.audited">Last Audited:</p>
+        <p v-if="part.audited">{{new Date(Date.parse(part.audited!)).toLocaleString()}}</p>
+      </div>
+      <input class="submit col-span-2" type="button" value="Mark As Audited" @click="$emit('audit')"/>
     </form>
   </FullScreenPopupComponent>
 </template>

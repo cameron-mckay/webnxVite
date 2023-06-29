@@ -3,6 +3,7 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { onBeforeMount, ref } from 'vue';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
+import BackButton from '../../components/GenericComponents/BackButton.vue';
 import AssetCartItemComponent from '../../components/AssetComponents/AssetCartItemComponent.vue';
 import {
   getAssetByID,
@@ -72,6 +73,7 @@ function adminEdit(){
     <div
       class="relative grid grid-cols-2 rounded-lg group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-4"
     >
+        <BackButton @click="router.back()" class="mr-2"/>
       <div class="col-span-2 mb-4 flex md:col-span-4">
         <h1 class="my-auto text-4xl leading-8 md:leading-10">
           {{ asset.asset_tag + ':' }}

@@ -5,6 +5,7 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import GridPartSpecComponent from '../../components/PartComponents/GridPartSpecComponent.vue';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
+import BackButton from '../../components/GenericComponents/BackButton.vue';
 import SerializedPartRecordComponent from '../../components/PartComponents/SerializedPartRecordComponent.vue';
 import {
   getPartByID,
@@ -128,8 +129,10 @@ function viewHistory(record: PartRecord, quantity?: number) {
 </script>
 <template>
   <div>
+    <BackButton @click="router.back()" class="mr-2"/>
     <GridPartSpecComponent :part="part" />
     <!-- PART RECORDS GO HERE -->
+
     <h1 class="detail-title mt-4">
       {{ pageTitle }}
     </h1>

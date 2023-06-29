@@ -563,8 +563,3 @@ watch(correction, ()=>{
     </form>
   </div>
 </template>
-<style scoped>
-label {
-  @apply my-auto;
-}
-</style>

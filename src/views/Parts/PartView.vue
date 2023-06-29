@@ -4,6 +4,7 @@ import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import GridPartSpecComponent from '../../components/PartComponents/GridPartSpecComponent.vue';
+import BackButton from '../../components/GenericComponents/BackButton.vue';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
 import {
   getPartByID,
@@ -43,7 +44,7 @@ let users = ref([
   // { _id: 'all', first_name: 'All', last_name: 'Techs' },
 ] as User[]);
 
-const getUserExclude = ["all", "testing", "la", "ny", "og"]
+let getUserExclude = ["all", "testing", "la", "ny", "og"]
 
 onBeforeMount(() => {
   if (router.currentRoute.value.query.nxid) {
@@ -130,6 +131,7 @@ function viewHistory(record: PartRecord, quantity: number) {
 </script>
 <template>
   <div>
+    <BackButton @click="router.back()" class="mr-2"/>
     <GridPartSpecComponent :part="part" />
     <!-- PART RECORDS GO HERE -->
     <div

@@ -10,10 +10,10 @@ import SearchComponent from '../../components/PartComponents/PartSearchComponent
 import {
 createNewPartRecords,
 deletePart,
-movePart,
 updatePart,
 updatePartImage,
-deleteFromPartsRoom
+deleteFromPartsRoom,
+auditPart
 } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
@@ -182,6 +182,18 @@ function submitAddToInventory(
     return errorHandler('Quantity error');
   }
 }
+
+function audit() {
+  console.log(currentPart.value.nxid)
+  auditPart(http, currentPart.value.nxid!, (data, err) => {
+    if(err) {
+      return errorHandler(err)
+    }
+    console.log(data)
+    currentPart.value = data as PartSchema
+    displayMessage("Part audited.")
+  })
+}
 </script>
 <template>
   <div>
@@ -217,6 +229,7 @@ function submitAddToInventory(
       v-if="addPart"
       @toggle="toggleAdd"
       @submitRequest="submitAddToInventory"
+      @audit="audit"
       :users="users"
       :buildings="buildings"
       :part="currentPart"

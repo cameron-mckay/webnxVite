@@ -16,6 +16,9 @@
     @apply text-black dark:text-gray-200;
   }
 
+  label {
+    @apply my-auto;
+  }
   del {
     @apply line-through decoration-black dark:decoration-gray-200;
   }

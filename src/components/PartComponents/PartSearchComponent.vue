@@ -23,32 +23,8 @@
         <option :value="3" selected>3</option>
         <option :value="1">1</option>
       </select>
-      <!-- QR Code -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        @click="toggleQR"
-        class="button-icon hover:button-icon-hover active:button-icon-active"
-        viewBox="0 0 448 512"
-      >
-        <path
-          fill="currentColor"
-          stroke="currentColor"
-          d="M0 80C0 53.5 21.5 32 48 32h96c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V80zM64 96v64h64V96H64zM0 336c0-26.5 21.5-48 48-48h96c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V336zm64 16v64h64V352H64zM304 32h96c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H304c-26.5 0-48-21.5-48-48V80c0-26.5 21.5-48 48-48zm80 64H320v64h64V96zM256 304c0-8.8 7.2-16 16-16h64c8.8 0 16 7.2 16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s7.2-16 16-16s16 7.2 16 16v96c0 8.8-7.2 16-16 16H368c-8.8 0-16-7.2-16-16s-7.2-16-16-16s-16 7.2-16 16v64c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V304zM368 480a16 16 0 1 1 0-32 16 16 0 1 1 0 32zm64 0a16 16 0 1 1 0-32 16 16 0 1 1 0 32z"
-        />
-      </svg>
-      <!-- Sliders -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="button-icon hover:button-icon-hover active:button-icon-active"
-        @click="toggleAdvanced"
-        viewBox="0 0 512 512"
-      >
-        <path
-          fill="currentColor"
-          stroke="currentColor"
-          d="M0 416c0-17.7 14.3-32 32-32l54.7 0c12.3-28.3 40.5-48 73.3-48s61 19.7 73.3 48L480 384c17.7 0 32 14.3 32 32s-14.3 32-32 32l-246.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 448c-17.7 0-32-14.3-32-32zm192 0c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32zM384 256c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32zm-32-80c32.8 0 61 19.7 73.3 48l54.7 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-54.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l246.7 0c12.3-28.3 40.5-48 73.3-48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32s-14.3-32-32-32zm73.3 0L480 64c17.7 0 32 14.3 32 32s-14.3 32-32 32l-214.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 128C14.3 128 0 113.7 0 96S14.3 64 32 64l86.7 0C131 35.7 159.2 16 192 16s61 19.7 73.3 48z"
-        />
-      </svg>
+      <QRCodeButton @click="toggleQR"/>
+      <SlidersButton @click="toggleAdvanced"/>
       <input class="search-button mr-0" type="submit" value="Search" />
       <AdvancedSearchComponent
         :http="http"
@@ -67,7 +43,7 @@
     </div>
     <div v-else-if="parts.length != 0">
       <div
-        class="relative grid grid-cols-4 p-1 text-center font-bold leading-8 transition md:grid-cols-6 md:p-2 md:leading-10"
+        class="relative grid grid-cols-4 py-1 text-center font-bold leading-8 transition md:grid-cols-6 md:p-2 md:leading-10"
       >
         <p class="hidden md:block">NXID</p>
         <p>Manufacturer</p>
@@ -75,40 +51,26 @@
         <p class="hidden md:block">Location</p>
         <p>Quantity</p>
         <div
-          v-if="multiplePages || pageNum > 1"
+          v-if="totalPages > 1"
           class="float-right flex select-none justify-between"
         >
           <p class="my-auto inline-block">{{ `Page: ${pageNum}` }}</p>
           <!-- Left Caret -->
-          <div class="flex shrink-0">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="button-icon hover:button-icon-hover active:button-icon-active"
-              viewBox="0 0 256 512"
+          <div
+            v-if="totalPages > 1 && !loading"
+            class="float-right flex select-none"
+          >
+            <p class="my-auto mr-3 inline-block leading-6">{{ `Page: ${pageNum}` }}</p>
+            <LeftCaretButton 
               v-on:click="prevPage"
               v-if="pageNum > 1"
-            >
-              <path
-                fill="currentColor"
-                stroke="currentColor"
-                d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
-              />
-            </svg>
+            />
             <div v-else class="button-icon opacity-0"></div>
             <!-- Right Caret -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="button-icon hover:button-icon-hover active:button-icon-active mr-0"
-              viewBox="0 0 256 512"
-              v-if="multiplePages"
+            <RightCaretButton
+              v-if="pageNum<totalPages"
               v-on:click="nextPage"
-            >
-              <path
-                fill="currentColor"
-                stroke="currentColor"
-                d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
-              />
-            </svg>
+            />
             <div v-else class="button-icon mr-0 opacity-0"></div>
           </div>
         </div>
@@ -130,42 +92,34 @@
     <div v-else class="md:animate-bottom my-4">
       <p>No results...</p>
     </div>
-    <div
-      v-if="(multiplePages || pageNum > 1) && !loading"
-      class="float-right flex select-none"
-    >
-      <p class="my-auto mr-3 inline-block">{{ `Page: ${pageNum}` }}</p>
-      <!-- Left Caret -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="button-icon hover:button-icon-hover active:button-icon-active"
-        viewBox="0 0 256 512"
-        v-on:click="prevPage"
-        v-if="pageNum > 1"
+      <div
+        v-if="totalPages > 1 && !loading"
+        class="float-right select-none"
       >
-        <path
-          fill="currentColor"
-          stroke="currentColor"
-          d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
-        />
-      </svg>
-      <div v-else class="button-icon opacity-0"></div>
-      <!-- Right Caret -->
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="button-icon hover:button-icon-hover active:button-icon-active"
-        viewBox="0 0 256 512"
-        v-if="multiplePages"
-        v-on:click="nextPage"
-      >
-        <path
-          fill="currentColor"
-          stroke="currentColor"
-          d="M246.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-9.2-9.2-22.9-11.9-34.9-6.9s-19.8 16.6-19.8 29.6l0 256c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l128-128z"
-        />
-      </svg>
-      <div v-else class="button-icon opacity-0"></div>
-    </div>
+        <div class="flex justify-end">
+          <p class="my-auto inline-block mr-2">{{ `Page: ${pageNum}` }}</p>
+          <div class="flex shrink-0">
+            <LeftCaretButton 
+              v-on:click="prevPage"
+              v-if="pageNum > 1"
+            />
+            <div v-else class="button-icon opacity-0"></div>
+            <!-- Right Caret -->
+            <RightCaretButton
+              v-if="pageNum<totalPages"
+              v-on:click="nextPage"
+            />
+            <div v-else class="button-icon mr-0 opacity-0"></div>
+          </div>
+        </div>
+        <div class="float-right">
+        <a class="mx-1" id="link" @click="goTo(1)" v-if="pageNum>2">1</a>
+          <a class="mx-1" v-if="pageNum>2">...</a>
+        <a class="mx-1" id="link" v-for="n in ((totalPages-(pageNum+1))>5)?5:(totalPages-pageNum-2>=0?totalPages-pageNum-2:0)" @click="n+pageNum+1<totalPages?goTo(n+pageNum+1):()=>{}">{{ n+pageNum+1 }}</a>
+          <a class="mx-1" v-if="(totalPages-pageNum)>7">...</a>
+          <a class="mx-1" id="link" @click="goTo(totalPages)">{{ totalPages}}</a>
+        </div>
+      </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -180,6 +134,10 @@ getPartsByTextSearch
 import type { PartSchema } from '../../plugins/interfaces';
 import QRCodeScannerPopupComponent from '../GenericComponents/QRCodeScannerPopupComponent.vue';
 import AdvancedSearchComponent from './PartAdvancedSearchComponent.vue';
+import QRCodeButton from '../GenericComponents/QRCodeButton.vue'
+import SlidersButton from '../GenericComponents/SlidersButton.vue'
+import LeftCaretButton from '../GenericComponents/LeftCaretButton.vue'
+import RightCaretButton from '../GenericComponents/RightCaretButton.vue'
 import PartComponent from './PartComponent.vue';
 
 interface AddObject {
@@ -228,9 +186,10 @@ let pageNum = ref(1);
 let parts: Ref<PartSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let showQR = ref(false);
-let multiplePages = ref(false);
 let loading = ref(false);
 let pageCache = new Map<number, PartSchema[]>();
+let totalPages = ref(1)
+let totalParts = ref(0)
 // Before component is mounted
 onBeforeMount(async () => {
   // Fuck this
@@ -290,7 +249,7 @@ function prevPage() {
 function nextPage() {
   let { query } = router.currentRoute.value;
   // Check if results have multiple pages
-  if (multiplePages) {
+  if (pageNum.value<totalPages.value) {
     // Increment page num
     pageNum.value += 1;
     // Send search query
@@ -335,28 +294,21 @@ async function advancedSearch(part: PartSchema) {
   part['building'] = building.value.toString();
   part['pageNum'] = pageNum.value;
   part['pageSize'] = 50;
-  multiplePages.value = false;
   router.push({ query: part });
   // Query the API
-  getPartsByData(http, part, (data, err) => {
-    // Hide advanced search
-    loading.value = false;
-    showAdvanced.value = false;
-    // Error
-    if (err) {
-      // Handle the error
-      return errorHandler(err);
-    } else if (data) {
-      // Set parts list to API response
-      parts.value = data as PartSchema[];
-      if (parts.value.length > 50) {
-        multiplePages.value = true;
-        // Pop the extra object
-        parts.value.pop();
-        // Set multiple pages
-      }
-    }
-  });
+  getPageAdvanced(pageNum.value, part)
+    .then((res) => {
+      parts.value = JSON.parse(JSON.stringify(res.parts));
+      totalPages.value = res.numPages
+      totalParts.value = res.numParts
+      loading.value = false;
+      pageCache.set(pageNum.value, res.parts);
+    })
+    .catch(() => {
+      pageNum.value = 1;
+      search();
+    });
+
 }
 
 // Search function
@@ -398,34 +350,22 @@ async function search() {
       location,
     },
   });
-  multiplePages.value = false;
   if (
     pageCache.has(pageNum.value) &&
     pageCache.get(pageNum.value)!.length > 0
   ) {
     parts.value = JSON.parse(JSON.stringify(pageCache.get(pageNum.value)!));
-    if (parts.value.length > 50) {
-      multiplePages.value = true;
-      // Pop the extra object
-      parts.value.pop();
-      // Set multiple pages
-      checkCache();
-    }
+    checkCache();
   } else {
     loading.value = true;
-    multiplePages.value = false;
     // Text search
     getPage(pageNum.value, invisibleSearchText)
-      .then((p) => {
-        parts.value = JSON.parse(JSON.stringify(p));
-        if (parts.value.length > 50) {
-          multiplePages.value = true;
-          // Pop the extra object
-          parts.value.pop();
-          // Set multiple pages
-        }
+      .then((res) => {
+        parts.value = JSON.parse(JSON.stringify(res.parts));
+        totalPages.value = res.numPages
+        totalParts.value = res.numParts
         loading.value = false;
-        pageCache.set(pageNum.value, p);
+        pageCache.set(pageNum.value, res.parts);
         checkCache();
       })
       .catch(() => {
@@ -437,7 +377,7 @@ async function search() {
 //}
 
 function getPage(page: number, text: string) {
-  return new Promise<PartSchema[]>((res, rej) => {
+  return new Promise<{numPages: number, numParts: number, parts: PartSchema[]}>((res, rej) => {
     getPartsByTextSearch(
       http,
       text,
@@ -449,19 +389,21 @@ function getPage(page: number, text: string) {
           // Send error to error handler
           rej();
         }
+        const response = data as {numPages: number, numParts: number, parts: PartSchema[]}
         // typecast
-        if (data && data.length === 0 && page != 1) {
+        if (response.parts && response.parts.length === 0 && page != 1) {
           // Extra redundancy just in case query string is malformed
           rej();
         }
-        res(data as PartSchema[]);
+        res(response);
       }
     );
   });
 }
 
 function searchButtonPressed() {
-  if (invisibleSearchText != visibleSearchText.value) {
+  let { query } = router.currentRoute.value;
+  if (invisibleSearchText != visibleSearchText.value||query.advanced=='true') {
     pageCache = new Map<number, PartSchema[]>();
     invisibleSearchText = visibleSearchText.value;
   }
@@ -470,9 +412,9 @@ function searchButtonPressed() {
 }
 
 function externalRefresh() {
-  pageCache = new Map<number, PartSchema[]>();
-  invisibleSearchText = visibleSearchText.value;
-  pageNum.value = 1;
+  // pageCache = new Map<number, PartSchema[]>();
+  // invisibleSearchText = visibleSearchText.value;
+  // pageNum.value = 1;
   search();
 }
 
@@ -491,8 +433,8 @@ async function checkCache() {
     } else {
       pageCache.set(localPage, []);
       getPage(localPage, invisibleSearchText)
-        .then((p: PartSchema[]) => {
-          pageCache.set(localPage, p);
+        .then((res) => {
+          pageCache.set(localPage, res.parts);
         })
         .catch(() => {
           pageCache.delete(localPage);
@@ -509,8 +451,8 @@ async function checkCache() {
     } else {
       pageCache.set(localPage, []);
       getPage(localPage, invisibleSearchText)
-        .then((p) => {
-          pageCache.set(localPage, p);
+        .then((res) => {
+          pageCache.set(localPage, res.parts);
         })
         .catch(() => {
           pageCache.delete(localPage);
@@ -518,5 +460,47 @@ async function checkCache() {
       page++;
     }
   }
+}
+
+
+function goTo(num: number) {
+  if(num>0&&num<=totalPages.value) {
+    pageNum.value = num
+    let { query } = router.currentRoute.value;
+    if (query.advanced === 'true') {
+      let searchPart = {} as PartSchema;
+      // Loop through query to create part object
+      for (const key in query) {
+        // Copy
+        searchPart[key] = query[key];
+      }
+      advancedSearch(searchPart);
+      return
+    }
+    search()
+  }
+}
+
+function getPageAdvanced(page: number, part: PartSchema) {
+  return new Promise<{numPages: number, numParts: number, parts: PartSchema[]}>((res, rej) => {
+    part['advanced'] = 'true';
+    part['location'] = location;
+    part['building'] = building.value.toString();
+    part['pageNum'] = pageNum.value;
+    part['pageSize'] = 50;
+    getPartsByData(http, part, (data, err) => {
+      if (err) {
+        // Send error to error handler
+        rej();
+      }
+      const response = data as {numPages: number, numParts: number, parts: PartSchema[]}
+      // typecast
+      if (response.parts && response.parts.length === 0 && page != 1) {
+        // Extra redundancy just in case query string is malformed
+        rej();
+      }
+      res(response);
+    });
+  });
 }
 </script>

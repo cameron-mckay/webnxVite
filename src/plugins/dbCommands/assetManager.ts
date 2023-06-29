@@ -33,7 +33,7 @@ export async function getAssetsByTextSearch(
     })
     .then((res: AxiosResponse) => {
       // Success and send back results
-      callback(res.data, null);
+      callback(res.data as { numPages: number, numAssets: number, assets: AssetSchema[]}, null);
     })
     .catch((err: Error | AxiosError) => {
       // Send error to callback

@@ -29,6 +29,8 @@ let url = import.meta.env.VITE_API_URL;
       <p class="detail-label">Total Quantity:</p>
       <p class="detail-data">{{ part.total_quantity }}</p>
     </div>
+    <p class="detail-label" v-if="part.audited">Last Audited:</p>
+    <p class="detail-data" v-if="part.audited">{{new Date(Date.parse(part.audited!)).toLocaleString()}}</p>
     <p class="detail-label">Type:</p>
     <p class="detail-data">{{ part.type }}</p>
     <p class="detail-label" v-if="part.serialized && serial">Serial:</p>

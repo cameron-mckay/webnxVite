@@ -44,7 +44,7 @@ export async function getPartsByTextSearch(
     })
     .then((res: AxiosResponse) => {
       // Success and send back results
-      callback(res.data, null);
+      callback(res.data as { numPages: number, numParts: number, parts: PartSchema[] }, null);
     })
     .catch((err: Error | AxiosError) => {
       // Send error to callback
@@ -105,7 +105,7 @@ export async function getPartsByData(
     })
     .then((res: AxiosResponse) => {
       // Success - send results to callback
-      callback(res.data, null);
+      callback(res.data as { numPages: number, numParts: number, parts: PartSchema[] }, null);
     })
     .catch((err: Error | AxiosError) => {
       // Error - send error to callback
@@ -138,7 +138,7 @@ export async function createPart(
     })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
-      callback(res.data, null);
+      callback(res.data as PartSchema, null);
     })
     .catch((err: Error | AxiosError) => {
       // Error - send error to callback
@@ -162,7 +162,7 @@ export async function updatePart(
     .put('/api/part', { part })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
-      callback(res.data, null);
+      callback(res.data , null);
     })
     .catch((err: Error | AxiosError) => {
       // Error - send error to callback
@@ -191,7 +191,7 @@ export async function checkout(
     })
     .then((res: AxiosResponse) => {
       // Authenticated - send null error to callback
-      callback(res, null);
+      callback(res.data as string, null);
     })
     .catch((err: Error | AxiosError) => {
       // Unauthenticated - send error to callback
@@ -220,7 +220,7 @@ export async function checkin(
     })
     .then((res: AxiosResponse) => {
       // Authenticated - send null error to callback
-      callback(res, null);
+      callback(res.data as string, null);
     })
     .catch((err: Error | AxiosError) => {
       // Unauthenticated - send error to callback
@@ -484,6 +484,27 @@ export function deleteFromPartsRoom(
         new_quantity,
         building
       },
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function auditPart(
+  http: AxiosInstance,
+  nxid: string,
+  callback: apiResponse
+) {
+  http
+    .get('/api/part/audit', {
+      params: {
+        nxid
+      }
     })
     .then((res: AxiosResponse) => {
       // Success - send results to callback

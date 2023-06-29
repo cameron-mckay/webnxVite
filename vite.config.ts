@@ -13,7 +13,7 @@ export default defineConfig({
       // https://rollupjs.org/guide/en/#outputmanualchunks
       output: {
         manualChunks: {
-          login: ['./src/views/LoginView.vue', './src/views/RegisterView.vue'],
+          login: ['./src/views/LoginView.vue', './src/views/RegisterView.vue', './src/views/SendResetEmailView.vue', './src/views/ResetPasswordView.vue'],
           essentials: [
             './src/views/Assets/AssetSearchView.vue',
             './src/views/Parts/FindPartView.vue',
@@ -36,7 +36,6 @@ export default defineConfig({
             './src/views/Parts/CheckInView.vue',
           ],
           admin: [
-            './src/views/Admin/AddToInventoryView.vue',
             './src/views/Admin/AdminDashboardView.vue',
             './src/views/Admin/AdminPartSearchView.vue',
             './src/views/Admin/AdminUserView.vue',
@@ -44,6 +43,12 @@ export default defineConfig({
             './src/views/Admin/InventoryManagerDashboardView.vue',
             './src/views/Parts/SellOnEbay.vue',
           ],
+          qrcode: [
+            './src/components/GenericComponents/QRCodeScannerPopupComponent.vue'
+          ],
+          css: [
+            './src/style.css'
+          ]
         },
       },
     },
