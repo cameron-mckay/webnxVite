@@ -43,12 +43,6 @@ export default defineConfig({
             './src/views/Admin/InventoryManagerDashboardView.vue',
             './src/views/Parts/SellOnEbay.vue',
           ],
-          qrcode: [
-            './src/components/GenericComponents/QRCodeScannerPopupComponent.vue'
-          ],
-          css: [
-            './src/style.css'
-          ]
         },
       },
     },
