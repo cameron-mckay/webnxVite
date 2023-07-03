@@ -515,3 +515,19 @@ export function auditPart(
       callback({}, err);
     });
 }
+
+export function getNextNXID(
+  http: AxiosInstance,
+  callback: apiResponse
+) {
+  http
+    .get('/api/part/nextNXID')
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}

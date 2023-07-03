@@ -3,17 +3,18 @@ import { Ref, onMounted, ref, watch } from 'vue';
 import type { PartSchema } from '../../plugins/interfaces';
 import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponent.vue';
 import StringArrayComponent from '../GenericComponents/StringArrayComponent.vue';
-
+import PlusButton from '../GenericComponents/PlusButton.vue';
 // Props interface
 interface Props {
   title: string;
   submitText: string;
   strict: boolean;
+  nextNXID?: () => Promise<string>;
   oldPart?: PartSchema;
   customResetText?: string;
 }
 
-const { title, submitText, strict, oldPart, customResetText } =
+const { title, submitText, strict, oldPart, customResetText, nextNXID } =
   defineProps<Props>();
 // END OF PROPS
 let part: Ref<PartSchema> = ref(
@@ -114,6 +115,11 @@ onMounted(() => {
     }
   );
 });
+async function getNXID() {
+  if(nextNXID) {
+    part.value.nxid = await nextNXID()
+  }
+}
 </script>
 
 <template>
@@ -142,13 +148,16 @@ onMounted(() => {
         <img class="col-span-2 my-2" v-if="imageUrl" :src="imageUrl" />
       </div>
       <label>NXID:</label>
-      <input
-        class="textbox m-1"
-        :required="strict"
-        v-model="part.nxid"
-        type="text"
-        placeholder="NXID"
-      />
+      <div class="flex">
+        <input
+          class="textbox m-1"
+          :required="strict"
+          v-model="part.nxid"
+          type="text"
+          placeholder="NXID"
+        />
+        <PlusButton v-if="nextNXID" @click="getNXID"/>
+      </div>
       <label>Manufacturer:</label>
       <input
         class="textbox m-1"

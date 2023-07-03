@@ -1,12 +1,13 @@
 <script setup lang="ts">
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
-import { ref } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PartManagerComponent from '../../components/PartComponents/PartManagerComponent.vue';
 import {
 createPart,
+getNextNXID,
 updatePartImage,
 } from '../../plugins/dbCommands/partManager';
 import type { PartSchema, UserState } from '../../plugins/interfaces';
@@ -23,7 +24,7 @@ const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 // END OF PROPS
 let key = ref(0);
-
+let nextSequentialNXID = ref("")
 async function submitPart(part: PartSchema, image: File) {
   // Use create part method from API commands
   createPart(
@@ -59,6 +60,16 @@ async function submitPart(part: PartSchema, image: File) {
     }
   );
 }
+
+function nextNXID() {
+  return new Promise<string>((res)=>{
+    getNextNXID(http, (data, err)=>{
+      if(err)
+        return res("")
+      return res(data as string)
+    })
+  })
+}
 </script>
 <template>
   <PartManagerComponent
@@ -69,5 +80,6 @@ async function submitPart(part: PartSchema, image: File) {
     :title="'Create a new part: '"
     @partSubmit="submitPart"
     :key="key"
+    :nextNXID="nextNXID"
   />
 </template>
