@@ -173,7 +173,7 @@ function submitAddToInventory(
     part.quantity != undefined &&
     request.quantity < part.quantity
   ) {
-    deleteFromPartsRoom(http, part.nxid!, part.quantity! - request.quantity, store.state.user.building!, request.location, (data, err)=>{
+    deleteFromPartsRoom(http, part.nxid!, part.quantity! - request.quantity, store.state.user.building!, request.location!, (data, err)=>{
       if (err) {
             // Handle errors
           return errorHandler(err);
