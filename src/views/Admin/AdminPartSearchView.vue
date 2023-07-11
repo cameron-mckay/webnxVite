@@ -13,7 +13,8 @@ deletePart,
 updatePart,
 updatePartImage,
 deleteFromPartsRoom,
-auditPart
+auditPart,
+getPartByID
 } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
@@ -41,6 +42,7 @@ let addPart = ref(false);
 let currentPart: Ref<PartSchema> = ref({});
 let currentBuilding = ref(3);
 let users = ref([] as User[]);
+let kiosks = ref([] as User[]);
 getUsers();
 
 // Wait for store to init
@@ -54,7 +56,8 @@ function getUsers() {
     if (err) {
       return errorHandler(err);
     }
-    users.value = data as User[];
+    users.value = (data as User[]).filter((u)=>!u.roles?.includes("kiosk")&&u.building==store.state.user.building);
+    kiosks.value = (data as User[]).filter((u)=>u.roles?.includes("kiosk")&&u.building==store.state.user.building);
   });
 }
 
@@ -130,6 +133,7 @@ function submitAddToInventory(
   owner: User,
   part: PartSchema
 ) {
+  request.building = store.state.user.building
   // Send creation details to API
   if(part.serialized) {
     createNewPartRecords(http, request, owner, (records, err) => {
@@ -183,6 +187,16 @@ function submitAddToInventory(
   }
 }
 
+function changeKiosk(part: PartSchema, kiosk: string) {
+  getPartByID(http, part.nxid!, store.state.user.building!, (data, err)=>{
+    if(err) {
+      return errorHandler(err)
+    }
+    let resPart = data as PartSchema
+    part.quantity = resPart.quantity
+  }, kiosk)
+}
+
 function audit() {
   console.log(currentPart.value.nxid)
   auditPart(http, currentPart.value.nxid!, (data, err) => {
@@ -206,7 +220,6 @@ function audit() {
       :view="true"
       :http="http"
       :errorHandler="errorHandler"
-      :location="'Parts Room'"
       :displayMessage="displayMessage"
       :changeBuilding="true"
       @editPartAction="toggleEdit"
@@ -230,7 +243,9 @@ function audit() {
       @toggle="toggleAdd"
       @submitRequest="submitAddToInventory"
       @audit="audit"
+      @kioskChange="changeKiosk"
       :users="users"
+      :kiosks="kiosks"
       :buildings="buildings"
       :part="currentPart"
     />

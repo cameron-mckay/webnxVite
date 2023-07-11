@@ -323,7 +323,6 @@ function getPage(page: number, text: string) {
       text,
       page,
       building.value,
-      location,
       (data: any, err) => {
         if (err) {
           // Send error to error handler
@@ -424,7 +423,6 @@ function goTo(num: number) {
 function getPageAdvanced(page: number, part: PartSchema) {
   return new Promise<{numPages: number, numParts: number, parts: PartSchema[]}>((res, rej) => {
     part['advanced'] = 'true';
-    part['location'] = location;
     part['building'] = building.value.toString();
     part['pageNum'] = pageNum.value;
     part['pageSize'] = 50;

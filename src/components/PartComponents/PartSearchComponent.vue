@@ -145,7 +145,6 @@ interface AddObject {
 // Props interface
 interface Props {
   http: AxiosInstance;
-  location: string;
   building: number;
   router: Router;
   errorHandler: (err: Error | AxiosError | string) => void;
@@ -155,6 +154,7 @@ interface Props {
   view?: boolean;
   changeBuilding?: boolean;
   add_object?: AddObject;
+  kioskName?: string;
   revokeLogin: () => void;
 }
 
@@ -165,6 +165,7 @@ let {
   router,
   errorHandler,
   displayMessage,
+  kioskName,
   edit,
   add,
   view,
@@ -177,7 +178,6 @@ defineExpose({
 });
 
 // component variables
-let location = props.location;
 let building = ref(props.building);
 let visibleSearchText = ref('');
 let invisibleSearchText = '';
@@ -195,9 +195,6 @@ onBeforeMount(async () => {
   let { query } = router.currentRoute.value;
   if (query.building) {
     building.value = parseInt(query.building as string);
-  }
-  if (query.location) {
-    location = query.location as string;
   }
   // Check for advanced search
   if (query.advanced === 'true') {
@@ -289,7 +286,8 @@ async function advancedSearch(part: PartSchema) {
   showAdvanced.value = false;
   loading.value = true;
   part['advanced'] = 'true';
-  part['location'] = location;
+  if(kioskName)
+    part['location'] = kioskName;
   part['building'] = building.value.toString();
   part['pageNum'] = pageNum.value;
   part['pageSize'] = 50;
@@ -346,7 +344,6 @@ async function search() {
       text: invisibleSearchText,
       pageNum: pageNum.value,
       building: building.value,
-      location,
     },
   });
   if (
@@ -382,7 +379,6 @@ function getPage(page: number, text: string) {
       text,
       page,
       building.value,
-      location,
       (data: any, err) => {
         if (err) {
           // Send error to error handler
@@ -396,7 +392,7 @@ function getPage(page: number, text: string) {
         }
         res(response);
       }
-    );
+    , kioskName);
   });
 }
 
@@ -483,7 +479,6 @@ function goTo(num: number) {
 function getPageAdvanced(page: number, part: PartSchema) {
   return new Promise<{numPages: number, numParts: number, parts: PartSchema[]}>((res, rej) => {
     part['advanced'] = 'true';
-    part['location'] = location;
     part['building'] = building.value.toString();
     part['pageNum'] = pageNum.value;
     part['pageSize'] = 50;

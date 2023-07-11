@@ -71,7 +71,6 @@ async function loadCart() {
         http,
         item,
         store.state.user.building!,
-        'Parts Room',
         (data, err) => {
           if (err) {
             return errorHandler(err);
@@ -83,7 +82,7 @@ async function loadCart() {
             quantity: store.getters.getQuantity(part.nxid),
           });
         }
-      );
+      , store.state.user.first_name + " " + store.state.user.last_name);
     }
   }
   keys.value = await Promise.all(
@@ -93,7 +92,6 @@ async function loadCart() {
           http,
           item.nxid,
           store.state.user.building!,
-          'Parts Room',
           (data, err) => {
             if (err) {
               return errorHandler(err);
@@ -105,7 +103,7 @@ async function loadCart() {
               'serial',
               {
                 nxid: part.nxid,
-                location: 'Parts Room',
+                location: store.state.user.first_name + " " + store.state.user.last_name,
                 building: store.state.user.building,
                 next: 'null',
               },
@@ -125,7 +123,7 @@ async function loadCart() {
               }
             );
           }
-        );
+      , store.state.user.first_name + " " + store.state.user.last_name);
       }
       return i;
     })
@@ -160,7 +158,6 @@ async function addOne(id: string) {
     http,
     id,
     store.state.user.building!,
-    'Parts Room',
     (data, err) => {
       let part = data as PartSchema;
       if (part.quantity! > store.getters.getQuantity(id)) {
@@ -169,7 +166,7 @@ async function addOne(id: string) {
         errorHandler('Not enough stock');
       }
     }
-  );
+  , store.state.user.first_name + " " + store.state.user.last_name);
 }
 
 async function subOne(id: string) {

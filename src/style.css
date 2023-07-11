@@ -60,6 +60,32 @@
     @apply cursor-pointer bg-green-500;
   }
 
+
+  .toggle-button {
+    @apply mx-0.5 my-auto h-8 w-8 shrink-0 rounded-md p-2 shadow-lg transition-colors first:ml-0 last:mr-0 only:mr-0 dark:text-gray-200 md:mx-1 md:h-10 md:w-10;
+  }
+
+  .toggle-button-inactive {
+    @apply bg-gray-400 dark:bg-zinc-600
+  }
+
+  .toggle-button-hover {
+    @apply cursor-pointer bg-green-400;
+  }
+
+  .toggle-button-hover-red {
+    @apply cursor-pointer bg-red-400;
+  }
+
+  .toggle-button-active {
+    @apply cursor-pointer bg-green-500;
+  }
+
+  .toggle-button-active-red {
+    @apply cursor-pointer bg-red-500;
+  }
+
+
   /* Header styles */
   .header-button-colors {
     @apply hover:hover-color active:active-color text-black transition-colors dark:text-white;
@@ -75,7 +101,6 @@
   .background-and-border {
     @apply nx-border-color header-color rounded-md border-2 shadow-md transition;
   }
-
   .background-and-border > p {
     @apply my-auto;
   }

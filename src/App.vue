@@ -70,30 +70,32 @@ onBeforeMount(()=>{
     store.commit('updateUserData', http);
   });
   // Check if user is a non admin trying to access admin route
-  router.beforeEach((to, from, next) => {
-    // Make sure they are admin for admin routes
-    if (!store.state.user.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
-      redirect()
-    }
-    if (
-      !(store.state.user.roles?.includes('admin')||
-      store.state.user.roles?.includes('clerk')) &&
-      /\/manage\/*/.test(to.path)
-    ) {
-      redirect()
-    }
-    if (!(store.state.user.roles?.includes('admin')||
-      store.state.user.roles?.includes('ebay')) &&
-      /\/ebay\/*/.test(to.path)
-    ) {
-      redirect()
-    }
-    // This goes through the matched routes from last to first, finding the closest route with a title.
-    // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
-    // `/nested`'s will be chosen.
-    document.title = `WebNX - ${to.name?.toString()}`;
-    next();
-  });
+  setTimeout(()=>{
+    router.beforeEach((to, from, next) => {
+      // Make sure they are admin for admin routes
+      if (!store.state.user.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
+        redirect()
+      }
+      if (
+        !(store.state.user.roles?.includes('admin')||
+        store.state.user.roles?.includes('clerk')) &&
+        /\/manage\/*/.test(to.path)
+      ) {
+        redirect()
+      }
+      if (!(store.state.user.roles?.includes('admin')||
+        store.state.user.roles?.includes('ebay')) &&
+        /\/ebay\/*/.test(to.path)
+      ) {
+        redirect()
+      }
+      // This goes through the matched routes from last to first, finding the closest route with a title.
+      // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
+      // `/nested`'s will be chosen.
+      document.title = `WebNX - ${to.name?.toString()}`;
+      next();
+    });
+  }, 1000)
 })
 /**
  * @brief Briefly print an error to an on screen popup

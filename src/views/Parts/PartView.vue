@@ -49,7 +49,7 @@ let getUserExclude = ["all", "testing", "la", "ny", "og"]
 onBeforeMount(() => {
   if (router.currentRoute.value.query.nxid) {
     let nxid = router.currentRoute.value.query.nxid as string;
-    getPartByID(http, nxid, 3, 'Parts Room', (res, err) => {
+    getPartByID(http, nxid, 3, (res, err) => {
       if (err) {
         errorHandler(err);
       }

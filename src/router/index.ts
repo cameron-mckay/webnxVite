@@ -102,20 +102,25 @@ const routes = [
     component: () => import('../views/Admin/CreatePartView.vue'),
   },
   {
+    path: '/manage/checkin',
+    name: 'Check In Queue',
+    component: () => import('../views/Admin/CheckinApprovalView.vue'),
+  },
+  {
     path: '/admin',
     name: 'Admin Dashboard',
     component: () => import('../views/Admin/AdminDashboardView.vue'),
   },
-  {
-    path: '/admin/parts/create',
-    name: 'Create Part Admin',
-    component: () => import('../views/Admin/CreatePartView.vue'),
-  },
-  {
-    path: '/admin/parts',
-    name: 'Part Manager Admin',
-    component: () => import('../views/Admin/AdminPartSearchView.vue'),
-  },
+  // {
+  //   path: '/admin/parts/create',
+  //   name: 'Create Part Admin',
+  //   component: () => import('../views/Admin/CreatePartView.vue'),
+  // },
+  // {
+  //   path: '/admin/parts',
+  //   name: 'Part Manager Admin',
+  //   component: () => import('../views/Admin/AdminPartSearchView.vue'),
+  // },
   {
     path: '/admin/users',
     name: 'User Manager',

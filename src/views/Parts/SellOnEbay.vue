@@ -279,7 +279,7 @@ function submit() {
             <p>Manufacturer</p>
             <p>Name</p>
             <p class="hidden md:block">Location</p>
-            <p>Quantity/SN</p>
+            <p>SN</p>
             <p></p>
           </div>
           <InventoryPartComponent

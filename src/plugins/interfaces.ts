@@ -186,3 +186,14 @@ export interface InventoryEntry {
     newSerials?: string[]
 }
 
+export interface CheckInQueuePart extends CartItem {
+  approved?: boolean,
+  newLocation?: string
+  approvedCount?: number
+}
+
+export interface CheckInRequest {
+  date: Date,
+  by: string,
+  parts: CheckInQueuePart[]
+}

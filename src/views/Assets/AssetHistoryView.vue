@@ -49,7 +49,7 @@ async function checkPart(part: CartItem) {
     // Set temp value
     parts.value.set(part.nxid, {});
     // Fetch part from API
-    getPartByID(http, part.nxid, 3, 'Part Room', (data, err) => {
+    getPartByID(http, part.nxid, 3, (data, err) => {
       if (err) {
         parts.value.delete(part.nxid);
         errorHandler(err);

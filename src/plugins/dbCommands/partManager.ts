@@ -4,13 +4,15 @@ import type {
   AxiosRequestConfig,
   AxiosResponse,
 } from 'axios';
+
 import type {
   apiResponse,
   CartItem,
   PartRecord,
   PartSchema,
   User,
-  InventoryEntry
+  InventoryEntry,
+  CheckInRequest
 } from '../interfaces';
 
 /**
@@ -28,8 +30,8 @@ export async function getPartsByTextSearch(
   searchString: string,
   pageNum: number,
   building: number,
-  location: string,
-  callback: apiResponse
+  callback: apiResponse,
+  location?: string
 ) {
   // Send string query to API
   await http
@@ -65,8 +67,8 @@ export async function getPartByID(
   http: AxiosInstance,
   id: string,
   building: number,
-  location: string,
-  callback: apiResponse
+  callback: apiResponse,
+  location?: string
 ) {
   // Request part using ID in query string
   await http
@@ -522,6 +524,39 @@ export function getNextNXID(
 ) {
   http
     .get('/api/part/nextNXID')
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getCheckInQueue(
+  http: AxiosInstance,
+  callback: apiResponse
+) {
+  http
+    .get('/api/checkin/queue')
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function processCheckInRequest(
+  http: AxiosInstance,
+  req: CheckInRequest,
+  callback: apiResponse
+) {
+  http
+    .post('/api/checkin/queue', req)
     .then((res: AxiosResponse) => {
       // Success - send results to callback
       callback(res.data as string, null);

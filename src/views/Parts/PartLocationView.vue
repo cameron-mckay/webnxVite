@@ -111,7 +111,7 @@ onBeforeMount(() => {
       }
     }
 
-    getPartByID(http, nxid, 3, 'Parts Room', (res, err) => {
+    getPartByID(http, nxid, store.state.user.building ? store.state.user.building : 3, (res, err) => {
       if (err) {
         errorHandler(err);
       }

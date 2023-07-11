@@ -14,6 +14,12 @@
       >
         Manage Parts
       </RouterLink>
+      <RouterLink
+        to="/manage/checkin"
+        class="m-2 block rounded-lg bg-green-400 p-4 text-center hover:bg-green-500 active:bg-green-600"
+      >
+        Check In Queue
+      </RouterLink>
     </div>
   </div>
 </template>

@@ -1,11 +1,9 @@
 <script setup lang="ts">
-// PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
 import { onMounted, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import SearchComponent from '../../components/PartComponents/PartSearchComponent.vue';
-import { checkRoles } from '../../plugins/dbCommands/userManager';
 import type { PartSchema, UserState } from '../../plugins/interfaces';
 
 interface Props {
@@ -64,10 +62,10 @@ function viewPart(part: PartSchema) {
       :http="http"
       :errorHandler="errorHandler"
       @viewPartAction="viewPart"
-      :location="'Parts Room'"
       :building="currentBuilding"
       :displayMessage="displayMessage"
       :revokeLogin="revokeLogin"
+      :kioskName="store.state.user.roles?.includes('kiosk')?store.state.user.first_name+' '+store.state.user.last_name:undefined"
       @addPartAction="addToCart"
     />
   </div>

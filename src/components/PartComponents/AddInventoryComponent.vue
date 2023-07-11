@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import { auditPart } from '../../plugins/dbCommands/partManager';
 import { CartItem, PartSchema, User } from '../../plugins/interfaces';
 import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
 
 // Start props
 interface Props {
   users: User[];
+  kiosks: User[];
   part: PartSchema;
 }
 
-const { users, part } = defineProps<Props>();
+const { users, kiosks, part } = defineProps<Props>();
 // End props
 
 // Request as cart item
@@ -23,9 +23,10 @@ let request = ref({
 // Owner
 let owner = ref({} as User);
 let quantity = ref(JSON.parse(JSON.stringify(part.quantity)));
-let existingQuantity = ref(part.quantity);
 let serials = ref('');
-let emit = defineEmits(['submitRequest', 'audit']);
+let emit = defineEmits(['submitRequest', 'audit', 'kioskChange']);
+let currentKiosk = ref("")
+let kioskNames = [] as string[]
 // Reset form
 function resetForm() {
   request.value.quantity = 0;
@@ -46,7 +47,13 @@ function submit() {
 onMounted(() => {
   // Set value of request to props
   request.value.nxid = part.nxid!;
+  kioskNames = kiosks.map((k)=>k.first_name+" "+k.last_name)
   // Register watch on the request object
+  watch(currentKiosk, ()=>{
+    emit("kioskChange", part, currentKiosk.value)
+    request.value.location = currentKiosk.value
+    setTimeout(()=>{quantity.value = part.quantity},250)
+  })
   watch(request, () => {
     switch (request.value.location) {
       // If all techs, set owner to arbitrary data
@@ -75,6 +82,8 @@ onMounted(() => {
         break;
       // Default case - do nothing
       default:
+        if(kioskNames.includes(request.value.location!))
+          owner.value = {};
         break;
     }
   });
@@ -90,12 +99,16 @@ onMounted(() => {
       @reset.prevent="resetForm"
       class="grid grid-cols-2"
     >
+      <label>Kiosk:</label>
+      <select required v-model="currentKiosk" class="textbox m-1">
+        <option v-for="kiosk of kiosks">{{kiosk.first_name + " " + kiosk.last_name}}</option>
+      </select>
       <p class="col-span-2 mb-4 text-xl">
-        Current Part Room Quantity: {{ existingQuantity }}
+        Current {{currentKiosk}} Quantity: {{ part.quantity }}
       </p>
-      <label v-if="!part.serialized">New Quantity:</label>
+      <label v-if="!part.serialized&&currentKiosk">New Quantity:</label>
       <input
-        v-if="!part.serialized"
+        v-if="!part.serialized&&currentKiosk"
         class="textbox m-1"
         required
         v-model="quantity"
@@ -103,31 +116,33 @@ onMounted(() => {
         min="0"
         placeholder="Quantity"
       />
-      <label v-if="part.serialized">Serial numbers:</label>
+      <label v-if="part.serialized&&currentKiosk">Serial numbers:</label>
       <textarea
         class="textbox m-1"
-        v-if="part.serialized"
+        v-if="part.serialized&&currentKiosk"
         v-model="serials"
         placeholder="One per line.  Drag to resize"
       />
       <div
         v-if="
-          ((quantity > existingQuantity!) || part.serialized)&&!part.consumable
+          ((quantity > part.quantity!) || part.serialized)&&!part.consumable
         "
         class="col-span-2 grid grid-cols-2"
       >
+        <!--
         <label>Building:</label>
         <select required v-model="request.building" class="textbox m-1">
           <option>3</option>
           <option>1</option>
           <option>4</option>
         </select>
+        -->
         <label>Location:</label>
         <select required v-model="request.location" class="textbox m-1">
           <option>Tech Inventory</option>
           <option>All Techs</option>
-          <option>Parts Room</option>
           <option>Asset</option>
+          <option>{{currentKiosk}}</option>
         </select>
         <div
           class="col-span-2 grid grid-cols-2"
@@ -160,27 +175,27 @@ onMounted(() => {
       </div>
       <p
         v-if="
-          existingQuantity != undefined &&
-          quantity > existingQuantity &&
+          part.quantity != undefined &&
+          quantity > part.quantity &&
           !part.serialized
         "
         class="col-span-2 mb-4 text-xl"
       >
-        Adding {{ quantity - existingQuantity }} to {{ request.location }}
+        Adding {{ quantity - part.quantity }} to {{ request.location }}
         {{ request.location == 'Asset' ? owner._id : '' }}
       </p>
       <p
         v-else-if="
-          existingQuantity != undefined &&
-          quantity < existingQuantity &&
+          part.quantity != undefined &&
+          quantity < part.quantity &&
           !part.serialized
         "
         class="col-span-2 mb-4 text-xl"
       >
-        Removing {{ existingQuantity - quantity }} from Parts Room
+        Removing {{ part.quantity - quantity }} from {{currentKiosk}}
       </p>
       <p
-        v-else-if="existingQuantity != undefined && !part.serialized"
+        v-else-if="part.quantity != undefined && !part.serialized"
         class="col-span-2 mb-4 text-xl"
       >
         No change.
