@@ -42,7 +42,7 @@ let addPart = ref(false);
 let currentPart: Ref<PartSchema> = ref({});
 let currentBuilding = ref(3);
 let users = ref([] as User[]);
-let kiosks = ref([] as User[]);
+let kiosks = ref([] as string[]);
 getUsers();
 
 // Wait for store to init
@@ -57,7 +57,10 @@ function getUsers() {
       return errorHandler(err);
     }
     users.value = (data as User[]).filter((u)=>!u.roles?.includes("kiosk")&&u.building==store.state.user.building);
-    kiosks.value = (data as User[]).filter((u)=>u.roles?.includes("kiosk")&&u.building==store.state.user.building);
+    kiosks.value = (data as User[]).filter((u)=>u.roles?.includes("kiosk")&&u.building==store.state.user.building).map((u)=>{
+      console.log(u)
+      return u.first_name + " " + u.last_name
+    });
   });
 }
 
@@ -170,7 +173,7 @@ function submitAddToInventory(
     part.quantity != undefined &&
     request.quantity < part.quantity
   ) {
-    deleteFromPartsRoom(http, part.nxid!, part.quantity! - request.quantity, store.state.user.building!, (data, err)=>{
+    deleteFromPartsRoom(http, part.nxid!, part.quantity! - request.quantity, store.state.user.building!, request.location, (data, err)=>{
       if (err) {
             // Handle errors
           return errorHandler(err);

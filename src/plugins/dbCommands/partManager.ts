@@ -477,6 +477,7 @@ export function deleteFromPartsRoom(
   nxid: string,
   new_quantity: number,
   building: number,
+  location: string,
   callback: apiResponse
 ) {
   http
@@ -484,6 +485,7 @@ export function deleteFromPartsRoom(
       params: {
         nxid,
         new_quantity,
+        location,
         building
       },
     })

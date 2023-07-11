@@ -6,7 +6,7 @@ import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupCompon
 // Start props
 interface Props {
   users: User[];
-  kiosks: User[];
+  kiosks: string[];
   part: PartSchema;
 }
 
@@ -47,7 +47,6 @@ function submit() {
 onMounted(() => {
   // Set value of request to props
   request.value.nxid = part.nxid!;
-  kioskNames = kiosks.map((k)=>k.first_name+" "+k.last_name)
   // Register watch on the request object
   watch(currentKiosk, ()=>{
     emit("kioskChange", part, currentKiosk.value)
@@ -101,7 +100,7 @@ onMounted(() => {
     >
       <label>Kiosk:</label>
       <select required v-model="currentKiosk" class="textbox m-1">
-        <option v-for="kiosk of kiosks">{{kiosk.first_name + " " + kiosk.last_name}}</option>
+        <option v-for="kiosk of kiosks">{{kiosk}}</option>
       </select>
       <p class="col-span-2 mb-4 text-xl">
         Current {{currentKiosk}} Quantity: {{ part.quantity }}
