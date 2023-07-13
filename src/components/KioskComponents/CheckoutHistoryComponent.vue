@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
 import { CheckOutEvent, User, PartSchema, LoadedCartItem } from '../../plugins/interfaces'
-import AssetCartItemComponent from '../AssetComponents/AssetCartItemComponent.vue';
+import CheckoutHistoryPartComponent from './CheckoutHistoryPartComponent.vue';
 interface Props {
   checkout: CheckOutEvent
   user: User
@@ -24,7 +24,7 @@ onBeforeMount(()=>{
 <template>
   <div class="background-and-border my-4 p-4">
     <div class="flex justify-between">
-      <h1 class="mb-8 text-4xl leading-8 md:leading-10">
+      <h1 class="text-4xl leading-8 md:leading-10">
         {{ new Date(checkout.date).toLocaleString() }}
       </h1>
       <p>
@@ -32,7 +32,15 @@ onBeforeMount(()=>{
       </p>
     </div>
     <div>
-      <AssetCartItemComponent
+      <div
+        class="relative grid grid-cols-4 py-1 text-center font-bold leading-8 transition md:py-2 md:leading-10 mt-auto"
+      >
+        <p class="mt-auto">NXID</p>
+        <p class="mt-auto">Manufacturer</p>
+        <p class="mt-auto">Name</p>
+        <p class="mt-auto">Quantity/SN</p>
+      </div>
+      <CheckoutHistoryPartComponent
         v-for="part in loadedParts"
         :item="part"
         :hideButtons="true"
