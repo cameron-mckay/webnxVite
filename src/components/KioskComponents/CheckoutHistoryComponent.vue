@@ -28,7 +28,6 @@ onBeforeMount(()=>{
         {{ new Date(checkout.date).toLocaleString() }}
       </h1>
       <p>
-        By:
         {{ user.first_name + " " + user.last_name }}
       </p>
     </div>
