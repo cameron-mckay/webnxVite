@@ -568,3 +568,30 @@ export function processCheckInRequest(
       callback({}, err);
     });
 }
+
+export function getCheckoutHistory(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse
+) {
+  http
+    .get('/api/checkout/history', {
+      params: {
+        startDate,
+        endDate,
+        pageNum,
+        pageSize
+      }
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}

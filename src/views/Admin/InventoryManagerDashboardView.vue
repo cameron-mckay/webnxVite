@@ -20,6 +20,12 @@
       >
         Check In Queue
       </RouterLink>
+      <RouterLink
+        to="/manage/checkout"
+        class="m-2 block rounded-lg bg-green-400 p-4 text-center hover:bg-green-500 active:bg-green-600"
+      >
+        Check Out History
+      </RouterLink>
     </div>
   </div>
 </template>

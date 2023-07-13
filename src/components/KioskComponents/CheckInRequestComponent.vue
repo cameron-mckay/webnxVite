@@ -47,9 +47,11 @@ function submit() {
     </div>
 
     <div>
-      <div v-for="p of requestCopy.parts" class="my-2 background-and-border group-hover:bab-hover grid grid-cols-5 p-1 text-center leading-8 md:p-2 md:leading-10">
-        <p>{{ p.nxid }}</p>
-        <p>{{ parts.get(p.nxid)!.manufacturer + " " + parts.get(p.nxid)!.name }}</p>
+      <div v-for="p of requestCopy.parts" class="my-2 background-and-border group-hover:bab-hover grid grid-cols-4 md:grid-cols-5 p-1 text-center leading-8 md:p-2 md:leading-10">
+        <div class="md:col-span-2 flex flex-wrap md:grid md:grid-cols-2">
+          <p class="w-full md:w-auto">{{ p.nxid }}</p>
+          <p class="w-full md:w-auto">{{ parts.get(p.nxid)!.manufacturer + " " + parts.get(p.nxid)!.name }}</p>
+        </div>
         <p>{{ p.serial ? p.serial : p.quantity }}</p>
         <div class="my-auto">
           <div class="flex justify-center">
@@ -61,7 +63,7 @@ function submit() {
             <input class="w-full h-2 rounded-lg accent-green-400 cursor-pointer text-gray-200 dark:text-gray-700" type="range" min="1" :max="p.quantity" v-model="p.approvedCount"/>
           </div>
         </div>
-        <select class="textbox" v-model="p.newLocation" :disabled="!(p.approved === true)">
+        <select class="textbox my-auto" v-model="p.newLocation" :disabled="!(p.approved === true)">
           <option v-for="kiosk of kiosks" :value="kiosk.first_name + ' ' + kiosk.last_name">{{ kiosk.first_name + " " + kiosk.last_name }}</option>
         </select>
       </div>

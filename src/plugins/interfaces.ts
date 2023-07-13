@@ -197,3 +197,7 @@ export interface CheckInRequest {
   by: string,
   parts: CheckInQueuePart[]
 }
+
+export interface CheckOutEvent extends CheckInRequest {
+  location: string
+}

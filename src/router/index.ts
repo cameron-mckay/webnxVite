@@ -107,6 +107,11 @@ const routes = [
     component: () => import('../views/Admin/CheckinApprovalView.vue'),
   },
   {
+    path: '/manage/checkout',
+    name: 'Check Out History',
+    component: () => import('../views/Admin/CheckoutHistoryView.vue'),
+  },
+  {
     path: '/admin',
     name: 'Admin Dashboard',
     component: () => import('../views/Admin/AdminDashboardView.vue'),

@@ -71,6 +71,7 @@ function loadQueue() {
       // Temporary array
       let allUsers = data as User[]
       // Process all users
+      kiosks.value = []
       for (let u of allUsers) {
         // Check if kiosk
         if(u.roles&&u.roles.includes("kiosk")) {
