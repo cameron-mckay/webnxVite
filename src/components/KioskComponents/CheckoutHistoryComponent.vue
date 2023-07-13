@@ -24,7 +24,7 @@ onBeforeMount(()=>{
 <template>
   <div class="background-and-border my-4 p-4">
     <div class="flex justify-between">
-      <h1 class="text-4xl leading-8 md:leading-10">
+      <h1 class="text-2xl leading-8 md:leading-10">
         {{ new Date(checkout.date).toLocaleString() }}
       </h1>
       <p>
