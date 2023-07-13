@@ -37,8 +37,6 @@ let pageNum = ref(1)
 // Strips the time from todays date for easier conversions
 let todaysDate = new Date((new Date()).toLocaleDateString())
 let lastWeeks = new Date((new Date()).toLocaleDateString())
-// Subtract 7 days
-lastWeeks.setDate(lastWeeks.getDate()-7)
 // Convert into html string
 let startDate = ref(lastWeeks.toISOString().replace(/T.*/,'').split('-').join('-'))
 let endDate = ref(todaysDate.toISOString().replace(/T.*/,'').split('-').join('-'))
