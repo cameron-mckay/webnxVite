@@ -16,10 +16,10 @@ function loaded() {
 
 <template>
   <FullScreenPopupComponent>
-    <h1 class="mb-4 text-4xl">QR Scanner:</h1>
+    <!-- <h1 class="mb-4 text-4xl">QR Scanner:</h1>
     <p class="hidden pb-4 text-center md:block">
       This won't work with front facing cameras or webcams
-    </p>
+</p> -->
     <div v-if="loading" class="my-4 flex justify-center">
       <div class="loader text-center"></div>
     </div>

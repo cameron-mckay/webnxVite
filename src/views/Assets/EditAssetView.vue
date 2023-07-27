@@ -4,6 +4,7 @@ import { Ref, onBeforeMount, ref } from 'vue';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetManagerComponent from '../../components/AssetComponents/AssetManagerComponent.vue';
+import BackButton from '../../components/GenericComponents/BackButton.vue';
 import {
   getAssetByID,
   getPartsOnAsset,
@@ -34,8 +35,10 @@ let partsOnAsset = ref([] as LoadedCartItem[]);
 let partsOnAssetCopy = [] as AssetSchema[];
 let inventory = ref([] as LoadedCartItem[]);
 let inventoryCopy = [] as LoadedCartItem[];
+let loading = ref(false)
 onBeforeMount(() => {
   if (router.currentRoute.value.query.asset_tag) {
+    loading.value = true
     // get asset tag from url
     let nxid = router.currentRoute.value.query.asset_tag as string;
     // Check mode
@@ -58,16 +61,17 @@ onBeforeMount(() => {
         // Save a copy for reset value
         partsOnAssetCopy = JSON.parse(JSON.stringify(partsOnAsset.value));
 
+        getUserInventory(http, (res, err) => {
+          if (err) {
+            errorHandler(err);
+          }
+          inventory.value = res as LoadedCartItem[];
+          inventoryCopy = JSON.parse(JSON.stringify(inventory.value));
+          loading.value = false
+        });
       });
     });
     // Get user inventory from api
-    getUserInventory(http, (res, err) => {
-      if (err) {
-        errorHandler(err);
-      }
-      inventory.value = res as LoadedCartItem[];
-      inventoryCopy = JSON.parse(JSON.stringify(inventory.value));
-    });
   }
 });
 
@@ -193,23 +197,32 @@ function reset() {
 </script>
 
 <template>
-  <AssetManagerComponent
-    :http="http"
-    :title="'Edit Asset:'"
-    :submitText="'Update Asset'"
-    :strict="true"
-    :oldAsset="oldAsset"
-    :parts="partsOnAsset"
-    :errorHandler="errorHandler"
-    :inventory="inventory"
-    :displayMessage="displayMessage"
-    :inventorySearch="true"
-    :untracked="assetCopy.migrated?true:false"
-    :isAdmin="(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('admin'))?true:false"
-    @assetSubmit="assetSubmit"
-    @plusPart="plusPart"
-    @minusPart="minusPart"
-    @deletePart="deletePart"
-    @assetReset="reset"
-  />
+  <div
+    class="background-and-border p-4"
+  >
+    <BackButton @click="router.back()" class="mr-2 mb-2"/>
+    <div v-if="loading" class="my-4 flex justify-center">
+      <div class="loader text-center"></div>
+    </div>
+    <AssetManagerComponent
+      v-else
+      :http="http"
+      :title="'Edit Asset:'"
+      :submitText="'Update Asset'"
+      :strict="true"
+      :oldAsset="oldAsset"
+      :parts="partsOnAsset"
+      :errorHandler="errorHandler"
+      :inventory="inventory"
+      :displayMessage="displayMessage"
+      :inventorySearch="true"
+      :untracked="assetCopy.migrated?true:false"
+      :isAdmin="(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('admin'))?true:false"
+      @assetSubmit="assetSubmit"
+      @plusPart="plusPart"
+      @minusPart="minusPart"
+      @deletePart="deletePart"
+      @assetReset="reset"
+    />
+  </div>
 </template>

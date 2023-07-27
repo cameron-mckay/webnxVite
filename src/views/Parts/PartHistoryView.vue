@@ -128,7 +128,7 @@ function viewHistory(id: string) {
 </script>
 <template>
   <div>
-    <BackButton @click="router.back()" class="mr-2"/>
+    <BackButton @click="router.back()" class="mr-2 mb-2"/>
     <GridPartSpecComponent :part="part" />
     <!-- PART RECORDS GO HERE -->
     <h1 class="detail-title" v-if="partRecords&&partRecords.length>0&&partRecords[0].serial != undefined">{{ partRecords[0].serial }} History:</h1>

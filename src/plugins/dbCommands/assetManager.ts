@@ -199,10 +199,18 @@ export async function getPartsOnAsset(
 export async function getAssetHistory(
   http: AxiosInstance,
   asset_tag: string,
+  pageNum: number,
+  pageSize: number,
   callback: apiResponse
 ) {
   await http
-    .get('/api/asset/history', { params: { id: asset_tag } })
+    .get('/api/asset/history', { 
+      params: { 
+        id: asset_tag,
+        pageNum,
+        pageSize
+      } 
+    })
     .then((res: AxiosResponse) => {
       // Success - send results to callback
       callback(res.data, null);

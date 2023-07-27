@@ -116,20 +116,35 @@ const routes = [
     name: 'Admin Dashboard',
     component: () => import('../views/Admin/AdminDashboardView.vue'),
   },
-  // {
-  //   path: '/admin/parts/create',
-  //   name: 'Create Part Admin',
-  //   component: () => import('../views/Admin/CreatePartView.vue'),
-  // },
-  // {
-  //   path: '/admin/parts',
-  //   name: 'Part Manager Admin',
-  //   component: () => import('../views/Admin/AdminPartSearchView.vue'),
-  // },
   {
     path: '/admin/users',
     name: 'User Manager',
     component: () => import('../views/Admin/AdminUserView.vue'),
+  },
+  {
+    path: '/admin/users/analytics',
+    name: 'User Analytics',
+    component: () => import('../views/Admin/UserAnalyticsView.vue'),
+  },
+  {
+    path: '/admin/user/checkouts',
+    name: 'User Checkout History',
+    component: () => import('../views/Admin/UserCheckoutHistoryView.vue'),
+  },
+  {
+    path: '/admin/user/checkins',
+    name: 'User Checkin History',
+    component: () => import('../views/Admin/UserCheckinHistoryView.vue'),
+  },
+  {
+    path: '/admin/user/newAssets',
+    name: 'User New Asset History',
+    component: () => import('../views/Admin/UserNewAssetsHistoryView.vue'),
+  },
+  {
+    path: '/admin/user/assetsUpdated',
+    name: 'User Asset Update History',
+    component: () => import('../views/Admin/UserAssetUpdateHistoryView.vue'),
   },
   {
     path: '/inventory',

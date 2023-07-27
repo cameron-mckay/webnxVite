@@ -291,7 +291,7 @@ async function advancedSearch(part: PartSchema) {
   part['building'] = building.value.toString();
   part['pageNum'] = pageNum.value;
   part['pageSize'] = 50;
-  router.push({ query: part });
+  router.replace({ query: part });
   // Query the API
   getPageAdvanced(pageNum.value, part)
     .then((res) => {
@@ -339,7 +339,7 @@ async function search() {
 //      })
 //  }
 //  else {
-  router.push({
+  router.replace({
     query: {
       text: invisibleSearchText,
       pageNum: pageNum.value,

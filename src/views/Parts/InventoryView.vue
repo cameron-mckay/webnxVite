@@ -406,7 +406,8 @@ watch(currentUser, () => {
               "
             >
               Your current role does not allow you to transfer parts from the
-              testing center to your inventory.
+              testing center to your inventory.  You will not be able to return them
+              to your inventory after they are transferred.
             </p>
             <p
               class="my-2 w-full rounded-md bg-red-400 p-2"

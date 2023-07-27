@@ -6,15 +6,14 @@ import { onBeforeMount, ref } from 'vue';
 import CheckoutHistoryComponent from '../../components/KioskComponents/CheckoutHistoryComponent.vue';
 import LeftCaretButton from '../../components/GenericComponents/LeftCaretButton.vue'
 import RightCaretButton from '../../components/GenericComponents/RightCaretButton.vue'
-import RefreshButton from '../../components/GenericComponents/RefreshButton.vue';
+import { dateToHTML, HTMLtoEpoch, getTodaysDate, getLastMonth } from '../../plugins/dateFunctions';
 import type {
 UserState,
-CheckInRequest,
 User,
 PartSchema,
 CheckOutEvent
 } from '../../plugins/interfaces';
-import { getCheckInQueue, getCheckoutHistory, getPartByID, processCheckInRequest } from '../../plugins/dbCommands/partManager';
+import { getCheckoutHistory, getPartByID } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 
 interface Props {
@@ -24,7 +23,7 @@ interface Props {
   errorHandler: (err: Error | AxiosError | string) => void;
   displayMessage: (message: string) => void;
 }
-const { http, store, router, errorHandler, displayMessage } =
+const { http, errorHandler } =
   defineProps<Props>();
 
 let loading = ref(false)
@@ -35,11 +34,9 @@ let partsMap = new Map<string, PartSchema>()
 let totalPages = ref(0)
 let pageNum = ref(1)
 // Strips the time from todays date for easier conversions
-let todaysDate = new Date((new Date()).toLocaleDateString())
-let lastWeeks = new Date((new Date()).toLocaleDateString())
 // Convert into html string
-let startDate = ref(lastWeeks.toISOString().replace(/T.*/,'').split('-').join('-'))
-let endDate = ref(todaysDate.toISOString().replace(/T.*/,'').split('-').join('-'))
+let endDate = ref(dateToHTML(getTodaysDate()))
+let startDate = ref(dateToHTML(getLastMonth()))
 let pageCache = new Map<number, CheckOutEvent[]>()
 let totalCheckouts = ref(0)
 let pageSize = 10
@@ -78,13 +75,11 @@ function loadPage(num: number) {
   loading.value = true
   checkInQueue.value = []
   getPage(num).then((req)=>{
-    console.log(req)
     checkInQueue.value = req.checkouts
     totalCheckouts.value = req.total
     totalPages.value = req.pages
     totalCheckouts.value = req.total
     checkCache()
-    console.log(pageCache)
     loading.value = false
   })
 }
@@ -92,8 +87,8 @@ function loadPage(num: number) {
 function getPage(page: number) {
   // Fuck dates
   // Add timezone offset since it was stripped
-  let sDate = (new Date(startDate.value)).getTime()+(todaysDate.getTimezoneOffset()*60000)
-  let eDate = (new Date(endDate.value)).getTime()+((todaysDate.getTimezoneOffset())*60000)
+  let sDate = HTMLtoEpoch(startDate.value)
+  let eDate = HTMLtoEpoch(endDate.value)
   return new Promise<{total: number, pages: number, checkouts: CheckOutEvent[]}>(async (res)=>{
     // Check if page is in cache
     if(pageCache.has(page))
@@ -113,6 +108,7 @@ function getPage(page: number) {
             return new Promise((res)=>{
               if(partsMap.has(p.nxid))
                 return res("")
+              partsMap.set(p.nxid, {})
               getPartByID(http, p.nxid, 3, (data, err) => {
                 if(err)
                   partsMap.delete(p.nxid)
@@ -121,7 +117,7 @@ function getPage(page: number) {
               })
             })
           }))
-      }))
+        }))
       pageCache.set(page, history)
       response.pages = response.total%pageSize>0 ? Math.trunc(response.total/pageSize) + 1 : Math.trunc(response.total/pageSize)
       res(response)
@@ -169,7 +165,7 @@ async function checkCache() {
         .then((res) => {
           pageCache.set(localPage, res.checkouts);
         })
-        .catch((err) => {
+        .catch(() => {
           pageCache.delete(localPage);
         });
       page -= 1;
@@ -186,7 +182,7 @@ async function checkCache() {
         .then((res) => {
           pageCache.set(localPage, res.checkouts);
         })
-        .catch((err) => {
+        .catch(() => {
           pageCache.delete(localPage);
         });
       page++;
@@ -206,7 +202,7 @@ async function checkCache() {
           </div>
           <div>
             <label>End Date: </label>
-            <input class="textbox w-auto mr-4" type="date" v-model="endDate" :min="startDate" :max="todaysDate.toISOString().replace(/T.*/,'').split('-').join('-')"/>
+            <input class="textbox w-auto mr-4" type="date" v-model="endDate" :min="startDate" :max="dateToHTML(getTodaysDate())"/>
           </div>
           <input class="search-button mr-0" type="submit" value="Go" />
         </form>

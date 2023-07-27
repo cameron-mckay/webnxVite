@@ -198,6 +198,16 @@ export interface CheckInRequest {
   parts: CheckInQueuePart[]
 }
 
+export interface CheckInEventPart extends CartItem {
+  approved: boolean
+}
+
+export interface CheckInEvent {
+  date: Date,
+  by: string,
+  parts: CheckInEventPart[]
+}
+
 export interface CheckOutEvent extends CheckInRequest {
   location: string
 }

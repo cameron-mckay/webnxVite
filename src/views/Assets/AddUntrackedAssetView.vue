@@ -4,6 +4,7 @@ import { onMounted, ref, watch } from 'vue';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetManagerComponent from '../../components/AssetComponents/AssetManagerComponent.vue';
+import BackButton from '../../components/GenericComponents/BackButton.vue';
 import { createAsset } from '../../plugins/dbCommands/assetManager';
 import type {
 AssetSchema,
@@ -120,21 +121,25 @@ function deletePart(part: LoadedCartItem) {
 </script>
 
 <template>
-  <AssetManagerComponent
+  <div
     class="background-and-border p-4"
-    :http="http"
-    :title="'Add Untracked Asset:'"
-    :submitText="'Create Asset'"
-    :strict="true"
-    :oldAsset="oldAsset"
-    :parts="partsOnAsset"
-    :errorHandler="errorHandler"
-    :displayMessage="displayMessage"
-    :partSearch="true"
-    :untracked="true"
-    @assetSubmit="assetSubmit"
-    @plusPart="plusPart"
-    @minusPart="minusPart"
-    @deletePart="deletePart"
-  />
+  >
+    <BackButton @click="router.back()" class="mr-2 mb-2"/>
+    <AssetManagerComponent
+      :http="http"
+      :title="'Add Untracked Asset:'"
+      :submitText="'Create Asset'"
+      :strict="true"
+      :oldAsset="oldAsset"
+      :parts="partsOnAsset"
+      :errorHandler="errorHandler"
+      :displayMessage="displayMessage"
+      :partSearch="true"
+      :untracked="true"
+      @assetSubmit="assetSubmit"
+      @plusPart="plusPart"
+      @minusPart="minusPart"
+      @deletePart="deletePart"
+    />
+  </div>
 </template>

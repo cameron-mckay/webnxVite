@@ -128,7 +128,7 @@
     @apply my-2;
   }
   .detail-row {
-    @apply col-span-2 grid grid-cols-2;
+    @apply col-span-2 grid grid-cols-2 h-fit;
   }
   .detail-row > p {
     @apply odd:detail-label even:detail-data;

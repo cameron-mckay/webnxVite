@@ -21,6 +21,12 @@
         Manage Users
       </RouterLink>
       <RouterLink
+        to="/admin/users/analytics"
+        class="manager-button"
+      >
+        User Analytics
+      </RouterLink>
+      <RouterLink
         to="/manage/checkin"
         class="manager-button"
       >

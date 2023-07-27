@@ -69,6 +69,12 @@ function addPartFromInventory(item: LoadedCartItem) {
   emit('plusPart', item, correction.value);
 }
 
+function submitForm() {
+  if(untracked&&!window.confirm("Are you sure you want to submit?"))
+    return
+  emit("assetSubmit", correction)
+}
+
 watch(correction, ()=>{
   if(!correction.value)
     emit("assetReset")
@@ -87,12 +93,13 @@ watch(correction, ()=>{
     </div>
     <form
       id="form"
-      @submit.prevent="$emit('assetSubmit', correction)"
+      @submit.prevent="submitForm"
       @reset.prevent="$emit('assetReset')"
       class="grid grid-cols-2"
     >
       <label>Asset Tag:</label>
       <input
+        v-on:keydown.enter.prevent
         class="textbox m-1"
         :required="strict"
         :disabled="strict&&!untracked&&!correction"
@@ -103,6 +110,7 @@ watch(correction, ()=>{
       />
       <label>Manufacturer:</label>
       <input
+        v-on:keydown.enter.prevent
         class="textbox m-1"
         :required="strict"
         :disabled="strict&&!untracked&&!correction"
@@ -113,6 +121,7 @@ watch(correction, ()=>{
       <label>Model:</label>
       <input
         class="textbox m-1"
+        v-on:keydown.enter.prevent
         :required="strict"
         :disabled="strict&&!untracked&&!correction"
         v-model="oldAsset.model"
@@ -129,6 +138,7 @@ watch(correction, ()=>{
       <label>Bay:</label>
       <input
         class="textbox m-1"
+        v-on:keydown.enter.prevent
         :required="strict"
         v-model="oldAsset.bay"
         type="number"
@@ -137,6 +147,7 @@ watch(correction, ()=>{
       <label>Serial Number:</label>
       <input
         class="textbox m-1"
+        v-on:keydown.enter.prevent
         :required="strict"
         :disabled="strict&&!untracked&&!correction"
         v-model="oldAsset.serial"
@@ -181,6 +192,7 @@ watch(correction, ()=>{
               :disabled="strict&&!untracked&&!correction"
               :required="strict"
               v-model="oldAsset.units"
+        v-on:keydown.enter.prevent
               type="number"
               min="1"
               placeholder="Rack Units"
@@ -190,6 +202,7 @@ watch(correction, ()=>{
               class="textbox m-1"
               :required="strict"
               :disabled="strict&&!untracked&&!correction"
+        v-on:keydown.enter.prevent
               v-model="oldAsset.num_bays"
               type="number"
               min="0"
@@ -204,6 +217,7 @@ watch(correction, ()=>{
               <select
                 :required="strict"
                 :disabled="strict&&!untracked&&!correction"
+        v-on:keydown.enter.prevent
                 v-model="oldAsset.bay_type"
                 class="textbox m-1"
               >
@@ -217,6 +231,7 @@ watch(correction, ()=>{
             <select
               :required="strict"
               :disabled="strict&&!untracked&&!correction"
+        v-on:keydown.enter.prevent
               v-model="oldAsset.cable_type"
               class="textbox m-1"
             >
@@ -230,6 +245,7 @@ watch(correction, ()=>{
             <input
               class="textbox m-1"
               :required="strict"
+        v-on:keydown.enter.prevent
               v-model="oldAsset.num_psu"
               type="number"
               min="0"
@@ -258,6 +274,7 @@ watch(correction, ()=>{
             <select
               :required="strict"
               v-model="oldAsset.rails"
+        v-on:keydown.enter.prevent
               class="textbox m-1"
             >
               <option :value="undefined" selected disabled>Select</option>
@@ -268,6 +285,7 @@ watch(correction, ()=>{
               <label>In Rack:</label>
               <select
                 :required="strict"
+        v-on:keydown.enter.prevent
                 v-model="oldAsset.in_rack" class="textbox m-1" >
                 <option :value="undefined" selected disabled>Select</option>
                 <option :value="true">Yes</option>
@@ -280,6 +298,7 @@ watch(correction, ()=>{
             <label>Chassis Tag:</label>
             <input
               class="textbox m-1"
+        v-on:keydown.enter.prevent
               :required="false"
               v-model="oldAsset.parent"
               type="text"
@@ -290,6 +309,7 @@ watch(correction, ()=>{
               <label>In Rack:</label>
               <select
                 :required="strict"
+        v-on:keydown.enter.prevent
                 v-model="oldAsset.in_rack"
                 class="textbox m-1"
               >
@@ -309,6 +329,7 @@ watch(correction, ()=>{
             <label>Status:</label>
             <select
               :required="strict"
+        v-on:keydown.enter.prevent
               v-model="oldAsset.live"
               class="textbox m-1"
             >
@@ -323,6 +344,7 @@ watch(correction, ()=>{
               <label>Power Port:</label>
               <input
                 class="textbox m-1"
+        v-on:keydown.enter.prevent
                 :required="strict"
                 v-model="oldAsset.power_port"
                 type="text"
@@ -333,12 +355,14 @@ watch(correction, ()=>{
                 class="textbox m-1"
                 :required="strict"
                 v-model="oldAsset.public_port"
+        v-on:keydown.enter.prevent
                 type="text"
                 placeholder="Public Port"
               />
               <label>Private Port:</label>
               <input
                 class="textbox m-1"
+        v-on:keydown.enter.prevent
                 :required="strict"
                 v-model="oldAsset.private_port"
                 type="text"
@@ -348,6 +372,7 @@ watch(correction, ()=>{
               <input
                 class="textbox m-1"
                 :required="strict"
+        v-on:keydown.enter.prevent
                 v-model="oldAsset.ipmi_port"
                 type="text"
                 placeholder="IPMI Port"
@@ -356,6 +381,7 @@ watch(correction, ()=>{
               <input
                 class="textbox m-1"
                 :required="strict"
+        v-on:keydown.enter.prevent
                 v-model="oldAsset.sid"
                 type="number"
                 placeholder="Service ID"
@@ -363,13 +389,14 @@ watch(correction, ()=>{
             </div>
           </div>
           <div
-            v-if="oldAsset.in_rack || oldAsset.power_port"
+            v-if="(oldAsset.in_rack || oldAsset.power_port)&&!(oldAsset.chassis_type == 'Tower')"
             class="col-span-2 grid grid-cols-2"
           >
             <label>Power Port:</label>
             <input
               class="textbox m-1"
               :required="strict"
+        v-on:keydown.enter.prevent
               v-model="oldAsset.power_port"
               type="text"
               placeholder="Power Port"
@@ -377,6 +404,7 @@ watch(correction, ()=>{
             <label>Public Port:</label>
             <input
               class="textbox m-1"
+        v-on:keydown.enter.prevent
               :required="strict"
               v-model="oldAsset.public_port"
               type="text"
@@ -386,6 +414,7 @@ watch(correction, ()=>{
             <input
               class="textbox m-1"
               :required="strict"
+        v-on:keydown.enter.prevent
               v-model="oldAsset.private_port"
               type="text"
               placeholder="Private Port"
@@ -394,6 +423,7 @@ watch(correction, ()=>{
             <input
               class="textbox m-1"
               :required="strict"
+        v-on:keydown.enter.prevent
               v-model="oldAsset.ipmi_port"
               type="text"
               placeholder="IPMI Port"
@@ -401,6 +431,7 @@ watch(correction, ()=>{
             <label>Status:</label>
             <select
               :required="strict"
+        v-on:keydown.enter.prevent
               v-model="oldAsset.live"
               class="textbox m-1"
             >
@@ -412,6 +443,7 @@ watch(correction, ()=>{
               <label>SID:</label>
               <input
                 class="textbox m-1"
+        v-on:keydown.enter.prevent
                 :required="strict"
                 v-model="oldAsset.sid"
                 type="number"
@@ -427,6 +459,7 @@ watch(correction, ()=>{
             <label>Pallet:</label>
             <input
               class="textbox m-1"
+        v-on:keydown.enter.prevent
               :required="strict"
               v-model="oldAsset.pallet"
               type="text"
@@ -439,12 +472,15 @@ watch(correction, ()=>{
           <input
             class="textbox m-1"
             :required="strict"
+        v-on:keydown.enter.prevent
             v-model="oldAsset.fw_rev"
             type="text"
             placeholder="FW Revision"
           />
           <label v-if="!(oldAsset.in_rack || oldAsset.power_port)">Status:</label>
-          <select :required="strict" v-model="oldAsset.live" class="textbox m-1" v-if="!(oldAsset.in_rack || oldAsset.power_port)">
+          <select 
+            v-on:keydown.enter.prevent
+            :required="strict" v-model="oldAsset.live" class="textbox m-1" v-if="!(oldAsset.in_rack || oldAsset.power_port)">
             <option :value="undefined" selected disabled>Select</option>
             <option :value="true">Live</option>
             <option :value="false">Inactive</option>
@@ -458,6 +494,7 @@ watch(correction, ()=>{
             <label>Rack Location:</label>
             <input
               class="textbox m-1"
+        v-on:keydown.enter.prevent
               :required="strict"
               v-model="oldAsset.power_port"
               type="text"
@@ -472,6 +509,7 @@ watch(correction, ()=>{
             <input
               class="textbox m-1"
               :required="strict"
+        v-on:keydown.enter.prevent
               v-model="oldAsset.pallet"
               type="text"
               placeholder="Pallet"
@@ -559,7 +597,9 @@ watch(correction, ()=>{
         type="reset"
         value="Reset"
       />
-      <input class="submit col-span-2" type="submit" :value="submitText" />
+      <input 
+        v-on:keydown.enter.prevent
+        class="submit col-span-2" type="submit" :value="submitText" />
     </form>
   </div>
 </template>

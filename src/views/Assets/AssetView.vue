@@ -66,6 +66,7 @@ function adminEdit(){
 
 <template>
   <div class="body">
+    <BackButton @click="router.back()" class="mr-2 mb-2"/>
     <p class="my-2 w-full rounded-md bg-red-400 p-2" v-if="asset.migrated">
       This asset was automatically migrated from the old asset tracking system
       and is incomplete. Please edit and update the information if you can.
@@ -73,7 +74,6 @@ function adminEdit(){
     <div
       class="relative grid grid-cols-2 rounded-lg group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-4"
     >
-        <BackButton @click="router.back()" class="mr-2"/>
       <div class="col-span-2 mb-4 flex md:col-span-4">
         <h1 class="my-auto text-4xl leading-8 md:leading-10">
           {{ asset.asset_tag + ':' }}

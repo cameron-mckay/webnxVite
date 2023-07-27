@@ -277,3 +277,122 @@ export async function submitNewPassword(http: AxiosInstance, user_id: string, to
     });
 }
 
+export async function getUserAssetUpdates(
+  http: AxiosInstance,
+  user: string,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse
+) {
+  // Send request to API
+  await http
+    .get('/api/user/assetsUpdated', {
+    params: {
+      user,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export async function getUserNewAssets(
+  http: AxiosInstance,
+  user: string,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse
+) {
+  // Send request to API
+  await http
+    .get('/api/user/newAssets', {
+    params: {
+      user,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export async function getUserCheckins(
+  http: AxiosInstance,
+  user: string,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse
+) {
+  // Send request to API
+  await http
+    .get('/api/user/checkins', {
+    params: {
+      user,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export async function getUserCheckouts(
+  http: AxiosInstance,
+  user: string,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse
+) {
+  // Send request to API
+  await http
+    .get('/api/checkout/history', {
+    params: {
+      user,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}

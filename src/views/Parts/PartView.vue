@@ -131,7 +131,7 @@ function viewHistory(record: PartRecord, quantity: number) {
 </script>
 <template>
   <div>
-    <BackButton @click="router.back()" class="mr-2"/>
+    <BackButton @click="router.back()" class="mr-2 mb-2"/>
     <GridPartSpecComponent :part="part" />
     <!-- PART RECORDS GO HERE -->
     <div
