@@ -72,7 +72,8 @@ const { asset, edit, add, view } = defineProps<Props>();
       <p>
         {{
           'Date Updated: ' +
-          new Date(Date.parse(asset.date_updated!)).toLocaleString()
+          ( asset.date_updated ? new Date(Date.parse(asset.date_updated!)).toLocaleString() : new Date(Date.parse(asset.date_created!)).toLocaleString()
+        )
         }}
       </p>
       <p>{{ 'Type: ' + asset.asset_type }}</p>
