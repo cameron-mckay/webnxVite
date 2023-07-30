@@ -2,6 +2,7 @@
   <div>
     <form class="flex justify-between" @submit.prevent="searchButtonPressed">
       <input
+        id="searchBox"
         class="search ml-0"
         type="text"
         v-model="visibleSearchText"
@@ -123,10 +124,9 @@
 </template>
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
-import { Ref, onBeforeMount, ref } from 'vue';
+import { Ref, onBeforeMount, ref, onMounted } from 'vue';
 import { Router } from 'vue-router';
 import {
-getPartByID,
 getPartsByData,
 getPartsByTextSearch
 } from '../../plugins/dbCommands/partManager';
@@ -163,8 +163,6 @@ let props = defineProps<Props>();
 let {
   http,
   router,
-  errorHandler,
-  displayMessage,
   kioskName,
   edit,
   add,
@@ -219,6 +217,9 @@ onBeforeMount(async () => {
   }
 });
 
+onMounted(()=>{
+  document.getElementById("searchBox")?.focus()
+})
 // Previous search page
 function prevPage() {
   let { query } = router.currentRoute.value;

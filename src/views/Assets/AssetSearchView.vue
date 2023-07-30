@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
-import { onBeforeMount, onActivated, ref, Ref } from 'vue';
+import { onBeforeMount, onMounted, ref, Ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { AssetSchema, UserState } from '../../plugins/interfaces';
@@ -362,6 +362,10 @@ function toggleEdit(asset: AssetSchema) {
 function viewAsset(asset: AssetSchema) {
   router.push({ name: 'View Asset', query: { asset_tag: asset.asset_tag } });
 }
+
+onMounted(()=>{
+  document.getElementById("searchBox")?.focus()
+})
 </script>
 <template>
   <div>
@@ -371,6 +375,7 @@ function viewAsset(asset: AssetSchema) {
   <div>
     <form class="flex justify-between" @submit.prevent="searchButtonPressed">
       <input
+        id="searchBox"
         class="search ml-0"
         type="text"
         v-model="visibleSearchText"
