@@ -70,7 +70,7 @@ function addPartFromInventory(item: LoadedCartItem) {
 }
 
 function submitForm() {
-  if(untracked&&!window.confirm("Are you sure you want to submit?"))
+  if((untracked||correction.value)&&!window.confirm("Are you sure you want to submit?"))
     return
   emit("assetSubmit", correction.value)
 }
@@ -79,6 +79,11 @@ watch(correction, ()=>{
   if(!correction.value)
     emit("assetReset")
 })
+
+onMounted(()=>{
+  document.getElementById("tag")?.focus()
+})
+
 </script>
 <template>
   <div class="body">
@@ -101,6 +106,7 @@ watch(correction, ()=>{
       <input
         v-on:keydown.enter.prevent
         class="textbox m-1"
+        id="tag"
         :required="strict"
         :disabled="strict&&!untracked&&!correction"
         v-model="oldAsset.asset_tag"
