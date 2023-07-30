@@ -146,7 +146,7 @@ function adminEdit(){
         <p v-if="asset.power_port">{{ asset.power_port }}</p>
         <p>Last Updated:</p>
         <p>
-          {{ new Date(Date.parse(asset.date_updated!)).toLocaleString() }}
+          {{ asset.date_updated ? new Date(Date.parse(asset.date_updated!)).toLocaleString() : new Date(Date.parse(asset.date_created!)).toLocaleString() }}
         </p>
         <div class="col-span-2 my-4" v-if="asset.notes">
           <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
