@@ -72,7 +72,7 @@ function addPartFromInventory(item: LoadedCartItem) {
 function submitForm() {
   if(untracked&&!window.confirm("Are you sure you want to submit?"))
     return
-  emit("assetSubmit", correction)
+  emit("assetSubmit", correction.value)
 }
 
 watch(correction, ()=>{
