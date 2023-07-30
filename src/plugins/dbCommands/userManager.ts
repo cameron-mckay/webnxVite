@@ -307,6 +307,36 @@ export async function getUserAssetUpdates(
     });
 }
 
+export async function getUserAssetUpdatesNoDetails(
+  http: AxiosInstance,
+  user: string,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse
+) {
+  // Send request to API
+  await http
+    .get('/api/user/assetsUpdated/noDetails', {
+    params: {
+      user,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
 export async function getUserNewAssets(
   http: AxiosInstance,
   user: string,
@@ -319,6 +349,36 @@ export async function getUserNewAssets(
   // Send request to API
   await http
     .get('/api/user/newAssets', {
+    params: {
+      user,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export async function getUserNewAssetsNoDetails(
+  http: AxiosInstance,
+  user: string,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse
+) {
+  // Send request to API
+  await http
+    .get('/api/user/newAssets/noDetails', {
     params: {
       user,
       startDate,

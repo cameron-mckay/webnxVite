@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
-import { getAllUsers, getUserCheckins, getUserCheckouts, getUserAssetUpdates, getUserNewAssets } from '../../plugins/dbCommands/userManager';
+import { getAllUsers, getUserCheckins, getUserCheckouts, getUserAssetUpdatesNoDetails, getUserNewAssetsNoDetails } from '../../plugins/dbCommands/userManager';
 import { User } from '../../plugins/interfaces';
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -39,50 +39,54 @@ function getUsers() {
       return errorHandler(err);
     }
     let temp = (data as User[]).filter((u)=>!(u.roles?.includes("kiosk")||u.roles?.includes("sales")))
-    await Promise.all(temp.map((u)=>{
-      return new Promise<string>((res, rej)=>{
-        getUserCheckins(http, u._id!, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
-          if(err)
-            return rej("")
-          let response = data as any
-          checkins.set(u._id!, response.total)
-          res("")
-        })
-      })
-    }))
-    await Promise.all(temp.map((u)=>{
-      return new Promise<string>((res, rej)=>{
-        getUserCheckouts(http, u._id!, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
-          if(err)
-            return rej("") 
-          let response = data as any
-          checkouts.set(u._id!, response.total)
-          res("")
-        })
-      })
-    }))
-    await Promise.all(temp.map((u)=>{
-      return new Promise<string>((res, rej)=>{
-        getUserAssetUpdates(http, u._id!, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
-          if(err)
-            return rej("")
-          let response = data as any
-          assetsUpdated.set(u._id!, response.total)
-          res("")
-        })
-      })
-    }))
-    await Promise.all(temp.map((u)=>{
-      return new Promise<string>((res, rej)=>{
-        getUserNewAssets(http, u._id!, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
-          if(err)
-            return rej("")
-          let response = data as any
-          newAssets.set(u._id!, response.total)
-          res("")
-        })
-      })
-    }))
+    await Promise.all(
+      [
+        Promise.all(temp.map((u)=>{
+          return new Promise<string>((res, rej)=>{
+            getUserCheckins(http, u._id!, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+              if(err)
+                return rej("")
+              let response = data as any
+              checkins.set(u._id!, response.total)
+              res("")
+            })
+          })
+        })),
+        Promise.all(temp.map((u)=>{
+          return new Promise<string>((res, rej)=>{
+            getUserCheckouts(http, u._id!, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+              if(err)
+                return rej("") 
+              let response = data as any
+              checkouts.set(u._id!, response.total)
+              res("")
+            })
+          })
+        })),
+        Promise.all(temp.map((u)=>{
+          return new Promise<string>((res, rej)=>{
+            getUserAssetUpdatesNoDetails(http, u._id!, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+              if(err)
+                return rej("")
+              let response = data as any
+              assetsUpdated.set(u._id!, response.total)
+              res("")
+            })
+          })
+        })),
+        Promise.all(temp.map((u)=>{
+          return new Promise<string>((res, rej)=>{
+            getUserNewAssetsNoDetails(http, u._id!, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+              if(err)
+                return rej("")
+              let response = data as any
+              newAssets.set(u._id!, response.total)
+              res("")
+            })
+          })
+        }))
+      ]
+    )
     users.value = temp;
     loading.value = false;
   });
