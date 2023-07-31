@@ -122,14 +122,26 @@ onBeforeMount(() => {
   }
 });
 
-function viewHistory(id: string) {
-  router.push({ name: 'Part History', query: { id } });
+function addToCart() {
+  // Check if cart quantity < available quantity
+  if (
+    part.value.quantity &&
+    part.value.nxid &&
+    store.getters.getQuantity(part.value.nxid) < part.value.quantity
+  ) {
+    // Add to cart
+    displayMessage(`Added ${part.value.manufacturer} ${part.value.name} to cart`);
+    store.commit('addToCart', part.value);
+  } else {
+    // Not enough stock
+    errorHandler(`Not enough stock`);
+  }
 }
 </script>
 <template>
   <div>
     <BackButton @click="router.back()" class="mr-2 mb-2"/>
-    <GridPartSpecComponent :part="part" />
+    <GridPartSpecComponent @plus="addToCart" :showPlus="store.state.user.roles?.includes('kiosk')" :part="part" />
     <!-- PART RECORDS GO HERE -->
     <h1 class="detail-title" v-if="partRecords&&partRecords.length>0&&partRecords[0].serial != undefined">{{ partRecords[0].serial }} History:</h1>
     <h1 class="detail-title" v-else>History:</h1>

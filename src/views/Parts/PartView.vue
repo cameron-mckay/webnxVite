@@ -49,7 +49,7 @@ let getUserExclude = ["all", "testing", "la", "ny", "og"]
 onBeforeMount(() => {
   if (router.currentRoute.value.query.nxid) {
     let nxid = router.currentRoute.value.query.nxid as string;
-    getPartByID(http, nxid, 3, (res, err) => {
+    getPartByID(http, nxid, store.state.user.building ? store.state.user.building : 3, (res, err) => {
       if (err) {
         errorHandler(err);
       }
@@ -128,11 +128,27 @@ function viewHistory(record: PartRecord, quantity: number) {
       },
     });
 }
+
+function addToCart() {
+  // Check if cart quantity < available quantity
+  if (
+    part.value.quantity &&
+    part.value.nxid &&
+    store.getters.getQuantity(part.value.nxid) < part.value.quantity
+  ) {
+    // Add to cart
+    displayMessage(`Added ${part.value.manufacturer} ${part.value.name} to cart`);
+    store.commit('addToCart', part.value);
+  } else {
+    // Not enough stock
+    errorHandler(`Not enough stock`);
+  }
+}
 </script>
 <template>
   <div>
     <BackButton @click="router.back()" class="mr-2 mb-2"/>
-    <GridPartSpecComponent :part="part" />
+    <GridPartSpecComponent @plus="addToCart" :showPlus="store.state.user.roles?.includes('kiosk')" :part="part" />
     <!-- PART RECORDS GO HERE -->
     <div
       v-if="partRecords.length > 0"

@@ -1,20 +1,24 @@
 <script lang="ts" setup>
 import { PartSchema } from '../../plugins/interfaces';
-
+import PlusButton from '../GenericComponents/PlusButton.vue';
 interface Props {
   part: PartSchema;
   serial?: string;
   quantity?: number;
+  showPlus?: boolean;
 }
 
-let { part, serial, quantity } = defineProps<Props>();
+let { part, serial, quantity, showPlus } = defineProps<Props>();
 let url = import.meta.env.VITE_API_URL;
 </script>
 <template>
   <div class="detail-table">
-    <h1 class="detail-title">
-      {{ part.type!='Cable' ? part.manufacturer : '' }} {{ part.name }}
-    </h1>
+    <div class="detail-title flex">
+      <h1>
+        {{ part.type!='Cable' ? part.manufacturer : '' }} {{ part.name }}
+      </h1>
+      <PlusButton v-if="showPlus" class="ml-4" @click="$emit('plus')"/>
+    </div>
     <p class="detail-label">NXID:</p>
     <p class="detail-data">{{ part.nxid }}</p>
     <p class="detail-label">Rack Number:</p>
