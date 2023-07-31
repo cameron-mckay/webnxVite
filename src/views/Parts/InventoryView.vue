@@ -40,7 +40,6 @@ let processingMove = false;
 let loading = ref(false);
 
 let canBuildingTransfer = ref(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('clerk'));
-let userBuilding = ref(store.state.user.building)
 
 async function loadInventory() {
   loading.value = true;
@@ -211,6 +210,12 @@ watch(currentUser, () => {
           </h1>
           <h1
             class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
+            v-else-if="currentUser._id == 'hdd'"
+          >
+            Drive Wipe Shelf
+          </h1>
+          <h1
+            class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit"
             v-else-if="currentUser._id == 'la'"
           >
             LA Transfers
@@ -236,6 +241,11 @@ watch(currentUser, () => {
               <option disabled :value="{}"></option>
               <option :value="store.state.user" selected>Your Inventory</option>
               <option :value="{ _id: 'all' }">All Tech's</option>
+              <option
+                :value="{ _id: 'hdd' }"
+              >
+                Drive Wipe Shelf
+              </option>
               <option
                 v-if="canBuildingTransfer"
                 :value="{ _id: 'la' }"
@@ -329,6 +339,15 @@ watch(currentUser, () => {
                   :disabled="currentUser._id == 'testing'"
                 >
                   Testing Center
+                </option>
+                <option
+                  :value="{
+                    _id: 'hdd',
+                    building: store.state.user.building,
+                  }"
+                  :disabled="currentUser._id == 'hdd'"
+                >
+                  Drive Wipe Shelf
                 </option>
                 <option
                   v-if="canBuildingTransfer"
