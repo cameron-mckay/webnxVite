@@ -2,7 +2,7 @@
 import type { AxiosError, AxiosInstance } from 'axios';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
 import CheckInRequestComponent from '../../components/KioskComponents/CheckInRequestComponent.vue';
 import RefreshButton from '../../components/GenericComponents/RefreshButton.vue';
 import type {
@@ -29,10 +29,11 @@ let checkInQueue = ref([] as CheckInRequest[])
 let kiosks = ref([] as User[])
 let users = new Map<string, User>()
 let partsMap = new Map<string, PartSchema>()
+let interval = setInterval(()=>{},10000)
 
 onBeforeMount(()=>{
   loadQueue()
-  setInterval(()=>{
+  interval = setInterval(()=>{
     if(checkInQueue.value.length==0)
       loadQueue()
   }, 10000)
@@ -103,6 +104,10 @@ function submit(req: CheckInRequest) {
     checkInQueue.value.splice(checkInQueue.value.findIndex((e)=>e.by==req.by&&e.date==req.date), 1)
   })
 }
+
+onBeforeUnmount(() => {
+  clearInterval(interval)
+})
 
 </script>
 <template>

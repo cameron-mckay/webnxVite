@@ -265,7 +265,7 @@ watch(currentUser, () => {
                Ogden Transfers
               </option>
               <option
-                v-if="store.state.user.roles?.includes('admin')"
+                v-if="store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('lead')||store.state.user.roles?.includes('testing')"
                 :value="{ _id: 'testing' }"
               >
                 Testing Center
@@ -421,7 +421,7 @@ watch(currentUser, () => {
             <p
               class="my-2 w-full rounded-md bg-red-400 p-2"
               v-if="
-                transferUser._id == 'testing' && !store.state.user.roles?.includes('admin')
+                transferUser._id == 'testing' && !(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('lead')||store.state.user.roles?.includes('testing'))
               "
             >
               Your current role does not allow you to transfer parts from the

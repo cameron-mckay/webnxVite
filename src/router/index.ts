@@ -82,12 +82,7 @@ const routes = [
     component: () => import('../views/Assets/AssetHistoryView.vue'),
   },
   {
-    path: '/manage',
-    name: 'Inventory Manager Dashboard',
-    component: () => import('../views/Admin/InventoryManagerDashboardView.vue'),
-  },
-  {
-    path: '/manage/parts',
+    path: '/clerk/parts',
     name: 'Part Manager',
     component: () => import('../views/Admin/AdminPartSearchView.vue'),
   },
@@ -102,7 +97,7 @@ const routes = [
     component: () => import('../views/Admin/CreatePartView.vue'),
   },
   {
-    path: '/manage/checkin',
+    path: '/clerk/checkin',
     name: 'Check In Queue',
     component: () => import('../views/Admin/CheckinApprovalView.vue'),
   },
@@ -112,8 +107,8 @@ const routes = [
     component: () => import('../views/Admin/CheckoutHistoryView.vue'),
   },
   {
-    path: '/admin',
-    name: 'Admin Dashboard',
+    path: '/manage',
+    name: 'Manage',
     component: () => import('../views/Admin/AdminDashboardView.vue'),
   },
   {
@@ -122,27 +117,27 @@ const routes = [
     component: () => import('../views/Admin/AdminUserView.vue'),
   },
   {
-    path: '/admin/users/analytics',
+    path: '/manage/users/analytics',
     name: 'User Analytics',
     component: () => import('../views/Admin/UserAnalyticsView.vue'),
   },
   {
-    path: '/admin/user/checkouts',
+    path: '/manage/user/checkouts',
     name: 'User Checkout History',
     component: () => import('../views/Admin/UserCheckoutHistoryView.vue'),
   },
   {
-    path: '/admin/user/checkins',
+    path: '/manage/user/checkins',
     name: 'User Checkin History',
     component: () => import('../views/Admin/UserCheckinHistoryView.vue'),
   },
   {
-    path: '/admin/user/newAssets',
+    path: '/manage/user/newAssets',
     name: 'User New Asset History',
     component: () => import('../views/Admin/UserNewAssetsHistoryView.vue'),
   },
   {
-    path: '/admin/user/assetsUpdated',
+    path: '/manage/user/assetsUpdated',
     name: 'User Asset Update History',
     component: () => import('../views/Admin/UserAssetUpdateHistoryView.vue'),
   },
@@ -159,7 +154,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(/*import.meta.env.BASE_URL*/),
+  history: createWebHistory(),
   routes,
 });
 

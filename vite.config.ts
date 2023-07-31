@@ -13,20 +13,23 @@ export default defineConfig({
       // https://rollupjs.org/guide/en/#outputmanualchunks
       output: {
         manualChunks: {
-          login: ['./src/views/LoginView.vue', './src/views/RegisterView.vue', './src/views/SendResetEmailView.vue', './src/views/ResetPasswordView.vue'],
+          login: [
+            './src/views/LoginView.vue',
+            './src/views/RegisterView.vue',
+            './src/views/SendResetEmailView.vue',
+            './src/views/ResetPasswordView.vue'
+          ],
           essentials: [
             './src/views/Assets/AssetSearchView.vue',
             './src/views/Parts/FindPartView.vue',
             './src/views/Parts/InventoryView.vue',
             './src/views/NotFound.vue',
           ],
-          'asset-extras': [
+          extras: [
             './src/views/Assets/AssetView.vue',
             './src/views/Assets/AddUntrackedAssetView.vue',
             './src/views/Assets/EditAssetView.vue',
             './src/views/Assets/AssetHistoryView.vue',
-          ],
-          'part-extras': [
             './src/views/Parts/PartHistoryView.vue',
             './src/views/Parts/PartView.vue',
             './src/views/Parts/PartLocationView.vue',
@@ -37,12 +40,20 @@ export default defineConfig({
           ],
           admin: [
             './src/views/Admin/AdminDashboardView.vue',
+            './src/views/Admin/CheckinApprovalView.vue',
+            './src/views/Admin/CheckoutHistoryView.vue',
             './src/views/Admin/AdminPartSearchView.vue',
             './src/views/Admin/AdminUserView.vue',
             './src/views/Admin/CreatePartView.vue',
-            './src/views/Admin/InventoryManagerDashboardView.vue',
             './src/views/Parts/SellOnEbay.vue',
           ],
+          analytics: [
+            './src/views/Admin/UserAnalyticsView.vue',
+            './src/views/Admin/UserCheckinHistoryView.vue',
+            './src/views/Admin/UserCheckoutHistoryView.vue',
+            './src/views/Admin/UserAssetUpdateHistoryView.vue',
+            './src/views/Admin/UserNewAssetsHistoryView.vue',
+          ]
         },
       },
     },

@@ -89,18 +89,11 @@
             eBay
           </RouterLink>
             <RouterLink
-            v-if="clerk||admin"
+            v-if="clerk||admin||lead"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/manage"
           >
             Manage
-          </RouterLink>
-          <RouterLink
-            v-if="admin"
-            class="header-button-colors w-24 text-center leading-10 transition"
-            to="/admin"
-          >
-            Admin
           </RouterLink>
         </div>
       </div>
@@ -223,19 +216,11 @@
         eBay
       </RouterLink>
       <RouterLink
-        v-if="clerk||admin"
+        v-if="clerk||admin||lead"
         class="mobile-nav-button"
         to="/manage"
       >
         Manage
-      </RouterLink>
-      <RouterLink
-        v-if="admin"
-
-        class="mobile-nav-button"
-        to="/admin"
-      >
-        Admin
       </RouterLink>
       <div class="h-full"></div>
     </div>
@@ -264,6 +249,7 @@ let tech = ref(false);
 let clerk = ref(false);
 let ebay = ref(false);
 let admin = ref(false);
+let lead = ref(false)
 
 onMounted(() => {
   // Load theme preference
@@ -274,6 +260,7 @@ onMounted(() => {
     clerk.value = roles.includes("clerk")
     ebay.value = roles.includes("ebay")
     admin.value = roles.includes("admin")
+    lead.value = roles.includes("lead")
   }
   if (
     localStorage.getItem('theme') == 'dark' ||

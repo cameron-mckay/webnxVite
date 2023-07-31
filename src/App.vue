@@ -78,8 +78,16 @@ onBeforeMount(()=>{
       }
       if (
         !(store.state.user.roles?.includes('admin')||
-        store.state.user.roles?.includes('clerk')) &&
+        store.state.user.roles?.includes('clerk')||
+        store.state.user.roles?.includes('lead')) &&
         /\/manage\/*/.test(to.path)
+      ) {
+        redirect()
+      }
+      if (
+        !(store.state.user.roles?.includes('admin')||
+        store.state.user.roles?.includes('clerk')) &&
+        /\/clerk\/*/.test(to.path)
       ) {
         redirect()
       }
