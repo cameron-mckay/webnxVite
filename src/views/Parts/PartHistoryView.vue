@@ -57,18 +57,13 @@ onBeforeMount(() => {
       }
       let tempParts = res as PartRecord[];
       let g = await Promise.all(tempParts.map((record)=>{
-        return new Promise((resolve)=>{
+        return new Promise<string>((resolve)=>{
           let unresolved = false
-          if((
-              record.owner &&
-              !getUserExclude.includes(record.owner) &&
-              userMap.has(record.owner))&&
-            (
-              record.by &&
-              userMap.has(record.by)
-            )
-          ){
-            resolve("")
+          if(record.owner&&record.owner=="")
+            return resolve("")
+          if((record.owner && !getUserExclude.includes(record.owner) && userMap.has(record.owner))&&
+            (record.by &&userMap.has(record.by))){
+            return resolve("")
           }
           // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
           if (
@@ -84,7 +79,7 @@ onBeforeMount(() => {
                 return resolve("");
               }
               userMap.set(record.owner!, res as User);
-              resolve("");
+              return resolve("");
             });
           }
           else {
@@ -103,11 +98,11 @@ onBeforeMount(() => {
                 return resolve("");
               }
               userMap.set(record.by!, res as User);
-              resolve("");
+              return resolve("");
             });
           }
           else if(unresolved) {
-            resolve("")
+            return resolve("")
           }
         })
       }))
