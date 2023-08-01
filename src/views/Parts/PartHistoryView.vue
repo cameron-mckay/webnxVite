@@ -111,8 +111,6 @@ onBeforeMount(() => {
           }
         })
       }))
-      console.log(userMap)
-      console.log(g)
       userMap.forEach((val)=>{
         users.value.push(val)
       })

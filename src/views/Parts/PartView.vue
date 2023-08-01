@@ -29,22 +29,17 @@ interface Props {
 interface GroupedRecords {
   record: PartRecord;
   quantity: number;
-  key: number;
 }
 
 const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 
-let url = import.meta.env.VITE_API_URL;
-
 let part = ref({} as PartSchema);
 let partRecords = ref([] as PartRecord[]);
 let groupedRecords = ref([] as GroupedRecords[]);
-let users = ref([
-  // { _id: 'all', first_name: 'All', last_name: 'Techs' },
-] as User[]);
+let users = ref([] as User[]);
 
-let getUserExclude = ["all", "testing", "la", "ny", "og"]
+const getUserExclude = ["all", "testing", "la", "ny", "og", "hdd"]
 
 onBeforeMount(() => {
   if (router.currentRoute.value.query.nxid) {
@@ -59,11 +54,10 @@ onBeforeMount(() => {
       if (err) {
         errorHandler(err);
       }
-      partRecords.value = res as PartRecord[];
-      partRecords.value = partRecords.value.reverse();
+      let tempGroups = [] as GroupedRecords[]
       for (const record of res as PartRecord[]) {
         // Check if group already exists
-        let existingGroup = groupedRecords.value.find(
+        let existingGroup = tempGroups.find(
           (e) =>
             e.record.nxid == record.nxid &&
             e.record.location == record.location &&
@@ -76,10 +70,9 @@ onBeforeMount(() => {
           continue;
         } else {
           // Create new group
-          groupedRecords.value.push({
+          tempGroups.push({
             record: record,
             quantity: 1,
-            key: groupedRecords.value.length,
           });
         }
         // Check
@@ -98,14 +91,11 @@ onBeforeMount(() => {
         }
       }
       // Sort array by quantity
-      groupedRecords.value.sort((r1, r2) =>
+      tempGroups.sort((r1, r2) =>
         r1.quantity < r2.quantity ? 1 : -1
       );
       // Advanced key switch to fix owners (hacker man)
-      groupedRecords.value.map((group) => {
-        group.key += 1;
-        group.key -= 1;
-      });
+      groupedRecords.value = tempGroups
     });
   }
 });
@@ -144,6 +134,7 @@ function addToCart() {
     errorHandler(`Not enough stock`);
   }
 }
+
 </script>
 <template>
   <div>
@@ -167,7 +158,6 @@ function addToCart() {
       :record="group.record"
       :quantity="group.quantity"
       :view="true"
-      :key="group.key"
       @viewPartAction="viewHistory"
     />
   </div>

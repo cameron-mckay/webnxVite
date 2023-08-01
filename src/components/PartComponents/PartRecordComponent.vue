@@ -16,10 +16,8 @@ let owner = ref({ first_name: '', last_name: '' } as User);
 let date = new Date(Date.parse(record.date_created!));
 
 onMounted(() => {
-  setTimeout(() => {
-    by.value = users.find((e) => e._id === record.by)!;
-    owner.value = users.find((e) => e._id === record.owner)!;
-  }, 500);
+  by.value = users.find((e) => e._id === record.by)!;
+  owner.value = users.find((e) => e._id === record.owner)!;
 });
 </script>
 <template>

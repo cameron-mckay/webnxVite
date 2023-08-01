@@ -40,53 +40,15 @@ let part = ref({
 } as PartSchema);
 let pageTitle = ref('');
 let partRecords = ref([] as PartRecord[]);
-let url = import.meta.env.VITE_API_URL;
-let users = ref([
-  // { _id: 'all', first_name: 'All', last_name: 'Techs' },
-  // { _id: 'testing', first_name: 'Testing', last_name: 'Center' },
-] as User[]);
+let users = ref([] as User[]);
 
-const getUserExclude = ["all", "testing", "la", "ny", "og"]
+const getUserExclude = ["all", "testing", "la", "ny", "og", "hdd"]
 
 onBeforeMount(() => {
   if (router.currentRoute.value.query.nxid) {
     let nxid = router.currentRoute.value.query.nxid as string;
     let query = router.currentRoute.value.query;
 
-    getPartRecords(http, query, async (res, err) => {
-      if (err) {
-        errorHandler(err);
-      }
-      partRecords.value = res as PartRecord[];
-      partRecords.value = partRecords.value.reverse();
-      for (const record of res as PartRecord[]) {
-        // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
-        if (
-          record.owner &&
-          !getUserExclude.includes(record.owner) &&
-          users.value.find((e) => e._id == record.owner) === undefined
-        ) {
-          await getUserByID(http, record.owner, (res, err) => {
-            if (err) {
-              errorHandler(err);
-            }
-            users.value.push(res as User);
-          });
-        }
-        // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
-        if (
-          record.by &&
-          users.value.find((e) => e._id == record.by) === undefined
-        ) {
-          await getUserByID(http, record.by, (res, err) => {
-            if (err) {
-              errorHandler(err);
-            }
-            users.value.push(res as User);
-          });
-        }
-      }
-    });
     pageTitle.value = '';
     if (query.location == 'All Techs') {
       pageTitle.value = pageTitle.value + "All Tech's inventory:";
@@ -116,6 +78,42 @@ onBeforeMount(() => {
         errorHandler(err);
       }
       part.value = res as PartSchema;
+    });
+
+    getPartRecords(http, query, async (res, err) => {
+      if (err) {
+        errorHandler(err);
+      }
+      for (const record of res as PartRecord[]) {
+        // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
+        if (
+          record.owner &&
+          !getUserExclude.includes(record.owner) &&
+          users.value.find((e) => e._id == record.owner) === undefined
+        ) {
+          await getUserByID(http, record.owner, (res, err) => {
+            if (err) {
+              errorHandler(err);
+            }
+            users.value.push(res as User);
+          });
+        }
+        // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
+        if (
+          record.by &&
+          users.value.find((e) => e._id == record.by) === undefined
+        ) {
+          await getUserByID(http, record.by, (res, err) => {
+            if (err) {
+              errorHandler(err);
+            }
+            users.value.push(res as User);
+          });
+        }
+      }
+
+      partRecords.value = res as PartRecord[];
+      partRecords.value = partRecords.value.reverse();
     });
   }
 });
