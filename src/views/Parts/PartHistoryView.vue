@@ -40,7 +40,7 @@ let part = ref({
 let partRecords = ref([] as PartRecord[]);
 let userMap = new Map<string, User>();
 let users = ref([] as User[])
-const getUserExclude = ["all", "testing", "la", "ny", "og"]
+const getUserExclude = ["all", "testing", "la", "ny", "og", "hdd"]
 onBeforeMount(() => {
   if (router.currentRoute.value.query.id) {
     let nxid = router.currentRoute.value.query.nxid as string;
