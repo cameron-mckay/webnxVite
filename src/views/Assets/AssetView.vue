@@ -66,7 +66,7 @@ function adminEdit(){
 
 <template>
   <div class="body">
-    <BackButton @click="router.back()" class="mr-2 mb-2"/>
+    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/assets')" class="mr-2 mb-2"/>
     <p class="my-2 w-full rounded-md bg-red-400 p-2" v-if="asset.migrated">
       This asset was automatically migrated from the old asset tracking system
       and is incomplete. Please edit and update the information if you can.
