@@ -51,7 +51,7 @@ let correction = ref(false)
 let partSearchPopup = ref(false);
 let inventorySearchPopup = ref(false);
 
-let emit = defineEmits(['assetSubmit', 'assetReset', 'plusPart', 'minusPart', 'deletePart']);
+let emit = defineEmits(['assetSubmit', 'assetReset', 'plusPart', 'minusPart', 'deletePart', 'addAll']);
 
 // Emit add part to asset as new record
 function addToAsset(part: PartSchema) {
@@ -69,6 +69,10 @@ function addPartFromInventory(item: LoadedCartItem) {
   emit('plusPart', item, correction.value);
 }
 
+function addAllFromInventory(item: LoadedCartItem) {
+  emit('addAll', item);
+}
+
 function submitForm() {
   if((untracked||correction.value)&&!window.confirm("Are you sure you want to submit?"))
     return
@@ -76,7 +80,7 @@ function submitForm() {
 }
 
 watch(correction, ()=>{
-  if(!correction.value)
+  if(correction.value)
     emit("assetReset")
 })
 
@@ -569,6 +573,7 @@ onMounted(()=>{
         >
           <InventoryPopup
             @addPartAction="addPartFromInventory"
+            @addAll="addAllFromInventory"
             :inventory="inventory"
           />
         </FullScreenPopupComponent>

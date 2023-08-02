@@ -184,6 +184,11 @@ function move(
   }
 }
 
+function addAll(item: LoadedCartItem) {
+  // Use move function for inventory checks
+  move(inventory, partsOnAsset, item.part, item.quantity!, item.serial!);
+}
+
 function deletePart(part: LoadedCartItem) {
   inventory.value.push(JSON.parse(JSON.stringify(part)));
   partsOnAsset.value.splice(partsOnAsset.value.indexOf(part), 1);
@@ -220,6 +225,7 @@ function reset() {
       :isAdmin="(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('admin'))?true:false"
       @assetSubmit="assetSubmit"
       @plusPart="plusPart"
+      @addAll="addAll"
       @minusPart="minusPart"
       @deletePart="deletePart"
       @assetReset="reset"

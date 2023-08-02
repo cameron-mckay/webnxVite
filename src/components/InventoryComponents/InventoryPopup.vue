@@ -19,6 +19,7 @@
         v-for="item in inventory"
         v-bind:key="item.part._id"
         @plus="$emit('addPartAction', item)"
+        @addAll="$emit('addAll', item)"
         :item="item"
       />
     </div>

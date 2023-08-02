@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { LoadedCartItem } from '../../plugins/interfaces';
 import InlinePartSpecComponent from '../PartComponents/InlinePartSpecComponent.vue';
+import PlusButton from '../GenericComponents/PlusButton.vue';
+import DoubleArrowDownButton from '../GenericComponents/DoubleArrowDownButton.vue';
 interface Props {
   item: LoadedCartItem;
 }
@@ -19,18 +21,9 @@ const { item } = defineProps<Props>();
       <p class="break-words" v-else>{{ item.quantity }}</p>
       <div class="flex justify-end">
         <!-- Plus -->
-        <svg
-          class="button-icon hover:button-icon-hover active:button-icon-active"
-          v-on:click="$emit('plus')"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 448 512"
-        >
-          <path
-            fill="currentColor"
-            stroke="currentColor"
-            d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"
-          />
-        </svg>
+        <PlusButton @click="$emit('plus')"/>
+        <div v-if="item.serial" class="button-icon opacity-0"></div>
+        <DoubleArrowDownButton v-else @click="$emit('addAll')"/>
       </div>
     </div>
     <InlinePartSpecComponent
