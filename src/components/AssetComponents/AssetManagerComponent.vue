@@ -80,8 +80,7 @@ function submitForm() {
 }
 
 watch(correction, ()=>{
-  if(correction.value)
-    emit("assetReset")
+  emit("assetReset")
 })
 
 onMounted(()=>{
