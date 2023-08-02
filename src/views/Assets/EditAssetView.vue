@@ -200,7 +200,7 @@ function reset() {
   <div
     class="background-and-border p-4"
   >
-    <BackButton @click="router.back()" class="mr-2 mb-2"/>
+    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/assets')" class="mr-2 mb-2"/>
     <div v-if="loading" class="my-4 flex justify-center">
       <div class="loader text-center"></div>
     </div>
