@@ -41,10 +41,12 @@ let part = ref({
 let pageTitle = ref('');
 let partRecords = ref([] as PartRecord[]);
 let users = ref([] as User[]);
+let loading = ref(false)
 
 const getUserExclude = ["all", "testing", "la", "ny", "og", "hdd"]
 
 onBeforeMount(() => {
+  loading.value = true
   if (router.currentRoute.value.query.nxid) {
     let nxid = router.currentRoute.value.query.nxid as string;
     let query = router.currentRoute.value.query;
@@ -114,6 +116,7 @@ onBeforeMount(() => {
 
       partRecords.value = res as PartRecord[];
       partRecords.value = partRecords.value.reverse();
+      loading.value = false
     });
   }
 });
@@ -142,7 +145,12 @@ function addToCart() {
 }
 </script>
 <template>
-  <div>
+  <div v-if="loading" >
+    <div class="my-4 flex justify-center">
+      <div class="loader text-center"></div>
+    </div>
+  </div>
+  <div v-else>
     <BackButton @click="router.back()" class="mr-2 mb-2"/>
     <GridPartSpecComponent @plus="addToCart" :showPlus="store.state.user.roles?.includes('kiosk')" :part="part" />
     <!-- PART RECORDS GO HERE -->
