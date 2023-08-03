@@ -62,10 +62,6 @@ onBeforeMount(() => {
       let g = await Promise.all(tempParts.map((record)=>{
         return new Promise((resolve)=>{
           let unresolved = false
-          if((record.owner && !getUserExclude.includes(record.owner) && userMap.has(record.owner))&&
-            (record.by &&userMap.has(record.by))){
-            resolve("")
-          }
           // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
           if (
             record.owner &&
@@ -77,33 +73,47 @@ onBeforeMount(() => {
               if (err) {
                 userMap.delete(record.owner!)
                 errorHandler(err);
-                return resolve("");
               }
               userMap.set(record.owner!, res as User);
-              resolve("");
+              if (
+                record.by &&
+                !userMap.has(record.by)
+              ) {
+                userMap.set(record.by, {})
+                getUserByID(http, record.by, (res, err) => {
+                  if (err) {
+                    userMap.delete(record.by!)
+                    errorHandler(err);
+                    return resolve("");
+                  }
+                  userMap.set(record.by!, res as User);
+                  resolve("");
+                });
+              }
+              else {
+                resolve("")
+              }
             });
           }
           else {
-            unresolved = true
-          }
-          // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
-          if (
-            record.by &&
-            !userMap.has(record.by)
-          ) {
-            userMap.set(record.by, {})
-            getUserByID(http, record.by, (res, err) => {
-              if (err) {
-                userMap.delete(record.by!)
-                errorHandler(err);
-                return resolve("");
-              }
-              userMap.set(record.by!, res as User);
-              resolve("");
-            });
-          }
-          else if(unresolved) {
-            resolve("")
+            if (
+              record.by &&
+              !userMap.has(record.by)
+            ) {
+              userMap.set(record.by, {})
+              getUserByID(http, record.by, (res, err) => {
+                if (err) {
+                  userMap.delete(record.by!)
+                  errorHandler(err);
+                  return resolve("");
+                }
+                userMap.set(record.by!, res as User);
+                resolve("");
+              });
+            }
+            else {
+              resolve("")
+            }
           }
         })
       }))
