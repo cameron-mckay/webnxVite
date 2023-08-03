@@ -427,15 +427,14 @@ async function checkCache() {
       page -= 1;
       continue;
     } else {
-      pageCache.set(localPage, []);
-      getPage(localPage, invisibleSearchText)
-        .then((res) => {
-          pageCache.set(localPage, res.parts);
-        })
-        .catch(() => {
-          pageCache.delete(localPage);
-        });
-      page -= 1;
+      try{
+        let p = await getPage(localPage, invisibleSearchText)
+        pageCache.set(localPage, p.parts);
+        page -= 1;
+      }
+      catch(e) {
+        break
+      }
     }
   }
   page = pageNum.value;
@@ -445,15 +444,14 @@ async function checkCache() {
       page++;
       continue;
     } else {
-      pageCache.set(localPage, []);
-      getPage(localPage, invisibleSearchText)
-        .then((res) => {
-          pageCache.set(localPage, res.parts);
-        })
-        .catch(() => {
-          pageCache.delete(localPage);
-        });
-      page++;
+      try{
+        let p = await getPage(localPage, invisibleSearchText)
+        pageCache.set(localPage, p.parts);
+        page++;
+      }
+      catch(e) {
+        break
+      }
     }
   }
 }
