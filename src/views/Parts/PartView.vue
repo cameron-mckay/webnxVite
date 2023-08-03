@@ -51,6 +51,7 @@ onBeforeMount(() => {
         errorHandler(err);
       }
       part.value = res as PartSchema;
+      loading.value = false
     });
     getPartRecordsByID(http, nxid, async (res, err) => {
       if (err) {
@@ -98,7 +99,6 @@ onBeforeMount(() => {
       );
       // Advanced key switch to fix owners (hacker man)
       groupedRecords.value = tempGroups
-      loading.value = false
     });
   }
 });

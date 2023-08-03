@@ -80,6 +80,7 @@ onBeforeMount(() => {
         errorHandler(err);
       }
       part.value = res as PartSchema;
+      loading.value = false
     });
 
     getPartRecords(http, query, async (res, err) => {
@@ -116,7 +117,6 @@ onBeforeMount(() => {
 
       partRecords.value = res as PartRecord[];
       partRecords.value = partRecords.value.reverse();
-      loading.value = false
     });
   }
 });

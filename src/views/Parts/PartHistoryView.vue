@@ -52,6 +52,7 @@ onBeforeMount(() => {
         errorHandler(err);
       }
       part.value = res as PartSchema;
+      loading.value = false
     });
     getPartHistoryByID(http, id, async (res, err) => {
       if (err) {
@@ -112,7 +113,6 @@ onBeforeMount(() => {
       })
       console.log(users.value)
       partRecords.value = tempParts
-      loading.value = false
     });
   }
 });
