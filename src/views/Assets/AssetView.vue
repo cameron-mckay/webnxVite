@@ -44,7 +44,24 @@ onBeforeMount(() => {
         if (err) {
           errorHandler(err);
         }
-        parts.value = res as LoadedCartItem[];
+        let temp = res as LoadedCartItem[]
+        let sortedList = temp.filter((p)=>p.part.type == "Motherboard")
+        sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "CPU"))
+        sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "Heatsink"))
+        sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "Memory"))
+        sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "Storage"))
+        sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "Peripheral Card"))
+        sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "Cable"))
+        sortedList = sortedList.concat(temp.filter((p)=>
+          (p.part.type != "Motherboard"&&
+          p.part.type != "CPU"&&
+          p.part.type != "Heatsink"&&
+          p.part.type != "Memory"&&
+          p.part.type != "Storage"&&
+          p.part.type != "Peripheral Card"&&
+          p.part.type != "Cable")
+        )) 
+        parts.value = sortedList
       });
     });
   }
