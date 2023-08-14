@@ -115,6 +115,14 @@ function minusPart(item: LoadedCartItem) {
   }
 }
 
+function updateQuantity(item: LoadedCartItem, quantity: number, correction: boolean) {
+  item.quantity! += quantity
+  if (item.part.serialized||item.quantity! < 1) {
+    let i = partsOnAsset.value.indexOf(item);
+    partsOnAsset.value.splice(i, 1);
+  }
+}
+
 function deletePart(part: LoadedCartItem) {
   partsOnAsset.value.splice(partsOnAsset.value.indexOf(part), 1);
 }
@@ -140,6 +148,7 @@ function deletePart(part: LoadedCartItem) {
       @plusPart="plusPart"
       @minusPart="minusPart"
       @deletePart="deletePart"
+      @updateQuantity="updateQuantity"
     />
   </div>
 </template>

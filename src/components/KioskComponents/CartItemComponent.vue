@@ -8,7 +8,7 @@ interface Props {
   quantity: number;
 }
 const { part, quantity } = defineProps<Props>();
-const emit = defineEmits(['plus', 'minus', 'delete']);
+const emit = defineEmits(['plus', 'minus', 'delete', 'updateQuantity']);
 
 let item_quantity = ref(quantity);
 
@@ -22,6 +22,12 @@ function plus() {
 function minus() {
   item_quantity.value -= 1;
   emit('minus');
+}
+
+function updateQuantity() {
+  if(part.quantity&&item_quantity.value>part.quantity)
+    item_quantity.value = part.quantity
+  emit("updateQuantity", item_quantity.value, part.nxid!)
 }
 </script>
 
@@ -40,7 +46,19 @@ function minus() {
           }`
         }}
       </p>
-      <p class="break-words">{{ `${item_quantity}/${part.quantity}` }}</p>
+      <div class="flex justify-center">
+        <input
+          class="textbox pl-2 w-16 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-right"
+          required
+          v-model="item_quantity"
+          type="number"
+          min="0"
+          :max="part.quantity"
+          step="1"
+          v-on:focusout="updateQuantity()"
+        />
+        <p class="break-words">{{ ` /${part.quantity}` }}</p>
+      </div>
       <div class="my-auto flex justify-end">
         <!-- Plus -->
         <svg

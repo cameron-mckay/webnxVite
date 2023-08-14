@@ -63,6 +63,11 @@ export function createGlobalStore(app: App): Store<UserState> {
           state.cart.unserialized.set(id, state.cart.unserialized.get(id)! + 1);
         }
       },
+      setQuantity(state: UserState, req: { id: string, quantity: number }) {
+        if(req.quantity<1)
+          return state.cart.unserialized.delete(req.id)
+        state.cart.unserialized.set(req.id, req.quantity);
+      },
       // Remove item of ID from
       removeOne(state: UserState, id: string) {
         if (state.cart.unserialized.has(id)) {

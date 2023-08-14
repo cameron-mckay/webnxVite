@@ -1,14 +1,40 @@
 <script setup lang="ts">
-import { LoadedCartItem } from '../../plugins/interfaces';
+import { AssetPart } from '../../plugins/interfaces';
 import InlinePartSpecComponent from '../PartComponents/InlinePartSpecComponent.vue';
-
+import { ref, watch } from 'vue';
 interface Props {
-  item: LoadedCartItem;
+  item: AssetPart;
   hideButtons?: boolean;
   untracked?: boolean;
 }
 const { item, hideButtons, untracked } = defineProps<Props>();
-const emit = defineEmits(['plus', 'minus', 'delete']);
+const emit = defineEmits(['updateQuantity']);
+let quantityInvisible = item.quantity ? item.quantity : 0
+let quantityVisible = ref(item.quantity ? item.quantity : 0)
+let serial = ref(item.serial?item.serial:"")
+
+function updateQuantity(q: number) {
+  if(item.serial)
+    return emit("updateQuantity", item, -1)
+  if(untracked||item.max_quantity==undefined)
+    return emit("updateQuantity", item, q-quantityInvisible)
+  if(q==item.quantity)
+    return
+  q = q > item.max_quantity ? item.max_quantity : q
+  if(q<1)
+    q = 0
+  emit("updateQuantity", item, q-quantityInvisible)
+}
+watch(()=>item.quantity, ()=>{
+  if(item.quantity) {
+    quantityVisible.value = item.quantity
+    quantityInvisible = item.quantity
+  }
+})
+
+function updateSerial() {
+  item.serial = serial.value
+}
 </script>
 
 <template>
@@ -20,16 +46,29 @@ const emit = defineEmits(['plus', 'minus', 'delete']);
       <p class="break-words">{{ item.part.manufacturer }}</p>
       <p class="break-words">{{ item.part.name }}</p>
       <input
-        class="textbox pl-2"
+        class="textbox pl-2 "
         v-if="untracked && item.part.serialized"
         required
-        v-model="item.serial"
+        v-model="serial"
         type="text"
         placeholder="Serial"
+        v-on:focusout="updateSerial"
       />
       <p class="break-words" v-else-if="item.part.serialized || item.serial">
         {{ item.serial }}
       </p>
+      <div class="flex justify-center" v-else-if="!hideButtons">
+        <input
+          class="textbox pl-2 w-16 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-right"
+          required
+          v-model="quantityVisible"
+          type="number"
+          min="0"
+          step="1"
+          v-on:focusout="updateQuantity(quantityVisible)"
+        />
+        <p class="break-words" v-if="!untracked">/ {{ item.max_quantity }}</p>
+      </div>
       <p class="break-words" v-else>{{ item.quantity }}</p>
       <div v-if="hideButtons != true" class="my-auto flex justify-end">
         <!-- Plus -->
@@ -38,7 +77,7 @@ const emit = defineEmits(['plus', 'minus', 'delete']);
           viewBox="0 0 448 512"
           class="button-icon hover:button-icon-hover active:button-icon-active"
           v-if="!(item.part.serialized || item.serial)"
-          v-on:click="$emit('plus')"
+          v-on:click="updateQuantity(quantityVisible+1)"
         >
           <path
             stroke="currentColor"
@@ -53,7 +92,7 @@ const emit = defineEmits(['plus', 'minus', 'delete']);
           viewBox="0 0 448 512"
           v-if="!(item.part.serialized || item.serial)"
           class="button-icon hover:button-icon-hover active:button-icon-active no-margin-on-mobile"
-          v-on:click="$emit('minus')"
+          v-on:click="updateQuantity(quantityVisible-1)"
         >
           <path
             stroke="currentColor"
@@ -67,7 +106,7 @@ const emit = defineEmits(['plus', 'minus', 'delete']);
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 384 512"
           class="button-icon hover:button-icon-hover active:button-icon-active"
-          v-on:click="$emit('delete')"
+          v-on:click="updateQuantity(0)"
         >
           <path
             fill="currentColor"

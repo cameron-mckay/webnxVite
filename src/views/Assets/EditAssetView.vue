@@ -17,7 +17,9 @@ import type {
   LoadedCartItem,
   PartSchema,
   UserState,
+  AssetPart
 } from '../../plugins/interfaces';
+
 
 interface Props {
   http: AxiosInstance;
@@ -31,11 +33,12 @@ const { http, store, router, errorHandler, displayMessage } =
 
 let oldAsset = ref({} as AssetSchema);
 let assetCopy = {} as AssetSchema;
-let partsOnAsset = ref([] as LoadedCartItem[]);
+let partsOnAsset = ref([] as AssetPart[]);
 let partsOnAssetCopy = [] as AssetSchema[];
-let inventory = ref([] as LoadedCartItem[]);
-let inventoryCopy = [] as LoadedCartItem[];
+let inventory = ref([] as AssetPart[]);
+let inventoryCopy = [] as AssetPart[];
 let loading = ref(false)
+let maxQuantityMap = new Map<string, number>()
 onBeforeMount(() => {
   if (router.currentRoute.value.query.asset_tag) {
     loading.value = true
@@ -52,14 +55,14 @@ onBeforeMount(() => {
       // Save a copy for reset value
       assetCopy = JSON.parse(JSON.stringify(oldAsset.value));
       // Get parts from api
-      getPartsOnAsset(http, oldAsset.value.asset_tag!, (res, err) => {
+      getPartsOnAsset(http, oldAsset.value.asset_tag!, (res1, err) => {
         if (err) {
           errorHandler(err);
         }
         // Set reactive array to API response
-        partsOnAsset.value = res as LoadedCartItem[];
+        partsOnAsset.value = res1 as LoadedCartItem[];
         // Save a copy for reset value
-        partsOnAssetCopy = JSON.parse(JSON.stringify(partsOnAsset.value));
+        partsOnAssetCopy = JSON.parse(JSON.stringify(res1 as LoadedCartItem[]));
 
         getUserInventory(http, (res, err) => {
           if (err) {
@@ -67,6 +70,28 @@ onBeforeMount(() => {
           }
           inventory.value = res as LoadedCartItem[];
           inventoryCopy = JSON.parse(JSON.stringify(inventory.value));
+          // Set reactive array to API response
+          partsOnAsset.value = res1 as LoadedCartItem[];
+          // Save a copy for reset value
+          partsOnAssetCopy = JSON.parse(JSON.stringify(res1 as LoadedCartItem[]));
+
+          inventoryCopy.filter((p)=>p.quantity).map((p)=>{
+            if(maxQuantityMap.has(p.part.nxid!))
+              return maxQuantityMap.set(p.part.nxid!, maxQuantityMap.get(p.part.nxid!)!+p.quantity!)
+            maxQuantityMap.set(p.part.nxid!, p.quantity!)
+          })
+          partsOnAssetCopy.filter((p)=>p.quantity).map((p)=>{
+            if(maxQuantityMap.has(p.part.nxid!))
+              return maxQuantityMap.set(p.part.nxid!, maxQuantityMap.get(p.part.nxid!)!+p.quantity!)
+            maxQuantityMap.set(p.part.nxid!, p.quantity!)
+          })
+          maxQuantityMap.forEach((v, k)=>{
+            console.log(k+": "+v)
+          })
+          partsOnAsset.value = (res1 as AssetPart[]).map((p)=>{
+            p.max_quantity = maxQuantityMap.has(p.part.nxid!) ? maxQuantityMap.get(p.part.nxid!) : 1
+            return p
+          })
           loading.value = false
         });
       });
@@ -92,7 +117,7 @@ function assetSubmit(correction: boolean) {
   });
 }
 
-function plusPart(item: LoadedCartItem, correction: boolean) {
+function plusPart(item: AssetPart, correction: boolean) {
   // Check asset edit mode
   if (assetCopy.migrated||correction) {
     // If serialized part
@@ -106,6 +131,7 @@ function plusPart(item: LoadedCartItem, correction: boolean) {
     // If part does not exist
     if (i < 0) {
       // Set quantity
+      item.max_quantity = item.quantity
       item.quantity = 1;
       // Push to asset and return
       partsOnAsset.value.push(item);
@@ -142,9 +168,40 @@ function minusPart(item: LoadedCartItem, correction: boolean) {
   move(partsOnAsset, inventory, item.part, 1, item.serial!);
 }
 
+function updateQuantity(item: AssetPart, quantity: number, correction: boolean) {
+  if (assetCopy.migrated||correction) {
+    // If part is serialized
+    if (item.part.serialized) {
+      return;
+    }
+    // Find index of part
+    let i = partsOnAsset.value.findIndex((e) => e.part.nxid == item.part.nxid);
+    // If part found, decrement
+    if (i < 0) {
+      // Set quantity
+      item.max_quantity = item.quantity
+      item.quantity = quantity;
+      // Push to asset and return
+      partsOnAsset.value.push(item);
+      return;
+    }
+    // Increment quantity
+    partsOnAsset.value[i].quantity! += quantity;
+    if (partsOnAsset.value[i].quantity! < 1)
+      partsOnAsset.value.splice(i, 1);
+    return;
+  }
+  console.log(quantity)
+  // move with inventory checks
+  if(quantity<0)
+    move(partsOnAsset, inventory, item.part, quantity*-1, item.serial!);
+  else 
+    move(inventory, partsOnAsset, item.part, quantity, item.serial!);
+}
+
 function move(
-  array1: Ref<LoadedCartItem[]>,
-  array2: Ref<LoadedCartItem[]>,
+  array1: Ref<AssetPart[]>,
+  array2: Ref<AssetPart[]>,
   part: PartSchema,
   quantity: number,
   serial: string
@@ -178,9 +235,11 @@ function move(
     // Find in array 2
     let item2 = array2.value.find((e) => e.part.nxid == part.nxid);
     // If it doesn't exist, push a new entry
-    if (!item2) array2.value.push({ part, quantity });
+    if (!item2)
+      array2.value.push({ part, quantity, max_quantity: maxQuantityMap.get(part.nxid!)! });
     // Otherwise increment existing entry
-    else item2.quantity! += quantity;
+    else
+      item2.quantity! += quantity;  
   }
 }
 
@@ -229,6 +288,7 @@ function reset() {
       @minusPart="minusPart"
       @deletePart="deletePart"
       @assetReset="reset"
+      @updateQuantity="updateQuantity"
     />
   </div>
 </template>

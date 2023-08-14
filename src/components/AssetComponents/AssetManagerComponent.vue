@@ -5,6 +5,7 @@ import { Router } from 'vue-router';
 import {
 AssetSchema,
 LoadedCartItem,
+AssetPart,
 PartSchema,
 } from '../../plugins/interfaces';
 import AssetCartItemComponent from '../AssetComponents/AssetCartItemComponent.vue';
@@ -18,14 +19,14 @@ interface Props {
   submitText: string;
   strict: boolean;
   oldAsset: AssetSchema;
-  parts: LoadedCartItem[];
+  parts: AssetPart[];
   errorHandler?: (err: Error | AxiosError | string) => void;
   displayMessage?: (message: string) => void;
   http?: AxiosInstance;
   router?: Router;
   partSearch?: boolean;
   inventorySearch?: boolean;
-  inventory?: LoadedCartItem[];
+  inventory?: AssetPart[];
   untracked?: boolean;
   isAdmin?: boolean;
 }
@@ -51,7 +52,7 @@ let correction = ref(false)
 let partSearchPopup = ref(false);
 let inventorySearchPopup = ref(false);
 
-let emit = defineEmits(['assetSubmit', 'assetReset', 'plusPart', 'minusPart', 'deletePart', 'addAll']);
+let emit = defineEmits(['assetSubmit', 'assetReset', 'plusPart', 'minusPart', 'deletePart', 'addAll', 'updateQuantity']);
 
 // Emit add part to asset as new record
 function addToAsset(part: PartSchema) {
@@ -77,6 +78,11 @@ function submitForm() {
   if((untracked||correction.value)&&!window.confirm("Are you sure you want to submit?"))
     return
   emit("assetSubmit", correction.value)
+}
+
+function updateQuantity(item: AssetPart, quantity: number) {
+  console.log(item)
+  emit("updateQuantity", item, quantity, correction.value)
 }
 
 watch(correction, ()=>{
@@ -595,11 +601,11 @@ onMounted(()=>{
         <AssetCartItemComponent
           class="col-span-2"
           v-for="part in parts"
+          :key="part.part.nxid!+part.serial"
           :item="part"
           :untracked="untracked || oldAsset.migrated"
-          @plus="$emit('plusPart', part, correction)"
-          @minus="$emit('minusPart', part, correction)"
           @delete="$emit('deletePart', part, correction)"
+          @updateQuantity="updateQuantity"
         />
       </div>
       <input

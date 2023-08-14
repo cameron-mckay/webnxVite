@@ -211,6 +211,24 @@ function localCheckout() {
     loadCart();
   });
 }
+
+function updateQuantity(q: number, id: string) {
+  getPartByID(
+    http,
+    id,
+    store.state.user.building!,
+    (data, err) => {
+      let part = data as PartSchema;
+      if (part.quantity! >= q) {
+        store.commit('setQuantity', {id, quantity: q});
+        if(q<1)
+          loadCart();
+      } else {
+        errorHandler('Not enough stock');
+      }
+    }
+  , store.state.user.first_name + " " + store.state.user.last_name);
+}
 </script>
 
 <template>
@@ -259,6 +277,7 @@ function localCheckout() {
         @plus="addOne(item.part.nxid!)"
         @minus="subOne(item.part.nxid!)"
         @delete="deletePart(item.part.nxid!)"
+        @updateQuantity="updateQuantity"
       />
       <div class="flex justify-center">
         <input type="submit" class="submit mx-1" value="Check Out" />

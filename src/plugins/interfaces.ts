@@ -211,3 +211,7 @@ export interface CheckInEvent {
 export interface CheckOutEvent extends CheckInRequest {
   location: string
 }
+
+export interface AssetPart extends LoadedCartItem {
+  max_quantity?: number
+}
