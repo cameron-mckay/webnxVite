@@ -27,6 +27,7 @@ const { asset, edit, add, view } = defineProps<Props>();
         <!-- Pencil -->
         <RouterLink :to="'/assets/edit?asset_tag='+asset.asset_tag"
             class="button-icon hover:button-icon-hover active:button-icon-active"
+            title="Edit asset"
         >
           <svg
             v-if="edit === true"
@@ -57,6 +58,7 @@ const { asset, edit, add, view } = defineProps<Props>();
         </svg>
         <!-- Eyeball -->
         <RouterLink :to="'/assets/view?asset_tag='+asset.asset_tag"
+            title="View Asset"
             class="button-icon hover:button-icon-hover active:button-icon-active"
         >
           <svg

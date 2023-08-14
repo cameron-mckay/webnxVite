@@ -24,7 +24,7 @@
         <option :value="3" selected>3</option>
         <option :value="1">1</option>
       </select>
-      <QRCodeButton @click="toggleQR"/>
+      <QRCodeButton @click="toggleQR" />
       <SlidersButton @click="toggleAdvanced"/>
       <input class="search-button mr-0" type="submit" value="Search" />
       <AdvancedSearchComponent

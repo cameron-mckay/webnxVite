@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import ButtonComponent from './ButtonComponent.vue'
+interface Props {
+  title?: string
+}
+let { title } = defineProps<Props>()
 </script>
 <template>
-  <ButtonComponent>
+  <ButtonComponent :title="title">
     <path
       fill="currentColor"
       stroke="currentColor"

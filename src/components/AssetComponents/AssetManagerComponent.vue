@@ -535,8 +535,7 @@ onMounted(()=>{
       <div v-if="strict" class="col-span-2 my-4">
         <h1 class="inline-block text-4xl leading-8 md:leading-10">Notes:</h1>
         <textarea
-          class="textbox m-1"
-          rows="4"
+          class="textbox m-1 h-40"
           v-model="oldAsset.notes"
           placeholder="Drag to resize"
         />

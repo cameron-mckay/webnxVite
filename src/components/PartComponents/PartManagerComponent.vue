@@ -592,6 +592,15 @@ async function getNXID() {
         </select>
 
       </div>
+
+      <div v-if="strict" class="col-span-2 my-4">
+        <h1 class="inline-block text-4xl leading-8 md:leading-10">Notes:</h1>
+        <textarea
+          class="textbox m-1 h-40"
+          v-model="part.notes"
+          placeholder="Drag to resize"
+        />
+      </div>
       <input
         class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
         type="reset"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PartSchema } from '../../plugins/interfaces';
 import InlinePartSpecComponent from './InlinePartSpecComponent.vue';
-
+import InfoIcon from '../GenericComponents/InfoIcon.vue';
 interface Props {
   part: PartSchema;
   edit?: boolean;
@@ -27,7 +27,13 @@ const { part } = defineProps<Props>();
           }`
         }}
       </p>
-      <p>{{ part.quantity + '/' + part.total_quantity }}</p>
+      <div class="flex justify-between">
+        <InfoIcon class="opacity-0 pointer-events-none" v-if="part.notes" :title="part.notes"/>
+        <p class="mx-auto">{{ part.quantity + '/' + part.total_quantity }}</p>
+        <InfoIcon v-if="part.notes" :title="part.notes"
+            v-on:click="$emit('viewPartAction')"
+        />
+      </div>
       <div class="my-auto flex justify-end">
         <!-- Pencil -->
         <svg
@@ -59,13 +65,14 @@ const { part } = defineProps<Props>();
           />
         </svg>
         <!-- Eyeball -->
-        <RouterLink :to="'/parts/view?nxid='+part.nxid">
+        <RouterLink :to="'/parts/view?nxid='+part.nxid" title="View part"
+            class="button-icon hover:button-icon-hover active:button-icon-active hover:button-icon-hover active:button-icon-active"
+            :class="{ hideViewOnMobile: edit }"
+        >
           <svg
             v-if="view === true"
-            class="button-icon hover:button-icon-hover active:button-icon-active hover:button-icon-hover active:button-icon-active"
             v-on:click="$emit('viewPartAction')"
             v-on:auxclick="console.log('Test2')"
-            :class="{ hideViewOnMobile: edit }"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 576 512"
           >
