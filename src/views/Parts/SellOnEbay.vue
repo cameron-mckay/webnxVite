@@ -34,7 +34,7 @@ let items = ref([] as LoadedCartItem[]);
 let transferList = ref([] as LoadedCartItem[]);
 let orderID = ref('');
 let currentUser = ref({} as User);
-
+let maxQuantities = new Map<string, number>()
 let users = ref([] as User[]);
 let processingMove = false;
 let loading = ref(false);
@@ -42,10 +42,18 @@ let loading = ref(false);
 async function loadInventory() {
   loading.value = true;
   getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
-    loading.value = false;
-    if (err) return errorHandler(err);
+    if (err) {
+      loading.value = false;
+      return errorHandler(err);
+    }
     items.value = data as LoadedCartItem[];
+    maxQuantities = new Map<string, number>()
+    for(let item of items.value) {
+      if(item.quantity)
+        maxQuantities.set(item.part.nxid!, item.quantity)
+    }
     transferList.value = [] as LoadedCartItem[];
+    loading.value = false;
   });
 }
 
@@ -82,7 +90,14 @@ function firstLoad() {
   }
 }
 
-function moveFromInventory(part: PartSchema, quantity: number, serial: string) {
+function moveFromInventory(part: PartSchema, difference: number, serial: string) {
+  if(difference<0)
+    moveEbay(part, difference*-1, serial);
+  if(difference>0)
+    moveBack(transferList, items, part, difference, serial);
+}
+
+function moveEbay(part: PartSchema, quantity: number, serial: string) {
   let array1 = items;
   let array2 = transferList;
 
@@ -123,13 +138,16 @@ function moveFromInventory(part: PartSchema, quantity: number, serial: string) {
 
 function moveFromTransferList(
   part: PartSchema,
-  quantity: number,
+  difference: number,
   serial: string
 ) {
-  move(transferList, items, part, quantity, serial);
+  if(difference<0)
+    moveBack(transferList, items, part, difference*-1, serial);
+  if(difference>0)
+    moveEbay(part, difference, serial);
 }
 
-function move(
+function moveBack(
   array1: Ref<LoadedCartItem[]>,
   array2: Ref<LoadedCartItem[]>,
   part: PartSchema,
@@ -247,9 +265,7 @@ function submit() {
             <InventoryPartComponent
               :isCurrentUser="false"
               v-for="item in items"
-              :part="item.part"
-              :quantity="item.quantity"
-              :serial="item.serial"
+              :item="item"
               @movePart="moveFromInventory"
             />
           </div>
@@ -285,10 +301,7 @@ function submit() {
           <InventoryPartComponent
             :isCurrentUser="true"
             v-for="item in transferList"
-            :part="item.part"
             :untracked="!item.part.serialized"
-            :quantity="item.quantity"
-            :serial="item.serial"
             :item="item"
             @movePart="moveFromTransferList"
           />

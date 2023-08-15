@@ -38,16 +38,25 @@ let transferUser = ref({} as User);
 let users = ref([] as User[]);
 let processingMove = false;
 let loading = ref(false);
+let maxQuantities = new Map<string, number>()
 
 let canBuildingTransfer = ref(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('clerk'));
 
-async function loadInventory() {
+function loadInventory() {
   loading.value = true;
   getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
-    loading.value = false;
-    if (err) return errorHandler(err);
+    if (err) {
+      loading.value = false;
+      return errorHandler(err);
+    }
     items.value = data as LoadedCartItem[];
+    maxQuantities = new Map<string, number>()
+    for(let item of items.value) {
+      if(item.quantity)
+        maxQuantities.set(item.part.nxid!, item.quantity)
+    }
     transferList.value = [] as LoadedCartItem[];
+    loading.value = false;
   });
 }
 
@@ -82,20 +91,27 @@ function firstLoad() {
       );
     });
   }
-
   canBuildingTransfer = ref(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('clerk'));
 }
 
-function moveFromInventory(part: PartSchema, quantity: number, serial: string) {
-  move(items, transferList, part, quantity, serial);
+function moveFromInventory(part: PartSchema, difference: number, serial: string) {
+  console.log("TEST")
+  console.log(difference)
+  if(difference<0)
+    move(items, transferList, part, difference*-1, serial);
+  if(difference>0)
+    move(transferList, items, part, difference, serial);
 }
 
 function moveFromTransferList(
   part: PartSchema,
-  quantity: number,
+  difference: number,
   serial: string
 ) {
-  move(transferList, items, part, quantity, serial);
+  if(difference<0)
+    move(transferList, items, part, difference*-1, serial);
+  if(difference>0)
+    move(items, transferList, part, difference, serial);
 }
 
 function move(
@@ -103,12 +119,14 @@ function move(
   array2: Ref<LoadedCartItem[]>,
   part: PartSchema,
   quantity: number,
-  serial: string
+  serial: string | undefined
 ) {
+  console.log("MOVE")
   // Create var for item to move
   let item1 = {} as LoadedCartItem | undefined;
   // If item is serialized
   if (serial != undefined) {
+    console.log('serial')
     // Find existing item
     item1 = array1.value.find((e) => e.serial == serial);
     // Return if not found
@@ -124,6 +142,7 @@ function move(
     item1 = array1.value.find((e) => e.part.nxid == part.nxid);
     // Return if not found
     if (!item1 || !quantity) {
+      console.log('err')
       return;
     }
     // subtract quantity
@@ -297,6 +316,7 @@ watch(currentUser, () => {
               :part="item.part"
               :quantity="item.quantity"
               :serial="item.serial"
+              :item="item"
               @movePart="moveFromInventory"
             />
           </div>
@@ -466,9 +486,11 @@ watch(currentUser, () => {
           <InventoryPartComponent
             :isCurrentUser="true"
             v-for="item in transferList"
+            :item="item"
             :part="item.part"
             :quantity="item.quantity"
             :serial="item.serial"
+            :maxQuantity="maxQuantities.has(item.part.nxid!)?maxQuantities.get(item.part.nxid!):undefined"
             @movePart="moveFromTransferList"
           />
           <div class="flex justify-center">

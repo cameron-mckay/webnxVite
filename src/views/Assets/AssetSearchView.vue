@@ -416,7 +416,7 @@ onMounted(()=>{
       v-if="totalPages > 1 && !loading"
       class="float-right flex select-none"
     >
-      <p class="my-auto mr-3 inline-block leading-6">{{ `Page: ${pageNum}` }}</p>
+      <p class="my-auto inline-block leading-6 mr-auto">{{ `Page: ${pageNum}` }}</p>
       <LeftCaretButton 
         v-on:click="prevPage"
         v-if="pageNum > 1"

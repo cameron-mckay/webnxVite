@@ -36,6 +36,7 @@ let currentUser = ref({} as User);
 let inventory = ref([] as LoadedCartItem[]);
 let checkInList = ref([] as LoadedCartItem[]);
 let loading = ref(false);
+let maxQuantities = new Map<string, number>()
 
 onBeforeMount(() => {
   loadUsers();
@@ -54,10 +55,18 @@ function loadUsers() {
 async function loadInventory() {
   loading.value = true;
   getUserInventoryByID(http, currentUser.value._id!, (data, err) => {
-    loading.value = false;
-    if (err) return errorHandler(err);
+    if (err) {
+      loading.value = false;
+      return errorHandler(err);
+    }
     inventory.value = data as LoadedCartItem[];
+    maxQuantities = new Map<string, number>()
+    for(let item of inventory.value) {
+      if(item.quantity)
+        maxQuantities.set(item.part.nxid!, item.quantity)
+    }
     checkInList.value = [] as LoadedCartItem[];
+    loading.value = false;
   });
 }
 
@@ -77,12 +86,18 @@ function localCheckin() {
   });
 }
 
-function moveToInventory(part: PartSchema, quantity: number, serial: string) {
-  move(checkInList, inventory, part, quantity, serial);
+function moveToInventory(part: PartSchema, difference: number, serial: string) {
+  if(difference<0)
+    move(checkInList, inventory, part, difference*-1, serial);
+  if(difference>0)
+    move(inventory, checkInList, part, difference, serial);
 }
 
-function moveToCheckin(part: PartSchema, quantity: number, serial: string) {
-  move(inventory, checkInList, part, quantity, serial);
+function moveToCheckin(part: PartSchema, difference: number, serial: string) {
+  if(difference<0)
+    move(inventory, checkInList, part, difference*-1, serial);
+  if(difference>0)
+    move(checkInList, inventory, part, difference, serial);
 }
 
 function move(
@@ -167,9 +182,7 @@ watch(currentUser, () => {
           <InventoryPartComponent
             :isCurrentUser="false"
             v-for="item in inventory"
-            :part="item.part"
-            :serial="item.serial"
-            :quantity="item.quantity"
+            :item="item"
             @movePart="moveToCheckin"
           />
         </div>
@@ -197,10 +210,9 @@ watch(currentUser, () => {
         <InventoryPartComponent
           :isCurrentUser="true"
           v-for="item in checkInList"
-          :part="item.part"
-          :serial="item.serial"
-          :quantity="item.quantity"
+          :item="item"
           @movePart="moveToInventory"
+          :maxQuantity="maxQuantities.has(item.part.nxid!)?maxQuantities.get(item.part.nxid!):undefined"
         />
         <div class="flex justify-center">
           <input type="submit" class="submit mx-1" value="Check In" />

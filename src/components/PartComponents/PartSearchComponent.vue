@@ -24,8 +24,12 @@
         <option :value="3" selected>3</option>
         <option :value="1">1</option>
       </select>
-      <QRCodeButton @click="toggleQR" />
-      <SlidersButton @click="toggleAdvanced"/>
+      <QRCodeButton @click="toggleQR" 
+        :title="'Open QR scanner'"
+      />
+      <SlidersButton @click="toggleAdvanced"
+        :title="'Advanced search'"
+      />
       <input class="search-button mr-0" type="submit" value="Search" />
       <AdvancedSearchComponent
         :http="http"
@@ -44,7 +48,7 @@
     </div>
     <div v-else-if="parts.length != 0">
       <div
-        class="relative grid grid-cols-4 py-1 text-center font-bold leading-8 transition md:grid-cols-6 md:p-2 md:leading-10"
+        class="relative grid grid-cols-4 py-1 text-center font-bold leading-8 transition md:grid-cols-6 md:py-2 md:leading-10"
       >
         <p class="hidden md:block">NXID</p>
         <p>Manufacturer</p>
@@ -60,7 +64,7 @@
             v-if="totalPages > 1 && !loading"
             class="float-right flex select-none"
           >
-            <p class="my-auto mr-3 inline-block leading-6">{{ `Page: ${pageNum}` }}</p>
+            <p class="my-auto inline-block leading-6 mr-auto">{{ `Page: ${pageNum}` }}</p>
             <LeftCaretButton 
               v-on:click="prevPage"
               v-if="pageNum > 1"

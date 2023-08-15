@@ -1,16 +1,34 @@
 <script setup lang="ts">
 import { LoadedCartItem, PartSchema } from '../../plugins/interfaces';
 import InlinePartSpecComponent from '../PartComponents/InlinePartSpecComponent.vue';
-
+import { ref, watch } from 'vue';
 interface Props {
-  part: PartSchema;
-  quantity?: number;
   isCurrentUser: boolean;
-  serial?: string;
-  untracked?: boolean;
-  item?: LoadedCartItem;
+  item: LoadedCartItem;
+  maxQuantity?: number;
+  untracked?: boolean
 }
-const { part, quantity, serial, isCurrentUser, item } = defineProps<Props>();
+const { maxQuantity, isCurrentUser, item, untracked } = defineProps<Props>();
+let quantityVisible = ref(item.quantity)
+let emit = defineEmits(['movePart'])
+let serial = ref(item.serial?item.serial:"")
+
+watch(()=>item.quantity, ()=>{
+  if(item.quantity) {
+    quantityVisible.value = item.quantity
+  }
+})
+
+function updateQuantity() {
+  if(maxQuantity&&quantityVisible.value!>maxQuantity)
+    quantityVisible.value = maxQuantity
+  if(quantityVisible.value!<0)
+    quantityVisible.value = 0
+  emit('movePart', item.part, quantityVisible.value!-item.quantity!)
+}
+function updateSerial() {
+  item.serial = serial.value
+}
 </script>
 
 <template>
@@ -18,38 +36,48 @@ const { part, quantity, serial, isCurrentUser, item } = defineProps<Props>();
     <div
       class="group-hover:bab-hover background-and-border grid grid-cols-4 p-1 text-center leading-8 md:grid-cols-6 md:p-2 md:leading-10"
     >
-      <p class="hidden md:block">{{ part.nxid }}</p>
-      <p class="break-words">{{ part.manufacturer }}</p>
-      <p class="break-words">{{ part.name }}</p>
+      <p class="hidden md:block">{{ item.part.nxid }}</p>
+      <p class="break-words">{{ item.part.manufacturer }}</p>
+      <p class="break-words">{{ item.part.name }}</p>
       <p class="hidden break-words md:block">
         {{
-          `${part.rack_num ? part.rack_num : ''}${
-            part.shelf_location ? part.shelf_location : ''
+          `${item.part.rack_num ? item.part.rack_num : ''}${
+            item.part.shelf_location ? item.part.shelf_location : ''
           }`
         }}
       </p>
-      <!-- <p class="break-words" v-if="serial">{{ serial }}</p>
-      <p class="break-words" v-else>{{ quantity }}</p> -->
-
       <input
-        class="textbox pl-2"
+        class="textbox pl-2 "
         v-if="untracked"
         required
-        v-model="item!.serial"
+        v-model="serial"
         type="text"
         placeholder="Serial"
+        v-on:focusout="updateSerial"
       />
-      <p class="break-words" v-else-if="part.serialized">
-        {{ serial }}
+      <p class="break-words" v-else-if="item.part.serialized&&item.serial">
+        {{ item.serial }}
       </p>
-      <p class="break-words" v-else>{{ quantity }}</p>
+      <p v-else-if="!isCurrentUser" class="break-words">{{ item.quantity }}</p>
+      <div v-else class="flex justify-center">
+        <input
+          class="textbox pl-2 w-16 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-right"
+          required
+          v-model="quantityVisible"
+          type="number"
+          min="0"
+          step="1"
+          v-on:focusout="updateQuantity"
+        />
+        <p class="break-words">/ {{ maxQuantity }}</p>
+      </div>
 
       <div v-if="isCurrentUser" class="my-auto flex justify-end">
         <!-- Single arrow up -->
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 384 512"
-          v-on:click="$emit('movePart', part, 1, serial)"
+          v-on:click="$emit('movePart', item.part, -1, item.serial)"
           class="button-icon hover:button-icon-hover active:button-icon-active"
         >
           <path
@@ -63,8 +91,8 @@ const { part, quantity, serial, isCurrentUser, item } = defineProps<Props>();
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 384 512"
           class="button-icon hover:button-icon-hover active:button-icon-active"
-          v-if="quantity && quantity > 1"
-          v-on:click="$emit('movePart', part, quantity ? quantity : 1, serial)"
+          v-if="item.quantity && item.quantity > 1"
+          v-on:click="$emit('movePart', item.part, item.quantity ? item.quantity*-1 : -1, item.serial)"
         >
           <path
             fill="currentColor"
@@ -80,7 +108,7 @@ const { part, quantity, serial, isCurrentUser, item } = defineProps<Props>();
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 384 512"
           class="button-icon hover:button-icon-hover active:button-icon-active"
-          v-on:click="$emit('movePart', part, 1, serial)"
+          v-on:click="$emit('movePart', item.part, -1, item.serial)"
         >
           <path
             fill="currentColor"
@@ -93,8 +121,8 @@ const { part, quantity, serial, isCurrentUser, item } = defineProps<Props>();
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 384 512"
           class="button-icon hover:button-icon-hover active:button-icon-active"
-          v-if="quantity && quantity > 1"
-          v-on:click="$emit('movePart', part, quantity ? quantity : 1, serial)"
+          v-if="item.quantity && item.quantity > 1"
+          v-on:click="$emit('movePart', item.part, item.quantity ? item.quantity * -1 : -1, item.serial)"
         >
           <path
             fill="currentColor"
@@ -107,7 +135,7 @@ const { part, quantity, serial, isCurrentUser, item } = defineProps<Props>();
     </div>
     <InlinePartSpecComponent
       class="group-hover:bab-drop-hover bab-drop relative"
-      :part="part"
+      :part="item.part"
     />
   </div>
 </template>
