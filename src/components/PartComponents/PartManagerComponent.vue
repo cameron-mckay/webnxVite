@@ -517,6 +517,16 @@ async function getNXID() {
           <option>SFP</option>
           <option>QSFP</option>
         </select>
+        <label>Consumable:</label>
+        <select
+          :required="strict"
+          v-model="part.consumable"
+          class="textbox m-1"
+        >
+          <option disabled value="">Pick one</option>
+          <option :value="true">Yes</option>
+          <option :value="false">No</option>
+        </select>
       </div>
       <div v-if="part.type == 'Cable'" class="col-span-2 grid grid-cols-2">
         <label>Cable end 1:</label>
