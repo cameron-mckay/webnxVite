@@ -447,12 +447,14 @@ async function checkCache() {
       page -= 1;
       continue;
     } else {
+      pageCache.set(localPage, [])
       try{
         let p = await getPage(localPage, invisibleSearchText)
         pageCache.set(localPage, p.parts);
         page -= 1;
       }
       catch(e) {
+        pageCache.delete(localPage)
         break
       }
     }
@@ -464,12 +466,14 @@ async function checkCache() {
       page++;
       continue;
     } else {
+      pageCache.set(localPage, [])
       try{
         let p = await getPage(localPage, invisibleSearchText)
         pageCache.set(localPage, p.parts);
         page++;
       }
       catch(e) {
+        pageCache.delete(localPage)
         break
       }
     }
