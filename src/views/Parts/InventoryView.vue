@@ -95,8 +95,6 @@ function firstLoad() {
 }
 
 function moveFromInventory(part: PartSchema, difference: number, serial: string) {
-  console.log("TEST")
-  console.log(difference)
   if(difference<0)
     move(items, transferList, part, difference*-1, serial);
   if(difference>0)

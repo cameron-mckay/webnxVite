@@ -150,7 +150,7 @@ function addToCart() {
     <GridPartSpecComponent @plus="addToCart" :showPlus="store.state.user.roles?.includes('kiosk')" :part="part" />
     <!-- PART RECORDS GO HERE -->
     <div
-      v-if="partRecords.length > 0"
+      v-if="groupedRecords.length > 0"
       class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
     >
       <p>Building</p>
