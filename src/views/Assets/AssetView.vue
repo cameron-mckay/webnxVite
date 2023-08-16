@@ -45,6 +45,7 @@ onBeforeMount(() => {
           errorHandler(err);
         }
         let temp = res as LoadedCartItem[]
+        // Create sorted list using array filters
         let sortedList = temp.filter((p)=>p.part.type == "Motherboard")
         sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "CPU"))
         sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "Heatsink"))
@@ -52,6 +53,7 @@ onBeforeMount(() => {
         sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "Storage"))
         sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "Peripheral Card"))
         sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "Cable"))
+        // Catch all
         sortedList = sortedList.concat(temp.filter((p)=>
           (p.part.type != "Motherboard"&&
           p.part.type != "CPU"&&

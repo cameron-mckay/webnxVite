@@ -55,28 +55,23 @@
         <p>Name</p>
         <p class="hidden md:block">Location</p>
         <p>Quantity</p>
+        <!-- Left Caret -->
         <div
-          v-if="totalPages > 1"
-          class="float-right flex select-none justify-between"
+          v-if="totalPages > 1 && !loading"
+          class="float-right flex select-none"
         >
-          <!-- Left Caret -->
-          <div
-            v-if="totalPages > 1 && !loading"
-            class="float-right flex select-none"
-          >
-            <p class="my-auto inline-block leading-6 mr-auto">{{ `Page: ${pageNum}` }}</p>
-            <LeftCaretButton 
-              v-on:click="prevPage"
-              v-if="pageNum > 1"
-            />
-            <div v-else class="button-icon opacity-0"></div>
-            <!-- Right Caret -->
-            <RightCaretButton
-              v-if="pageNum<totalPages"
-              v-on:click="nextPage"
-            />
-            <div v-else class="button-icon mr-0 opacity-0"></div>
-          </div>
+          <p class="my-auto inline-block leading-6 mr-auto">{{ `Page: ${pageNum}` }}</p>
+          <LeftCaretButton 
+            v-on:click="prevPage"
+            v-if="pageNum > 1"
+          />
+          <div v-else class="button-icon opacity-0"></div>
+          <!-- Right Caret -->
+          <RightCaretButton
+            v-if="pageNum<totalPages"
+            v-on:click="nextPage"
+          />
+          <div v-else class="button-icon mr-0 opacity-0"></div>
         </div>
       </div>
       <div class="md:animate-bottom">
@@ -214,14 +209,17 @@ onBeforeMount(async () => {
       visibleSearchText.value = query.text as string;
       invisibleSearchText = visibleSearchText.value;
     }
+    // Parse page number from query string
     if (query.pageNum) {
       pageNum.value = parseInt(query.pageNum as string);
     }
+    // Initial search
     search();
   }
 });
 
 onMounted(()=>{
+  // Focus search box by default
   document.getElementById("searchBox")?.focus()
 })
 // Previous search page
@@ -290,23 +288,30 @@ function decodedQR(nxid: string) {
 async function advancedSearch(part: PartSchema) {
   showAdvanced.value = false;
   loading.value = true;
+  // Copy extra info to query string
   part['advanced'] = 'true';
   if(kioskName)
     part['location'] = kioskName;
   part['building'] = building.value.toString();
   part['pageNum'] = pageNum.value;
   part['pageSize'] = 50;
+  // Replace query string
   router.replace({ query: part });
-  // Query the API
+  // Send request to API
   getPageAdvanced(pageNum.value, part)
     .then((res) => {
+      // Copy parts
       parts.value = JSON.parse(JSON.stringify(res.parts));
+      // Get total parts and pages
       totalPages.value = res.numPages
       totalParts.value = res.numParts
+      // Finsihed loading
       loading.value = false;
+      // Add to cache
       pageCache.set(pageNum.value, res.parts);
     })
     .catch(() => {
+      // Error, go to page 1
       pageNum.value = 1;
       search();
     });
@@ -344,6 +349,7 @@ async function search() {
 //      })
 //  }
 //  else {
+  // Update query string
   router.replace({
     query: {
       text: invisibleSearchText,
@@ -351,25 +357,35 @@ async function search() {
       building: building.value,
     },
   });
+  // Check if page is in cache
   if (
     pageCache.has(pageNum.value) &&
     pageCache.get(pageNum.value)!.length > 0
   ) {
+    // Copy page from cache
     parts.value = JSON.parse(JSON.stringify(pageCache.get(pageNum.value)!));
+    // Update cache
     checkCache();
   } else {
+    // Set loading screen
     loading.value = true;
     // Text search
     getPage(pageNum.value, invisibleSearchText)
       .then((res) => {
+        // Copy parts
         parts.value = JSON.parse(JSON.stringify(res.parts));
+        // Set total parts and pages
         totalPages.value = res.numPages
         totalParts.value = res.numParts
+        // Loaded
         loading.value = false;
+        // Save to cache
         pageCache.set(pageNum.value, res.parts);
+        // Update Cache
         checkCache();
       })
       .catch(() => {
+        // Error, go to page 1
         pageNum.value = 1;
         search();
       });
@@ -462,9 +478,13 @@ async function checkCache() {
 
 
 function goTo(num: number) {
+  // Check if page is in valid range
   if(num>0&&num<=totalPages.value) {
+    // Update page number
     pageNum.value = num
+    // Get query string
     let { query } = router.currentRoute.value;
+    // If advanced
     if (query.advanced === 'true') {
       let searchPart = {} as PartSchema;
       // Loop through query to create part object
@@ -472,19 +492,23 @@ function goTo(num: number) {
         // Copy
         searchPart[key] = query[key];
       }
+      // Advanced search
       advancedSearch(searchPart);
       return
     }
+    // Normal search
     search()
   }
 }
 
 function getPageAdvanced(page: number, part: PartSchema) {
   return new Promise<{numPages: number, numParts: number, parts: PartSchema[]}>((res, rej) => {
+    // Copy info to part for query string
     part['advanced'] = 'true';
     part['building'] = building.value.toString();
     part['pageNum'] = pageNum.value;
     part['pageSize'] = 50;
+    // Send request to api
     getPartsByData(http, part, (data, err) => {
       if (err) {
         // Send error to error handler

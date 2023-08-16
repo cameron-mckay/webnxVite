@@ -9,6 +9,7 @@ interface Props {
 const emit = defineEmits(['update']);
 
 const props = defineProps<Props>();
+// All possible roles
 const roles = ['sales', 'tech', 'clerk', 'ebay', 'kiosk', 'lead', 'testing', 'admin'];
 let user: Ref<User> = ref({});
 user.value = props.user;

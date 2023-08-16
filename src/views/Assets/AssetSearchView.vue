@@ -238,38 +238,54 @@ function search() {
 
 async function checkCache() {
   let page = pageNum.value;
+  // Check previous 5 pages
   while (page > 0 && page >= pageNum.value - 5) {
     let localPage = page;
+    // Check if exists in cache
     if (pageCache.has(localPage)) {
+      // Decrement and continue
       page -= 1;
       continue;
     } else {
+      // Set temp value
       pageCache.set(localPage, []);
+      // Get Page from api
       getPage(localPage, invisibleSearchText)
         .then((res) => {
+          // Set new value
           pageCache.set(localPage, res.assets);
         })
         .catch(() => {
+          // Delete temp value
           pageCache.delete(localPage);
         });
+      // Decrement
       page -= 1;
     }
   }
   page = pageNum.value;
+  // Get next 5 pages
   while (page <= pageNum.value + 5) {
     let localPage = page;
+    // Check if cache has page
     if (pageCache.has(localPage)) {
+      // increment and continue
       page++;
       continue;
     } else {
+      // Set temp value
       pageCache.set(localPage, []);
+      // Get page from api
       getPage(localPage, invisibleSearchText)
         .then((res) => {
+          // Set new value
           pageCache.set(localPage, res.assets);
         })
         .catch(() => {
+          // Delete temp value
           pageCache.delete(localPage);
         });
+      // Increment
       page++;
     }
   }
@@ -278,8 +294,11 @@ async function checkCache() {
 function checkCacheAdvanced() {}
 
 function searchButtonPressed() {
+  // Get query string from router
   let { query } = router.currentRoute.value;
+  // Check if search text has changed
   if (invisibleSearchText != visibleSearchText.value||query.advanced=='true') {
+    // Reset page cache and set new search string
     pageCache = new Map<number, AssetSchema[]>();
     invisibleSearchText = visibleSearchText.value;
   }
@@ -298,28 +317,33 @@ function addUntrackedAsset() {
 }
 
 function getPage(page: number, text: string) {
+  // Return promise
   return new Promise<{numPages: number, numAssets: number, assets: AssetSchema[]}>((res, rej) => {
     getAssetsByTextSearch(http, text, page, (data: any, err) => {
       if (err) {
         // Send error to error handler
         rej();
       }
+      // Typecast response
       const response = data as {numPages: number, numAssets: number, assets: AssetSchema[]}
       // typecast
       if (response.assets && response.assets.length === 0 && page != 1) {
         // Extra redundancy just in case query string is malformed
         rej();
       }
-      res(data as {numPages: number, numAssets: number, assets: AssetSchema[]});
+      // Resolve promise
+      res(response);
     });
   });
 }
 
 function getPageAdvanced(page: number, asset: AssetSchema) {
   return new Promise<{numPages: number, numAssets: number, assets: AssetSchema[]}>((res, rej) => {
+    // These attributes will be pushed to query string
     asset['advanced'] = 'true';
     asset['pageNum'] = pageNum.value;
     asset['pageSize'] = 50;
+    // Send request to api
     getAssetsByData(http, asset, (data, err) => {
       if (err) {
         // Send error to error handler
@@ -331,15 +355,20 @@ function getPageAdvanced(page: number, asset: AssetSchema) {
         // Extra redundancy just in case query string is malformed
         rej();
       }
+      // Resolve promise
       res(response);
     });
   });
 }
 
 function goTo(num: number) {
+  // Check if page is in valid range
   if(num>0&&num<=totalPages.value) {
+    // Set page num
     pageNum.value = num
+    // Get query string
     let { query } = router.currentRoute.value;
+    // If advanced search
     if (query.advanced === 'true') {
       let searchAsset = {} as AssetSchema;
       // Loop through query to create part object
@@ -350,6 +379,7 @@ function goTo(num: number) {
       advancedSearch(searchAsset);
       return
     }
+    // Normal search
     search()
   }
 }

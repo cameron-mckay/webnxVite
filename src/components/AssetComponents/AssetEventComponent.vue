@@ -49,6 +49,7 @@ let added = ref([] as LoadedCartItem[]);
 let removed = ref([] as LoadedCartItem[]);
 
 function loadPart(part: CartItem) {
+  // Load part from map
   return {
     part: parts.get(part.nxid),
     serial: part.serial,
@@ -57,13 +58,19 @@ function loadPart(part: CartItem) {
 }
 
 onMounted(() => {
-  asset.value = assets.get(event.asset_id)
+  // Get asset from map
+  asset.value = assets.has(event.asset_id)
     ? assets.get(event.asset_id)!
     : asset.value;
+  // Load existing parts
   existing.value = event.existing.map(loadPart);
+  // Load added parts
   added.value = event.added.map(loadPart);
+  // Laod removed parts
   removed.value = event.removed.map(loadPart);
+  // Check if asset info is updated
   if (event.info_updated && asset.value?.prev != null) {
+    // Get previous asset for strikethrough
     prevAsset.value = assets.get(asset.value?.prev)
       ? assets.get(asset.value?.prev)!
       : {};

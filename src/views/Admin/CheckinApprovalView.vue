@@ -92,11 +92,14 @@ function loadQueue() {
 function submit(req: CheckInRequest) {
   // Quick local validity check
   for (let p of req.parts) {
+    // Check if everything has been approved/denied
     if(p.approved==undefined&&p.approvedCount==undefined)
       return errorHandler(p.nxid + " has not been approved or denied")
+    // Check if new location exists
     if((p.approved||(p.approvedCount&&p.approvedCount>1))&&(p.newLocation==undefined||p.newLocation==""))
       return errorHandler(p.nxid+" needs a new location.")
   }
+  // Send request to API
   processCheckInRequest(http, req, (data, err)=>{
     if(err)
       return errorHandler(err)

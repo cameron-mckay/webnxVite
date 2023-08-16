@@ -201,12 +201,10 @@ function changeKiosk(part: PartSchema, kiosk: string) {
 }
 
 function audit() {
-  console.log(currentPart.value.nxid)
   auditPart(http, currentPart.value.nxid!, (data, err) => {
     if(err) {
       return errorHandler(err)
     }
-    console.log(data)
     currentPart.value = data as PartSchema
     displayMessage("Part audited.")
   })

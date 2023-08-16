@@ -14,24 +14,36 @@ let quantityVisible = ref(item.quantity ? item.quantity : 0)
 let serial = ref(item.serial?item.serial:"")
 
 function updateQuantity(q: number) {
+  // If serialized part
   if(item.serial)
     return emit("updateQuantity", item, -1)
+  // If no max quantity
   if(untracked||item.max_quantity==undefined)
     return emit("updateQuantity", item, q-quantityInvisible)
+  // If quantity is unchanged
   if(q==item.quantity)
     return
+  // Clamp quantity to max quantity
   q = q > item.max_quantity ? item.max_quantity : q
+  // Clamp negative values to zero
   if(q<1)
     q = 0
+  // Emit update
   emit("updateQuantity", item, q-quantityInvisible)
 }
+
+// Watch for changes in props
 watch(()=>item.quantity, ()=>{
   if(item.quantity) {
+    // Update visible and invisble quantities to match
     quantityVisible.value = item.quantity
     quantityInvisible = item.quantity
   }
 })
 
+// Function called on exit since serial is used as 
+// key, and key updates reset the component.
+// Direct model was causing dropped or delayed input
 function updateSerial() {
   item.serial = serial.value
 }
