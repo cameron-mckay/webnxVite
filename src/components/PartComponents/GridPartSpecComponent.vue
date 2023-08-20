@@ -115,12 +115,12 @@ let url = import.meta.env.VITE_API_URL;
     </div>
     <p v-if="part.consumable">Consumable:</p>
     <p v-if="part.consumable">{{ part.consumable?"Yes":"No" }}</p>
-    <div class="col-span-2 my-4" v-if="part.notes">
-      <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
-      <pre>{{ part.notes }}</pre>
-    </div>
     <div class="detail-image-container">
       <img :src="`${url}/images/parts/${part.nxid}`" />
+    </div>
+    <div class="col-span-4 my-4" v-if="part.notes">
+      <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
+      <pre>{{ part.notes }}</pre>
     </div>
   </div>
 </template>
