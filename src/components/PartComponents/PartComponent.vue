@@ -29,7 +29,7 @@ const { part } = defineProps<Props>();
       </p>
       <div class="flex justify-between">
         <InfoIcon class="opacity-0 pointer-events-none" v-if="part.notes" :title="part.notes"/>
-        <p class="mx-auto">{{ part.quantity + '/' + part.total_quantity }}</p>
+        <p class="mx-auto my-auto">{{ part.quantity + '/' + part.total_quantity }}</p>
         <InfoIcon v-if="part.notes" :title="part.notes"
             v-on:click="$emit('viewPartAction')"
         />
