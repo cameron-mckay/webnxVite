@@ -163,6 +163,8 @@ function adminEdit(){
         <p v-if="asset.ipmi_port">{{ asset.ipmi_port }}</p>
         <p v-if="asset.power_port">Power Port:</p>
         <p v-if="asset.power_port">{{ asset.power_port }}</p>
+        <p v-if="asset.pallet">Pallet:</p>
+        <p v-if="asset.pallet">{{ asset.pallet }}</p>
         <p>Last Updated:</p>
         <p>
           {{ asset.date_updated ? new Date(Date.parse(asset.date_updated!)).toLocaleString() : new Date(Date.parse(asset.date_created!)).toLocaleString() }}

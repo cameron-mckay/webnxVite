@@ -600,9 +600,9 @@ onMounted(()=>{
         <AssetCartItemComponent
           class="col-span-2"
           v-for="part in parts"
-          :key="part.part.nxid!+part.serial"
+          :key="part.part.nxid!+part.serial+(correction ? 't':'f')"
           :item="part"
-          :untracked="untracked || oldAsset.migrated"
+          :untracked="untracked || oldAsset.migrated || correction"
           @delete="$emit('deletePart', part, correction)"
           @updateQuantity="updateQuantity"
         />
