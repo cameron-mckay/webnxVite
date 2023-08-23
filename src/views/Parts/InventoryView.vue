@@ -158,6 +158,7 @@ function move(
 }
 function submit() {
   if (!processingMove) {
+    console.log(transferList.value)
     processingMove = true;
     let transferListHash = new Map<string, InventoryEntry>()
     // Process transfer list

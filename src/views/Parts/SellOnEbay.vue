@@ -199,6 +199,7 @@ function moveBack(
 
 function submit() {
   if (!processingMove) {
+    console.log(transferList.value)
     processingMove = true;
     let transferListHash = new Map<string, InventoryEntry>()
     // Process transfer list
@@ -299,6 +300,7 @@ function submit() {
             <p></p>
           </div>
           <InventoryPartComponent
+            :key="item.part.nxid!+transferList.indexOf(item)+item.serial"
             :isCurrentUser="true"
             v-for="item in transferList"
             :untracked="!item.part.serialized"
