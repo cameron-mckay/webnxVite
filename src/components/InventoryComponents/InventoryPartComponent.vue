@@ -7,8 +7,9 @@ interface Props {
   item: LoadedCartItem;
   maxQuantity?: number;
   untracked?: boolean
+  serialOptional?: boolean
 }
-const { maxQuantity, isCurrentUser, item, untracked } = defineProps<Props>();
+const { maxQuantity, isCurrentUser, item, untracked, serialOptional } = defineProps<Props>();
 let quantityVisible = ref(item.quantity)
 let emit = defineEmits(['movePart'])
 let serial = ref(item.serial?item.serial:"")
@@ -49,7 +50,7 @@ function updateSerial() {
       <input
         class="textbox pl-2 "
         v-if="untracked"
-        required
+        :required="serialOptional!=true"
         v-model="serial"
         type="text"
         placeholder="Serial"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
 import InventoryPartComponent from '../../components/InventoryComponents/InventoryPartComponent.vue';
-import { movePart } from '../../plugins/dbCommands/partManager';
+import { sellOnEbay } from '../../plugins/dbCommands/partManager';
 import {
   getAllUsers,
   getUserInventoryByID,
@@ -18,6 +18,10 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState } from '../../plugins/interfaces';
+
+interface EbayPart extends LoadedCartItem {
+  hadSerial: boolean
+}
 
 interface Props {
   http: AxiosInstance;
@@ -199,23 +203,27 @@ function moveBack(
 
 function submit() {
   if (!processingMove) {
-    console.log(transferList.value)
     processingMove = true;
     let transferListHash = new Map<string, InventoryEntry>()
     // Process transfer list
     transferList.value.map((item)=> {
       // Create boilerplate
-      let invEntry = { serials: [], unserialized: 0} as InventoryEntry
+      let invEntry = { newSerials: [], serials: [], unserialized: 0} as InventoryEntry
       // Check if it already exists in map
       if(transferListHash.has(item.part.nxid!))
         invEntry = transferListHash.get(item.part.nxid!)!
       // Update values
-      if(item.serial)
+      if(item.serial&&item.part.serialized)
         // Push serial to array
         invEntry.serials.push(item.serial)
-      else
-        // Increment unserialized
-        invEntry.unserialized+=item.quantity!
+      // Increment unserialized
+      else {
+        invEntry.unserialized+=1
+        if(item.serial&&item.serial!='') {
+          invEntry.newSerials!.push(item.serial)
+        }
+      }
+      //invEntry.unserialized+=item.quantity!
       // Update hash
       transferListHash.set(item.part.nxid!, invEntry)
     })
@@ -226,7 +234,7 @@ function submit() {
       partList.push(v)
     })
     // Move parts
-    movePart(http, 'sold', currentUser.value._id!, partList, (data, err) => {
+    sellOnEbay(http, partList, orderID.value, (data, err) => {
       if (err) {
         // Handle errors
         processingMove = false;
@@ -235,7 +243,7 @@ function submit() {
       displayMessage(data as string);
       transferList.value = [];
       processingMove = false;
-    }, orderID.value);
+    });
   }
 }
 </script>
@@ -300,10 +308,10 @@ function submit() {
             <p></p>
           </div>
           <InventoryPartComponent
-            :key="item.part.nxid!+transferList.indexOf(item)+item.serial"
             :isCurrentUser="true"
             v-for="item in transferList"
             :untracked="!item.part.serialized"
+            :serialOptional="true"
             :item="item"
             @movePart="moveFromTransferList"
           />

@@ -11,7 +11,7 @@ import {
   PartRecord,
   PartSchema,
   User,
-  InventoryEntry
+  CartItem
 } from '../../plugins/interfaces';
 
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -158,32 +158,13 @@ function move(
 }
 function submit() {
   if (!processingMove) {
-    console.log(transferList.value)
     processingMove = true;
-    let transferListHash = new Map<string, InventoryEntry>()
-    // Process transfer list
-    transferList.value.map((item)=> {
-      // Create boilerplate
-      let invEntry = { serials: [], unserialized: 0} as InventoryEntry
-      // Check if it already exists in map
-      if(transferListHash.has(item.part.nxid!))
-        invEntry = transferListHash.get(item.part.nxid!)!
-      // Update values
-      if(item.serial)
-        // Push serial to array
-        invEntry.serials.push(item.serial)
-      else
-        // Increment unserialized
-        invEntry.unserialized+=item.quantity!
-      // Update hash
-      transferListHash.set(item.part.nxid!, invEntry)
+    let partList = transferList.value.map((p)=>{
+      if(p.serial)
+        return{nxid: p.part.nxid, serial: p.serial }as CartItem
+      return{nxid: p.part.nxid, quantity: p.quantity }as CartItem
     })
-    // Turn hash map back into array
-    let partList = [] as InventoryEntry[]
-    transferListHash.forEach((v, k)=>{
-      v.nxid = k
-      partList.push(v)
-    })
+    console.log(partList)
     // Move parts
     movePart(http, transferUser.value._id!, currentUser.value._id!, partList, (data, err) => {
       if (err) {

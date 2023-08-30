@@ -378,7 +378,7 @@ export function movePart(
   http: AxiosInstance,
   new_owner: string,
   old_owner: string,
-  parts: InventoryEntry[],
+  parts: CartItem[],
   callback: apiResponse,
   orderID?: string
 ) {
@@ -398,6 +398,25 @@ export function movePart(
     });
 }
 
+export function sellOnEbay(
+  http: AxiosInstance,
+  parts: InventoryEntry[],
+  orderID: string,
+  callback: apiResponse,
+) {
+  http
+    .post('/api/part/sell', {
+      parts,
+      orderID
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => { // Error - send error to callback
+      callback({}, err);
+    });
+}
 /**
  *
  * @param http
