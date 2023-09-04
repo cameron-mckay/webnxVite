@@ -281,7 +281,7 @@ function reset() {
       :displayMessage="displayMessage"
       :inventorySearch="true"
       :untracked="assetCopy.migrated?true:false"
-      :isAdmin="(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('admin'))?true:false"
+      :isAdmin="(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('lead'))?true:false"
       @assetSubmit="assetSubmit"
       @plusPart="plusPart"
       @addAll="addAll"

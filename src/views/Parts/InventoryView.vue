@@ -40,7 +40,7 @@ let processingMove = false;
 let loading = ref(false);
 let maxQuantities = new Map<string, number>()
 
-let canBuildingTransfer = ref(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('clerk'));
+let canBuildingTransfer = ref(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('clerk')||store.state.user.roles?.includes('lead'));
 
 function loadInventory() {
   loading.value = true;
@@ -91,7 +91,7 @@ function firstLoad() {
       );
     });
   }
-  canBuildingTransfer = ref(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('clerk'));
+  canBuildingTransfer = ref(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('clerk')||store.state.user.roles?.includes('lead'));
 }
 
 function moveFromInventory(part: PartSchema, difference: number, serial: string) {
@@ -264,7 +264,7 @@ watch(currentUser, () => {
                Ogden Transfers
               </option>
               <option
-                v-if="store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('lead')||store.state.user.roles?.includes('testing')"
+                v-if="canBuildingTransfer||store.state.user.roles?.includes('testing')"
                 :value="{ _id: 'testing' }"
               >
                 Testing Center
@@ -370,10 +370,7 @@ watch(currentUser, () => {
                 <option
                   :value="{ _id: 'lost', building: store.state.user.building }"
                   :disabled="currentUser._id == 'lost'"
-                  v-if="
-                    store.state.user.roles?.includes('admin')||
-                    store.state.user.roles?.includes('clerk')
-                  "
+                  v-if="canBuildingTransfer"
                 >
                   Lost
                 </option>
@@ -383,10 +380,7 @@ watch(currentUser, () => {
                     building: store.state.user.building,
                   }"
                   :disabled="currentUser._id == 'broken'"
-                  v-if="
-                    store.state.user.roles?.includes('admin')||
-                    store.state.user.roles?.includes('clerk')
-                  "
+                  v-if="canBuildingTransfer"
                 >
                   Broken
                 </option>
@@ -396,18 +390,12 @@ watch(currentUser, () => {
                     building: store.state.user.building,
                   }"
                   :disabled="currentUser._id == 'deleted'"
-                  v-if="
-                    store.state.user.roles?.includes('admin')||
-                    store.state.user.roles?.includes('clerk')
-                  "
+                  v-if="canBuildingTransfer"
                 >
                   Delete
                 </option>
                 <option
-                  v-if="
-                    store.state.user.roles?.includes('admin')||
-                    store.state.user.roles?.includes('clerk')
-                  "
+                  v-if="canBuildingTransfer"
                   v-for="user in users"
                   :disabled="user._id == currentUser._id"
                   :value="user"
