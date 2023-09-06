@@ -215,3 +215,17 @@ export interface CheckOutEvent extends CheckInRequest {
 export interface AssetPart extends LoadedCartItem {
   max_quantity?: number
 }
+
+
+export interface PalletSchema {
+    _id: string,
+    pallet_tag: string,
+    location: string,
+    building: number,
+    by: string,
+    date_created: Date,
+    date_replaced: Date,
+    notes: string,
+    prev: string|null,
+    next: string|null,
+}

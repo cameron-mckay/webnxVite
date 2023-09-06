@@ -16,14 +16,14 @@ import type {
  * @param pageNum
  * @param callback
  */
-export async function getAssetsByTextSearch(
+export function getAssetsByTextSearch(
   http: AxiosInstance,
   searchString: string,
   pageNum: number,
   callback: apiResponse
 ) {
   // Send string query to API
-  await http
+  http
     .get('/api/asset/search', {
       params: {
         searchString,
@@ -48,13 +48,13 @@ export async function getAssetsByTextSearch(
  * @param id
  * @param callback
  */
-export async function getAssetByID(
+export function getAssetByID(
   http: AxiosInstance,
   id: string,
   callback: apiResponse
 ) {
   // Request part using ID in query string
-  await http
+  http
     .get('/api/asset/id', {
       params: {
         id,
@@ -77,21 +77,21 @@ export async function getAssetByID(
  * @param asset
  * @param callback
  */
-export async function getAssetsByData(
+export function getAssetsByData(
   http: AxiosInstance,
   asset: AssetSchema,
   callback: apiResponse
 ) {
-  await http
-    .get('/api/asset', { params: asset })
-    .then((res: AxiosResponse) => {
-      // Success - send results to callback
-      callback(res.data, null);
-    })
-    .catch((err: Error | AxiosError) => {
-      // Error - send error to callback
-      callback({}, err);
-    });
+    http
+      .get('/api/asset', { params: asset })
+      .then((res: AxiosResponse) => {
+        // Success - send results to callback
+        callback(res.data, null);
+      })
+      .catch((err: Error | AxiosError) => {
+        // Error - send error to callback
+        callback({}, err);
+      });
 }
 
 /**
@@ -102,14 +102,14 @@ export async function getAssetsByData(
  * @param parts
  * @param callback
  */
-export async function createAsset(
+export function createAsset(
   http: AxiosInstance,
   asset: AssetSchema,
   parts: Array<CartItem>,
   callback: apiResponse
 ) {
   // Send new part to API
-  await http
+  http
     .post('/api/asset', { asset, parts })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
@@ -128,14 +128,14 @@ export async function createAsset(
  * @param asset
  * @param callback
  */
-export async function updateAsset(
+export function updateAsset(
   http: AxiosInstance,
   asset: AssetSchema,
   parts: Array<CartItem>,
   correction: boolean,
   callback: apiResponse
 ) {
-  await http
+  http
     .put('/api/asset', { asset, parts: parts, correction })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
@@ -154,12 +154,12 @@ export async function updateAsset(
  * @param asset_tag
  * @param callback
  */
-export async function getPartsOnAsset(
+export function getPartsOnAsset(
   http: AxiosInstance,
   asset_tag: string,
   callback: apiResponse
 ) {
-  await http
+  http
     .get('/api/asset/parts', { params: { asset_tag } })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
@@ -196,14 +196,14 @@ export async function getPartsOnAsset(
  * @param asset_tag
  * @param callback
  */
-export async function getAssetHistory(
+export function getAssetHistory(
   http: AxiosInstance,
   asset_tag: string,
   pageNum: number,
   pageSize: number,
   callback: apiResponse
 ) {
-  await http
+  http
     .get('/api/asset/history', { 
       params: { 
         id: asset_tag,
