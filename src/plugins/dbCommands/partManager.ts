@@ -25,7 +25,7 @@ import type {
  * @param location
  * @param callback
  */
-export async function getPartsByTextSearch(
+export function getPartsByTextSearch(
   http: AxiosInstance,
   searchString: string,
   pageNum: number,
@@ -34,7 +34,7 @@ export async function getPartsByTextSearch(
   location?: string
 ) {
   // Send string query to API
-  await http
+  http
     .get('/api/part/search', {
       params: {
         searchString,
@@ -63,7 +63,7 @@ export async function getPartsByTextSearch(
  * @param location
  * @param callback
  */
-export async function getPartByID(
+export function getPartByID(
   http: AxiosInstance,
   id: string,
   building: number,
@@ -71,7 +71,7 @@ export async function getPartByID(
   location?: string
 ) {
   // Request part using ID in query string
-  await http
+  http
     .get('/api/part/id', {
       params: {
         id,
@@ -96,12 +96,12 @@ export async function getPartByID(
  * @param part
  * @param callback
  */
-export async function getPartsByData(
+export function getPartsByData(
   http: AxiosInstance,
   part: PartSchema,
   callback: apiResponse
 ) {
-  await http
+  http
     .get('/api/part', {
       params: part,
     })
@@ -124,7 +124,7 @@ export async function getPartsByData(
  * @param location
  * @param callback
  */
-export async function createPart(
+export function createPart(
   http: AxiosInstance,
   part: PartSchema,
   building: number,
@@ -132,7 +132,7 @@ export async function createPart(
   callback: apiResponse
 ) {
   // Send new part to API
-  await http
+  http
     .post('/api/part', {
       part,
       building,
@@ -155,12 +155,12 @@ export async function createPart(
  * @param part
  * @param callback
  */
-export async function updatePart(
+export function updatePart(
   http: AxiosInstance,
   part: PartSchema,
   callback: apiResponse
 ) {
-  await http
+  http
     .put('/api/part', { part })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
@@ -180,13 +180,13 @@ export async function updatePart(
  * @param user_id
  * @param callback
  */
-export async function checkout(
+export function checkout(
   http: AxiosInstance,
   cart: Array<CartItem>,
   user_id: string,
   callback: apiResponse
 ) {
-  await http
+  http
     .post('/api/checkout', {
       cart,
       user_id,
@@ -209,13 +209,13 @@ export async function checkout(
  * @param user_id 
  * @param callback
  */
-export async function checkin(
+export function checkin(
   http: AxiosInstance,
   inventory: Array<CartItem>,
   user_id: string,
   callback: apiResponse
 ) {
-  await http
+  http
     .post('/api/checkin', {
       inventory,
       user_id,
@@ -297,13 +297,13 @@ export function getUniqueOnPartRecord(
  * @param part
  * @param callback
  */
-export async function createNewPartRecords(
+export function createNewPartRecords(
   http: AxiosInstance,
   part: CartItem,
   owner: User,
   callback: apiResponse
 ) {
-  await http
+  http
     .post('/api/part/add', {
       part,
       owner,

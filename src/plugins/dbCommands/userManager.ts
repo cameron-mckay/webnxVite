@@ -14,12 +14,12 @@ import type {
  * @param http
  * @param callback
  */
-export async function getCurrentUser(
+export function getCurrentUser(
   http: AxiosInstance,
   callback: apiResponse
 ) {
   // Send request to API
-  await http
+  http
     .get('/api/user')
     .then((res: AxiosResponse) => {
       // Success - send response data to callback
@@ -38,13 +38,13 @@ export async function getCurrentUser(
  * @param id
  * @param callback
  */
-export async function getUserByID(
+export function getUserByID(
   http: AxiosInstance,
   id: string,
   callback: apiResponse
 ) {
   // Send request to API
-  await http
+  http
     .get('/api/user', {
       params: {
         id,
@@ -66,11 +66,11 @@ export async function getUserByID(
  * @param http
  * @param callback
  */
-export async function checkAuth(http: AxiosInstance, callback: apiResponse) {
+export function checkAuth(http: AxiosInstance, callback: apiResponse) {
   // Add token to default headers
   http.defaults.headers.common['Authorization'] = localStorage.getItem('token');
   // Check with API to see if authorized
-  await http
+  http
     .post('/api/auth')
     .then((res: AxiosResponse) => {
       // Authenticated - send null error to callback
@@ -88,8 +88,8 @@ export async function checkAuth(http: AxiosInstance, callback: apiResponse) {
  * @param http
  * @param callback
  */
-export async function getAllUsers(http: AxiosInstance, callback: apiResponse) {
-  await http
+export function getAllUsers(http: AxiosInstance, callback: apiResponse) {
+  http
     .get('/api/user/all')
     .then((res: AxiosResponse) => {
       callback(res.data, null);
@@ -106,12 +106,12 @@ export async function getAllUsers(http: AxiosInstance, callback: apiResponse) {
  * @param user
  * @param callback
  */
-export async function updateUser(
+export function updateUser(
   http: AxiosInstance,
   user: User,
   callback: apiResponse
 ) {
-  await http
+  http
     .put('/api/user', { user })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
@@ -129,11 +129,11 @@ export async function updateUser(
  * @param http
  * @param callback
  */
-export async function getUserInventory(
+export function getUserInventory(
   http: AxiosInstance,
   callback: apiResponse
 ) {
-  await http
+  http
     .get('/api/user/inventory')
     .then((res: AxiosResponse) => {
       // Success - send response to callback
@@ -170,12 +170,12 @@ export async function getUserInventory(
  * @param user_id
  * @param callback
  */
-export async function getUserInventoryByID(
+export function getUserInventoryByID(
   http: AxiosInstance,
   user_id: string,
   callback: apiResponse
 ) {
-  await http
+  http
     .get('/api/user/inventory', {
       params: {
         user_id,
@@ -209,11 +209,11 @@ export async function getUserInventoryByID(
     });
 }
 
-export async function getAllTechsInventory(
+export function getAllTechsInventory(
   http: AxiosInstance,
   callback: apiResponse
 ) {
-  await http
+  http
     .get('/api/user/inventory', {
       params: {
         user_id: 'all',
@@ -229,8 +229,8 @@ export async function getAllTechsInventory(
     });
 }
 
-export async function checkRoles(http: AxiosInstance, roles: string[], callback: apiResponse) {
-  await http.get('/api/user/roles', {
+export function checkRoles(http: AxiosInstance, roles: string[], callback: apiResponse) {
+  http.get('/api/user/roles', {
     params: {
       roles
     }
@@ -245,8 +245,8 @@ export async function checkRoles(http: AxiosInstance, roles: string[], callback:
     });
 }
 
-export async function sendPasswordResetEmail(http: AxiosInstance, email: string, callback: apiResponse) {
-  await http.get('/api/password/reset', {
+export function sendPasswordResetEmail(http: AxiosInstance, email: string, callback: apiResponse) {
+  http.get('/api/password/reset', {
     params: {
       email
     }
@@ -261,8 +261,8 @@ export async function sendPasswordResetEmail(http: AxiosInstance, email: string,
     });
 }
 
-export async function submitNewPassword(http: AxiosInstance, user_id: string, token: string, password: string, callback: apiResponse) {
-  await http.post('/api/password/reset', {
+export function submitNewPassword(http: AxiosInstance, user_id: string, token: string, password: string, callback: apiResponse) {
+  http.post('/api/password/reset', {
     user_id,
     token,
     password
@@ -277,7 +277,7 @@ export async function submitNewPassword(http: AxiosInstance, user_id: string, to
     });
 }
 
-export async function getUserAssetUpdates(
+export function getUserAssetUpdates(
   http: AxiosInstance,
   user: string,
   startDate: number,
@@ -287,7 +287,7 @@ export async function getUserAssetUpdates(
   callback: apiResponse
 ) {
   // Send request to API
-  await http
+  http
     .get('/api/user/assetsUpdated', {
     params: {
       user,
@@ -307,7 +307,7 @@ export async function getUserAssetUpdates(
     });
 }
 
-export async function getUserAssetUpdatesNoDetails(
+export function getUserAssetUpdatesNoDetails(
   http: AxiosInstance,
   user: string,
   startDate: number,
@@ -317,7 +317,7 @@ export async function getUserAssetUpdatesNoDetails(
   callback: apiResponse
 ) {
   // Send request to API
-  await http
+  http
     .get('/api/user/assetsUpdated/noDetails', {
     params: {
       user,
@@ -337,7 +337,7 @@ export async function getUserAssetUpdatesNoDetails(
     });
 }
 
-export async function getUserNewAssets(
+export function getUserNewAssets(
   http: AxiosInstance,
   user: string,
   startDate: number,
@@ -347,7 +347,7 @@ export async function getUserNewAssets(
   callback: apiResponse
 ) {
   // Send request to API
-  await http
+  http
     .get('/api/user/newAssets', {
     params: {
       user,
@@ -367,7 +367,7 @@ export async function getUserNewAssets(
     });
 }
 
-export async function getUserNewAssetsNoDetails(
+export function getUserNewAssetsNoDetails(
   http: AxiosInstance,
   user: string,
   startDate: number,
@@ -377,7 +377,7 @@ export async function getUserNewAssetsNoDetails(
   callback: apiResponse
 ) {
   // Send request to API
-  await http
+  http
     .get('/api/user/newAssets/noDetails', {
     params: {
       user,
@@ -397,7 +397,7 @@ export async function getUserNewAssetsNoDetails(
     });
 }
 
-export async function getUserCheckins(
+export function getUserCheckins(
   http: AxiosInstance,
   user: string,
   startDate: number,
@@ -407,7 +407,7 @@ export async function getUserCheckins(
   callback: apiResponse
 ) {
   // Send request to API
-  await http
+  http
     .get('/api/user/checkins', {
     params: {
       user,
@@ -427,7 +427,7 @@ export async function getUserCheckins(
     });
 }
 
-export async function getUserCheckouts(
+export function getUserCheckouts(
   http: AxiosInstance,
   user: string,
   startDate: number,
@@ -437,7 +437,7 @@ export async function getUserCheckouts(
   callback: apiResponse
 ) {
   // Send request to API
-  await http
+  http
     .get('/api/checkout/history', {
     params: {
       user,

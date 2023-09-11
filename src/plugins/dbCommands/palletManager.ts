@@ -1,11 +1,11 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import type {
   apiResponse,
-  AssetSchema,
   CartItem,
   LoadedCartItem,
   PartCache,
   PartSchema,
+  PalletSchema
 } from '../interfaces';
 
 /**
@@ -16,7 +16,7 @@ import type {
  * @param pageNum
  * @param callback
  */
-export function getAssetsByTextSearch(
+export function getPalletsByTextSearch(
   http: AxiosInstance,
   searchString: string,
   pageNum: number,
@@ -24,7 +24,7 @@ export function getAssetsByTextSearch(
 ) {
   // Send string query to API
   http
-    .get('/api/asset/search', {
+    .get('/api/pallet/search', {
       params: {
         searchString,
         pageNum,
@@ -33,7 +33,7 @@ export function getAssetsByTextSearch(
     })
     .then((res: AxiosResponse) => {
       // Success and send back results
-      callback(res.data as { numPages: number, numAssets: number, assets: AssetSchema[]}, null);
+      callback(res.data as { numPages: number, numPallets: number, pallets: PalletSchema[]}, null);
     })
     .catch((err: Error | AxiosError) => {
       // Send error to callback
@@ -48,14 +48,14 @@ export function getAssetsByTextSearch(
  * @param id
  * @param callback
  */
-export function getAssetByID(
+export function getPalletByID(
   http: AxiosInstance,
   id: string,
   callback: apiResponse
 ) {
   // Request part using ID in query string
   http
-    .get('/api/asset/id', {
+    .get('/api/pallet/id', {
       params: {
         id,
       },
@@ -77,21 +77,21 @@ export function getAssetByID(
  * @param asset
  * @param callback
  */
-export function getAssetsByData(
+export function getPalletsByData(
   http: AxiosInstance,
-  asset: AssetSchema,
+  pallet: PalletSchema,
   callback: apiResponse
 ) {
-    http
-      .get('/api/asset', { params: asset })
-      .then((res: AxiosResponse) => {
-        // Success - send results to callback
-        callback(res.data, null);
-      })
-      .catch((err: Error | AxiosError) => {
-        // Error - send error to callback
-        callback({}, err);
-      });
+  http
+    .get('/api/pallet', { params: pallet })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
 }
 
 /**
@@ -102,15 +102,16 @@ export function getAssetsByData(
  * @param parts
  * @param callback
  */
-export function createAsset(
+export function createPallet(
   http: AxiosInstance,
-  asset: AssetSchema,
+  pallet: PalletSchema,
   parts: Array<CartItem>,
+  assets: Array<string>,
   callback: apiResponse
 ) {
   // Send new part to API
   http
-    .post('/api/asset', { asset, parts })
+    .post('/api/pallet', { pallet, parts, assets })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);
@@ -128,15 +129,16 @@ export function createAsset(
  * @param asset
  * @param callback
  */
-export function updateAsset(
+export function updatePallet(
   http: AxiosInstance,
-  asset: AssetSchema,
+  pallet: PalletSchema,
   parts: Array<CartItem>,
+  assets: Array<string>,
   correction: boolean,
   callback: apiResponse
 ) {
   http
-    .put('/api/asset', { asset, parts: parts, correction })
+    .put('/api/pallet', { pallet, parts, correction, assets })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);
@@ -154,13 +156,13 @@ export function updateAsset(
  * @param asset_tag
  * @param callback
  */
-export function getPartsOnAsset(
+export function getPartsOnPallet(
   http: AxiosInstance,
-  asset_tag: string,
+  pallet_tag: string,
   callback: apiResponse
 ) {
   http
-    .get('/api/asset/parts', { params: { asset_tag } })
+    .get('/api/pallet/parts', { params: { pallet_tag } })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       let partsArr = res.data.parts as PartCache;
@@ -196,17 +198,17 @@ export function getPartsOnAsset(
  * @param asset_tag
  * @param callback
  */
-export function getAssetHistory(
+export function getPalletHistory(
   http: AxiosInstance,
-  asset_tag: string,
+  pallet_tag: string,
   pageNum: number,
   pageSize: number,
   callback: apiResponse
 ) {
   http
-    .get('/api/asset/history', { 
+    .get('/api/pallet/history', { 
       params: { 
-        id: asset_tag,
+        id: pallet_tag,
         pageNum,
         pageSize
       } 
