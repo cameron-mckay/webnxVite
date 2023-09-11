@@ -113,8 +113,13 @@ function assetSubmit(correction: boolean) {
     if (err) {
       return errorHandler(err);
     }
-    router.back();
-  });
+    if(correction&&oldAsset.value.asset_tag!=assetCopy.asset_tag) {
+      router.push({ name: 'View Asset', query: { asset_tag: oldAsset.value.asset_tag } });
+    }
+    else {
+      router.back();
+    }
+  }, correction&&oldAsset.value.asset_tag!=assetCopy.asset_tag ? assetCopy.asset_tag : undefined);
 }
 
 function plusPart(item: AssetPart, correction: boolean) {
