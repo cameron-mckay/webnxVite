@@ -133,10 +133,11 @@ export function updateAsset(
   asset: AssetSchema,
   parts: Array<CartItem>,
   correction: boolean,
-  callback: apiResponse
+  callback: apiResponse,
+  oldAssetTag?: string
 ) {
   http
-    .put('/api/asset', { asset, parts: parts, correction })
+    .put('/api/asset', { asset, parts: parts, correction, oldAssetTag })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);
