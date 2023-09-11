@@ -147,6 +147,11 @@ const routes = [
     component: () => import('../views/Parts/InventoryView.vue'),
   },
   {
+    path: '/pallets/edit',
+    name: 'Edit Pallet',
+    component: () => import('../views/Pallets/EditPalletView.vue'),
+  },
+  {
     path: '/:catchall(.*)',
     name: '404',
     component: () => import('../views/NotFound.vue'),

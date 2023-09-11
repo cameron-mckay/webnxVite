@@ -6,11 +6,11 @@ import type { Store } from 'vuex';
 import BackButton from '../../components/GenericComponents/BackButton.vue';
 import AssetCartItemComponent from '../../components/AssetComponents/AssetCartItemComponent.vue';
 import {
-  getAssetByID,
-  getPartsOnAsset,
-} from '../../plugins/dbCommands/assetManager';
+  getPalletByID,
+  getPartsOnPallet,
+} from '../../plugins/dbCommands/palletManager';
 import type {
-AssetSchema,
+PalletSchema,
 LoadedCartItem,
 UserState,
 } from '../../plugins/interfaces';
@@ -25,22 +25,23 @@ interface Props {
 const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 
-let asset = ref({
-  asset_tag: '',
+let pallet = ref({
+  pallet_tag: '',
   building: 3,
-  asset_type: '',
-} as AssetSchema);
+  location: '',
+  notes: ''
+} as PalletSchema);
 let parts = ref([] as LoadedCartItem[]);
 
 onBeforeMount(() => {
-  if (router.currentRoute.value.query.asset_tag) {
-    let nxid = router.currentRoute.value.query.asset_tag as string;
-    getAssetByID(http, nxid, (res, err) => {
+  if (router.currentRoute.value.query.pallet_tag) {
+    let nxid = router.currentRoute.value.query.pallet_tag as string;
+    getPalletByID(http, nxid, (res, err) => {
       if (err) {
         errorHandler(err);
       }
-      asset.value = res as AssetSchema;
-      getPartsOnAsset(http, asset.value.asset_tag!, (res, err) => {
+      pallet.value = res as PalletSchema;
+      getPartsOnPallet(http, pallet.value.pallet_tag!, (res, err) => {
         if (err) {
           errorHandler(err);
         }
@@ -71,25 +72,21 @@ onBeforeMount(() => {
 
 function edit() {
   router.push({
-    name: 'Edit Asset',
-    query: { asset_tag: asset.value.asset_tag },
+    name: 'Edit Pallet',
+    query: { pallet_tag: pallet.value.pallet_tag },
   });
 }
 </script>
 
 <template>
   <div class="body">
-    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/assets')" class="mr-2 mb-2"/>
-    <p class="my-2 w-full rounded-md bg-red-400 p-2" v-if="asset.migrated">
-      This asset was automatically migrated from the old asset tracking system
-      and is incomplete. Please edit and update the information if you can.
-    </p>
+    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/pallets')" class="mr-2 mb-2"/>
     <div
       class="relative grid grid-cols-2 rounded-lg group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-4"
     >
       <div class="col-span-2 mb-4 flex md:col-span-4">
         <h1 class="my-auto text-4xl leading-8 md:leading-10">
-          {{ asset.asset_tag + ':' }}
+          {{ pallet.pallet_tag + ':' }}
         </h1>
         <!-- Pencil -->
         <svg
@@ -107,65 +104,23 @@ function edit() {
         </svg>
         <RouterLink
           class="my-auto ml-2 rounded-md p-2 font-bold transition-colors hover:bg-gray-400 hover:dark:bg-zinc-700"
-          :to="`/assets/history?nxid=${asset.asset_tag}`"
+          :to="`/pallets/history?nxid=${pallet.pallet_tag}`"
         >
           View History
         </RouterLink>
       </div>
       <div class="detail-row">
         <p>Building:</p>
-        <p>{{ asset.building }}</p>
-        <p>Asset Type:</p>
-        <p>{{ asset.asset_type }}</p>
-        <p v-if="asset.chassis_type">Chassis Type:</p>
-        <p v-if="asset.chassis_type">
-          {{ asset.chassis_type }}
-        </p>
-        <p v-if="asset.manufacturer">Manufacturer:</p>
-        <p v-if="asset.manufacturer">
-          {{ asset.manufacturer }}
-        </p>
-        <p v-if="asset.model">Model:</p>
-        <p v-if="asset.model">{{ asset.model }}</p>
-        <p v-if="asset.serial">Serial:</p>
-        <p v-if="asset.serial">{{ asset.serial }}</p>
-        <p v-if="asset.bay">Bay:</p>
-        <p v-if="asset.bay">{{ asset.bay }}</p>
-
-        <p v-if="asset.parent">Chassis Tag:</p>
-        <p v-if="asset.parent">{{ asset.parent }}</p>
-
-        <p v-if="asset.live != undefined">Status:</p>
-        <p v-if="asset.live">Live</p>
-        <p v-else-if="asset.live != undefined">Inactive</p>
-
-        <p v-if="asset.rails != undefined">Rails:</p>
-        <p v-if="asset.rails">Yes</p>
-        <p v-else-if="asset.rails != undefined">No</p>
-
-        <p v-if="asset.in_rack != undefined">In Rack:</p>
-        <p v-if="asset.in_rack">Yes</p>
-        <p v-else-if="asset.in_rack != undefined">No</p>
-
-        <p v-if="asset.public_port">Public Port:</p>
-        <p v-if="asset.public_port">{{ asset.public_port }}</p>
-        <p v-if="asset.private_port">Private Port:</p>
-        <p v-if="asset.private_port">
-          {{ asset.private_port }}
-        </p>
-        <p v-if="asset.ipmi_port">IPMI Port:</p>
-        <p v-if="asset.ipmi_port">{{ asset.ipmi_port }}</p>
-        <p v-if="asset.power_port">Power Port:</p>
-        <p v-if="asset.power_port">{{ asset.power_port }}</p>
-        <p v-if="asset.pallet">Pallet:</p>
-        <p v-if="asset.pallet">{{ asset.pallet }}</p>
+        <p>{{ pallet.building }}</p>
+        <p>Location:</p>
+        <p>{{ pallet.location }}</p>
         <p>Last Updated:</p>
         <p>
-          {{ asset.date_updated ? new Date(Date.parse(asset.date_updated!)).toLocaleString() : new Date(Date.parse(asset.date_created!)).toLocaleString() }}
+          {{ pallet.date_created!.toLocaleString() }}
         </p>
-        <div class="col-span-2 my-4" v-if="asset.notes">
+        <div class="col-span-2 my-4" v-if="pallet.notes">
           <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
-          <pre>{{ asset.notes }}</pre>
+          <pre>{{ pallet.notes }}</pre>
         </div>
       </div>
     </div>
