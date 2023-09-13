@@ -122,7 +122,7 @@ onBeforeUnmount(() => {
     <div v-if="loading" class="my-4 flex justify-center">
       <div class="loader text-center"></div>
     </div>
-    <CheckInRequestComponent v-for="request of checkInQueue" :request="request" :kiosks="kiosks" :user="users.get(request.by)!" :parts="partsMap" @submit="submit"/>
+    <CheckInRequestComponent v-for="request of checkInQueue" :key="request.by+request.date" :request="request" :kiosks="kiosks" :user="users.get(request.by)!" :parts="partsMap" @submit="submit"/>
     <p class="mt-4" v-if="checkInQueue.length<1&&!loading">Queue is empty and will auto refresh every 10 seconds...</p>
   </div>
 </template>
