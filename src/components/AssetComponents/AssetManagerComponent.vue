@@ -163,7 +163,6 @@ onMounted(()=>{
       <input
         class="textbox m-1"
         v-on:keydown.enter.prevent
-        :disabled="strict&&!untracked&&!correction"
         v-model="oldAsset.serial"
         type="text"
         placeholder="Serial Number"
