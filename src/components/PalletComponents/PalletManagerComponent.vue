@@ -3,16 +3,18 @@ import { AxiosError, AxiosInstance } from 'axios';
 import { ref, onMounted, watch } from 'vue';
 import { Router } from 'vue-router';
 import {
-PalletSchema,
-LoadedCartItem,
-AssetPart,
-PartSchema,
+  PalletSchema,
+  LoadedCartItem,
+  AssetPart,
+  PartSchema,
+  AssetSchema
 } from '../../plugins/interfaces';
 import AssetCartItemComponent from '../AssetComponents/AssetCartItemComponent.vue';
 import AssetPartSearchComponent from '../AssetComponents/SearchPartOnAssetComponent.vue';
 import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponent.vue';
 import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
 import InventoryPopup from '../InventoryComponents/InventoryPopup.vue';
+import AssetComponent from '../AssetComponents/AssetComponent.vue';
 import PlusButton from '../GenericComponents/PlusButton.vue';
 
 interface Props {
@@ -21,6 +23,7 @@ interface Props {
   strict: boolean;
   palletRef: PalletSchema;
   parts: AssetPart[];
+  assets: AssetSchema[];
   errorHandler?: (err: Error | AxiosError | string) => void;
   displayMessage?: (message: string) => void;
   http?: AxiosInstance;
@@ -46,13 +49,13 @@ const {
   inventorySearch,
   inventory,
   untracked,
-  isAdmin
+  isAdmin,
 } = defineProps<Props>();
 // End props
 let correction = ref(false)
 let partSearchPopup = ref(false);
 let inventorySearchPopup = ref(false);
-
+let serialsRef = ref("");
 let emit = defineEmits(['palletSubmit', 'palletReset', 'plusPart', 'minusPart', 'deletePart', 'addAll', 'updateQuantity']);
 
 // Emit add part to asset as new record
@@ -78,7 +81,7 @@ function addAllFromInventory(item: LoadedCartItem) {
 function submitForm() {
   if((untracked||correction.value)&&!window.confirm("Are you sure you want to submit?"))
     return
-  emit("palletSubmit", correction.value)
+  emit("palletSubmit", serialsRef.value, correction.value)
 }
 
 function updateQuantity(item: AssetPart, quantity: number) {
@@ -120,22 +123,21 @@ onMounted(()=>{
         pattern="PAL([0-9]{7})"
         placeholder="PAL0000000"
       />
-      <label>Location:</label>
-      <input
-        v-on:keydown.enter.prevent
-        class="textbox m-1"
-        :required="strict"
-        :disabled="strict&&!untracked&&!correction"
-        v-model="palletRef.location"
-        type="text"
-        placeholder="Location"
-      />
       <label>Building:</label>
       <CustomDropdownComponent
         :required="strict"
         :options="['3', '1', '4']"
         @updateValue="(value: string) => { palletRef.building = parseInt(value) }"
         :defaultValue="palletRef.building?.toString()"
+      />
+      <label>Location:</label>
+      <input
+        v-on:keydown.enter.prevent
+        class="textbox m-1"
+        :required="strict"
+        v-model="palletRef.location"
+        type="text"
+        placeholder="Location"
       />
       <div v-if="strict" class="col-span-2 my-4">
         <h1 class="inline-block text-4xl leading-8 md:leading-10">Notes:</h1>
@@ -200,6 +202,40 @@ onMounted(()=>{
           @updateQuantity="updateQuantity"
         />
       </div>
+    <div class="col-span-full">
+      <h1 class="col-span-2 my-4 text-4xl">Assets:</h1>
+      <div v-if="strict" class="col-span-2 grid grid-cols-2">
+        <label>Add Assets:</label>
+        <textarea
+          class="textbox m-1"
+          v-model="serialsRef"
+          placeholder="One tag per line.  Drag to resize"
+        />
+      </div>
+        <p v-if="assets.length>0" class="my-2 w-full rounded-md bg-green-500 p-2 font-bold">
+          To remove an asset, edit its "Pallet" field and provide a new location in the Edit Asset menu.
+      </p>
+      <div
+        v-if="assets.length>0"
+        class="relative grid grid-cols-4 py-1 text-center font-bold leading-8 transition md:grid-cols-6 md:py-2 md:leading-10 mt-auto"
+      >
+        <p class="mt-auto">NXID</p>
+        <p class="mt-auto">Building</p>
+        <p class="hidden md:block mt-auto">Type</p>
+        <p class="hidden md:block mt-auto">Chassis</p>
+        <p class="mt-auto">Status</p>
+      </div>
+      <div class="md:animate-bottom" v-if="assets.length>0">
+        <AssetComponent
+          :add="false"
+          :edit="false"
+          :view="false"
+          v-for="asset in assets"
+          v-bind:key="asset._id"
+          :asset="asset"
+        />
+      </div>
+    </div>
       <input
         class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
         type="reset"

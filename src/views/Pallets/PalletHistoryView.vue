@@ -11,12 +11,14 @@ import {
   getPalletByID,
   getPalletHistory,
 } from '../../plugins/dbCommands/palletManager';
+import { getAssetByID } from '../../plugins/dbCommands/assetManager';
 import { getPartByID } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import {
-  AssetEvent,
-  AssetHistory,
   AssetSchema,
+  PalletSchema,
+  PalletHistory,
+  PalletEvent,
   CartItem,
   PartSchema,
   User,
@@ -36,6 +38,7 @@ const { http, router, errorHandler } =
 let pallets = ref(new Map<string, PalletSchema>());
 let users = new Map<string, User>();
 let parts = ref(new Map<string, PartSchema>());
+let assets = ref(new Map<string, AssetSchema>());
 let pallet_tag = ref('');
 let history = ref([] as PalletHistory);
 let pageSize = 10;
@@ -67,14 +70,36 @@ function checkPart(part: CartItem) {
     });
   })
 }
+// Check if asset is in map and add it if it isn't
+function checkAsset(asset_tag: string) {
+  return new Promise<void>((res, rej)=>{
+    // Check if part is already mapped
+    if (assets.value.has(asset_tag))
+      return res()
+    // Set temp value
+    assets.value.set(asset_tag, {});
+    // Fetch part from API
+    getAssetByID(http, asset_tag, (data, err) => {
+      if (err) {
+        assets.value.delete(asset_tag);
+        errorHandler(err);
+        rej()
+        return;
+      }
+      // Set new value
+      assets.value.set(asset_tag, data as AssetSchema);
+      res()
+    });
+  })
+}
 
 // Check if asset in in map and add it if it isn't
-function checkAssetAndParts(historyEvent: PalletEvent) {
+function checkPallets(historyEvent: PalletEvent) {
   return new Promise<string>(async (res, rej)=>{
     // Check if asset is already cached
     if (!pallets.value.has(historyEvent.pallet_id)) {
       // Set temporary value
-      pallets.value.set(historyEvent.pallet_id, {});
+      pallets.value.set(historyEvent.pallet_id, {} as PalletSchema);
       // Get asset from API
       getPalletByID(http, historyEvent.pallet_id, async (data, err) => {
         if (err) {
@@ -85,25 +110,31 @@ function checkAssetAndParts(historyEvent: PalletEvent) {
           return;
         }
         // Set temp variable for type casting
-        let temp = data as AssetSchema;
+        let temp = data as PalletSchema;
         // Set new value
         pallets.value.set(historyEvent.pallet_id, temp);
         // Map all existing parts
-        await Promise.all(historyEvent.existing.map(checkPart))
+        await Promise.all(historyEvent.existingParts.map(checkPart))
         // Map all added parts
-        await Promise.all(historyEvent.added.map(checkPart))
+        await Promise.all(historyEvent.addedParts.map(checkPart))
         // Map all removed parts
-        await Promise.all(historyEvent.removed.map(checkPart))
+        await Promise.all(historyEvent.removedParts.map(checkPart))
+        // Map all existing assets
+        await Promise.all(historyEvent.existingAssets.map(checkAsset))
+        // Map all added assets
+        await Promise.all(historyEvent.addedAssets.map(checkAsset))
+        // Map all removed assets
+        await Promise.all(historyEvent.removedAssets.map(checkAsset))
         res("")
       });
     }
     else {
       // Map all existing parts
-      await Promise.all(historyEvent.existing.map(checkPart))
+      await Promise.all(historyEvent.existingParts.map(checkPart))
       // Map all added parts
-      await Promise.all(historyEvent.added.map(checkPart))
+      await Promise.all(historyEvent.addedParts.map(checkPart))
       // Map all removed parts
-      await Promise.all(historyEvent.removed.map(checkPart))
+      await Promise.all(historyEvent.removedParts.map(checkPart))
       res("")
     }
   })
@@ -143,14 +174,14 @@ async function loadPage(page: number) {
 }
 
 function getPage(page: number) {
-  return new Promise<{ total: number, pages: number, events: AssetHistory}>((res, rej)=>{
+  return new Promise<{ total: number, pages: number, events: PalletHistory}>((res, rej)=>{
     if(pageCache.has(page))
       return res({total: totalEvents.value, pages: totalPages.value, events: pageCache.get(page)!})
     getPalletHistory(http, pallet_tag.value, page, pageSize, async (data, err) => {
       if(err)
         return rej([])
-      let p = data as { total: number, pages: number, events: AssetHistory}
-      await Promise.all(p.events.map(checkAssetAndParts));
+      let p = data as { total: number, pages: number, events: PalletHistory}
+      await Promise.all(p.events.map(checkPallets));
       pageCache.set(page, p.events)
       res(p)
     })
@@ -246,6 +277,7 @@ function checkCache() {
     <PalletEventComponent
       v-else
       :pallets="pallets"
+      :assets="assets"
       :user="users.get(event.by)!"
       :parts="parts"
       :event="event"

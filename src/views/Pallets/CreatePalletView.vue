@@ -26,7 +26,7 @@ const { http, store, router, errorHandler, displayMessage } =
 let palletRef = ref({} as PalletSchema);
 let partsOnPallet = ref([] as LoadedCartItem[]);
 
-function palletSubmit() {
+function palletSubmit(assets: string) {
   // Use create part method from API commands
   let unloadedParts = [] as CartItem[];
   // Iterate through list of parts and strip only the NXID and quantity
@@ -43,7 +43,7 @@ function palletSubmit() {
       });
     }
   }
-  createPallet(http, palletRef.value, unloadedParts, [], (data, err) => {
+  createPallet(http, palletRef.value, unloadedParts, assets, (data, err) => {
     if (err) {
       return errorHandler(err);
     }
@@ -108,10 +108,12 @@ function deletePart(part: LoadedCartItem) {
     <PalletManagerComponent
       :http="http"
       :title="'Add Untracked Asset:'"
+      :untracked="true"
       :submitText="'Create Asset'"
       :strict="true"
       :palletRef="palletRef"
       :parts="partsOnPallet"
+      :assets="[]"
       :errorHandler="errorHandler"
       :displayMessage="displayMessage"
       :partSearch="true"

@@ -5,6 +5,7 @@ import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import BackButton from '../../components/GenericComponents/BackButton.vue';
 import AssetCartItemComponent from '../../components/AssetComponents/AssetCartItemComponent.vue';
+import AssetComponent from '../../components/AssetComponents/AssetComponent.vue';
 import {
   getPalletByID,
   getPartsOnPallet,
@@ -13,6 +14,7 @@ import type {
 PalletSchema,
 LoadedCartItem,
 UserState,
+AssetSchema
 } from '../../plugins/interfaces';
 
 interface Props {
@@ -32,6 +34,7 @@ let pallet = ref({
   notes: ''
 } as PalletSchema);
 let parts = ref([] as LoadedCartItem[]);
+let assets = ref([] as AssetSchema[]);
 
 onBeforeMount(() => {
   if (router.currentRoute.value.query.pallet_tag) {
@@ -45,7 +48,10 @@ onBeforeMount(() => {
         if (err) {
           errorHandler(err);
         }
-        let temp = res as LoadedCartItem[]
+        // Doing this cause I'm too lazy to fix type defs
+        let res2 = res as any
+        let temp = res2.parts as LoadedCartItem[]
+        assets.value = res2.assets
         // Create sorted list using array filters
         let sortedList = temp.filter((p)=>p.part.type == "Motherboard")
         sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "CPU"))
@@ -64,7 +70,9 @@ onBeforeMount(() => {
           p.part.type != "Peripheral Card"&&
           p.part.type != "Cable")
         )) 
+        console.log(res2)
         parts.value = sortedList
+        assets.value = res2.assets as AssetSchema[]
       });
     });
   }
@@ -75,6 +83,14 @@ function edit() {
     name: 'Edit Pallet',
     query: { pallet_tag: pallet.value.pallet_tag },
   });
+}
+
+function toggleEdit(asset: AssetSchema) {
+  router.push({ name: 'Edit Asset', query: { asset_tag: asset.asset_tag } });
+}
+
+function viewAsset(asset: AssetSchema) {
+  router.push({ name: 'View Asset', query: { asset_tag: asset.asset_tag } });
 }
 </script>
 
@@ -104,7 +120,7 @@ function edit() {
         </svg>
         <RouterLink
           class="my-auto ml-2 rounded-md p-2 font-bold transition-colors hover:bg-gray-400 hover:dark:bg-zinc-700"
-          :to="`/pallets/history?nxid=${pallet.pallet_tag}`"
+          :to="`/pallets/history?pallet_tag=${pallet.pallet_tag}`"
         >
           View History
         </RouterLink>
@@ -116,7 +132,7 @@ function edit() {
         <p>{{ pallet.location }}</p>
         <p>Last Updated:</p>
         <p>
-          {{ pallet.date_created!.toLocaleString() }}
+          {{ new Date(pallet.date_created).toLocaleString() }}
         </p>
         <div class="col-span-2 my-4" v-if="pallet.notes">
           <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
@@ -125,7 +141,7 @@ function edit() {
       </div>
     </div>
     <div v-if="parts.length > 0">
-      <h1 class="col-span-2 mb-4 text-4xl">Parts:</h1>
+      <h1 class="col-span-2 my-4 text-4xl">Parts:</h1>
       <div
         v-if="(parts!.length > 0)"
         class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-5 md:leading-10"
@@ -145,6 +161,30 @@ function edit() {
         @delete="$emit('deletePart', part)"
         :hideButtons="true"
       />
+    </div>
+    <div v-if="assets.length > 0">
+      <h1 class="col-span-2 my-4 text-4xl">Assets:</h1>
+      <div
+        class="relative grid grid-cols-4 py-1 text-center font-bold leading-8 transition md:grid-cols-6 md:py-2 md:leading-10 mt-auto"
+      >
+        <p class="mt-auto">NXID</p>
+        <p class="mt-auto">Building</p>
+        <p class="hidden md:block mt-auto">Type</p>
+        <p class="hidden md:block mt-auto">Chassis</p>
+        <p class="mt-auto">Status</p>
+      </div>
+      <div class="md:animate-bottom">
+        <AssetComponent
+          :add="false"
+          :edit="true"
+          :view="true"
+          v-for="asset in assets"
+          v-bind:key="asset._id"
+          @editPartAction="toggleEdit(asset)"
+          @viewPartAction="viewAsset(asset)"
+          :asset="asset"
+        />
+      </div>
     </div>
   </div>
 </template>

@@ -44,6 +44,13 @@
           >
             Assets
           </RouterLink>
+          <RouterLink
+            v-if="!kiosk"
+            class="header-button-colors w-24 text-center leading-10 transition"
+            to="/pallets"
+          >
+            Pallets
+          </RouterLink>
           <!-- <RouterLink to="/assets">Assets</RouterLink> -->
           <RouterLink
             v-if="kiosk"

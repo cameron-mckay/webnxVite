@@ -17,7 +17,8 @@ import type {
   PartSchema,
   UserState,
   AssetPart,
-  PalletSchema
+  PalletSchema,
+  AssetSchema
 } from '../../plugins/interfaces';
 
 
@@ -39,6 +40,7 @@ let inventory = ref([] as AssetPart[]);
 let inventoryCopy = [] as AssetPart[];
 let loading = ref(false)
 let maxQuantityMap = new Map<string, number>()
+let assets = ref([] as AssetSchema[])
 onBeforeMount(() => {
   if (router.currentRoute.value.query.pallet_tag) {
     loading.value = true
@@ -59,10 +61,11 @@ onBeforeMount(() => {
         if (err) {
           errorHandler(err);
         }
+        let res2 = res1 as any
         // Set reactive array to API response
-        partsOnPallet.value = res1 as LoadedCartItem[];
+        partsOnPallet.value = res2.parts as LoadedCartItem[];
         // Save a copy for reset value
-        partsOnPalletCopy = JSON.parse(JSON.stringify(res1 as LoadedCartItem[]));
+        partsOnPalletCopy = JSON.parse(JSON.stringify(res2.parts)) as AssetPart[];
 
         getUserInventory(http, (res, err) => {
           if (err) {
@@ -70,10 +73,6 @@ onBeforeMount(() => {
           }
           inventory.value = res as LoadedCartItem[];
           inventoryCopy = JSON.parse(JSON.stringify(inventory.value));
-          // Set reactive array to API response
-          partsOnPallet.value = res1 as LoadedCartItem[];
-          // Save a copy for reset value
-          partsOnPalletCopy = JSON.parse(JSON.stringify(res1 as LoadedCartItem[]));
 
           inventoryCopy.filter((p)=>p.quantity).map((p)=>{
             if(maxQuantityMap.has(p.part.nxid!))
@@ -88,10 +87,13 @@ onBeforeMount(() => {
           maxQuantityMap.forEach((v, k)=>{
             console.log(k+": "+v)
           })
-          partsOnPallet.value = (res1 as AssetPart[]).map((p)=>{
+          partsOnPallet.value = (res2.parts as AssetPart[]).map((p)=>{
             p.max_quantity = maxQuantityMap.has(p.part.nxid!) ? maxQuantityMap.get(p.part.nxid!) : 1
             return p
           })
+          // Save a copy for reset value
+          partsOnPalletCopy = JSON.parse(JSON.stringify(partsOnPallet.value)) as AssetPart[];
+          assets.value = res2.assets
           loading.value = false
         });
       });
@@ -100,7 +102,7 @@ onBeforeMount(() => {
   }
 });
 
-function palletSubmit(correction: boolean) {
+function palletSubmit(assets: string, correction: boolean) {
   // Use create part method from API commands
   let unloadedParts = partsOnPallet.value.map((part) => {
     if (part.serial) {
@@ -108,7 +110,6 @@ function palletSubmit(correction: boolean) {
     }
     return { nxid: part.part.nxid as string, quantity: part.quantity };
   }) as CartItem[];
-  let assets = [] as string[]
   // Iterate through list of parts and strip only the NXID and quantity
   updatePallet(http, palletRef.value, unloadedParts, assets, correction, (data, err) => {
     if (err) {
@@ -282,7 +283,8 @@ function reset() {
       :displayMessage="displayMessage"
       :inventorySearch="true"
       :isAdmin="(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('lead'))?true:false"
-      @assetSubmit="palletSubmit"
+      :assets="assets"
+      @palletSubmit="palletSubmit"
       @plusPart="plusPart"
       @addAll="addAll"
       @minusPart="minusPart"
