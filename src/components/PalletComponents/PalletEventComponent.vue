@@ -147,16 +147,16 @@ onMounted(() => {
         </del>
       </div>
       <div class="hidden md:block md:col-span1 md:h-full"></div>
-      <div class="col-span-2">
+      <div class="col-span-2"
+          v-if="existingAssets.length > 0 || addedAssets.length > 0 || removedAssets.length > 0"
+      >
         <h1
-          v-if="existingParts.length > 0 || addedParts.length > 0 || removedParts.length > 0"
           class="mb-4 mt-4 text-4xl leading-8 md:mt-0 md:leading-10"
         >
           Assets:
         </h1>
         <div
           class="grid grid-cols-3 text-center font-bold"
-          v-if="existingParts.length > 0 || addedParts.length > 0 || removedParts.length > 0"
         >
           <p >NXID</p>
           <p>Manufacturer</p>
