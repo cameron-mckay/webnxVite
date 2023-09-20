@@ -34,6 +34,9 @@ onMounted(() => {
       <p class="col-span-2" v-else-if="record.asset_tag">
         {{ record.asset_tag }}
       </p>
+      <p class="col-span-2" v-else-if="record.pallet_tag">
+        {{ record.pallet_tag }}
+      </p>
       <p class="col-span-2 break-words" v-else></p>
       <p class="hidden break-words md:block" v-if="quantity">
         {{ quantity }}

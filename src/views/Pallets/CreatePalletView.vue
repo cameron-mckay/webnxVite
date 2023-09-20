@@ -107,9 +107,9 @@ function deletePart(part: LoadedCartItem) {
     <BackButton @click="router.back()" class="mr-2 mb-2"/>
     <PalletManagerComponent
       :http="http"
-      :title="'Add Untracked Asset:'"
+      :title="'Create Pallet:'"
       :untracked="true"
-      :submitText="'Create Asset'"
+      :submitText="'Create Pallet'"
       :strict="true"
       :palletRef="palletRef"
       :parts="partsOnPallet"

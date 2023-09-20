@@ -71,23 +71,23 @@ function checkPart(part: CartItem) {
   })
 }
 // Check if asset is in map and add it if it isn't
-function checkAsset(asset_tag: string) {
+function checkAsset(asset_id: string) {
   return new Promise<void>((res, rej)=>{
     // Check if part is already mapped
-    if (assets.value.has(asset_tag))
+    if (assets.value.has(asset_id))
       return res()
     // Set temp value
-    assets.value.set(asset_tag, {});
+    assets.value.set(asset_id, {});
     // Fetch part from API
-    getAssetByID(http, asset_tag, (data, err) => {
+    getAssetByID(http, asset_id, (data, err) => {
       if (err) {
-        assets.value.delete(asset_tag);
+        assets.value.delete(asset_id);
         errorHandler(err);
-        rej()
+        res()
         return;
       }
       // Set new value
-      assets.value.set(asset_tag, data as AssetSchema);
+      assets.value.set(asset_id, data as AssetSchema);
       res()
     });
   })
@@ -135,6 +135,12 @@ function checkPallets(historyEvent: PalletEvent) {
       await Promise.all(historyEvent.addedParts.map(checkPart))
       // Map all removed parts
       await Promise.all(historyEvent.removedParts.map(checkPart))
+      // Map all existing assets
+      await Promise.all(historyEvent.existingAssets.map(checkAsset))
+      // Map all added assets
+      await Promise.all(historyEvent.addedAssets.map(checkAsset))
+      // Map all removed assets
+      await Promise.all(historyEvent.removedAssets.map(checkAsset))
       res("")
     }
   })

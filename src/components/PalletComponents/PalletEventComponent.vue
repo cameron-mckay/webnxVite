@@ -89,7 +89,7 @@ onMounted(() => {
         }}
       </p>
     </div>
-    <div class="grid md:grid-cols-3">
+    <div class="grid grid-cols-2 md:grid-cols-3">
       <div
         class="detail-row col-span-1"
       >
@@ -116,7 +116,7 @@ onMounted(() => {
           </p>
         </div>
       </div>
-      <div class="md:col-span-2">
+      <div class="col-span-2">
         <h1
           v-if="existingParts.length > 0 || addedParts.length > 0 || removedParts.length > 0"
           class="mb-4 mt-4 text-4xl leading-8 md:mt-0 md:leading-10"
@@ -146,7 +146,8 @@ onMounted(() => {
           />
         </del>
       </div>
-      <div class="md:col-span-2 col-start-2">
+      <div class="hidden md:block md:col-span1 md:h-full"></div>
+      <div class="col-span-2">
         <h1
           v-if="existingParts.length > 0 || addedParts.length > 0 || removedParts.length > 0"
           class="mb-4 mt-4 text-4xl leading-8 md:mt-0 md:leading-10"
@@ -159,18 +160,18 @@ onMounted(() => {
         >
           <p >NXID</p>
           <p>Manufacturer</p>
-          <p>Name</p>
+          <p>Type</p>
         </div>
-        <PalletEventAssetComponent v-for="item of existingAssets" :item="item" />
+        <PalletEventAssetComponent v-for="item of existingAssets" :asset="item" />
         <PalletEventAssetComponent
           v-for="item of addedAssets"
-          :item="item"
+          :asset="item"
           :plus="true"
         />
         <del>
           <PalletEventAssetComponent
             v-for="item of removedAssets"
-            :item="item"
+            :asset="item"
             :minus="true"
           />
         </del>

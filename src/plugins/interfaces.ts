@@ -105,6 +105,7 @@ export interface PartRecord {
   building?: Number;
   location?: string;
   asset_tag?: string;
+  pallet_tag?: string;
   serial?: string;
   owner?: string;
   ebay?: string;

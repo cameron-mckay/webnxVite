@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { AssetSchema } from '../../plugins/interfaces';
-import InlinePartSpecComponent from '../PartComponents/InlinePartSpecComponent.vue';
 interface Props {
-  item: AssetSchema;
+  asset: AssetSchema;
   plus?: boolean;
   minus?: boolean;
 }
 
-const { item } = defineProps<Props>();
+const { asset } = defineProps<Props>();
 </script>
 
 <template>
   <div class="group relative col-span-4 my-1">
     <div
-      class="group-hover:bab-hover background-and-border grid grid-cols-3 rounded-lg p-1 text-center leading-8 md:grid-cols-4 md:p-2 md:leading-10"
+      class="group-hover:bab-hover background-and-border grid grid-cols-3 rounded-lg p-1 text-center leading-8 md:p-2 md:leading-10"
     >
       <div class="hidden md:flex">
         <!-- Plus -->
@@ -48,16 +47,37 @@ const { item } = defineProps<Props>();
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
         ></svg>
-        <p>{{ item.asset_tag }}</p>
+        <p>{{ asset.asset_tag }}</p>
       </div>
-      <p class="break-words">{{ item.manufacturer }}</p>
-      <p class="break-words">{{ item.asset_type }}</p>
+      <p class="break-words">{{ asset.manufacturer }}</p>
+      <p class="break-words">{{ asset.asset_type }}</p>
     </div>
     <div
       class="group-hover:bab-drop-hover bab-drop relative"
-      :part="item.part"
+      :part="asset.part"
     >
-
+        <p v-if="asset.building">Building: {{ asset.building }}</p>
+        <p v-if="asset.asset_type">Asset Type: {{ asset.asset_type }}</p>
+        <p v-if="asset.chassis_type">Chassis Type: {{ asset.chassis_type }}</p>
+        <p v-if="asset.manufacturer">Manufacturer: {{ asset.manufacturer }}</p>
+        <p v-if="asset.model">Model: {{ asset.model }}</p>
+        <p v-if="asset.serial">Serial: {{ asset.serial }}</p>
+        <p v-if="asset.bay">Bay: {{ asset.bay }}</p>
+        <p v-if="asset.parent">Chassis Tag: {{ asset.parent }}</p>
+        <p v-if="asset.live != undefined">Status: {{ asset.live ? "Live" : "Invactive" }}</p>
+        <p v-if="asset.rails != undefined">Rails: {{ asset.rails ? "Yes" : "No"}}</p>
+        <p v-if="asset.in_rack != undefined">In Rack: {{ asset.in_rack ? "Yes" : "No"}}</p>
+        <p v-if="asset.public_port">Public Port: {{ asset.public_port }}</p>
+        <p v-if="asset.private_port">Private Port: {{ asset.private_port }}</p>
+        <p v-if="asset.ipmi_port">IPMI Port: {{ asset.ipmi_port }}</p>
+        <p v-if="asset.power_port">Power Port: {{ asset.power_port }}</p>
+        <p v-if="asset.pallet">Pallet: {{ asset.pallet }}</p>
+        <p>Date added: {{ new Date(Date.parse(asset.date_created!)).toLocaleString() }}</p>
+        <p v-if="asset.date_replaced">Date removed: {{ new Date(Date.parse(asset.date_replaced!)).toLocaleString() }}</p>
+        <div class="my-4" v-if="asset.notes">
+          <h1 class="mb-2 text-2xl">Notes:</h1>
+          <pre>{{ asset.notes }}</pre>
+        </div>
     </div>
   </div>
 </template>
