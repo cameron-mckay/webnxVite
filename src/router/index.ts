@@ -147,6 +147,31 @@ const routes = [
     component: () => import('../views/Parts/InventoryView.vue'),
   },
   {
+    path: '/pallets',
+    name: 'Pallets',
+    component: () => import('../views/Pallets/PalletSearchView.vue'),
+  },
+  {
+    path: '/pallets/add',
+    name: 'Create Pallet',
+    component: () => import('../views/Pallets/CreatePalletView.vue'),
+  },
+  {
+    path: '/pallets/edit',
+    name: 'Edit Pallet',
+    component: () => import('../views/Pallets/EditPalletView.vue'),
+  },
+  {
+    path: '/pallets/view',
+    name: 'View Pallet',
+    component: () => import('../views/Pallets/PalletView.vue'),
+  },
+  {
+    path: '/pallets/history',
+    name: 'Pallet History',
+    component: () => import('../views/Pallets/PalletHistoryView.vue'),
+  },
+  {
     path: '/:catchall(.*)',
     name: '404',
     component: () => import('../views/NotFound.vue'),

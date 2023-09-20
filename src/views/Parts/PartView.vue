@@ -85,7 +85,7 @@ onBeforeMount(() => {
           !getUserExclude.includes(record.owner) &&
           users.value.find((e) => e._id == record.owner) === undefined
         ) {
-          await getUserByID(http, record.owner, (res, err) => {
+          getUserByID(http, record.owner, (res, err) => {
             if (err) {
               errorHandler(err);
             }

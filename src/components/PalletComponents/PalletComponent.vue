@@ -1,37 +1,33 @@
 <script setup lang="ts">
-import { AssetSchema } from '../../plugins/interfaces';
+import { PalletSchema } from '../../plugins/interfaces';
 
 interface Props {
-  asset: AssetSchema;
+  pallet: PalletSchema;
   edit?: boolean;
   add?: boolean;
   view?: boolean;
 }
 
-const { asset, edit, add, view } = defineProps<Props>();
+const { pallet, edit, add, view } = defineProps<Props>();
 </script>
 
 <template>
   <div class="group relative my-1">
     <div
-      class="background-and-border group-hover:bab-hover grid grid-cols-4 p-1 text-center leading-8 group-hover:rounded-bl-none md:grid-cols-6 md:p-2 md:leading-10"
+      class="background-and-border group-hover:bab-hover grid grid-cols-4 p-1 text-center leading-8 group-hover:rounded-bl-none md:p-2 md:leading-10"
     >
-      <p>{{ asset.asset_tag }}</p>
-      <p class="break-words">{{ asset.building }}</p>
-      <p class="hidden break-words md:block">{{ asset.asset_type }}</p>
-      <p class="hidden break-words md:block">{{ asset.chassis_type }}</p>
-      <p v-if="asset.live">Live</p>
-      <p v-else-if="asset.asset_type=='Server'&&asset.in_rack">AVAIL</p>
-      <p v-else>Inactive</p>
+      <p>{{ pallet.pallet_tag }}</p>
+      <p class="break-words">{{ pallet.building }}</p>
+      <p class="break-words">{{ pallet.location }}</p>
       <div class="my-auto flex justify-end">
         <!-- Pencil -->
-        <RouterLink :to="'/assets/edit?asset_tag='+asset.asset_tag"
-            v-if="edit === true"
+        <RouterLink :to="'/pallets/edit?pallet_tag='+pallet.pallet_tag"
             class="button-icon hover:button-icon-hover active:button-icon-active"
-            title="Edit asset"
+            title="Edit pallet"
         >
           <svg
-            v-on:click="$emit('editPartAction')"
+            v-if="edit === true"
+            v-on:click="$emit('editAction')"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 512 512"
           >
@@ -46,7 +42,7 @@ const { asset, edit, add, view } = defineProps<Props>();
         <svg
           class="button-icon hover:button-icon-hover active:button-icon-active"
           v-if="add === true"
-          v-on:click="$emit('addPartAction')"
+          v-on:click="$emit('addAction')"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"
         >
@@ -57,13 +53,13 @@ const { asset, edit, add, view } = defineProps<Props>();
           />
         </svg>
         <!-- Eyeball -->
-        <RouterLink :to="'/assets/view?asset_tag='+asset.asset_tag"
-            v-if="view === true"
-            title="View Asset"
+        <RouterLink :to="'/pallets/view?pallet_tag='+pallet.pallet_tag"
+            title="View Pallet"
             class="button-icon hover:button-icon-hover active:button-icon-active"
         >
           <svg
-            v-on:click="$emit('viewPartAction')"
+            v-if="view === true"
+            v-on:click="$emit('viewAction')"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 576 512"
           >
@@ -77,28 +73,13 @@ const { asset, edit, add, view } = defineProps<Props>();
       </div>
     </div>
     <div class="group-hover:bab-drop-hover bab-drop">
-        <p v-if="asset.building">Building: {{ asset.building }}</p>
-        <p v-if="asset.asset_type">Asset Type: {{ asset.asset_type }}</p>
-        <p v-if="asset.chassis_type">Chassis Type: {{ asset.chassis_type }}</p>
-        <p v-if="asset.manufacturer">Manufacturer: {{ asset.manufacturer }}</p>
-        <p v-if="asset.model">Model: {{ asset.model }}</p>
-        <p v-if="asset.serial">Serial: {{ asset.serial }}</p>
-        <p v-if="asset.bay">Bay: {{ asset.bay }}</p>
-        <p v-if="asset.parent">Chassis Tag: {{ asset.parent }}</p>
-        <p v-if="asset.live != undefined">Status: {{ asset.live ? "Live" : "Invactive" }}</p>
-        <p v-if="asset.rails != undefined">Rails: {{ asset.rails ? "Yes" : "No"}}</p>
-        <p v-if="asset.in_rack != undefined">In Rack: {{ asset.in_rack ? "Yes" : "No"}}</p>
-        <p v-if="asset.public_port">Public Port: {{ asset.public_port }}</p>
-        <p v-if="asset.private_port">Private Port: {{ asset.private_port }}</p>
-        <p v-if="asset.ipmi_port">IPMI Port: {{ asset.ipmi_port }}</p>
-        <p v-if="asset.power_port">Power Port: {{ asset.power_port }}</p>
-        <p v-if="asset.pallet">Pallet: {{ asset.pallet }}</p>
-        <p>Date added: {{ new Date(Date.parse(asset.date_created!)).toLocaleString() }}</p>
-        <p v-if="asset.date_replaced">Date removed: {{ new Date(Date.parse(asset.date_replaced!)).toLocaleString() }}</p>
-        <div class="my-4" v-if="asset.notes">
-          <h1 class="mb-2 text-2xl">Notes:</h1>
-          <pre>{{ asset.notes }}</pre>
-        </div>
+      <p>
+        {{
+          'Date Updated: ' +
+          new Date(pallet.date_created).toLocaleString()
+        }}
+      </p>
+      <pre class="font-extrabold" v-if="pallet.notes">Notes:<br><span class="font-normal">{{ pallet.notes }}</span></pre>
     </div>
   </div>
 </template>

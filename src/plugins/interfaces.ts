@@ -105,6 +105,7 @@ export interface PartRecord {
   building?: Number;
   location?: string;
   asset_tag?: string;
+  pallet_tag?: string;
   serial?: string;
   owner?: string;
   ebay?: string;
@@ -216,8 +217,8 @@ export interface AssetPart extends LoadedCartItem {
   max_quantity?: number
 }
 
-
 export interface PalletSchema {
+    [index: string]: any;
     _id: string,
     pallet_tag: string,
     location: string,
@@ -229,3 +230,19 @@ export interface PalletSchema {
     prev: string|null,
     next: string|null,
 }
+
+export interface PalletEvent {
+    date_begin: Date,
+    pallet_id: string,
+    by: string,
+    info_updated: boolean,
+    existingParts: CartItem[],
+    addedParts: CartItem[],
+    removedParts: CartItem[],
+    existingAssets: string[],
+    addedAssets: string[],
+    removedAssets: string[]
+}
+
+
+export type PalletHistory = PalletEvent[]

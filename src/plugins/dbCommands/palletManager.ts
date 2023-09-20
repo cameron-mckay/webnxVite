@@ -106,7 +106,7 @@ export function createPallet(
   http: AxiosInstance,
   pallet: PalletSchema,
   parts: Array<CartItem>,
-  assets: Array<string>,
+  assets: string,
   callback: apiResponse
 ) {
   // Send new part to API
@@ -133,7 +133,7 @@ export function updatePallet(
   http: AxiosInstance,
   pallet: PalletSchema,
   parts: Array<CartItem>,
-  assets: Array<string>,
+  assets: string,
   correction: boolean,
   callback: apiResponse
 ) {
@@ -171,7 +171,7 @@ export function getPartsOnPallet(
       partsArr.map((obj) => {
         parts.set(obj.nxid, obj.part);
       });
-      let returnValue = records.map((item) => {
+      let returnParts = records.map((item) => {
         if (item.serial) {
           return {
             part: parts.get(item.nxid),
@@ -183,7 +183,7 @@ export function getPartsOnPallet(
           quantity: item.quantity,
         } as LoadedCartItem;
       });
-      callback(returnValue, null);
+      callback({ parts: returnParts, assets: res.data.assets}, null);
     })
     .catch((err: Error | AxiosError) => {
       // Error - send error to callback
