@@ -1,7 +1,7 @@
 <script lang='ts' setup>
 import { UserState } from '../../plugins/interfaces';
 import { Store } from 'vuex';
-import { onMounted, onBeforeMount, onActivated, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 interface Props {
   store: Store<UserState>;

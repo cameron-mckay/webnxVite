@@ -614,3 +614,59 @@ export function getCheckoutHistory(
       callback({}, err);
     });
 }
+
+export function getPartCreateAndDeleteHistory(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse
+) {
+  http
+    .get('/api/part/history', {
+      params: {
+        startDate,
+        endDate,
+        pageNum,
+        pageSize
+      }
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getPartCreateAndDeleteHistoryByNXID(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  nxid: string,
+  callback: apiResponse
+) {
+  http
+    .get('/api/part/history', {
+      params: {
+        startDate,
+        endDate,
+        pageNum,
+        pageSize,
+        nxid
+      }
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
