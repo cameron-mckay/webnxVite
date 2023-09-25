@@ -8,6 +8,7 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState } from '../../plugins/interfaces';
 import UserAnalyticsComponent from '../../components/AdminComponents/UserAnalyticsComponent.vue';
+import BackButton from '../../components/GenericComponents/BackButton.vue';
 import { dateToHTML, getTodaysDate, HTMLtoEpoch, getLastMonth } from '../../plugins/dateFunctions';
 interface Props {
   http: AxiosInstance;
@@ -142,6 +143,7 @@ function openAssetsUpdated(user_id: string) {
 </script>
 <template>
   <div>
+    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/manage')" class="mr-2 mb-2"/>
     <h1 class="mb-4 text-4xl">User Analytics</h1>
     <form @submit.prevent="getUsers()" class="flex flex-wrap mb-4">
       <div>

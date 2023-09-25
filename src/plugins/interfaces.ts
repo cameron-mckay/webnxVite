@@ -181,10 +181,10 @@ export interface Cart {
 }
 
 export interface InventoryEntry {
-    nxid?: string,
-    unserialized: number,
-    serials: string[],
-    newSerials?: string[]
+  nxid?: string,
+  unserialized: number,
+  serials: string[],
+  newSerials?: string[]
 }
 
 export interface CheckInQueuePart extends CartItem {
@@ -218,31 +218,41 @@ export interface AssetPart extends LoadedCartItem {
 }
 
 export interface PalletSchema {
-    [index: string]: any;
-    _id: string,
-    pallet_tag: string,
-    location: string,
-    building: number,
-    by: string,
-    date_created: Date,
-    date_replaced: Date,
-    notes: string,
-    prev: string|null,
-    next: string|null,
+  [index: string]: any;
+  _id: string,
+  pallet_tag: string,
+  location: string,
+  building: number,
+  by: string,
+  date_created: Date,
+  date_replaced: Date,
+  notes: string,
+  prev: string|null,
+  next: string|null,
 }
 
 export interface PalletEvent {
-    date_begin: Date,
-    pallet_id: string,
-    by: string,
-    info_updated: boolean,
-    existingParts: CartItem[],
-    addedParts: CartItem[],
-    removedParts: CartItem[],
-    existingAssets: string[],
-    addedAssets: string[],
-    removedAssets: string[]
+  date_begin: Date,
+  pallet_id: string,
+  by: string,
+  info_updated: boolean,
+  existingParts: CartItem[],
+  addedParts: CartItem[],
+  removedParts: CartItem[],
+  existingAssets: string[],
+  addedAssets: string[],
+  removedAssets: string[]
 }
 
 
 export type PalletHistory = PalletEvent[]
+
+export interface AllTechsEvent {
+  by: string,
+  date: Date,
+  existing: CartItem[],
+  added: CartItem[],
+  removed: CartItem[]
+}
+
+export type AllTechsHistory = AllTechsEvent[]

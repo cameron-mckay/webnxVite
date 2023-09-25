@@ -107,9 +107,19 @@ const routes = [
     component: () => import('../views/Admin/CheckoutHistoryView.vue'),
   },
   {
+    path: '/manage/checkin',
+    name: 'Check In History',
+    component: () => import('../views/Admin/CheckinHistoryView.vue'),
+  },
+  {
     path: '/manage',
     name: 'Manage',
     component: () => import('../views/Admin/AdminDashboardView.vue'),
+  },
+  {
+    path: '/manage/all',
+    name: 'All Techs History',
+    component: () => import('../views/Admin/AllTechsHistoryView.vue'),
   },
   {
     path: '/admin/users',

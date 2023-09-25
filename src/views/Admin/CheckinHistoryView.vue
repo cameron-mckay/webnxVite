@@ -3,19 +3,20 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import { onBeforeMount, ref } from 'vue';
-import CheckoutHistoryComponent from '../../components/KioskComponents/CheckoutHistoryComponent.vue';
+import CheckinHistoryComponent from '../../components/KioskComponents/CheckinHistoryComponent.vue';
 import LeftCaretButton from '../../components/GenericComponents/LeftCaretButton.vue'
 import RightCaretButton from '../../components/GenericComponents/RightCaretButton.vue'
 import BackButton from '../../components/GenericComponents/BackButton.vue';
-import { dateToHTML, HTMLtoEpoch, getTodaysDate, getLastMonth } from '../../plugins/dateFunctions';
+import RefreshButton from '../../components/GenericComponents/RefreshButton.vue';
+import { dateToHTML, getTodaysDate, HTMLtoEpoch, getLastMonth } from '../../plugins/dateFunctions';
 import type {
 UserState,
 User,
 PartSchema,
-CheckOutEvent
+CheckInEvent
 } from '../../plugins/interfaces';
-import { getCheckoutHistory, getPartByID } from '../../plugins/dbCommands/partManager';
-import { getAllUsers } from '../../plugins/dbCommands/userManager';
+import { getPartByID } from '../../plugins/dbCommands/partManager';
+import { getAllCheckins, getAllUsers } from '../../plugins/dbCommands/userManager';
 
 interface Props {
   http: AxiosInstance;
@@ -24,11 +25,11 @@ interface Props {
   errorHandler: (err: Error | AxiosError | string) => void;
   displayMessage: (message: string) => void;
 }
-const { http, errorHandler } =
+const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 
 let loading = ref(false)
-let checkInQueue = ref([] as CheckOutEvent[])
+let checkInQueue = ref([] as CheckInEvent[])
 let kiosks = ref([] as User[])
 let users = new Map<string, User>()
 let partsMap = new Map<string, PartSchema>()
@@ -38,35 +39,25 @@ let pageNum = ref(1)
 // Convert into html string
 let endDate = ref(dateToHTML(getTodaysDate()))
 let startDate = ref(dateToHTML(getLastMonth()))
-let pageCache = new Map<number, CheckOutEvent[]>()
+let pageCache = new Map<number, CheckInEvent[]>()
 let totalCheckouts = ref(0)
 let pageSize = 10
 
 onBeforeMount(()=>{
-  getAllUsers(http, (data, err) => {
+  getAllUsers(http, (data, err)=>{
     if(err) {
       return errorHandler("Could not load users.")
     }
-    // Temporary array
-    let allUsers = data as User[]
-    // Process all users
-    kiosks.value = []
-    for (let u of allUsers) {
-      // Check if kiosk
-      if(u.roles&&u.roles.includes("kiosk")) {
-        // Push to kiosks array
-        kiosks.value.push(u)
-      }
-      // Set user map
-      users.set(u._id!, u)
+    let u = data as User[]
+    for(let i of u) {
+      users.set(i._id!, i)
     }
-    // Push check in queue to ref
     loadHistory()
   })
 })
 
 function loadHistory() {
-  pageCache = new Map<number, CheckOutEvent[]>()
+  pageCache = new Map<number, CheckInEvent[]>()
   pageNum.value = 1
   loadPage(1)
   // Get all users
@@ -76,7 +67,7 @@ function loadPage(num: number) {
   loading.value = true
   checkInQueue.value = []
   getPage(num).then((req)=>{
-    checkInQueue.value = req.checkouts
+    checkInQueue.value = req.checkins
     totalCheckouts.value = req.total
     totalPages.value = req.pages
     totalCheckouts.value = req.total
@@ -86,21 +77,17 @@ function loadPage(num: number) {
 }
 
 function getPage(page: number) {
-  // Fuck dates
-  // Add timezone offset since it was stripped
-  let sDate = HTMLtoEpoch(startDate.value)
-  let eDate = HTMLtoEpoch(endDate.value)
-  return new Promise<{total: number, pages: number, checkouts: CheckOutEvent[]}>(async (res)=>{
+  return new Promise<{total: number, pages: number, checkins: CheckInEvent[]}>(async (res)=>{
     // Check if page is in cache
     if(pageCache.has(page))
-      return res({total: totalCheckouts.value, pages: totalPages.value, checkouts: pageCache.get(page)!})
-    getCheckoutHistory(http, sDate, eDate, page, pageSize, async (data, err) => {
+      return res({total: totalCheckouts.value, pages: totalPages.value, checkins: pageCache.get(page)!})
+    getAllCheckins(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), page, pageSize, async (data, err)=>{
       if(err) {
         return errorHandler("Failed to fetch queue.")
       }
       // Load all users now.
-      let response = data as {total: number, pages: number, checkouts: CheckOutEvent[]}
-      let history = response.checkouts
+      let response = data as {total: number, pages: number, checkins: CheckInEvent[]}
+      let history = response.checkins
       // Get all parts and map
       // Evil promise code
       if(history.length&&history.length>0)
@@ -164,9 +151,9 @@ async function checkCache() {
     } else {
       getPage(localPage)
         .then((res) => {
-          pageCache.set(localPage, res.checkouts);
+          pageCache.set(localPage, res.checkins);
         })
-        .catch(() => {
+        .catch((err) => {
           pageCache.delete(localPage);
         });
       page -= 1;
@@ -181,9 +168,9 @@ async function checkCache() {
     } else {
       getPage(localPage)
         .then((res) => {
-          pageCache.set(localPage, res.checkouts);
+          pageCache.set(localPage, res.checkins);
         })
-        .catch(() => {
+        .catch((err) => {
           pageCache.delete(localPage);
         });
       page++;
@@ -193,9 +180,9 @@ async function checkCache() {
 </script>
 <template>
   <div>
+    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/manage')" class="mr-2 mb-2"/>
     <div>
-      <BackButton @click="router.options.history.state.back ? router.back() : router.push('/manage')" class="mr-2 mb-2"/>
-      <h1 class="my-auto text-4xl">Check Out History</h1>
+      <h1 class="my-auto text-4xl">Check In History</h1>
       <div class="flex justify-between my-2">
         <form @submit.prevent="loadHistory" class="flex flex-wrap">
           <div>
@@ -230,7 +217,7 @@ async function checkCache() {
     <div v-if="loading" class="my-4 flex justify-center">
       <div class="loader text-center"></div>
     </div>
-    <CheckoutHistoryComponent v-for="checkout of checkInQueue" :checkout="checkout" :kiosks="kiosks" :user="users.get(checkout.by)!" :parts="partsMap"/>
+    <CheckinHistoryComponent v-for="checkin of checkInQueue" :event="checkin" :kiosks="kiosks" :user="users.get(checkin.by)!" :parts="partsMap"/>
     <p class="mt-4" v-if="checkInQueue.length<1&&!loading">No results found...</p>
     <div
       v-if="totalPages > 1 && !loading"

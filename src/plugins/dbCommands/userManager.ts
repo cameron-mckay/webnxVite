@@ -427,6 +427,34 @@ export function getUserCheckins(
     });
 }
 
+export function getAllCheckins(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse
+) {
+  // Send request to API
+  http
+    .get('/api/user/checkins', {
+    params: {
+      startDate,
+      endDate,
+      pageNum,
+      pageSize
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
 export function getUserCheckouts(
   http: AxiosInstance,
   user: string,
@@ -441,6 +469,34 @@ export function getUserCheckouts(
     .get('/api/checkout/history', {
     params: {
       user,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getAllTechsHistory(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse
+) {
+  // Send request to API
+  http
+    .get('/api/user/alltechs', {
+    params: {
       startDate,
       endDate,
       pageNum,

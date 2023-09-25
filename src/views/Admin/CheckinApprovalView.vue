@@ -5,6 +5,7 @@ import type { Store } from 'vuex';
 import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
 import CheckInRequestComponent from '../../components/KioskComponents/CheckInRequestComponent.vue';
 import RefreshButton from '../../components/GenericComponents/RefreshButton.vue';
+import BackButton from '../../components/GenericComponents/BackButton.vue';
 import type {
 UserState,
 CheckInRequest,
@@ -115,6 +116,7 @@ onBeforeUnmount(() => {
 </script>
 <template>
   <div>
+    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/manage')" class="mr-2 mb-2"/>
     <div class="flex">
       <h1 class="my-auto text-4xl">Check In Queue</h1>
       <RefreshButton class="ml-2" @click="loadQueue"/>

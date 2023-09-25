@@ -5,6 +5,7 @@ import { ref, onBeforeMount } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PartManagerComponent from '../../components/PartComponents/PartManagerComponent.vue';
+import BackButton from '../../components/GenericComponents/BackButton.vue';
 import {
 createPart,
 getNextNXID,
@@ -72,14 +73,17 @@ function nextNXID() {
 }
 </script>
 <template>
-  <PartManagerComponent
-    class="background-and-border p-4"
-    :oldPart="{}"
-    :strict="true"
-    :submitText="`Create Part`"
-    :title="'Create a new part: '"
-    @partSubmit="submitPart"
-    :key="key"
-    :nextNXID="nextNXID"
-  />
+  <div>
+    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/manage')" class="mr-2 mb-2"/>
+    <PartManagerComponent
+      class="background-and-border p-4"
+      :oldPart="{}"
+      :strict="true"
+      :submitText="`Create Part`"
+      :title="'Create a new part: '"
+      @partSubmit="submitPart"
+      :key="key"
+      :nextNXID="nextNXID"
+    />
+  </div>
 </template>

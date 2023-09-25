@@ -7,6 +7,7 @@ import type { Store } from 'vuex';
 import AddInventoryComponent from '../../components/PartComponents/AddInventoryComponent.vue';
 import EditPartComponent from '../../components/PartComponents/EditPartComponent.vue';
 import SearchComponent from '../../components/PartComponents/PartSearchComponent.vue';
+import BackButton from '../../components/GenericComponents/BackButton.vue';
 import {
 createNewPartRecords,
 deletePart,
@@ -19,7 +20,6 @@ getPartByID
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import type {
 CartItem,
-PartRecord,
 PartSchema,
 User,
 UserState,
@@ -212,6 +212,7 @@ function audit() {
 </script>
 <template>
   <div>
+    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/manage')" class="mr-2 mb-2"/>
     <h1 class="mb-4 text-4xl">Part Manager</h1>
     <SearchComponent
       ref="searchRef"

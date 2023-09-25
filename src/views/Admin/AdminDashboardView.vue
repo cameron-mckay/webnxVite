@@ -39,7 +39,7 @@ onMounted(async()=>{
 <template>
   <div class="background-and-border p-4">
     <h1 class="mb-4 text-4xl">Management Dashboard</h1>
-    <div class="grid grid-cols-2">
+    <div class="grid grid-cols-3">
       <RouterLink
         to="/manage/parts/create"
         class="manager-button"
@@ -79,6 +79,18 @@ onMounted(async()=>{
         class="manager-button"
       >
         Check Out History
+      </RouterLink>
+      <RouterLink
+        to="/manage/checkin"
+        class="manager-button"
+      >
+        Check In History
+      </RouterLink>
+      <RouterLink
+        to="/manage/all"
+        class="manager-button"
+      >
+        All Techs History
       </RouterLink>
     </div>
   </div>
