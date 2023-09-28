@@ -621,35 +621,8 @@ export function getPartCreateAndDeleteHistory(
   endDate: number,
   pageNum: number,
   pageSize: number,
-  callback: apiResponse
-) {
-  http
-    .get('/api/part/history', {
-      params: {
-        startDate,
-        endDate,
-        pageNum,
-        pageSize
-      }
-    })
-    .then((res: AxiosResponse) => {
-      // Success - send results to callback
-      callback(res.data as string, null);
-    })
-    .catch((err: Error | AxiosError) => {
-      // Error - send error to callback
-      callback({}, err);
-    });
-}
-
-export function getPartCreateAndDeleteHistoryByNXID(
-  http: AxiosInstance,
-  startDate: number,
-  endDate: number,
-  pageNum: number,
-  pageSize: number,
-  nxid: string,
-  callback: apiResponse
+  callback: apiResponse,
+  nxid?: string,
 ) {
   http
     .get('/api/part/history', {
