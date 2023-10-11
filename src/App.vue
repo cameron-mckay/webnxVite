@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeaderComponent v-if="store.state.isAuth" :http="http" :store="store" :revokeLogin="revokeLogin" />
+    <HeaderComponent v-if="store.state.isAuth&&routeConfigured" :http="http" :store="store" :revokeLogin="revokeLogin" />
     <MessageComponent :messages="messages" :errors="errorMessages" />
     <router-view
       class="my-16 mx-4 w-[calc(100%-2rem)] text-sm md:mx-auto md:max-w-5xl md:text-base"
@@ -10,7 +10,11 @@
       :errorHandler="errorHandler"
       :displayMessage="displayMessage"
       :revokeLogin="revokeLogin"
+      v-if="routeConfigured"
     />
+    <div v-else class="my-4 flex justify-center">
+      <div class="loader text-center"></div>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -21,9 +25,9 @@ import MessageComponent from './components/GenericComponents/MessageComponent.vu
 // Import dependencies
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, inject, onMounted, ref, onBeforeMount } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { NavigationGuardNext, RouteLocationNormalized, useRoute, useRouter } from 'vue-router';
 import { injectionKey } from './plugins/axios';
-import { checkAuth } from './plugins/dbCommands/userManager';
+import { checkAuth, getCurrentUser } from './plugins/dbCommands/userManager';
 import type { Message, User } from './plugins/interfaces';
 import { useStore } from './plugins/store';
 
@@ -32,6 +36,8 @@ const http = inject<AxiosInstance>(injectionKey)!;
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
+
+let routeConfigured = ref(false)
 
 // Global list of messages for the MessageComponent to render
 var messages: Ref<Message[]> = ref([]);
@@ -44,13 +50,13 @@ onMounted(() => {
     (localStorage.getItem('theme') == null &&
       window.matchMedia('(prefers-color-scheme: dark)').matches)
   ) {
-    setTimeout(() => {
+    //setTimeout(() => {
       document.documentElement.classList.add('dark');
-    }, 100);
+    //}, 100);
   } else {
-    setTimeout(() => {
+    //setTimeout(() => {
       localStorage.setItem('theme', 'light');
-    }, 100);
+    //}, 100);
   }
 });
 
@@ -61,50 +67,69 @@ function redirect() {
 
 // Before app is created
 onBeforeMount(()=>{
-  checkAuth(http, (data, err) => {
+  checkAuth(http, async (data, err) => {
     // If not authenticated
     if (err)
       return firstLoadRevokeLogin()
     // If authenticated, set status
-    displayMessage('Successfully logged in.');
-    store.commit('updateUserData', http);
-  });
-  // Check if user is a non admin trying to access admin route
-  setTimeout(()=>{
-    router.beforeEach((to, from, next) => {
-      // Make sure they are admin for admin routes
-      if (!store.state.user.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
-        redirect()
+    getCurrentUser(http, (data, err) => {
+      if (err) {
+        // Error occured - update nothing
+        store.commit('logout')
+        configureRouter()
+        return
       }
-      if (
-        !(store.state.user.roles?.includes('admin')||
-        store.state.user.roles?.includes('clerk')||
-        store.state.user.roles?.includes('lead')) &&
-        /\/manage\/*/.test(to.path)
-      ) {
-        redirect()
-      }
-      if (
-        !(store.state.user.roles?.includes('admin')||
-        store.state.user.roles?.includes('clerk')) &&
-        /\/clerk\/*/.test(to.path)
-      ) {
-        redirect()
-      }
-      if (!(store.state.user.roles?.includes('admin')||
-        store.state.user.roles?.includes('ebay')) &&
-        /\/ebay\/*/.test(to.path)
-      ) {
-        redirect()
-      }
-      // This goes through the matched routes from last to first, finding the closest route with a title.
-      // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
-      // `/nested`'s will be chosen.
-      document.title = `WebNX - ${to.name?.toString()}`;
-      next();
+      // Success - update global user component
+      let user = data as User
+      store.commit("updateUserData", user)
+      displayMessage('Successfully logged in.');
+      console.log(user)
+      configureRouter()
     });
-  }, 1000)
+  });
 })
+
+function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized, next?: NavigationGuardNext) {
+  // Make sure they are admin for admin routes
+  if (!store.state.user.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
+    redirect()
+  }
+  if (
+    !(store.state.user.roles?.includes('admin')||
+    store.state.user.roles?.includes('clerk')||
+    store.state.user.roles?.includes('lead')) &&
+    (/\/manage\/*/.test(to.path)||
+    /\/manage/.test(to.path))
+  ) {
+    redirect()
+  }
+  if (
+    !(store.state.user.roles?.includes('admin')||
+    store.state.user.roles?.includes('clerk')) &&
+    /\/clerk\/*/.test(to.path)
+  ) {
+    redirect()
+  }
+  if (!(store.state.user.roles?.includes('admin')||
+    store.state.user.roles?.includes('ebay')) &&
+    (/\/ebay\/*/.test(to.path)||
+    /\/ebay/.test(to.path))
+  ) {
+    redirect()
+  }
+  // This goes through the matched routes from last to first, finding the closest route with a title.
+  // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
+  // `/nested`'s will be chosen.
+  document.title = `WebNX${to.name?" - "+to.name.toString():""}`;
+  if(next)
+    next();
+}
+
+function configureRouter() {
+  checkRoute(router.currentRoute.value)
+  router.beforeEach(checkRoute);
+  routeConfigured.value = true
+}
 /**
  * @brief Briefly print an error to an on screen popup
  *
@@ -225,13 +250,12 @@ function revokeLogin() {
 function firstLoadRevokeLogin() {
   // set status
   store.commit('logout', http);
+  configureRouter();
   // redirect
-  setTimeout(()=> {
-    if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Password Reset') {
-      router.replace({ query: undefined })
-      router.push({ name: 'Login' });
-    }
-  }, 1000)
+  if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Password Reset') {
+    router.replace({ query: undefined })
+    router.push({ name: 'Login' });
+  }
 }
 
 </script>

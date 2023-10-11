@@ -13,7 +13,7 @@ let loadedParts = ref([] as LoadedCartItem[])
 onBeforeMount(()=>{
   loadedParts.value = checkout.parts.map((p)=>{
     return  {
-        part: parts.get(p.nxid)!,
+        part: parts.get(p.nxid)||{nxid: p.nxid, manufacturer: "DELETED PART", name: "DELETED PART", type: "DELETED", notes: "The part info associated with this NXID has been deleted."},
         serial: p.serial,
         quantity: p.quantity
     } as LoadedCartItem

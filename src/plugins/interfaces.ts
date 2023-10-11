@@ -258,12 +258,8 @@ export interface AllTechsEvent {
 export type AllTechsHistory = AllTechsEvent[]
 
 export interface PartEvent {
-    by: string,
-    location: string,
-    date: Date,
-    next?: string,
-    prev?: string,
-    asset_tag?: string,
-    pallet_tag?: string,
-    parts: CartItem[]
+  date: Date,
+  info: PartRecord,
+  added: CartItem[],
+  removed: CartItem[]
 }

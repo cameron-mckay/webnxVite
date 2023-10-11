@@ -117,17 +117,9 @@ export function createGlobalStore(app: App): Store<UserState> {
         }
       },
       // Uses token to fetch user data from the API
-      updateUserData(state: UserState, http: AxiosInstance) {
-        getCurrentUser(http, (data, err) => {
-          if (err) {
-            // Error occured - update nothing
-            store.commit('logout') 
-            return;
-          }
-          // Success - update global user component
-          state.user = data as User;
-          state.isAuth = true;
-        });
+      updateUserData(state: UserState, user: User) {
+        store.state.user = user
+        store.state.isAuth = true
       },
     },
   });

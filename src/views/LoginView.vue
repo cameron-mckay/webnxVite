@@ -34,7 +34,8 @@ import { onMounted } from 'vue';
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import type { UserState } from '../plugins/interfaces';
+import type { UserState, User } from '../plugins/interfaces';
+import { checkAuth, getCurrentUser } from '../plugins/dbCommands/userManager';
 
 interface Props {
   http: AxiosInstance;
@@ -74,8 +75,25 @@ async function login() {
         localStorage.setItem('token', res.data.token);
         // Add token to headers
         http.defaults.headers['Authorization'] = res.data.token;
+        checkAuth(http, async (data, err) => {
+          // If not authenticated
+          if (err)
+            return
+          // If authenticated, set status
+          getCurrentUser(http, (data, err) => {
+            if (err) {
+              // Error occured - update nothing
+              store.commit('logout')
+              return
+            }
+            // Success - update global user component
+            let user = data as User
+            store.commit("updateUserData", user)
+            displayMessage('Successfully logged in.');
+            console.log(user)
+          });
+        });
         // Save user data to vuex store
-        store.commit('updateUserData', http);
         router.push('/');
       })
       .catch((err: Error | AxiosError) => {

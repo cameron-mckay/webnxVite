@@ -142,6 +142,12 @@ function addToCart() {
     errorHandler(`Not enough stock`);
   }
 }
+function loadActionHistory() {
+    router.push({
+      name: 'Part Action History',
+      query: { nxid: part.value.nxid },
+    });
+}
 </script>
 <template>
   <div v-if="loading" >
@@ -151,7 +157,7 @@ function addToCart() {
   </div>
   <div v-else>
     <BackButton @click="router.back()" class="mr-2 mb-2"/>
-    <GridPartSpecComponent @plus="addToCart" :showPlus="store.state.user.roles?.includes('kiosk')" :part="part" />
+    <GridPartSpecComponent @plus="addToCart" :showHistory="store.state.user.roles?.includes('clerk')||store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('lead')" :showPlus="store.state.user.roles?.includes('kiosk')" :part="part" @loadHistory="loadActionHistory"/>
     <!-- PART RECORDS GO HERE -->
     <h1 class="detail-title" v-if="partRecords&&partRecords.length>0&&partRecords[0].serial != undefined">{{ partRecords[0].serial }} History:</h1>
     <h1 class="detail-title" v-else>History:</h1>

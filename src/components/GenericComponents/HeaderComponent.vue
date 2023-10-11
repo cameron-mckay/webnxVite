@@ -178,6 +178,13 @@
       >
         Assets
       </RouterLink>
+      <RouterLink
+        v-if="!kiosk"
+        class="mobile-nav-button"
+        to="/pallets"
+      >
+        Pallets
+      </RouterLink>
       <!-- <RouterLink to="/assets">Assets</RouterLink> -->
       <RouterLink
         v-if="kiosk"

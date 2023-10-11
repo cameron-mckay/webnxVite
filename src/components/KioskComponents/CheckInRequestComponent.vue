@@ -48,8 +48,8 @@ function submit() {
     <div>
       <div v-for="p of requestCopy.parts" class="my-2 background-and-border group-hover:bab-hover grid grid-cols-4 md:grid-cols-5 p-1 text-center leading-8 md:p-2 md:leading-10">
         <div class="md:col-span-2 flex flex-wrap md:grid md:grid-cols-2">
-          <p class="w-full md:w-auto">{{ p.nxid }}</p>
-          <p class="w-full md:w-auto">{{ parts.get(p.nxid)!.manufacturer + " " + parts.get(p.nxid)!.name }}</p>
+          <p class="w-full md:w-auto">{{ p.nxid ? p.nxid : "PNX0000000" }}</p>
+          <p class="w-full md:w-auto">{{ parts.has(p.nxid) ? parts.get(p.nxid)!.manufacturer + " " + parts.get(p.nxid)!.name : "DELETED PART" }}</p>
         </div>
         <p>{{ p.serial ? p.serial : p.quantity }}</p>
         <div class="my-auto">

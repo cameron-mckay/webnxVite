@@ -152,6 +152,11 @@ const routes = [
     component: () => import('../views/Admin/UserAssetUpdateHistoryView.vue'),
   },
   {
+    path: '/manage/part/history',
+    name: 'Part Action History',
+    component: () => import('../views/Admin/PartHistoryView.vue'),
+  },
+  {
     path: '/inventory',
     name: 'Inventory',
     component: () => import('../views/Parts/InventoryView.vue'),

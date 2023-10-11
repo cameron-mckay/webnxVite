@@ -6,6 +6,7 @@ interface Props {
   serial?: string;
   quantity?: number;
   showPlus?: boolean;
+  showHistory?: boolean;
 }
 
 let { part, serial, quantity, showPlus } = defineProps<Props>();
@@ -18,6 +19,13 @@ let url = import.meta.env.VITE_API_URL;
         {{ part.type!='Cable' ? part.manufacturer : '' }} {{ part.name }}
       </h1>
       <PlusButton v-if="showPlus" class="ml-4" @click="$emit('plus')"/>
+      <a
+        class="text-sm my-auto ml-2 rounded-md p-2 font-bold transition-colors hover:bg-gray-400 hover:dark:bg-zinc-700"
+        @click="$emit('loadHistory')"
+        v-if="showHistory"
+      >
+        View History
+      </a>
     </div>
     <p class="detail-label">NXID:</p>
     <p class="detail-data">{{ part.nxid }}</p>

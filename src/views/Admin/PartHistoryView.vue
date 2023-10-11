@@ -18,6 +18,7 @@ PartEvent
 import AllTechsEventComponent from '../../components/AdminComponents/AllTechsEventComponent.vue';
 import { getPartByID, getPartCreateAndDeleteHistory } from '../../plugins/dbCommands/partManager';
 import { getAllTechsHistory, getAllUsers } from '../../plugins/dbCommands/userManager';
+import PartEventComponent from '../../components/AdminComponents/PartEventComponent.vue';
 
 interface Props {
   http: AxiosInstance;
@@ -46,6 +47,8 @@ let totalCheckouts = ref(0)
 let pageSize = 10
 
 onBeforeMount(()=>{
+  if (router.currentRoute.value.query.nxid)
+    nxid.value = router.currentRoute.value.query.nxid as string;
   getAllUsers(http, (data, err)=>{
     if(err) {
       return errorHandler("Could not load users.")
@@ -98,7 +101,11 @@ function updatePartsCache(parts: CartItem[], cache: Map<string, PartSchema>) {
 }
 
 function cacheFromEvent(event: PartEvent) {
-  return updatePartsCache(event.parts, partsMap)
+  let promises = [
+    updatePartsCache(event.removed, partsMap),
+    updatePartsCache(event.added, partsMap)
+  ]
+  return Promise.all(promises)
 }
 
 function cacheFromEvents(events: PartEvent[]) {
@@ -193,7 +200,7 @@ async function checkCache() {
   <div>
     <BackButton @click="router.options.history.state.back ? router.back() : router.push('/manage')" class="mr-2 mb-2"/>
     <div>
-      <h1 class="my-auto text-4xl">All Techs History</h1>
+      <h1 class="my-auto text-4xl">{{ nxid =="" ? "Part" : nxid}} Action History</h1>
       <div class="flex justify-between my-2">
         <form @submit.prevent="loadHistory" class="flex flex-wrap">
           <div>
@@ -228,9 +235,7 @@ async function checkCache() {
     <div v-if="loading" class="my-4 flex justify-center">
       <div class="loader text-center"></div>
     </div>
-
-    <AllTechsEventComponent v-for="event of allTechsHistory" :event="event" :kiosks="kiosks" :user="users.get(event.by)!" :parts="partsMap"/>
-
+    <PartEventComponent v-for="event of allTechsHistory" :event="event" :kiosks="kiosks" :users="users" :parts="partsMap"/>
     <p class="mt-4" v-if="allTechsHistory.length<1&&!loading">No results found...</p>
     <div
       v-if="totalPages > 1 && !loading"

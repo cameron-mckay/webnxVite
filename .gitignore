@@ -130,4 +130,6 @@ dist
 .pnp.*;
 env_local.txt
 .gitignore
+.eslintrc.js
+.prettierrc.cjs
 env_server.txt

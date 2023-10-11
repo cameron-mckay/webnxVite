@@ -92,6 +92,12 @@ onMounted(async()=>{
       >
         All Techs History
       </RouterLink>
+      <RouterLink
+        to="/manage/part/history"
+        class="manager-button"
+      >
+        Part Action History
+      </RouterLink>
     </div>
   </div>
 </template>
