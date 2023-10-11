@@ -67,6 +67,7 @@ function redirect() {
 
 // Before app is created
 onBeforeMount(()=>{
+  routeConfigured.value = false;
   checkAuth(http, async (data, err) => {
     // If not authenticated
     if (err)
