@@ -51,7 +51,7 @@ let removed = ref([] as LoadedCartItem[]);
 function loadPart(part: CartItem) {
   // Load part from map
   return {
-    part: parts.get(part.nxid),
+    part: parts.get(part.nxid)||{nxid: part.nxid, manufacturer: "DELETED PART", name: "DELETED PART", type: "DELETED", notes: "The part info associated with this NXID has been deleted."},
     serial: part.serial,
     quantity: part.quantity,
   } as LoadedCartItem;

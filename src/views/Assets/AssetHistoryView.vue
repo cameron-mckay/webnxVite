@@ -57,7 +57,6 @@ function checkPart(part: CartItem) {
     getPartByID(http, part.nxid, 3, (data, err) => {
       if (err) {
         parts.value.delete(part.nxid);
-        errorHandler(err);
         rej("")
         return;
       }

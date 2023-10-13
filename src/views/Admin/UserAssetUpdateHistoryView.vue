@@ -53,23 +53,22 @@ let user_id = ""
 let user = {} as User
 // Check if part is in map and add it if it isn't
 function checkPart(part: CartItem) {
-  return new Promise<string>((res, rej)=>{
+  return new Promise<void>((res, rej)=>{
     // Check if part is already mapped
     if (parts.value.has(part.nxid))
-      return res("")
+      return res()
     // Set temp value
     parts.value.set(part.nxid, {});
     // Fetch part from API
     getPartByID(http, part.nxid, 3, (data, err) => {
       if (err) {
         parts.value.delete(part.nxid);
-        errorHandler(err);
-        rej("")
+        res()
         return;
       }
       // Set new value
       parts.value.set(part.nxid, data as PartSchema);
-      res("")
+      res()
     });
   })
 }
@@ -86,8 +85,6 @@ function checkAssetAndParts(historyEvent: AssetEvent) {
         if (err) {
           // Clear value so other threads can try again
           assets.value.delete(historyEvent.asset_id);
-          errorHandler(err);
-          rej()
           return;
         }
         // Set temp variable for type casting
