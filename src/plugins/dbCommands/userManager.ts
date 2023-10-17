@@ -404,7 +404,8 @@ export function getUserCheckins(
   endDate: number,
   pageNum: number,
   pageSize: number,
-  callback: apiResponse
+  callback: apiResponse,
+  nxids?: string[]
 ) {
   // Send request to API
   http
@@ -414,7 +415,8 @@ export function getUserCheckins(
       startDate,
       endDate,
       pageNum,
-      pageSize
+      pageSize,
+      nxids
     }
   })
     .then((res: AxiosResponse) => {
@@ -433,7 +435,8 @@ export function getAllCheckins(
   endDate: number,
   pageNum: number,
   pageSize: number,
-  callback: apiResponse
+  callback: apiResponse,
+  nxids?: string[]
 ) {
   // Send request to API
   http
@@ -442,7 +445,8 @@ export function getAllCheckins(
       startDate,
       endDate,
       pageNum,
-      pageSize
+      pageSize,
+      nxids
     }
   })
     .then((res: AxiosResponse) => {
@@ -462,7 +466,8 @@ export function getUserCheckouts(
   endDate: number,
   pageNum: number,
   pageSize: number,
-  callback: apiResponse
+  callback: apiResponse,
+  nxids?: string[]
 ) {
   // Send request to API
   http
@@ -472,7 +477,8 @@ export function getUserCheckouts(
       startDate,
       endDate,
       pageNum,
-      pageSize
+      pageSize,
+      nxids
     }
   })
     .then((res: AxiosResponse) => {
@@ -491,7 +497,8 @@ export function getAllTechsHistory(
   endDate: number,
   pageNum: number,
   pageSize: number,
-  callback: apiResponse
+  callback: apiResponse,
+  nxids: string[]
 ) {
   // Send request to API
   http
@@ -500,7 +507,8 @@ export function getAllTechsHistory(
       startDate,
       endDate,
       pageNum,
-      pageSize
+      pageSize,
+      nxids
     }
   })
     .then((res: AxiosResponse) => {

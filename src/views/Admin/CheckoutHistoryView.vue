@@ -7,6 +7,8 @@ import CheckoutHistoryComponent from '../../components/KioskComponents/CheckoutH
 import LeftCaretButton from '../../components/GenericComponents/LeftCaretButton.vue'
 import RightCaretButton from '../../components/GenericComponents/RightCaretButton.vue'
 import BackButton from '../../components/GenericComponents/BackButton.vue';
+import FilterTag from '../../components/GenericComponents/FilterTag.vue';
+import PartFilterComponent from '../../components/PartComponents/PartFilterComponent.vue';
 import { dateToHTML, HTMLtoEpoch, getTodaysDate, getLastMonth } from '../../plugins/dateFunctions';
 import type {
 UserState,
@@ -41,6 +43,7 @@ let startDate = ref(dateToHTML(getLastMonth()))
 let pageCache = new Map<number, CheckOutEvent[]>()
 let totalCheckouts = ref(0)
 let pageSize = 10
+let filterMap = ref(new Map<string, PartSchema>())
 
 onBeforeMount(()=>{
   getAllUsers(http, (data, err) => {
@@ -123,7 +126,7 @@ function getPage(page: number) {
       response.pages = response.total%pageSize>0 ? Math.trunc(response.total/pageSize) + 1 : Math.trunc(response.total/pageSize)
       res(response)
       // Get all users
-    })
+    }, Array.from(filterMap.value.keys()))
   })
 }
 
@@ -206,6 +209,7 @@ async function checkCache() {
             <label>End Date: </label>
             <input class="textbox w-auto mr-4" type="date" v-model="endDate" :min="startDate" :max="dateToHTML(getTodaysDate())"/>
           </div>
+          <PartFilterComponent :http="http" :filterMap="filterMap" :errorHandler="errorHandler" :displayMessage="displayMessage"/>
           <input class="search-button mr-0" type="submit" value="Go" />
         </form>
         <div
@@ -226,6 +230,7 @@ async function checkCache() {
           <div v-else class="button-icon mr-0 opacity-0"></div>
         </div>
       </div>
+      <FilterTag v-for="part of Array.from(filterMap.keys())" :name="part" @remove="filterMap.delete(part)" class="background-and-border mt-2"/>
     </div>
     <div v-if="loading" class="my-4 flex justify-center">
       <div class="loader text-center"></div>

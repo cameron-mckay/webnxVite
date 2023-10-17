@@ -594,7 +594,8 @@ export function getCheckoutHistory(
   endDate: number,
   pageNum: number,
   pageSize: number,
-  callback: apiResponse
+  callback: apiResponse,
+  nxids?: string[]
 ) {
   http
     .get('/api/checkout/history', {
@@ -602,7 +603,8 @@ export function getCheckoutHistory(
         startDate,
         endDate,
         pageNum,
-        pageSize
+        pageSize,
+        nxids
       }
     })
     .then((res: AxiosResponse) => {
@@ -622,7 +624,7 @@ export function getPartCreateAndDeleteHistory(
   pageNum: number,
   pageSize: number,
   callback: apiResponse,
-  nxid?: string,
+  nxids?: string[],
 ) {
   http
     .get('/api/part/history', {
@@ -631,7 +633,7 @@ export function getPartCreateAndDeleteHistory(
         endDate,
         pageNum,
         pageSize,
-        nxid
+        nxids
       }
     })
     .then((res: AxiosResponse) => {
