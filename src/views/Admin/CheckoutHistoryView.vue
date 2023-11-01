@@ -74,7 +74,7 @@ function showLoader() {
 <template>
   <div>
     <PageHeaderWithBackButton :prev-path="'/manage'" :router="router">
-      Check In History
+      Check Out History
     </PageHeaderWithBackButton>
     <div v-if="!loaded" class="my-4 flex justify-center">
       <div class="loader text-center"></div>

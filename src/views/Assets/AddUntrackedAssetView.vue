@@ -66,17 +66,6 @@ onMounted(() => {
       partsOnAsset.value = []
     }
   })
-
-  // watch(
-  //   () => oldAsset.value.live,
-  //   () => {
-  //     if (oldAsset.value.asset_type == 'Server' && oldAsset.value.live) {
-  //       oldAsset.value.rails = true;
-  //     } else {
-  //       delete oldAsset.value.rails;
-  //     }
-  //   }
-  // );
 });
 
 function plusPart(item: LoadedCartItem) {

@@ -68,7 +68,7 @@ onMounted(() => {
       <p v-else-if="event.info.owner">
         User Inventory:
         {{
-          users.get(event.info.owner)
+          users.get(event.info.owner)?.first_name + " " + users.get(event.info.owner)?.last_name
         }}
       </p>
       <p v-else-if="event.info.location">
