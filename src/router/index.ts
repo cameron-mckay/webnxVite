@@ -134,22 +134,22 @@ const routes = [
   {
     path: '/manage/user/checkouts',
     name: 'User Checkout History',
-    component: () => import('../views/Admin/UserCheckoutHistoryView.vue'),
+    component: () => import('../views/Admin/CheckoutHistoryView.vue'),
   },
   {
     path: '/manage/user/checkins',
     name: 'User Checkin History',
-    component: () => import('../views/Admin/UserCheckinHistoryView.vue'),
+    component: () => import('../views/Admin/CheckinHistoryView.vue'),
   },
   {
     path: '/manage/user/newAssets',
     name: 'User New Asset History',
-    component: () => import('../views/Admin/UserNewAssetsHistoryView.vue'),
+    component: () => import('../views/Admin/NewAssetsHistoryView.vue'),
   },
   {
     path: '/manage/user/assetsUpdated',
     name: 'User Asset Update History',
-    component: () => import('../views/Admin/UserAssetUpdateHistoryView.vue'),
+    component: () => import('../views/Admin/AssetUpdateHistoryView.vue'),
   },
   {
     path: '/manage/part/history',

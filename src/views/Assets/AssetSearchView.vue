@@ -12,11 +12,11 @@ import {
 
 import QRCodeScannerPopupComponent from '../../components/GenericComponents/QRCodeScannerPopupComponent.vue'
 //'../GenericComponents/QRCodeScannerPopupComponent.vue';
-import QRCodeButton from '../../components/GenericComponents/QRCodeButton.vue'
-import SlidersButton from '../../components/GenericComponents/SlidersButton.vue'
-import PlusButton from '../../components/GenericComponents/PlusButton.vue'
-import LeftCaretButton from '../../components/GenericComponents/LeftCaretButton.vue'
-import RightCaretButton from '../../components/GenericComponents/RightCaretButton.vue'
+import QRCodeButton from '../../components/GenericComponents/Buttons/QRCodeButton.vue'
+import SlidersButton from '../../components/GenericComponents/Buttons/SlidersButton.vue'
+import PlusButton from '../../components/GenericComponents/Buttons/PlusButton.vue'
+import LeftCaretButton from '../../components/GenericComponents/Buttons/LeftCaretButton.vue'
+import RightCaretButton from '../../components/GenericComponents/Buttons/RightCaretButton.vue'
 import AdvancedSearchComponent from '../../components/AssetComponents/AssetAdvancedSearchComponent.vue';
 import AssetComponent from '../../components/AssetComponents/AssetComponent.vue';
 

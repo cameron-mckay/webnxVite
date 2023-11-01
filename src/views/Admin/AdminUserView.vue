@@ -8,7 +8,7 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import UserManagerComponent from '../../components/AdminComponents/UserManagerComponent.vue';
-import BackButton from '../../components/GenericComponents/BackButton.vue';
+import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import type { UserState } from '../../plugins/interfaces';
 
 interface Props {
@@ -85,6 +85,7 @@ onMounted(() => {
         class="relative grid grid-cols-5 text-center text-sm leading-10 transition"
         v-for="user in users"
         :user="user"
+        :edit="true"
         @edit="toggleEdit(user)"
       />
     </div>

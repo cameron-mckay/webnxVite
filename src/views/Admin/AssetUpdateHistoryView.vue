@@ -4,16 +4,15 @@ import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
+import AssetEventComponent from '../../components/AssetComponents/AssetEventComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
-import PartEventComponent from '../../components/AdminComponents/PartEventComponent.vue';
+import { getAssetUpdates } from '../../plugins/dbCommands/userManager';
 import {
-AllTechsEvent,
+AssetEvent,
   Page,
-  PartEvent,
   UserState,
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
-import { getPartCreateAndDeleteHistory } from '../../plugins/dbCommands/partManager';
 
 interface Props {
   http: AxiosInstance;
@@ -25,48 +24,50 @@ interface Props {
 
 let loaded = ref(false)
 let resultsLoading = ref(false)
-let allTechsHistory = ref([] as PartEvent[])
+let assetEvents = ref([] as AssetEvent[])
 
 const { http, router } =
   defineProps<Props>();
-let analyticsSearchObject:AnalyticsSearch<PartEvent>;
+let analyticsSearchObject:AnalyticsSearch<AssetEvent>;
 
 
 onBeforeMount(async ()=>{
   analyticsSearchObject = await AnalyticsSearch.createAnalyticsSearch(http, router, 
-    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts)=>{
-      return new Promise<Page>((res)=>{
-        getPartCreateAndDeleteHistory(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err)=>{
-          if(err) {
+    (pageNum, startDate, endDate, userFilters, partFilters)=>{
+      return new Promise<Page>((res, rej)=>{
+        getAssetUpdates(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
+          if(err)
             return res({total: 0, pages: 0, events: []})
-          }
-          // Load all users now.
           let p = data as Page
           res(p)
         },
-        userFilters,
-        partFilters,
-        hideOtherParts)
+        userFilters
+        )
       })
     }
   );
   loaded.value = true
 })
 
-async function displayResults(page: PartEvent[])
+async function displayResults(page: AssetEvent[])
 {
-  console.log(page)
   // Load all the required info into the caches
   for(let e of page) {
     // Evil ass promise code
-    await Promise.all(e.added.map((p)=>{
-      return analyticsSearchObject.getPartInfo(p)
-    }))
-    await Promise.all(e.removed.map((p)=>{
-      return analyticsSearchObject.getPartInfo(p)
-    }))
+    await Promise.all([
+      Promise.all(e.added.map((p)=>{
+        return analyticsSearchObject.getPartInfo(p)
+      })),
+      Promise.all(e.removed.map((p)=>{
+        return analyticsSearchObject.getPartInfo(p)
+      })),
+      Promise.all(e.existing.map((p)=>{
+        return analyticsSearchObject.getPartInfo(p)
+      }))
+    ])
+    await analyticsSearchObject.getAsset(e.asset_id)
   }
-  allTechsHistory.value = page
+  assetEvents.value = page
   resultsLoading.value = false
 }
 
@@ -78,7 +79,7 @@ function showLoader() {
 <template>
   <div>
     <PageHeaderWithBackButton :prev-path="'/manage'" :router="router">
-      Part Action History
+      Asset Update History
     </PageHeaderWithBackButton>
     <div v-if="!loaded" class="my-4 flex justify-center">
       <div class="loader text-center"></div>
@@ -87,14 +88,15 @@ function showLoader() {
       :resultsLoading="resultsLoading"
       :searchComponent="analyticsSearchObject"
       :show-user-filters="true"
-      :show-part-filters="true"
       @displayResults="displayResults"
       @showLoader="showLoader"
     >
-    <PartEventComponent v-for="event of allTechsHistory" 
-        :event="event"
-        :users="analyticsSearchObject.getAllUserMap()"
+      <AssetEventComponent
+        :assets="analyticsSearchObject.assetCache"
+        :user="analyticsSearchObject.getUser(event.by)!"
         :parts="analyticsSearchObject.partsCache"
+        :event="event"
+        v-for="event in assetEvents"
       />
     </AnalyticsSearchComponent>
   </div>

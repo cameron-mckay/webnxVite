@@ -4,7 +4,7 @@ import { onMounted, ref, watch } from 'vue';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PalletManagerComponent from '../../components/PalletComponents/PalletManagerComponent.vue';
-import BackButton from '../../components/GenericComponents/BackButton.vue';
+import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import { createPallet } from '../../plugins/dbCommands/palletManager';
 import type {
 PalletSchema,

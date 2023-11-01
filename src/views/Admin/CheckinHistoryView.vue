@@ -1,23 +1,18 @@
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
-import type { Router } from 'vue-router';
-import type { Store } from 'vuex';
 import { onBeforeMount, ref } from 'vue';
+import { Router } from 'vue-router';
+import type { Store } from 'vuex';
+import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
+import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
+import { getCheckinHistory } from '../../plugins/dbCommands/userManager';
 import CheckinHistoryComponent from '../../components/KioskComponents/CheckinHistoryComponent.vue';
-import LeftCaretButton from '../../components/GenericComponents/LeftCaretButton.vue'
-import RightCaretButton from '../../components/GenericComponents/RightCaretButton.vue'
-import BackButton from '../../components/GenericComponents/BackButton.vue';
-import FilterTag from '../../components/GenericComponents/FilterTag.vue';
-import PartFilterComponent from '../../components/PartComponents/PartFilterComponent.vue';
-import { dateToHTML, getTodaysDate, HTMLtoEpoch, getLastMonth } from '../../plugins/dateFunctions';
-import type {
-UserState,
-User,
-PartSchema,
-CheckInEvent
+import {
+  CheckInEvent,
+  Page,
+  UserState,
 } from '../../plugins/interfaces';
-import { getPartByID } from '../../plugins/dbCommands/partManager';
-import { getAllCheckins, getAllUsers } from '../../plugins/dbCommands/userManager';
+import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 
 interface Props {
   http: AxiosInstance;
@@ -26,230 +21,73 @@ interface Props {
   errorHandler: (err: Error | AxiosError | string) => void;
   displayMessage: (message: string) => void;
 }
-const { http, store, router, errorHandler, displayMessage } =
+
+let loaded = ref(false)
+let resultsLoading = ref(false)
+let checkinEvents = ref([] as CheckInEvent[])
+
+const { http, router } =
   defineProps<Props>();
+let analyticsSearchObject:AnalyticsSearch<CheckInEvent>;
 
-let loading = ref(false)
-let checkInQueue = ref([] as CheckInEvent[])
-let kiosks = ref([] as User[])
-let users = new Map<string, User>()
-let partsMap = new Map<string, PartSchema>()
-let totalPages = ref(0)
-let pageNum = ref(1)
-// Strips the time from todays date for easier conversions
-// Convert into html string
-let endDate = ref(dateToHTML(getTodaysDate()))
-let startDate = ref(dateToHTML(getLastMonth()))
-let pageCache = new Map<number, CheckInEvent[]>()
-let totalCheckouts = ref(0)
-let pageSize = 10
-let filterMap = ref(new Map<string, PartSchema>())
 
-onBeforeMount(()=>{
-  getAllUsers(http, (data, err)=>{
-    if(err) {
-      return errorHandler("Could not load users.")
+onBeforeMount(async ()=>{
+  analyticsSearchObject = await AnalyticsSearch.createAnalyticsSearch(http, router, 
+    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts)=>{
+      return new Promise<Page>((res)=>{
+        getCheckinHistory(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err)=>{
+          if(err) {
+            return res({total: 0, pages: 0, events: []})
+          }
+          // Load all users now.
+          let p = data as Page
+          res(p)
+        },
+        userFilters,
+        partFilters,
+        hideOtherParts)
+      })
     }
-    let u = data as User[]
-    for(let i of u) {
-      users.set(i._id!, i)
-    }
-    loadHistory()
-  })
+  );
+  loaded.value = true
 })
 
-function loadHistory() {
-  pageCache = new Map<number, CheckInEvent[]>()
-  pageNum.value = 1
-  loadPage(1)
-  // Get all users
-}
-
-function loadPage(num: number) {
-  loading.value = true
-  checkInQueue.value = []
-  getPage(num).then((req)=>{
-    checkInQueue.value = req.checkins
-    totalCheckouts.value = req.total
-    totalPages.value = req.pages
-    totalCheckouts.value = req.total
-    checkCache()
-    loading.value = false
-  })
-}
-
-function getPage(page: number) {
-  return new Promise<{total: number, pages: number, checkins: CheckInEvent[]}>(async (res)=>{
-    // Check if page is in cache
-    if(pageCache.has(page))
-      return res({total: totalCheckouts.value, pages: totalPages.value, checkins: pageCache.get(page)!})
-    getAllCheckins(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), page, pageSize, async (data, err)=>{
-      if(err) {
-        return errorHandler("Failed to fetch queue.")
-      }
-      // Load all users now.
-      let response = data as {total: number, pages: number, checkins: CheckInEvent[]}
-      let history = response.checkins
-      // Get all parts and map
-      // Evil promise code
-      if(history.length&&history.length>0)
-        await Promise.all(history.map((r)=>{
-          return Promise.all(r.parts.map((p)=>{
-            return new Promise((res)=>{
-              if(partsMap.has(p.nxid))
-                return res("")
-              partsMap.set(p.nxid, {})
-              getPartByID(http, p.nxid, 3, (data, err) => {
-                if(err)
-                  partsMap.delete(p.nxid)
-                partsMap.set(p.nxid, data as PartSchema)
-                res("")
-              })
-            })
-          }))
-        }))
-      pageCache.set(page, history)
-      response.pages = response.total%pageSize>0 ? Math.trunc(response.total/pageSize) + 1 : Math.trunc(response.total/pageSize)
-      res(response)
-      // Get all users
-    }, Array.from(filterMap.value.keys()))
-  })
-}
-
-function prevPage() {
-  // Check current page num
-  if (pageNum.value > 1) {
-    // Decrement
-    pageNum.value -= 1;
-    loadPage(pageNum.value)
+async function displayResults(page: CheckInEvent[])
+{
+  console.log(page)
+  // Load all the required info into the caches
+  for(let e of page) {
+    // Evil ass promise code
+    await Promise.all(e.parts.map((p)=>{
+      return analyticsSearchObject.getPartInfo(p)
+    }))
   }
+  checkinEvents.value = page
+  resultsLoading.value = false
 }
 
-// Next search page
-function nextPage() {
-  // Check if results have multiple pages
-  if (pageNum.value<totalPages.value) {
-    // Increment page num
-    pageNum.value += 1;
-    loadPage(pageNum.value)
-    // Send search query
-  }
+function showLoader() {
+  resultsLoading.value = true
 }
 
-function goTo(num: number) {
-  if(num>0&&num<=totalPages.value) {
-    pageNum.value = num
-    loadPage(pageNum.value)
-  }
-}
-
-async function checkCache() {
-  let page = pageNum.value;
-  while (page > 0 && page >= pageNum.value - 5) {
-    let localPage = page;
-    if (pageCache.has(localPage)) {
-      page -= 1;
-      continue;
-    } else {
-      getPage(localPage)
-        .then((res) => {
-          pageCache.set(localPage, res.checkins);
-        })
-        .catch((err) => {
-          pageCache.delete(localPage);
-        });
-      page -= 1;
-    }
-  }
-  page = pageNum.value;
-  while (page <= pageNum.value + 5) {
-    let localPage = page;
-    if (pageCache.has(localPage)) {
-      page++;
-      continue;
-    } else {
-      getPage(localPage)
-        .then((res) => {
-          pageCache.set(localPage, res.checkins);
-        })
-        .catch((err) => {
-          pageCache.delete(localPage);
-        });
-      page++;
-    }
-  }
-}
 </script>
 <template>
   <div>
-    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/manage')" class="mr-2 mb-2"/>
-    <div>
-      <h1 class="my-auto text-4xl">Check In History</h1>
-      <div class="flex justify-between my-2">
-        <form @submit.prevent="loadHistory" class="flex flex-wrap">
-          <div>
-            <label>Start Date: </label>
-            <input class="textbox w-auto mr-4" type="date" v-model="startDate" :max="endDate"/>
-          </div>
-          <div>
-            <label>End Date: </label>
-            <input class="textbox w-auto mr-4" type="date" v-model="endDate" :min="startDate" :max="dateToHTML(getTodaysDate())"/>
-          </div>
-          <PartFilterComponent :http="http" :filterMap="filterMap" :errorHandler="errorHandler" :displayMessage="displayMessage"/>
-          <input class="search-button mr-0" type="submit" value="Go" />
-        </form>
-        <div
-          v-if="totalPages > 1 && !loading"
-          class="float-right flex select-none"
-        >
-          <p class="my-auto mr-3 inline-block leading-6">{{ `Page: ${pageNum}` }}</p>
-          <LeftCaretButton 
-            v-on:click="prevPage"
-            v-if="pageNum > 1"
-          />
-          <div v-else class="button-icon opacity-0"></div>
-          <!-- Right Caret -->
-          <RightCaretButton
-            v-if="pageNum<totalPages"
-            v-on:click="nextPage"
-          />
-          <div v-else class="button-icon mr-0 opacity-0"></div>
-        </div>
-      </div>
-      <FilterTag v-for="part of Array.from(filterMap.keys())" :name="part" @remove="filterMap.delete(part)" class="background-and-border mt-2"/>
-    </div>
-    <div v-if="loading" class="my-4 flex justify-center">
+    <PageHeaderWithBackButton :prev-path="'/manage'" :router="router">
+      Check In History
+    </PageHeaderWithBackButton>
+    <div v-if="!loaded" class="my-4 flex justify-center">
       <div class="loader text-center"></div>
     </div>
-    <CheckinHistoryComponent v-for="checkin of checkInQueue" :event="checkin" :kiosks="kiosks" :user="users.get(checkin.by)!" :parts="partsMap"/>
-    <p class="mt-4" v-if="checkInQueue.length<1&&!loading">No results found...</p>
-    <div
-      v-if="totalPages > 1 && !loading"
-      class="float-right select-none"
+    <AnalyticsSearchComponent v-else 
+      :resultsLoading="resultsLoading"
+      :searchComponent="analyticsSearchObject"
+      :show-user-filters="true"
+      :show-part-filters="true"
+      @displayResults="displayResults"
+      @showLoader="showLoader"
     >
-      <div class="flex justify-end">
-        <p class="my-auto inline-block mr-2">{{ `Page: ${pageNum}` }}</p>
-        <div class="flex shrink-0">
-          <LeftCaretButton 
-            v-on:click="prevPage"
-            v-if="pageNum > 1"
-          />
-          <div v-else class="button-icon opacity-0"></div>
-          <!-- Right Caret -->
-          <RightCaretButton
-            v-if="pageNum<totalPages"
-            v-on:click="nextPage"
-          />
-          <div v-else class="button-icon mr-0 opacity-0"></div>
-        </div>
-      </div>
-      <div class="float-right">
-      <a class="mx-1" id="link" @click="goTo(1)" v-if="pageNum>2">1</a>
-        <a class="mx-1" v-if="pageNum>2">...</a>
-      <a class="mx-1" id="link" v-for="n in ((totalPages-(pageNum+1))>5)?5:(totalPages-pageNum-2>=0?totalPages-pageNum-2:0)" @click="n+pageNum+1<totalPages?goTo(n+pageNum+1):()=>{}">{{ n+pageNum+1 }}</a>
-        <a class="mx-1" v-if="(totalPages-pageNum)>7">...</a>
-        <a class="mx-1" id="link" @click="goTo(totalPages)">{{ totalPages}}</a>
-      </div>
-    </div>
+      <CheckinHistoryComponent v-for="checkin of checkinEvents" :event="checkin" :kiosks="analyticsSearchObject.getAllUsers().filter((u)=>u.roles?.includes('kiosk'))" :user="analyticsSearchObject.getUser(checkin.by)!" :parts="analyticsSearchObject.partsCache"/>
+    </AnalyticsSearchComponent>
   </div>
 </template>

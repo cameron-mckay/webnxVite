@@ -588,35 +588,6 @@ export function processCheckInRequest(
     });
 }
 
-export function getCheckoutHistory(
-  http: AxiosInstance,
-  startDate: number,
-  endDate: number,
-  pageNum: number,
-  pageSize: number,
-  callback: apiResponse,
-  nxids?: string[]
-) {
-  http
-    .get('/api/checkout/history', {
-      params: {
-        startDate,
-        endDate,
-        pageNum,
-        pageSize,
-        nxids
-      }
-    })
-    .then((res: AxiosResponse) => {
-      // Success - send results to callback
-      callback(res.data as string, null);
-    })
-    .catch((err: Error | AxiosError) => {
-      // Error - send error to callback
-      callback({}, err);
-    });
-}
-
 export function getPartCreateAndDeleteHistory(
   http: AxiosInstance,
   startDate: number,
@@ -624,16 +595,20 @@ export function getPartCreateAndDeleteHistory(
   pageNum: number,
   pageSize: number,
   callback: apiResponse,
+  users?: string[],
   nxids?: string[],
+  hideOthers?: boolean,
 ) {
   http
-    .get('/api/part/history', {
+    .get('/api/history/part', {
       params: {
         startDate,
         endDate,
         pageNum,
         pageSize,
-        nxids
+        users,
+        nxids,
+        hideOthers
       }
     })
     .then((res: AxiosResponse) => {

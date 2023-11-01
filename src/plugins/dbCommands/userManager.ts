@@ -277,176 +277,24 @@ export function submitNewPassword(http: AxiosInstance, user_id: string, token: s
     });
 }
 
-export function getUserAssetUpdates(
-  http: AxiosInstance,
-  user: string,
-  startDate: number,
-  endDate: number,
-  pageNum: number,
-  pageSize: number,
-  callback: apiResponse
-) {
-  // Send request to API
-  http
-    .get('/api/user/assetsUpdated', {
-    params: {
-      user,
-      startDate,
-      endDate,
-      pageNum,
-      pageSize
-    }
-  })
-    .then((res: AxiosResponse) => {
-      // Success - send response data to callback
-      callback(res.data, null);
-    })
-    .catch((err: Error | AxiosError) => {
-      // Error - send error to callback
-      callback({}, err);
-    });
-}
-
-export function getUserAssetUpdatesNoDetails(
-  http: AxiosInstance,
-  user: string,
-  startDate: number,
-  endDate: number,
-  pageNum: number,
-  pageSize: number,
-  callback: apiResponse
-) {
-  // Send request to API
-  http
-    .get('/api/user/assetsUpdated/noDetails', {
-    params: {
-      user,
-      startDate,
-      endDate,
-      pageNum,
-      pageSize
-    }
-  })
-    .then((res: AxiosResponse) => {
-      // Success - send response data to callback
-      callback(res.data, null);
-    })
-    .catch((err: Error | AxiosError) => {
-      // Error - send error to callback
-      callback({}, err);
-    });
-}
-
-export function getUserNewAssets(
-  http: AxiosInstance,
-  user: string,
-  startDate: number,
-  endDate: number,
-  pageNum: number,
-  pageSize: number,
-  callback: apiResponse
-) {
-  // Send request to API
-  http
-    .get('/api/user/newAssets', {
-    params: {
-      user,
-      startDate,
-      endDate,
-      pageNum,
-      pageSize
-    }
-  })
-    .then((res: AxiosResponse) => {
-      // Success - send response data to callback
-      callback(res.data, null);
-    })
-    .catch((err: Error | AxiosError) => {
-      // Error - send error to callback
-      callback({}, err);
-    });
-}
-
-export function getUserNewAssetsNoDetails(
-  http: AxiosInstance,
-  user: string,
-  startDate: number,
-  endDate: number,
-  pageNum: number,
-  pageSize: number,
-  callback: apiResponse
-) {
-  // Send request to API
-  http
-    .get('/api/user/newAssets/noDetails', {
-    params: {
-      user,
-      startDate,
-      endDate,
-      pageNum,
-      pageSize
-    }
-  })
-    .then((res: AxiosResponse) => {
-      // Success - send response data to callback
-      callback(res.data, null);
-    })
-    .catch((err: Error | AxiosError) => {
-      // Error - send error to callback
-      callback({}, err);
-    });
-}
-
-export function getUserCheckins(
-  http: AxiosInstance,
-  user: string,
-  startDate: number,
-  endDate: number,
-  pageNum: number,
-  pageSize: number,
-  callback: apiResponse,
-  nxids?: string[]
-) {
-  // Send request to API
-  http
-    .get('/api/user/checkins', {
-    params: {
-      user,
-      startDate,
-      endDate,
-      pageNum,
-      pageSize,
-      nxids
-    }
-  })
-    .then((res: AxiosResponse) => {
-      // Success - send response data to callback
-      callback(res.data, null);
-    })
-    .catch((err: Error | AxiosError) => {
-      // Error - send error to callback
-      callback({}, err);
-    });
-}
-
-export function getAllCheckins(
+export function getAssetUpdates(
   http: AxiosInstance,
   startDate: number,
   endDate: number,
   pageNum: number,
   pageSize: number,
   callback: apiResponse,
-  nxids?: string[]
+  users?: string[],
 ) {
   // Send request to API
   http
-    .get('/api/user/checkins', {
+    .get('/api/history/assetsUpdated', {
     params: {
+      users,
       startDate,
       endDate,
       pageNum,
-      pageSize,
-      nxids
+      pageSize
     }
   })
     .then((res: AxiosResponse) => {
@@ -459,26 +307,152 @@ export function getAllCheckins(
     });
 }
 
-export function getUserCheckouts(
+export function getAssetUpdatesNoDetails(
   http: AxiosInstance,
-  user: string,
   startDate: number,
   endDate: number,
   pageNum: number,
   pageSize: number,
   callback: apiResponse,
-  nxids?: string[]
+  users?: string[],
 ) {
   // Send request to API
   http
-    .get('/api/checkout/history', {
+    .get('/api/history/assetsUpdated/noDetails', {
     params: {
-      user,
+      users,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getNewAssets(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+) {
+  // Send request to API
+  http
+    .get('/api/history/newAssets', {
+    params: {
+      users,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getNewAssetsNoDetails(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+) {
+  // Send request to API
+  http
+    .get('/api/history/newAssets/noDetails', {
+    params: {
+      users,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getCheckinHistory(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
+) {
+  // Send request to API
+  http
+    .get('/api/history/checkins', {
+    params: {
       startDate,
       endDate,
       pageNum,
       pageSize,
-      nxids
+      users,
+      nxids,
+      hideOthers
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getCheckoutHistory(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
+) {
+  // Send request to API
+  http
+    .get('/api/history/checkouts', {
+    params: {
+      startDate,
+      endDate,
+      pageNum,
+      pageSize,
+      users,
+      nxids,
+      hideOthers
     }
   })
     .then((res: AxiosResponse) => {
@@ -498,17 +472,21 @@ export function getAllTechsHistory(
   pageNum: number,
   pageSize: number,
   callback: apiResponse,
-  nxids: string[]
+  users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
 ) {
   // Send request to API
   http
-    .get('/api/user/alltechs', {
+    .get('/api/history/alltechs', {
     params: {
       startDate,
       endDate,
       pageNum,
       pageSize,
-      nxids
+      users,
+      nxids,
+      hideOthers
     }
   })
     .then((res: AxiosResponse) => {

@@ -7,7 +7,7 @@ import type { Store } from 'vuex';
 import AddInventoryComponent from '../../components/PartComponents/AddInventoryComponent.vue';
 import EditPartComponent from '../../components/PartComponents/EditPartComponent.vue';
 import SearchComponent from '../../components/PartComponents/PartSearchComponent.vue';
-import BackButton from '../../components/GenericComponents/BackButton.vue';
+import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import {
 createNewPartRecords,
 deletePart,

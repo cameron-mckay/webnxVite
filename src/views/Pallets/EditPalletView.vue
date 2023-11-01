@@ -3,7 +3,7 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, onBeforeMount, ref } from 'vue';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import BackButton from '../../components/GenericComponents/BackButton.vue';
+import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import PalletManagerComponent from '../../components/PalletComponents/PalletManagerComponent.vue';
 import {
   getPalletByID,

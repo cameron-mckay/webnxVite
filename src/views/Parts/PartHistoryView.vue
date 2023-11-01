@@ -4,7 +4,7 @@ import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import GridPartSpecComponent from '../../components/PartComponents/GridPartSpecComponent.vue';
-import BackButton from '../../components/GenericComponents/BackButton.vue';
+import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
 import {
   getPartByID,

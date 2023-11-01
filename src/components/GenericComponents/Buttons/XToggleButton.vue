@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ToggleButtonComponent from './ToggleButtonComponent.vue'
+import ToggleButtonComponent from '../BaseToggleButtonComponent.vue'
 interface Props {
   active: boolean
 }

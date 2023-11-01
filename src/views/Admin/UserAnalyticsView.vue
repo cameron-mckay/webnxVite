@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
-import { getAllUsers, getUserCheckins, getUserCheckouts, getUserAssetUpdatesNoDetails, getUserNewAssetsNoDetails } from '../../plugins/dbCommands/userManager';
+import { getAllUsers, getCheckinHistory, getCheckoutHistory, getAssetUpdatesNoDetails, getNewAssetsNoDetails } from '../../plugins/dbCommands/userManager';
 import { User } from '../../plugins/interfaces';
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -8,7 +8,7 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState } from '../../plugins/interfaces';
 import UserAnalyticsComponent from '../../components/AdminComponents/UserAnalyticsComponent.vue';
-import BackButton from '../../components/GenericComponents/BackButton.vue';
+import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import { dateToHTML, getTodaysDate, HTMLtoEpoch, getLastMonth } from '../../plugins/dateFunctions';
 interface Props {
   http: AxiosInstance;
@@ -44,46 +44,46 @@ function getUsers() {
       [
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getUserCheckins(http, u._id!, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+            getCheckinHistory(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
               checkins.set(u._id!, response.total)
               res("")
-            })
+            },[u._id!])
           })
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getUserCheckouts(http, u._id!, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+            getCheckoutHistory(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
               if(err)
                 return rej("") 
               let response = data as any
               checkouts.set(u._id!, response.total)
               res("")
-            })
+            },[u._id!])
           })
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getUserAssetUpdatesNoDetails(http, u._id!, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+            getAssetUpdatesNoDetails(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
               assetsUpdated.set(u._id!, response.total)
               res("")
-            })
+            },[u._id!])
           })
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getUserNewAssetsNoDetails(http, u._id!, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+            getNewAssetsNoDetails(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
               newAssets.set(u._id!, response.total)
               res("")
-            })
+            },[u._id!])
           })
         }))
       ]
@@ -103,7 +103,7 @@ function openCheckouts(user_id: string) {
     query: {
       startDate: HTMLtoEpoch(startDate.value),
       endDate: HTMLtoEpoch(endDate.value),
-      user: user_id
+      users: [user_id] as string[]
     }
   })
 }
@@ -114,7 +114,7 @@ function openCheckins(user_id: string) {
     query: {
       startDate: HTMLtoEpoch(startDate.value),
       endDate: HTMLtoEpoch(endDate.value),
-      user: user_id
+      users: [user_id] as string[]
     }
   })
 }
@@ -125,7 +125,7 @@ function openNewAssets(user_id: string) {
     query: {
       startDate: HTMLtoEpoch(startDate.value),
       endDate: HTMLtoEpoch(endDate.value),
-      user: user_id
+      users: [user_id] as string[]
     }
   })
 }
@@ -136,7 +136,7 @@ function openAssetsUpdated(user_id: string) {
     query: {
       startDate: HTMLtoEpoch(startDate.value),
       endDate: HTMLtoEpoch(endDate.value),
-      user: user_id
+      users: [user_id] as string[]
     }
   })
 }

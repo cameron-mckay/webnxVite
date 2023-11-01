@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CheckInRequest, User, PartSchema, CheckInQueuePart } from '../../plugins/interfaces'
-import XToggleButton from '../GenericComponents/XToggleButton.vue';
-import CheckToggleButton from '../GenericComponents/CheckToggleButton.vue';
+import XToggleButton from '../GenericComponents/Buttons/XToggleButton.vue';
+import CheckToggleButton from '../GenericComponents/Buttons/CheckToggleButton.vue';
 import { ref } from 'vue';
 
 interface Props {

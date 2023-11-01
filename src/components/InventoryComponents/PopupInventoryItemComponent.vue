@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { LoadedCartItem } from '../../plugins/interfaces';
 import InlinePartSpecComponent from '../PartComponents/InlinePartSpecComponent.vue';
-import PlusButton from '../GenericComponents/PlusButton.vue';
-import DoubleArrowDownButton from '../GenericComponents/DoubleArrowDownButton.vue';
+import PlusButton from '../GenericComponents/Buttons/PlusButton.vue';
+import DoubleArrowDownButton from '../GenericComponents/Buttons/DoubleArrowDownButton.vue';
 interface Props {
   item: LoadedCartItem;
 }

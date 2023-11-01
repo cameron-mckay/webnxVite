@@ -5,7 +5,7 @@ import { ref, onBeforeMount } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import PartManagerComponent from '../../components/PartComponents/PartManagerComponent.vue';
-import BackButton from '../../components/GenericComponents/BackButton.vue';
+import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import {
 createPart,
 getNextNXID,

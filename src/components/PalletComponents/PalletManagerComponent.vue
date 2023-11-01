@@ -15,7 +15,7 @@ import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponen
 import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
 import InventoryPopup from '../InventoryComponents/InventoryPopup.vue';
 import AssetComponent from '../AssetComponents/AssetComponent.vue';
-import PlusButton from '../GenericComponents/PlusButton.vue';
+import PlusButton from '../GenericComponents/Buttons/PlusButton.vue';
 
 interface Props {
   title: string;

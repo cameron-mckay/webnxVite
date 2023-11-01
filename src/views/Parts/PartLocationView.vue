@@ -5,7 +5,7 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import GridPartSpecComponent from '../../components/PartComponents/GridPartSpecComponent.vue';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
-import BackButton from '../../components/GenericComponents/BackButton.vue';
+import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import SerializedPartRecordComponent from '../../components/PartComponents/SerializedPartRecordComponent.vue';
 import {
   getPartByID,

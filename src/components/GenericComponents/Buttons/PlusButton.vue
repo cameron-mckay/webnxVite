@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ButtonComponent from './ButtonComponent.vue'
+import ButtonComponent from '../BaseButtonComponent.vue'
 interface Props {
   title?: string
 }
@@ -9,12 +9,12 @@ let { title } = defineProps<Props>()
   <ButtonComponent :title="title">
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 256 512"
+      viewBox="0 0 448 512"
     >
       <path
         fill="currentColor"
         stroke="currentColor"
-        d="M9.4 278.6c-12.5-12.5-12.5-32.8 0-45.3l128-128c9.2-9.2 22.9-11.9 34.9-6.9s19.8 16.6 19.8 29.6l0 256c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-128-128z"
+        d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"
       />
     </svg>
   </ButtonComponent>

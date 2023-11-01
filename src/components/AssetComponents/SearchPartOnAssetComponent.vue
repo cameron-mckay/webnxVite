@@ -124,9 +124,9 @@ getPartsByTextSearch
 } from '../../plugins/dbCommands/partManager';
 import type { PartSchema } from '../../plugins/interfaces';
 import AdvancedSearchComponent from '../PartComponents/PartAdvancedSearchComponent.vue';
-import SlidersButton from '../GenericComponents/SlidersButton.vue'
-import LeftCaretButton from '../GenericComponents/LeftCaretButton.vue'
-import RightCaretButton from '../GenericComponents/RightCaretButton.vue'
+import SlidersButton from '../GenericComponents/Buttons/SlidersButton.vue'
+import LeftCaretButton from '../GenericComponents/Buttons/LeftCaretButton.vue'
+import RightCaretButton from '../GenericComponents/Buttons/RightCaretButton.vue'
 import AssetPartComponent from './PartOnAssetComponent.vue';
 interface AddObject {
   show: boolean;

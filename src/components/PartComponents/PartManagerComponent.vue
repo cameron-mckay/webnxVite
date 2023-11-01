@@ -3,7 +3,7 @@ import { Ref, onMounted, ref, watch } from 'vue';
 import type { PartSchema } from '../../plugins/interfaces';
 import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponent.vue';
 import StringArrayComponent from '../GenericComponents/StringArrayComponent.vue';
-import PlusButton from '../GenericComponents/PlusButton.vue';
+import PlusButton from '../GenericComponents/Buttons/PlusButton.vue';
 // Props interface
 interface Props {
   title: string;

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { PartSchema } from '../../plugins/interfaces';
-import PlusButton from '../GenericComponents/PlusButton.vue';
+import PlusButton from '../GenericComponents/Buttons/PlusButton.vue';
 interface Props {
   part: PartSchema;
   serial?: string;

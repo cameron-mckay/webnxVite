@@ -132,10 +132,10 @@ getPartsByTextSearch
 import type { PartSchema } from '../../plugins/interfaces';
 import QRCodeScannerPopupComponent from '../GenericComponents/QRCodeScannerPopupComponent.vue';
 import AdvancedSearchComponent from './PartAdvancedSearchComponent.vue';
-import QRCodeButton from '../GenericComponents/QRCodeButton.vue'
-import SlidersButton from '../GenericComponents/SlidersButton.vue'
-import LeftCaretButton from '../GenericComponents/LeftCaretButton.vue'
-import RightCaretButton from '../GenericComponents/RightCaretButton.vue'
+import QRCodeButton from '../GenericComponents/Buttons/QRCodeButton.vue'
+import SlidersButton from '../GenericComponents/Buttons/SlidersButton.vue'
+import LeftCaretButton from '../GenericComponents/Buttons/LeftCaretButton.vue'
+import RightCaretButton from '../GenericComponents/Buttons/RightCaretButton.vue'
 import PartComponent from './PartComponent.vue';
 
 interface AddObject {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { User } from '../../plugins/interfaces';
-import RightCaretButton from '../GenericComponents/RightCaretButton.vue';
+import RightCaretButton from '../GenericComponents/Buttons/RightCaretButton.vue';
 interface Props {
   user: User;
   assetsUpdated: number;

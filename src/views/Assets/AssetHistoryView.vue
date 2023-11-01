@@ -4,9 +4,9 @@ import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetEventComponent from '../../components/AssetComponents/AssetEventComponent.vue';
-import BackButton from '../../components/GenericComponents/BackButton.vue';
-import LeftCaretButton from '../../components/GenericComponents/LeftCaretButton.vue';
-import RightCaretButton from '../../components/GenericComponents/RightCaretButton.vue';
+import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
+import LeftCaretButton from '../../components/GenericComponents/Buttons/LeftCaretButton.vue';
+import RightCaretButton from '../../components/GenericComponents/Buttons/RightCaretButton.vue';
 import {
   getAssetByID,
   getAssetHistory,

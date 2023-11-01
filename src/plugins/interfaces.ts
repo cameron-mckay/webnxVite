@@ -5,6 +5,17 @@ export interface apiResponse {
   (data: object | Array<object> | string, err: Error | AxiosError | null): void;
 }
 
+export interface loadPageCallback {
+  (pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean): Promise<Page>;
+}
+
+export interface Page {
+  total: number;
+  pages: number;
+  events: any[];
+}
+
+
 // For axios.ts
 export interface AxiosOptions {
   baseUrl?: string;
