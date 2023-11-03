@@ -141,7 +141,7 @@ function addToCart() {
 function loadActionHistory() {
     router.push({
       name: 'Part Action History',
-      query: { nxid: part.value.nxid },
+      query: { parts: [part.value.nxid], hideOtherParts: "true" },
     });
 }
 
