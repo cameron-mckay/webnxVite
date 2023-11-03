@@ -25,8 +25,12 @@ const { http, store, router, errorHandler, displayMessage } =
 
 let palletRef = ref({} as PalletSchema);
 let partsOnPallet = ref([] as LoadedCartItem[]);
+let processingSubmission = false
 
 function palletSubmit(assets: string) {
+  if(processingSubmission)
+    return
+  processingSubmission = true
   // Use create part method from API commands
   let unloadedParts = [] as CartItem[];
   // Iterate through list of parts and strip only the NXID and quantity
@@ -44,6 +48,7 @@ function palletSubmit(assets: string) {
     }
   }
   createPallet(http, palletRef.value, unloadedParts, assets, (data, err) => {
+    processingSubmission = false
     if (err) {
       return errorHandler(err);
     }

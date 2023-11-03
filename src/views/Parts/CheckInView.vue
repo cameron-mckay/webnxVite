@@ -81,6 +81,7 @@ function localCheckin() {
   });
   checkin(http, unloadedParts, currentUser.value._id!, (data, err) => {
     if (err) {
+      processingCheckin = false
       return errorHandler(err);
     }
     setTimeout(() => {

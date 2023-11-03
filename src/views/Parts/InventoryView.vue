@@ -157,26 +157,25 @@ function move(
   }
 }
 function submit() {
-  if (!processingMove) {
-    processingMove = true;
-    let partList = transferList.value.map((p)=>{
-      if(p.serial)
-        return{nxid: p.part.nxid, serial: p.serial }as CartItem
-      return{nxid: p.part.nxid, quantity: p.quantity }as CartItem
-    })
-    console.log(partList)
-    // Move parts
-    movePart(http, transferUser.value._id!, currentUser.value._id!, partList, (data, err) => {
-      if (err) {
-        // Handle errors
-        processingMove = false;
-        return errorHandler(err);
-      }
-      displayMessage(data as string);
-      transferList.value = [];
-      processingMove = false;
-    });
-  }
+  if (processingMove)
+    return
+  processingMove = true;
+  let partList = transferList.value.map((p)=>{
+    if(p.serial)
+      return{nxid: p.part.nxid, serial: p.serial }as CartItem
+    return{nxid: p.part.nxid, quantity: p.quantity }as CartItem
+  })
+  console.log(partList)
+  // Move parts
+  movePart(http, transferUser.value._id!, currentUser.value._id!, partList, (data, err) => {
+    processingMove = false;
+    if (err) {
+      // Handle errors
+      return errorHandler(err);
+    }
+    displayMessage(data as string);
+    transferList.value = [];
+  });
 }
 
 watch(currentUser, () => {

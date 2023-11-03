@@ -2,7 +2,6 @@
 import { Ref, onMounted, ref } from 'vue';
 import { getAllUsers, getCheckinHistory, getCheckoutHistory, getAssetUpdatesNoDetails, getNewAssetsNoDetails, getNewPalletsNoDetails, getPalletUpdatesNoDetails } from '../../plugins/dbCommands/userManager';
 import { User } from '../../plugins/interfaces';
-// PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
@@ -19,7 +18,6 @@ interface Props {
 }
 
 const { http, errorHandler, router } = defineProps<Props>();
-// END OF PROPS
 
 let users: Ref<Array<User>> = ref([]);
 let checkins = new Map<string, number>()
@@ -88,7 +86,6 @@ function getUsers() {
             },[u._id!])
           })
         })),
-
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
             getPalletUpdatesNoDetails(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
@@ -111,8 +108,6 @@ function getUsers() {
             },[u._id!])
           })
         }))
-
-
       ]
     )
     users.value = temp;

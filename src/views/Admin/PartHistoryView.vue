@@ -7,7 +7,6 @@ import AnalyticsSearchComponent from '../../components/GenericComponents/Search/
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
 import PartEventComponent from '../../components/AdminComponents/PartEventComponent.vue';
 import {
-AllTechsEvent,
   Page,
   PartEvent,
   UserState,

@@ -25,8 +25,12 @@ const { http, store, router, errorHandler, displayMessage } =
 
 let oldAsset = ref({} as AssetSchema);
 let partsOnAsset = ref([] as LoadedCartItem[]);
+let processingSubmission = false
 
 function assetSubmit() {
+  if(processingSubmission)
+    return
+  processingSubmission = true
   // Use create part method from API commands
   let unloadedParts = [] as CartItem[];
   // Iterate through list of parts and strip only the NXID and quantity
@@ -44,6 +48,7 @@ function assetSubmit() {
     }
   }
   createAsset(http, oldAsset.value, unloadedParts, (data, err) => {
+    processingSubmission = false
     if (err) {
       return errorHandler(err);
     }

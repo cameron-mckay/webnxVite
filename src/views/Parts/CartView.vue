@@ -208,6 +208,7 @@ function localCheckout() {
   });
   checkout(http, cart, currentUser.value._id!, (data, err) => {
     if (err) {
+      processingCheckout = false
       return errorHandler(err);
     }
     displayMessage('Successfully checked out.');

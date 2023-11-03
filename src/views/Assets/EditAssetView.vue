@@ -39,6 +39,7 @@ let inventory = ref([] as AssetPart[]);
 let inventoryCopy = [] as AssetPart[];
 let loading = ref(false)
 let maxQuantityMap = new Map<string, number>()
+let processingSubmission = false
 onBeforeMount(() => {
   if (router.currentRoute.value.query.asset_tag) {
     loading.value = true
@@ -101,6 +102,9 @@ onBeforeMount(() => {
 });
 
 function assetSubmit(correction: boolean) {
+  if(processingSubmission)
+    return
+  processingSubmission = true
   // Use create part method from API commands
   let unloadedParts = partsOnAsset.value.map((part) => {
     if (part.serial) {
@@ -110,6 +114,7 @@ function assetSubmit(correction: boolean) {
   }) as CartItem[];
   // Iterate through list of parts and strip only the NXID and quantity
   updateAsset(http, oldAsset.value, unloadedParts, correction, (data, err) => {
+    processingSubmission = false
     if (err) {
       return errorHandler(err);
     }
