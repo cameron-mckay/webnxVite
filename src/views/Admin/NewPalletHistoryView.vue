@@ -4,13 +4,13 @@ import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
-import AssetEventComponent from '../../components/AssetComponents/AssetEventComponent.vue';
+import PalletEventComponent from '../../components/PalletComponents/PalletEventComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
-import { getNewAssets } from '../../plugins/dbCommands/userManager';
+import { getNewPallets } from '../../plugins/dbCommands/userManager';
 import {
-AssetEvent,
   Page,
+  PalletEvent,
   UserState,
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
@@ -25,18 +25,18 @@ interface Props {
 
 let loaded = ref(false)
 let resultsLoading = ref(false)
-let assetEvents = ref([] as AssetEvent[])
+let palletEvents = ref([] as PalletEvent[])
 
 const { http, router } =
   defineProps<Props>();
-let analyticsSearchObject:AnalyticsSearch<AssetEvent>;
+let analyticsSearchObject:AnalyticsSearch<PalletEvent>;
 
 
 onBeforeMount(async ()=>{
   analyticsSearchObject = await AnalyticsSearch.createAnalyticsSearch(http, router, 
     (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts)=>{
       return new Promise<Page>((res, rej)=>{
-        getNewAssets(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
+        getNewPallets(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
           if(err)
             return res({total: 0, pages: 0, events: []})
           let p = data as Page
@@ -52,25 +52,34 @@ onBeforeMount(async ()=>{
   loaded.value = true
 })
 
-async function displayResults(page: AssetEvent[])
+async function displayResults(page: PalletEvent[])
 {
   // Load all the required info into the caches
   for(let e of page) {
     // Evil ass promise code
     await Promise.all([
-      Promise.all(e.added.map((p)=>{
+      Promise.all(e.addedParts.map((p)=>{
         return analyticsSearchObject.getPartInfo(p)
       })),
-      Promise.all(e.removed.map((p)=>{
+      Promise.all(e.removedParts.map((p)=>{
         return analyticsSearchObject.getPartInfo(p)
       })),
-      Promise.all(e.existing.map((p)=>{
+      Promise.all(e.existingParts.map((p)=>{
         return analyticsSearchObject.getPartInfo(p)
+      })),
+      Promise.all(e.addedAssets.map((p)=>{
+        return analyticsSearchObject.getAsset(p)
+      })),
+      Promise.all(e.removedAssets.map((p)=>{
+        return analyticsSearchObject.getAsset(p)
+      })),
+      Promise.all(e.existingAssets.map((p)=>{
+        return analyticsSearchObject.getAsset(p)
       }))
     ])
-    await analyticsSearchObject.getAsset(e.asset_id)
+    await analyticsSearchObject.getPallet(e.pallet_id)
   }
-  assetEvents.value = page
+  palletEvents.value = page
   resultsLoading.value = false
 }
 
@@ -82,9 +91,8 @@ function showLoader() {
 <template>
   <div>
     <PageHeaderWithBackButton :prev-path="'/manage'" :router="router">
-      New Asset History
+      New Pallet History
     </PageHeaderWithBackButton>
-
     <LoaderComponent v-if="!loaded"/>
     <AnalyticsSearchComponent v-else 
       :resultsLoading="resultsLoading"
@@ -94,17 +102,14 @@ function showLoader() {
       @displayResults="displayResults"
       @showLoader="showLoader"
     >
-
-
-      <AssetEventComponent
+      <PalletEventComponent
         :assets="analyticsSearchObject.assetCache"
         :user="analyticsSearchObject.getUser(event.by)!"
         :parts="analyticsSearchObject.partsCache"
+        :pallets="analyticsSearchObject.palletCache"
         :event="event"
-        v-for="event in assetEvents"
+        v-for="event in palletEvents"
       />
-
-
     </AnalyticsSearchComponent>
   </div>
 </template>

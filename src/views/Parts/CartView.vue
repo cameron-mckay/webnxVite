@@ -41,6 +41,7 @@ let allSerials = ref(new Map<string, SNAvailable[]>());
 let users = ref([] as User[]);
 let currentUser = ref({} as User);
 let keys = ref([] as number[]);
+let processingCheckout = false
 let offset = 0;
 
 onBeforeMount(() => {
@@ -195,6 +196,9 @@ function updateSerial(new_sn: string, old_sn: string, index: number) {
 }
 
 function localCheckout() {
+  if(processingCheckout)
+    return
+  processingCheckout = true
   let cart = [] as CartItem[];
   for (let item of store.state.cart.unserialized.keys()) {
     cart.push({ nxid: item, quantity: store.getters.getQuantity(item) });
@@ -209,6 +213,7 @@ function localCheckout() {
     displayMessage('Successfully checked out.');
     store.commit('emptyCart');
     loadCart();
+    processingCheckout = false
   });
 }
 

@@ -1,10 +1,11 @@
-import { User, PartSchema, AssetEvent, AssetSchema, CartItem, loadPageCallback, apiResponse } from "./interfaces"
+import { User, PartSchema, AssetEvent, AssetSchema, CartItem, loadPageCallback, apiResponse, PalletSchema } from "./interfaces"
 import { AxiosInstance } from "axios"
 import { Router } from "vue-router"
 import { getAllUsers } from "./dbCommands/userManager"
 import { getPartByID } from "./dbCommands/partManager"
 import { getAssetByID } from "./dbCommands/assetManager"
 import { getLastMonth, getTodaysDate } from "./dateFunctions"
+import { getPalletByID } from "./dbCommands/palletManager"
 
 export default class AnalyticsSearch<Type> {
   // Vue shit
@@ -18,6 +19,7 @@ export default class AnalyticsSearch<Type> {
   // Cache loaded parts and assets
   public partsCache: Map<string, PartSchema>
   public assetCache: Map<string, AssetSchema>
+  public palletCache: Map<string, PalletSchema>
   // Store filters from last search
   private lastUserFilters: string[]
   private lastPartFilters: string[]
@@ -61,6 +63,7 @@ export default class AnalyticsSearch<Type> {
     this.allUsers = new Map<string, User>()
     this.partsCache = new Map<string, PartSchema>()
     this.assetCache = new Map<string, AssetSchema>()
+    this.palletCache = new Map<string, PalletSchema>()
     this.pageCache = new Map<number, Type[]>()
     // Cache the last search params
     this.lastUserFilters = []
@@ -112,7 +115,7 @@ export default class AnalyticsSearch<Type> {
     let userFilterArray = AnalyticsSearch.getUserFiltersFromRouter(this.router).map((u)=>this.getUser(u as string))
     let userFilterMap = new Map<string, User>()
     for(let u of userFilterArray) {
-      userFilterMap.set(u._id, u)
+      userFilterMap.set(u!._id, u!)
     }
     return userFilterMap
   }
@@ -127,6 +130,10 @@ export default class AnalyticsSearch<Type> {
 
   getEndDateFromRouter() {
     return isNaN(parseInt(this.router.currentRoute.value.query.endDate as string))? getTodaysDate() : new Date(parseInt(this.router.currentRoute.value.query.endDate as string))
+  }
+
+  getHideOthersFromRouter() {
+    return (this.router.currentRoute.value.query.hideOtherParts as string) == "true" ? true : false
   }
 
   getAllUsers() {
@@ -180,6 +187,25 @@ export default class AnalyticsSearch<Type> {
     })
   }
 
+  static loadPallet(http: AxiosInstance, pallet: string|PalletSchema) {
+    return new Promise<PalletSchema>((res)=>{
+      let pallet_tag = ""
+      if(typeof(pallet)=="string") {
+        pallet_tag = pallet
+      }
+      else {
+        pallet_tag = pallet.pallet_tag!
+      }
+      getPalletByID(http, pallet_tag, (data, err)=>{
+        if(err) {
+          res({} as PalletSchema)
+          return
+        }
+        res(data as PalletSchema)
+      })
+    })
+  }
+
   getAsset(asset: string|AssetSchema) {
     return new Promise<AssetSchema>(async (res)=>{
       let asset_tag = ""
@@ -198,7 +224,30 @@ export default class AnalyticsSearch<Type> {
       this.assetCache.set(asset_tag, p);
       // Check if asset loaded properly
       if(JSON.stringify(p)==JSON.stringify({}))
-          this.partsCache.delete(asset_tag);
+          this.assetCache.delete(asset_tag);
+      res(p)
+    })
+  }
+
+  getPallet(pallet: string|PalletSchema) {
+    return new Promise<AssetSchema>(async (res)=>{
+      let pallet_tag = ""
+      if(typeof(pallet)=="string") {
+        pallet_tag = pallet
+      }
+      else {
+        pallet_tag = pallet.pallet_tag!
+      }
+      if(this.palletCache.has(pallet_tag))
+        return res(this.assetCache.get(pallet_tag)!)
+      // Set temp value
+      this.palletCache.set(pallet_tag, {});
+      // Fetch pallet from API
+      let p = await AnalyticsSearch.loadPallet(this.http, pallet_tag)
+      this.palletCache.set(pallet_tag, p);
+      // Check if pallet loaded properly
+      if(JSON.stringify(p)==JSON.stringify({}))
+          this.palletCache.delete(pallet_tag);
       res(p)
     })
   }
@@ -260,9 +309,83 @@ export default class AnalyticsSearch<Type> {
     this.pageCache.set(pageNum, events)
   }
 
+  // Cache 5 pages ahead and behind
+  loadCache(pageNum: number) {
+    let page = pageNum
+    while (page > 0 && page >= pageNum - 5) {
+      let localPage = page;
+      // Check if exists in cache
+      if (this.pageCache.has(localPage)) {
+        // Decrement and continue
+        page -= 1;
+        continue;
+      } else {
+        // Set temp value
+        this.pageCache.set(localPage, []);
+        // Get Page from api
+        // Update local info
+        this.loadPageCallback(localPage, new Date(this.lastStartDate), new Date(this.lastEndDate), this.lastUserFilters, this.lastPartFilters, this.lastHideOtherParts)
+          .then((page) => {
+            console.log(page)
+            // Set new value
+            this.numPages = page.pages
+            this.numItems = page.total
+            this.pageCache.set(localPage, page.events)
+          })
+          .catch(() => {
+            // Delete temp value
+            this.pageCache.delete(localPage);
+          });
+        // Decrement
+        page -= 1;
+      }
+    }
+    page = pageNum;
+    // Get next 5 pages
+    while (page <= pageNum + 5) {
+      let localPage = page;
+      // Check if cache has page
+      if (this.pageCache.has(localPage)) {
+        // increment and continue
+        page++;
+        continue;
+      } else {
+        // Set temp value
+        this.pageCache.set(localPage, []);
+        // Get page from api
+        this.loadPageCallback(localPage, new Date(this.lastStartDate), new Date(this.lastEndDate), this.lastUserFilters, this.lastPartFilters, this.lastHideOtherParts)
+          .then((page) => {
+            console.log(page)
+            // Set new value
+            this.numPages = page.pages
+            this.numItems = page.total
+            this.pageCache.set(localPage, page.events)
+          })
+          .catch(() => {
+            // Delete temp value
+            this.pageCache.delete(localPage);
+          });
+        // Increment
+        page++;
+      }
+    }
+  }
+
+  hasPage(pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean) {
+      if(
+        startDate.getTime()!=this.lastStartDate||
+        endDate.getTime()!=this.lastEndDate ||
+        (userFilters?JSON.stringify(userFilters):JSON.stringify([]))!=JSON.stringify(this.lastUserFilters) ||
+        (partFilters?JSON.stringify(partFilters):JSON.stringify([]))!=JSON.stringify(this.lastPartFilters) ||
+        hideOtherParts != this.lastHideOtherParts
+      ) {
+        return false
+      }
+      return this.pageCache.has(pageNum)
+  }
+
   async loadPage(pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean) {
     return new Promise<Type[]>(async (res)=>{
-      console.log("start class promise")
       let searchParamChanged = false
       // Check for change in search params
       if(
@@ -292,21 +415,18 @@ export default class AnalyticsSearch<Type> {
           startDate: startDate.getTime(),
           endDate: endDate.getTime(),
           users: userFilters,
-          parts: partFilters
+          parts: partFilters,
+          hideOtherParts: this.lastHideOtherParts ? "true" : "false"
         }
       });
       // Early return if the request doesn't make sense
       if((pageNum < 1) || ((pageNum > this.numPages)&&!searchParamChanged)) {
-        console.log("error")
         return res(thisPage)
       }
       // If the cache doesn't have the page
       if(!this.pageCache.has(pageNum)) {
         // Load page from callback
-        console.log("before callback")
         let page = await this.loadPageCallback(pageNum, startDate, endDate, this.lastUserFilters, this.lastPartFilters, this.lastHideOtherParts)
-        console.log("after callback")
-        console.log(page)
         // Update local info
         this.numPages = page.pages
         this.numItems = page.total
@@ -315,9 +435,8 @@ export default class AnalyticsSearch<Type> {
       // Load from cache
       thisPage = this.pageCache.get(pageNum)!
       // Return the page
-      console.log("end class promise")
-      console.log(thisPage)
-      return res(thisPage)
+      this.loadCache(pageNum)
+      res(thisPage)
     })
   }
 }

@@ -285,6 +285,8 @@ export function getAssetUpdates(
   pageSize: number,
   callback: apiResponse,
   users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
 ) {
   // Send request to API
   http
@@ -294,7 +296,9 @@ export function getAssetUpdates(
       startDate,
       endDate,
       pageNum,
-      pageSize
+      pageSize,
+      nxids,
+      hideOthers
     }
   })
     .then((res: AxiosResponse) => {
@@ -315,6 +319,8 @@ export function getAssetUpdatesNoDetails(
   pageSize: number,
   callback: apiResponse,
   users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
 ) {
   // Send request to API
   http
@@ -324,7 +330,9 @@ export function getAssetUpdatesNoDetails(
       startDate,
       endDate,
       pageNum,
-      pageSize
+      pageSize,
+      nxids,
+      hideOthers
     }
   })
     .then((res: AxiosResponse) => {
@@ -345,6 +353,8 @@ export function getNewAssets(
   pageSize: number,
   callback: apiResponse,
   users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
 ) {
   // Send request to API
   http
@@ -354,7 +364,9 @@ export function getNewAssets(
       startDate,
       endDate,
       pageNum,
-      pageSize
+      pageSize,
+      nxids,
+      hideOthers
     }
   })
     .then((res: AxiosResponse) => {
@@ -375,6 +387,8 @@ export function getNewAssetsNoDetails(
   pageSize: number,
   callback: apiResponse,
   users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
 ) {
   // Send request to API
   http
@@ -384,7 +398,9 @@ export function getNewAssetsNoDetails(
       startDate,
       endDate,
       pageNum,
-      pageSize
+      pageSize,
+      nxids,
+      hideOthers
     }
   })
     .then((res: AxiosResponse) => {
@@ -485,6 +501,142 @@ export function getAllTechsHistory(
       pageNum,
       pageSize,
       users,
+      nxids,
+      hideOthers
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getNewPallets(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
+) {
+  // Send request to API
+  http
+    .get('/api/history/newPallets', {
+    params: {
+      users,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize,
+      nxids,
+      hideOthers
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getNewPalletsNoDetails(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
+) {
+  // Send request to API
+  http
+    .get('/api/history/newPallets/noDetails', {
+    params: {
+      users,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize,
+      nxids,
+      hideOthers
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getPalletUpdates(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
+) {
+  // Send request to API
+  http
+    .get('/api/history/palletsUpdated', {
+    params: {
+      users,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize,
+      nxids,
+      hideOthers
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: Error | AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getPalletUpdatesNoDetails(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
+) {
+  // Send request to API
+  http
+    .get('/api/history/assetsUpdated/noDetails', {
+    params: {
+      users,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize,
       nxids,
       hideOthers
     }

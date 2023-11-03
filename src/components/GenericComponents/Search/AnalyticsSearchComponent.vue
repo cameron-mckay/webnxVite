@@ -47,6 +47,8 @@ onBeforeMount(async ()=>{
   // Load dates from search helper
   startDateCache = searchComponent.getStartDateFromRouter()
   endDateCache = searchComponent.getEndDateFromRouter()
+  hideOtherPartsRef.value = searchComponent.getHideOthersFromRouter()
+  hideOtherPartsCache = hideOtherPartsRef.value
   console.log(startDateCache.getTime())
   pageNumRef.value = searchComponent.getPageNumFromRouter()
   loadPage(pageNumRef.value)

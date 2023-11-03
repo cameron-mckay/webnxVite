@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
-import { getAllUsers, getCheckinHistory, getCheckoutHistory, getAssetUpdatesNoDetails, getNewAssetsNoDetails } from '../../plugins/dbCommands/userManager';
+import { getAllUsers, getCheckinHistory, getCheckoutHistory, getAssetUpdatesNoDetails, getNewAssetsNoDetails, getNewPalletsNoDetails, getPalletUpdatesNoDetails } from '../../plugins/dbCommands/userManager';
 import { User } from '../../plugins/interfaces';
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -26,6 +26,8 @@ let checkins = new Map<string, number>()
 let checkouts = new Map<string, number>()
 let newAssets = new Map<string, number>()
 let assetsUpdated = new Map<string, number>()
+let newPallets = new Map<string, number>()
+let palletsUpdated = new Map<string, number>()
 let loading = ref(false);
 let pageNum = ref(1)
 let pageSize = 20
@@ -85,7 +87,32 @@ function getUsers() {
               res("")
             },[u._id!])
           })
+        })),
+
+        Promise.all(temp.map((u)=>{
+          return new Promise<string>((res, rej)=>{
+            getPalletUpdatesNoDetails(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+              if(err)
+                return rej("")
+              let response = data as any
+              palletsUpdated.set(u._id!, response.total)
+              res("")
+            },[u._id!])
+          })
+        })),
+        Promise.all(temp.map((u)=>{
+          return new Promise<string>((res, rej)=>{
+            getNewPalletsNoDetails(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+              if(err)
+                return rej("")
+              let response = data as any
+              newPallets.set(u._id!, response.total)
+              res("")
+            },[u._id!])
+          })
         }))
+
+
       ]
     )
     users.value = temp;
@@ -99,7 +126,7 @@ onMounted(() => {
 
 function openCheckouts(user_id: string) {
   router.push({
-    name: 'User Checkout History',
+    name: 'Checkout History',
     query: {
       startDate: HTMLtoEpoch(startDate.value),
       endDate: HTMLtoEpoch(endDate.value),
@@ -110,7 +137,7 @@ function openCheckouts(user_id: string) {
 
 function openCheckins(user_id: string) {
   router.push({
-    name: 'User Checkin History',
+    name: 'Checkin History',
     query: {
       startDate: HTMLtoEpoch(startDate.value),
       endDate: HTMLtoEpoch(endDate.value),
@@ -121,7 +148,7 @@ function openCheckins(user_id: string) {
 
 function openNewAssets(user_id: string) {
   router.push({
-    name: 'User New Asset History',
+    name: 'New Asset History',
     query: {
       startDate: HTMLtoEpoch(startDate.value),
       endDate: HTMLtoEpoch(endDate.value),
@@ -132,7 +159,29 @@ function openNewAssets(user_id: string) {
 
 function openAssetsUpdated(user_id: string) {
   router.push({
-    name: 'User Asset Update History',
+    name: 'Asset Update History',
+    query: {
+      startDate: HTMLtoEpoch(startDate.value),
+      endDate: HTMLtoEpoch(endDate.value),
+      users: [user_id] as string[]
+    }
+  })
+}
+
+function openNewPallets(user_id: string) {
+  router.push({
+    name: 'New Pallet History',
+    query: {
+      startDate: HTMLtoEpoch(startDate.value),
+      endDate: HTMLtoEpoch(endDate.value),
+      users: [user_id] as string[]
+    }
+  })
+}
+
+function openPalletsUpdated(user_id: string) {
+  router.push({
+    name: 'Pallet Update History',
     query: {
       startDate: HTMLtoEpoch(startDate.value),
       endDate: HTMLtoEpoch(endDate.value),
@@ -167,10 +216,14 @@ function openAssetsUpdated(user_id: string) {
         :checkouts="checkouts.get(user._id!)!"
         :assetsUpdated="assetsUpdated.get(user._id!)!"
         :newAssets="newAssets.get(user._id!)!"
+        :palletsUpdated="palletsUpdated.get(user._id!)!"
+        :newPallets="newPallets.get(user._id!)!"
         @checkouts="openCheckouts(user._id!)"
         @checkins="openCheckins(user._id!)"
         @assetsUpdated="openAssetsUpdated(user._id!)"
         @newAssets="openNewAssets(user._id!)"
+        @palletsUpdated="openPalletsUpdated(user._id!)"
+        @newPallets="openNewPallets(user._id!)"
       />
     </div>
   </div>

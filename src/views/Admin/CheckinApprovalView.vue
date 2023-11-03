@@ -4,8 +4,8 @@ import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
 import CheckInRequestComponent from '../../components/KioskComponents/CheckInRequestComponent.vue';
-import RefreshButton from '../../components/GenericComponents/RefreshButton.vue';
-import BackButton from '../../components/GenericComponents/BackButton.vue';
+import RefreshButton from '../../components/GenericComponents/Buttons/RefreshButton.vue';
+import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import type {
 UserState,
 CheckInRequest,

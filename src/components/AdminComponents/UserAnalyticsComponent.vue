@@ -5,10 +5,12 @@ interface Props {
   user: User;
   assetsUpdated: number;
   newAssets: number;
+  palletsUpdated: number;
+  newPallets: number;
   checkins: number;
   checkouts: number;
 }
-const { user, assetsUpdated, newAssets, checkins, checkouts } = defineProps<Props>();
+const { newPallets, palletsUpdated, user, assetsUpdated, newAssets, checkins, checkouts } = defineProps<Props>();
 </script>
 <template>
   <div class="group relative p-0">
@@ -33,6 +35,14 @@ const { user, assetsUpdated, newAssets, checkins, checkouts } = defineProps<Prop
       <div class="flex justify-between my-2 rounded-md hover:shadow-md hover:bg-gray-200 dark:hover:bg-zinc-800 transition p-2 md:delay-300">
         <p>{{ newAssets }} new assets tracked</p>
         <RightCaretButton @click="$emit('newAssets')"/>
+      </div>
+      <div class="flex justify-between my-2 rounded-md hover:shadow-md hover:bg-gray-200 dark:hover:bg-zinc-800 transition p-2 md:delay-300">
+        <p>{{ palletsUpdated }} pallets updated</p>
+        <RightCaretButton @click="$emit('palletsUpdated')"/>
+      </div>
+      <div class="flex justify-between my-2 rounded-md hover:shadow-md hover:bg-gray-200 dark:hover:bg-zinc-800 transition p-2 md:delay-300">
+        <p>{{ newPallets }} new pallets tracked</p>
+        <RightCaretButton @click="$emit('newPallets')"/>
       </div>
     </div>
   </div>

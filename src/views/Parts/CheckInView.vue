@@ -37,6 +37,7 @@ let inventory = ref([] as LoadedCartItem[]);
 let checkInList = ref([] as LoadedCartItem[]);
 let loading = ref(false);
 let maxQuantities = new Map<string, number>()
+let processingCheckin = false
 
 onBeforeMount(() => {
   loadUsers();
@@ -71,6 +72,9 @@ async function loadInventory() {
 }
 
 function localCheckin() {
+  if(processingCheckin)
+    return
+  processingCheckin = true
   let unloadedParts = checkInList.value.map((i) => {
     if (i.serial) return { nxid: i.part.nxid, serial: i.serial } as CartItem;
     else return { nxid: i.part.nxid, quantity: i.quantity } as CartItem;
@@ -82,6 +86,7 @@ function localCheckin() {
     setTimeout(() => {
       displayMessage('Successfully checked in.');
       loadInventory();
+      processingCheckin = false
     }, 500);
   });
 }
