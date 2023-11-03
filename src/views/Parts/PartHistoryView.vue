@@ -148,6 +148,55 @@ function loadActionHistory() {
       query: { parts: [part.value.nxid], hideOtherParts: "true" },
     });
 }
+
+function loadCheckouts() {
+    router.push({
+      name: 'Checkout History',
+      query: { parts: [part.value.nxid], hideOtherParts: "true" },
+    });
+}
+
+function loadCheckins() {
+    router.push({
+      name: 'Checkin History',
+      query: { parts: [part.value.nxid], hideOtherParts: "true" },
+    });
+}
+
+function loadAssetUpdates() {
+    router.push({
+      name: 'Asset Update History',
+      query: { parts: [part.value.nxid], hideOtherParts: "true" },
+    });
+}
+
+function loadNewAssets() {
+    router.push({
+      name: 'New Asset History',
+      query: { parts: [part.value.nxid], hideOtherParts: "true" },
+    });
+}
+
+function loadPalletUpdates() {
+    router.push({
+      name: 'Pallet Update History',
+      query: { parts: [part.value.nxid], hideOtherParts: "true" },
+    });
+}
+
+function loadNewPallets() {
+    router.push({
+      name: 'New Pallet History',
+      query: { parts: [part.value.nxid], hideOtherParts: "true" },
+    });
+}
+
+function loadAllTechs() {
+    router.push({
+      name: 'All Techs History',
+      query: { parts: [part.value.nxid], hideOtherParts: "true" },
+    });
+}
 </script>
 <template>
   <div v-if="loading" >
@@ -157,7 +206,20 @@ function loadActionHistory() {
   </div>
   <div v-else>
     <BackButton @click="router.back()" class="mr-2 mb-2"/>
-    <GridPartSpecComponent @plus="addToCart" :showHistory="store.state.user.roles?.includes('clerk')||store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('lead')" :showPlus="store.state.user.roles?.includes('kiosk')" :part="part" @loadHistory="loadActionHistory"/>
+    <GridPartSpecComponent
+      @plus="addToCart"
+      :showHistory="store.state.user.roles?.includes('clerk')||store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('lead')"
+      :showPlus="store.state.user.roles?.includes('kiosk')"
+      :part="part"
+      @loadHistory="loadActionHistory"
+      @loadCheckouts="loadCheckouts"
+      @loadCheckins="loadCheckins"
+      @loadNewAssets="loadNewAssets"
+      @loadAssetUpdates="loadAssetUpdates"
+      @loadNewPallets="loadNewPallets"
+      @loadPalletUpdates="loadPalletUpdates"
+      @loadAllTechs="loadAllTechs"
+    />
     <!-- PART RECORDS GO HERE -->
     <h1 class="detail-title" v-if="partRecords&&partRecords.length>0&&partRecords[0].serial != undefined">{{ partRecords[0].serial }} History:</h1>
     <h1 class="detail-title" v-else>History:</h1>
