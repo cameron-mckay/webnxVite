@@ -630,7 +630,7 @@ export function getPalletUpdatesNoDetails(
 ) {
   // Send request to API
   http
-    .get('/api/history/assetsUpdated/noDetails', {
+    .get('/api/history/palletsUpdated/noDetails', {
     params: {
       users,
       startDate,
