@@ -4,8 +4,8 @@ import { onBeforeMount, ref } from 'vue';
 import { dateToHTML, getLastMonth, getTodaysDate, HTMLToDate } from "../../plugins/dateFunctions"
 
 interface Props {
-  startDate?: Date
-  endDate?: Date
+  startDateEpoch?: number
+  endDateEpoch?: number
 }
 
 let { startDateEpoch, endDateEpoch } = defineProps<Props>()
@@ -14,11 +14,11 @@ let endDateRef = ref(dateToHTML(getTodaysDate()))
 
 onBeforeMount(()=>{
   // Check if start date is valid
-  if(startDateEpoch&&startDateEpoch<Date.now()&&startDateEpoch<endDateEpoch)
+  if(startDateEpoch&&startDateEpoch<Date.now()&&endDateEpoch&&startDateEpoch<endDateEpoch)
     // Set start date
     startDateRef.value = dateToHTML(new Date(startDateEpoch))
   // Check if end date is valid
-  if(endDateEpoch&&endDateEpoch>startDateEpoch&&endDateEpoch<getTodaysDate().getTime())
+  if(startDateEpoch&&endDateEpoch&&endDateEpoch>startDateEpoch&&endDateEpoch<getTodaysDate().getTime())
     // Set end date
     endDateRef.value = dateToHTML(new Date(endDateEpoch))
 })

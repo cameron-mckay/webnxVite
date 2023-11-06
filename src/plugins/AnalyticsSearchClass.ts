@@ -115,7 +115,7 @@ export default class AnalyticsSearch<Type> {
     let userFilterArray = AnalyticsSearch.getUserFiltersFromRouter(this.router).map((u)=>this.getUser(u as string))
     let userFilterMap = new Map<string, User>()
     for(let u of userFilterArray) {
-      userFilterMap.set(u!._id, u!)
+      userFilterMap.set((u as User)._id!, u!)
     }
     return userFilterMap
   }
@@ -230,7 +230,7 @@ export default class AnalyticsSearch<Type> {
   }
 
   getPallet(pallet: string|PalletSchema) {
-    return new Promise<AssetSchema>(async (res)=>{
+    return new Promise<PalletSchema>(async (res)=>{
       let pallet_tag = ""
       if(typeof(pallet)=="string") {
         pallet_tag = pallet
@@ -239,9 +239,9 @@ export default class AnalyticsSearch<Type> {
         pallet_tag = pallet.pallet_tag!
       }
       if(this.palletCache.has(pallet_tag))
-        return res(this.assetCache.get(pallet_tag)!)
+        return res(this.palletCache.get(pallet_tag)!)
       // Set temp value
-      this.palletCache.set(pallet_tag, {});
+      this.palletCache.set(pallet_tag, {} as PalletSchema);
       // Fetch pallet from API
       let p = await AnalyticsSearch.loadPallet(this.http, pallet_tag)
       this.palletCache.set(pallet_tag, p);
