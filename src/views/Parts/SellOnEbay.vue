@@ -202,49 +202,48 @@ function moveBack(
 }
 
 function submit() {
-  if (!processingMove) {
-    processingMove = true;
-    let transferListHash = new Map<string, InventoryEntry>()
-    // Process transfer list
-    transferList.value.map((item)=> {
-      // Create boilerplate
-      let invEntry = { newSerials: [], serials: [], unserialized: 0} as InventoryEntry
-      // Check if it already exists in map
-      if(transferListHash.has(item.part.nxid!))
-        invEntry = transferListHash.get(item.part.nxid!)!
-      // Update values
-      if(item.serial&&item.part.serialized)
-        // Push serial to array
-        invEntry.serials.push(item.serial)
-      // Increment unserialized
-      else {
-        invEntry.unserialized+=1
-        if(item.serial&&item.serial!='') {
-          invEntry.newSerials!.push(item.serial)
-        }
+  if (processingMove)
+    return
+  processingMove = true;
+  let transferListHash = new Map<string, InventoryEntry>()
+  // Process transfer list
+  transferList.value.map((item)=> {
+    // Create boilerplate
+    let invEntry = { newSerials: [], serials: [], unserialized: 0} as InventoryEntry
+    // Check if it already exists in map
+    if(transferListHash.has(item.part.nxid!))
+      invEntry = transferListHash.get(item.part.nxid!)!
+    // Update values
+    if(item.serial&&item.part.serialized)
+      // Push serial to array
+      invEntry.serials.push(item.serial)
+    // Increment unserialized
+    else {
+      invEntry.unserialized+=1
+      if(item.serial&&item.serial!='') {
+        invEntry.newSerials!.push(item.serial)
       }
-      //invEntry.unserialized+=item.quantity!
-      // Update hash
-      transferListHash.set(item.part.nxid!, invEntry)
-    })
-    // Turn hash map back into array
-    let partList = [] as InventoryEntry[]
-    transferListHash.forEach((v, k)=>{
-      v.nxid = k
-      partList.push(v)
-    })
-    // Move parts
-    sellOnEbay(http, partList, orderID.value, (data, err) => {
-      if (err) {
-        // Handle errors
-        processingMove = false;
-        return errorHandler(err);
-      }
-      displayMessage(data as string);
-      transferList.value = [];
-      processingMove = false;
-    });
-  }
+    }
+    //invEntry.unserialized+=item.quantity!
+    // Update hash
+    transferListHash.set(item.part.nxid!, invEntry)
+  })
+  // Turn hash map back into array
+  let partList = [] as InventoryEntry[]
+  transferListHash.forEach((v, k)=>{
+    v.nxid = k
+    partList.push(v)
+  })
+  // Move parts
+  sellOnEbay(http, partList, orderID.value, (data, err) => {
+    processingMove = false;
+    if (err) {
+      // Handle errors
+      return errorHandler(err);
+    }
+    displayMessage(data as string);
+    transferList.value = [];
+  });
 }
 </script>
 <template>
