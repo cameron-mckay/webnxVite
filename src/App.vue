@@ -2,7 +2,7 @@
   <div>
     <HeaderComponent v-if="store.state.isAuth&&routeConfigured" :http="http" :store="store" :revokeLogin="revokeLogin" />
     <MessageComponent :messages="messages" :errors="errorMessages" />
-    <LoaderComponent v-if="routeConfigured"/>
+    <LoaderComponent v-if="!routeConfigured"/>
     <router-view
       v-else
       class="my-16 mx-4 w-[calc(100%-2rem)] text-sm md:mx-auto md:max-w-5xl md:text-base"
@@ -14,9 +14,6 @@
       :revokeLogin="revokeLogin"
       v-if="routeConfigured"
     />
-    <div v-else class="my-4 flex justify-center">
-      <div class="loader text-center"></div>
-    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -149,6 +146,7 @@ function configureRouter() {
   checkRoute(router.currentRoute.value)
   router.beforeEach(checkRoute);
   routeConfigured.value = true
+  console.log("CONFIGURED")
 }
 /**
  * @brief Briefly print an error to an on screen popup
