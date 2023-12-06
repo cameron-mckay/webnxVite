@@ -49,6 +49,7 @@ export default defineConfig({
             './src/views/Admin/AdminPartSearchView.vue',
             './src/views/Admin/AdminUserView.vue',
             './src/views/Admin/CreatePartView.vue',
+            './src/views/Admin/EbaySaleHistoryView.vue',
             './src/views/Parts/SellOnEbay.vue',
           ],
           analytics: [
