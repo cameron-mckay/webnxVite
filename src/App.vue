@@ -69,13 +69,13 @@ function redirect() {
 
 // Before app is created
 onBeforeMount(()=>{
+  console.log("TEST BEFORE MOUNT SCRIPT")
   routeConfigured.value = false;
   Cacher.assignAxios(http)
   Cacher.assignRouter(router)
   Cacher.validateCache()
   Cacher.assignErrorHandler(errorHandler)
   checkAuth(http, async (data, err) => {
-    console.log("TEST BEFORE MOUNT SCRIPT")
     // If not authenticated
     if (err||data=="You must login to continue.") {
       console.log("TESTING AUTH")
