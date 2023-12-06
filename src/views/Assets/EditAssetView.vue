@@ -13,9 +13,7 @@ import {
 } from '../../plugins/dbCommands/assetManager';
 import type {
   AssetSchema,
-  CartItem,
   UserState,
-  AssetPart
 } from '../../plugins/interfaces';
 import Inventory from '../../plugins/InventoryClass';
 

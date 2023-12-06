@@ -4,9 +4,10 @@ import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AssetEventComponent from '../../components/AssetComponents/AssetEventComponent.vue';
-import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
-import LeftCaretButton from '../../components/GenericComponents/Buttons/LeftCaretButton.vue';
-import RightCaretButton from '../../components/GenericComponents/Buttons/RightCaretButton.vue';
+import SearchNavButtons from '../../components/GenericComponents/Search/SearchNavButtons.vue';
+import SearchFooterComponent from '../../components/GenericComponents/Search/SearchFooterComponent.vue';
+import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue';
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import {
   getAssetByID,
   getAssetHistory,
@@ -156,26 +157,6 @@ function getPage(page: number) {
   })
 }
 
-function nextPage() {
-  if (pageNum.value < totalPages.value) {
-    pageNum.value += 1;
-    router.replace({
-      query: { nxid: asset_tag.value, pageNum: pageNum.value.toString() },
-    });
-    loadPage(pageNum.value)
-  }
-}
-
-function prevPage() {
-  if (pageNum.value > 1) {
-    pageNum.value -= 1;
-    router.replace({
-      query: { nxid: asset_tag.value, pageNum: pageNum.value.toString() },
-    });
-    loadPage(pageNum.value)
-  }
-}
-
 async function checkCache() {
   let page = pageNum.value;
   while (page > 0 && page >= pageNum.value - 5) {
@@ -217,31 +198,16 @@ async function checkCache() {
 <template>
   <div>
     <div class="mb-4 flex justify-between">
-      <div>
-        <BackButton @click="router.back()" class="mr-2 mb-2"/>
-        <h1 class="text-4xl leading-8 md:leading-10">Asset History</h1>
-      </div>
-        <div
-          v-if="totalPages > 1 && !loading"
-          class="float-right flex select-none"
-        >
-          <p class="my-auto mr-3 inline-block leading-6">{{ `Page: ${pageNum}` }}</p>
-          <LeftCaretButton 
-            v-on:click="prevPage"
-            v-if="pageNum > 1"
-          />
-          <div v-else class="button-icon opacity-0"></div>
-          <!-- Right Caret -->
-          <RightCaretButton
-            v-if="pageNum<totalPages"
-            v-on:click="nextPage"
-          />
-          <div v-else class="button-icon mr-0 opacity-0"></div>
-        </div>
+      <PageHeaderWithBackButton :router="router" :prevPath="'/assets'">
+        Asset History
+      </PageHeaderWithBackButton>
+      <SearchNavButtons
+        :num-pages="totalPages"
+        :page-num="pageNum"
+        @loadPage="loadPage"
+      />
     </div>
-    <div v-if="loading" class="my-4 flex justify-center">
-      <div class="loader text-center"></div>
-    </div>
+    <LoaderComponent v-if="loading"/>
     <AssetEventComponent
       v-else
       :assets="assets"
@@ -250,33 +216,10 @@ async function checkCache() {
       :event="event"
       v-for="event in history"
     />
-    <div
-      v-if="totalPages > 1 && !loading"
-      class="float-right select-none"
-    >
-      <div class="flex justify-end">
-        <p class="my-auto inline-block mr-2">{{ `Page: ${pageNum}` }}</p>
-        <div class="flex shrink-0">
-          <LeftCaretButton 
-            v-on:click="prevPage"
-            v-if="pageNum > 1"
-          />
-          <div v-else class="button-icon opacity-0"></div>
-          <!-- Right Caret -->
-          <RightCaretButton
-            v-if="pageNum<totalPages"
-            v-on:click="nextPage"
-          />
-          <div v-else class="button-icon mr-0 opacity-0"></div>
-        </div>
-      </div>
-      <div class="float-right">
-      <a class="mx-1" id="link" @click="loadPage(1)" v-if="pageNum>2">1</a>
-        <a class="mx-1" v-if="pageNum>2">...</a>
-      <a class="mx-1" id="link" v-for="n in ((totalPages-(pageNum+1))>5)?5:(totalPages-pageNum-2>=0?totalPages-pageNum-2:0)" @click="n+pageNum+1<totalPages?loadPage(n+pageNum+1):()=>{}">{{ n+pageNum+1 }}</a>
-        <a class="mx-1" v-if="(totalPages-pageNum)>7">...</a>
-        <a class="mx-1" id="link" @click="loadPage(totalPages)">{{ totalPages}}</a>
-      </div>
-    </div>
+    <SearchFooterComponent
+      :num-pages="totalPages"
+      :page-num="pageNum"
+      @loadPage="loadPage"
+    />
   </div>
 </template>
