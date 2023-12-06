@@ -5,15 +5,21 @@ import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import AssetCartItemComponent from '../../components/AssetComponents/AssetCartItemComponent.vue';
+import PencilButton from '../../components/GenericComponents/Buttons/PencilButton.vue';
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
+import AssetComponent from '../../components/AssetComponents/AssetComponent.vue';
 import {
   getAssetByID,
+  getNodesOnAsset,
   getPartsOnAsset,
 } from '../../plugins/dbCommands/assetManager';
 import type {
 AssetSchema,
+CartItem,
 LoadedCartItem,
 UserState,
 } from '../../plugins/interfaces';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -25,6 +31,10 @@ interface Props {
 const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 
+let assetLoading = ref(false)
+let partsLoading = ref(false)
+let nodes = ref([] as AssetSchema[])
+
 let asset = ref({
   asset_tag: '',
   building: 3,
@@ -32,19 +42,27 @@ let asset = ref({
 } as AssetSchema);
 let parts = ref([] as LoadedCartItem[]);
 
-onBeforeMount(() => {
+onBeforeMount(reload)
+
+function reload() {
   if (router.currentRoute.value.query.asset_tag) {
     let nxid = router.currentRoute.value.query.asset_tag as string;
+    console.log(nxid)
+    asset.value = {}
+    assetLoading.value = true
+    partsLoading.value = true
+    nodes.value = []
     getAssetByID(http, nxid, (res, err) => {
       if (err) {
         errorHandler(err);
       }
       asset.value = res as AssetSchema;
-      getPartsOnAsset(http, asset.value.asset_tag!, (res, err) => {
+      assetLoading.value = false
+      getPartsOnAsset(http, asset.value.asset_tag!, async (res, err) => {
         if (err) {
           errorHandler(err);
         }
-        let temp = res as LoadedCartItem[]
+        let temp = await Cacher.loadCartItems(res as CartItem[])
         // Create sorted list using array filters
         let sortedList = temp.filter((p)=>p.part.type == "Motherboard")
         sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "CPU"))
@@ -64,10 +82,19 @@ onBeforeMount(() => {
           p.part.type != "Cable")
         )) 
         parts.value = sortedList
+        partsLoading.value = false
       });
+      if(asset.value.chassis_type=="Node Chassis") {
+        getNodesOnAsset(http, asset.value.asset_tag!, async (res, err)=>{
+          if (err) {
+            return errorHandler(err);
+          }
+          nodes.value = res as AssetSchema[]
+        })
+      }
     });
   }
-});
+}
 
 function edit() {
   router.push({
@@ -75,11 +102,34 @@ function edit() {
     query: { asset_tag: asset.value.asset_tag },
   });
 }
+
+function toggleEdit(ass: AssetSchema) {
+  router.push({ name: 'Edit Asset', query: { asset_tag: ass.asset_tag } });
+}
+
+function viewAsset(ass: AssetSchema) {
+  router.push({ name: 'View Asset', query: { asset_tag: ass.asset_tag } }).then(()=>{
+    reload();
+  });
+}
+
+function prev() {
+  if(router.options.history.state.back) {
+    router.back()
+    setTimeout(reload, 50)
+    return
+  }
+  router.push('/assets')
+}
 </script>
 
 <template>
-  <div class="body">
-    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/assets')" class="mr-2 mb-2"/>
+  <LoaderComponent v-if="assetLoading" class="mt-16"/>
+  <div 
+    v-else
+    class="body"
+  >
+    <BackButton @click="prev" class="mr-2 mb-2"/>
     <p class="my-2 w-full rounded-md bg-red-400 p-2" v-if="asset.migrated">
       This asset was automatically migrated from the old asset tracking system
       and is incomplete. Please edit and update the information if you can.
@@ -92,19 +142,10 @@ function edit() {
           {{ asset.asset_tag + ':' }}
         </h1>
         <!-- Pencil -->
-        <svg
+        <PencilButton
           v-on:click="edit"
-            v-if="!store.state.user.roles?.includes('sales')"
-          class="button-icon hover:button-icon-hover active:button-icon-active"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-        >
-          <path
-            fill="currentColor"
-            stroke="currentColor"
-            d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"
-          />
-        </svg>
+          v-if="!store.state.user.roles?.includes('sales')"
+        />
         <RouterLink
           class="my-auto ml-2 rounded-md p-2 font-bold transition-colors hover:bg-gray-400 hover:dark:bg-zinc-700"
           :to="`/assets/history?nxid=${asset.asset_tag}`"
@@ -169,7 +210,8 @@ function edit() {
         </div>
       </div>
     </div>
-    <div v-if="parts.length > 0">
+    <LoaderComponent v-if="partsLoading"/>
+    <div v-else-if="parts.length > 0">
       <h1 class="col-span-2 mb-4 text-4xl">Parts:</h1>
       <div
         v-if="(parts!.length > 0)"
@@ -190,6 +232,30 @@ function edit() {
         @delete="$emit('deletePart', part)"
         :hideButtons="true"
       />
+    </div>
+    <div v-if="nodes.length > 0">
+      <h1 class="col-span-2 my-4 text-4xl">Nodes:</h1>
+      <div
+        class="relative grid grid-cols-3 py-1 text-center font-bold leading-8 transition md:grid-cols-6 md:py-2 md:leading-10 mt-auto"
+      >
+        <p class="mt-auto">NXID</p>
+        <p class="mt-auto md:block hidden">Building</p>
+        <p class="mt-auto">Type</p>
+        <p class="hidden md:block mt-auto">Chassis</p>
+        <p class="hidden md:block mt-auto">Status</p>
+      </div>
+      <div class="md:animate-bottom">
+        <AssetComponent
+          :add="false"
+          :edit="true"
+          :view="true"
+          v-for="ass in nodes"
+          v-bind:key="ass._id"
+          @viewPartAction="viewAsset(ass)"
+          @editPartAction="toggleEdit(ass)"
+          :asset="ass"
+        />
+      </div>
     </div>
   </div>
 </template>

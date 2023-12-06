@@ -7,8 +7,11 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState } from '../../plugins/interfaces';
 import UserAnalyticsComponent from '../../components/AdminComponents/UserAnalyticsComponent.vue';
-import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
-import { dateToHTML, getTodaysDate, HTMLtoEpoch, getLastMonth } from '../../plugins/dateFunctions';
+import DateRangeComponent from '../../components/GenericComponents/DateRangeComponent.vue';
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
+import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue';
+import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
+import { getTodaysDate, getLastMonth } from '../../plugins/dateFunctions';
 interface Props {
   http: AxiosInstance;
   store: Store<UserState>;
@@ -26,15 +29,16 @@ let newAssets = new Map<string, number>()
 let assetsUpdated = new Map<string, number>()
 let newPallets = new Map<string, number>()
 let palletsUpdated = new Map<string, number>()
+let startDateCache = getLastMonth();
+let endDateCache = getTodaysDate();
 let loading = ref(false);
 let pageNum = ref(1)
 let pageSize = 20
 
-// Convert into html string
-let startDate = ref(dateToHTML(getLastMonth()))
-let endDate = ref(dateToHTML(getTodaysDate()))
-function getUsers() {
+function getUsers(startDate: Date, endDate: Date) {
   loading.value = true;
+  startDateCache = startDate
+  endDateCache = endDate
   getAllUsers(http, async (data, err) => {
     if (err) {
       return errorHandler(err);
@@ -44,7 +48,7 @@ function getUsers() {
       [
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getCheckinHistory(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+            getCheckinHistory(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
@@ -55,7 +59,7 @@ function getUsers() {
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getCheckoutHistory(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+            getCheckoutHistory(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
               if(err)
                 return rej("") 
               let response = data as any
@@ -66,7 +70,7 @@ function getUsers() {
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getAssetUpdatesNoDetails(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+            getAssetUpdatesNoDetails(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
@@ -77,7 +81,7 @@ function getUsers() {
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getNewAssetsNoDetails(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+            getNewAssetsNoDetails(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
@@ -88,7 +92,7 @@ function getUsers() {
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getPalletUpdatesNoDetails(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+            getPalletUpdatesNoDetails(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
@@ -99,7 +103,7 @@ function getUsers() {
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getNewPalletsNoDetails(http, HTMLtoEpoch(startDate.value), HTMLtoEpoch(endDate.value), pageNum.value, pageSize, (data, err) => {
+            getNewPalletsNoDetails(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
@@ -116,15 +120,15 @@ function getUsers() {
 }
 
 onMounted(() => {
-  getUsers();
+  getUsers(startDateCache, endDateCache);
 });
 
 function openCheckouts(user_id: string) {
   router.push({
     name: 'Checkout History',
     query: {
-      startDate: HTMLtoEpoch(startDate.value),
-      endDate: HTMLtoEpoch(endDate.value),
+      startDate: startDateCache.getTime(),
+      endDate: endDateCache.getTime(),
       users: [user_id] as string[]
     }
   })
@@ -134,8 +138,8 @@ function openCheckins(user_id: string) {
   router.push({
     name: 'Checkin History',
     query: {
-      startDate: HTMLtoEpoch(startDate.value),
-      endDate: HTMLtoEpoch(endDate.value),
+      startDate: startDateCache.getTime(),
+      endDate: endDateCache.getTime(),
       users: [user_id] as string[]
     }
   })
@@ -145,8 +149,8 @@ function openNewAssets(user_id: string) {
   router.push({
     name: 'New Asset History',
     query: {
-      startDate: HTMLtoEpoch(startDate.value),
-      endDate: HTMLtoEpoch(endDate.value),
+      startDate: startDateCache.getTime(),
+      endDate: endDateCache.getTime(),
       users: [user_id] as string[]
     }
   })
@@ -156,8 +160,8 @@ function openAssetsUpdated(user_id: string) {
   router.push({
     name: 'Asset Update History',
     query: {
-      startDate: HTMLtoEpoch(startDate.value),
-      endDate: HTMLtoEpoch(endDate.value),
+      startDate: startDateCache.getTime(),
+      endDate: endDateCache.getTime(),
       users: [user_id] as string[]
     }
   })
@@ -167,8 +171,8 @@ function openNewPallets(user_id: string) {
   router.push({
     name: 'New Pallet History',
     query: {
-      startDate: HTMLtoEpoch(startDate.value),
-      endDate: HTMLtoEpoch(endDate.value),
+      startDate: startDateCache.getTime(),
+      endDate: endDateCache.getTime(),
       users: [user_id] as string[]
     }
   })
@@ -178,8 +182,8 @@ function openPalletsUpdated(user_id: string) {
   router.push({
     name: 'Pallet Update History',
     query: {
-      startDate: HTMLtoEpoch(startDate.value),
-      endDate: HTMLtoEpoch(endDate.value),
+      startDate: startDateCache.getTime(),
+      endDate: endDateCache.getTime(),
       users: [user_id] as string[]
     }
   })
@@ -187,23 +191,12 @@ function openPalletsUpdated(user_id: string) {
 </script>
 <template>
   <div>
-    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/manage')" class="mr-2 mb-2"/>
-    <h1 class="mb-4 text-4xl">User Analytics</h1>
-    <form @submit.prevent="getUsers()" class="flex flex-wrap mb-4">
-      <div>
-        <label>Start Date: </label>
-        <input class="textbox w-auto mr-4" type="date" v-model="startDate" :max="endDate"/>
-      </div>
-      <div>
-        <label>End Date: </label>
-        <input class="textbox w-auto mr-4" type="date" v-model="endDate" :min="startDate" :max="dateToHTML(getTodaysDate())"/>
-      </div>
-      <input class="search-button mr-0" type="submit" value="Go" />
-    </form>
-    <div v-if="loading" class="my-4 flex justify-center">
-      <div class="loader text-center"></div>
-    </div>
-    <div v-else class="md:animate-bottom grid grid-cols-2 md:grid-cols-3">
+    <PageHeaderWithBackButton :router="router" :prevPath="'/manage'">
+      User Analytics
+    </PageHeaderWithBackButton>
+    <DateRangeComponent :startDate="startDateCache" :endDate="endDateCache" @search="getUsers" class="md:mb-2"/>
+    <LoaderComponent v-if="loading"/>
+    <div v-else class="md:animate-bottom grid grid-cols-1 md:grid-cols-3">
       <UserAnalyticsComponent
         v-for="user in users"
         :user="user"

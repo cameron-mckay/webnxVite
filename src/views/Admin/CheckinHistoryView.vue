@@ -7,12 +7,14 @@ import AnalyticsSearchComponent from '../../components/GenericComponents/Search/
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
 import { getCheckinHistory } from '../../plugins/dbCommands/userManager';
 import CheckinHistoryComponent from '../../components/KioskComponents/CheckinHistoryComponent.vue';
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import {
   CheckInEvent,
-  Page,
+  AnalyticsSearchPage,
   UserState,
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -32,15 +34,15 @@ let analyticsSearchObject:AnalyticsSearch<CheckInEvent>;
 
 
 onBeforeMount(async ()=>{
-  analyticsSearchObject = await AnalyticsSearch.createAnalyticsSearch(http, router, 
+  analyticsSearchObject = new AnalyticsSearch(
     (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts)=>{
-      return new Promise<Page>((res)=>{
+      return new Promise<AnalyticsSearchPage>((res)=>{
         getCheckinHistory(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err)=>{
           if(err) {
             return res({total: 0, pages: 0, events: []})
           }
           // Load all users now.
-          let p = data as Page
+          let p = data as AnalyticsSearchPage
           res(p)
         },
         userFilters,
@@ -54,12 +56,11 @@ onBeforeMount(async ()=>{
 
 async function displayResults(page: CheckInEvent[])
 {
-  console.log(page)
   // Load all the required info into the caches
   for(let e of page) {
     // Evil ass promise code
     await Promise.all(e.parts.map((p)=>{
-      return analyticsSearchObject.getPartInfo(p)
+      return Cacher.getPartInfo(p)
     }))
   }
   checkinEvents.value = page
@@ -76,9 +77,7 @@ function showLoader() {
     <PageHeaderWithBackButton :prev-path="'/manage'" :router="router">
       Check In History
     </PageHeaderWithBackButton>
-    <div v-if="!loaded" class="my-4 flex justify-center">
-      <div class="loader text-center"></div>
-    </div>
+    <LoaderComponent v-if="!loaded"/>
     <AnalyticsSearchComponent v-else 
       :resultsLoading="resultsLoading"
       :searchComponent="analyticsSearchObject"
@@ -87,7 +86,7 @@ function showLoader() {
       @displayResults="displayResults"
       @showLoader="showLoader"
     >
-      <CheckinHistoryComponent v-for="checkin of checkinEvents" :event="checkin" :kiosks="analyticsSearchObject.getAllUsers().filter((u)=>u.roles?.includes('kiosk'))" :user="analyticsSearchObject.getUser(checkin.by)!" :parts="analyticsSearchObject.partsCache"/>
+      <CheckinHistoryComponent v-for="checkin of checkinEvents" :event="checkin" :kiosks="Cacher.getKiosks()" :user="Cacher.getUser(checkin.by)!" :parts="Cacher.getPartCache()"/>
     </AnalyticsSearchComponent>
   </div>
 </template>

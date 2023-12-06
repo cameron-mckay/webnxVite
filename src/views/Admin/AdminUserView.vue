@@ -8,7 +8,8 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import UserManagerComponent from '../../components/AdminComponents/UserManagerComponent.vue';
-import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
+import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue';
 import type { UserState } from '../../plugins/interfaces';
 
 interface Props {
@@ -35,7 +36,6 @@ function getUsers() {
       return errorHandler(err);
     }
     users.value = data as Array<User>;
-    console.log(data)
   });
 }
 
@@ -66,8 +66,9 @@ onMounted(() => {
 </script>
 <template>
   <div>
-    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/manage')" class="mr-2 mb-2"/>
-    <h1 class="mb-4 text-4xl">User Manager</h1>
+    <PageHeaderWithBackButton :router="router" prevPath="'/manage'">
+      User Manager
+    </PageHeaderWithBackButton>
     <div
       class="relative grid grid-cols-3 p-2 text-center text-sm font-bold leading-8 transition md:grid-cols-5 md:leading-10"
     >
@@ -77,9 +78,7 @@ onMounted(() => {
       <p class="grid md:hidden">Name</p>
       <p>Role</p>
     </div>
-    <div v-if="loading" class="my-4 flex justify-center">
-      <div class="loader text-center"></div>
-    </div>
+    <LoaderComponent v-if="loading"/>
     <div v-else class="md:animate-bottom">
       <UserComponent
         class="relative grid grid-cols-5 text-center text-sm leading-10 transition"

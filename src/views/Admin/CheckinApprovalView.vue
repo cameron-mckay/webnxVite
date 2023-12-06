@@ -6,6 +6,7 @@ import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
 import CheckInRequestComponent from '../../components/KioskComponents/CheckInRequestComponent.vue';
 import RefreshButton from '../../components/GenericComponents/Buttons/RefreshButton.vue';
 import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import type {
 UserState,
 CheckInRequest,
@@ -121,9 +122,7 @@ onBeforeUnmount(() => {
       <h1 class="my-auto text-4xl">Check In Queue</h1>
       <RefreshButton class="ml-2" @click="loadQueue"/>
     </div>
-    <div v-if="loading" class="my-4 flex justify-center">
-      <div class="loader text-center"></div>
-    </div>
+    <LoaderComponent v-if="loading"/>
     <CheckInRequestComponent v-for="request of checkInQueue" :key="request.by+request.date" :request="request" :kiosks="kiosks" :user="users.get(request.by)!" :parts="partsMap" @submit="submit"/>
     <p class="mt-4" v-if="checkInQueue.length<1&&!loading">Queue is empty and will auto refresh every 10 seconds...</p>
   </div>

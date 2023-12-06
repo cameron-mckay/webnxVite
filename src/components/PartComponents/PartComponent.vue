@@ -72,7 +72,6 @@ const { part } = defineProps<Props>();
           <svg
             v-if="view === true"
             v-on:click="$emit('viewPartAction')"
-            v-on:auxclick="console.log('Test2')"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 576 512"
           >

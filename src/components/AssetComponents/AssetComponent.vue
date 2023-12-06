@@ -14,15 +14,15 @@ const { asset, edit, add, view } = defineProps<Props>();
 <template>
   <div class="group relative my-1">
     <div
-      class="background-and-border group-hover:bab-hover grid grid-cols-4 p-1 text-center leading-8 group-hover:rounded-bl-none md:grid-cols-6 md:p-2 md:leading-10"
+      class="background-and-border group-hover:bab-hover grid grid-cols-3 p-1 text-center leading-8 group-hover:rounded-bl-none md:grid-cols-6 md:p-2 md:leading-10"
     >
       <p>{{ asset.asset_tag }}</p>
-      <p class="break-words">{{ asset.building }}</p>
-      <p class="hidden break-words md:block">{{ asset.asset_type }}</p>
+      <p class="hidden break-words md:block">{{ asset.building }}</p>
+      <p class="break-words">{{ asset.asset_type }}</p>
       <p class="hidden break-words md:block">{{ asset.chassis_type }}</p>
-      <p v-if="asset.live">Live</p>
-      <p v-else-if="asset.asset_type=='Server'&&asset.in_rack">AVAIL</p>
-      <p v-else>Inactive</p>
+      <p class="hidden break-words md:block" v-if="asset.live">Live</p>
+      <p class="hidden break-words md:block" v-else-if="asset.asset_type=='Server'&&asset.in_rack">AVAIL</p>
+      <p class="hidden break-words md:block" v-else>Inactive</p>
       <div class="my-auto flex justify-end">
         <!-- Pencil -->
         <RouterLink :to="'/assets/edit?asset_tag='+asset.asset_tag"

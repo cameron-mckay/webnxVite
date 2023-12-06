@@ -1,96 +1,62 @@
 <script setup lang="ts">
-import { AxiosError, AxiosInstance } from 'axios';
-import { ref, onMounted, watch } from 'vue';
-import { Router } from 'vue-router';
+import { ref, onMounted, watch, onBeforeMount } from 'vue';
 import {
   PalletSchema,
-  LoadedCartItem,
-  AssetPart,
-  PartSchema,
-  AssetSchema
 } from '../../plugins/interfaces';
-import AssetCartItemComponent from '../AssetComponents/AssetCartItemComponent.vue';
-import AssetPartSearchComponent from '../AssetComponents/SearchPartOnAssetComponent.vue';
 import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponent.vue';
-import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
-import InventoryPopup from '../InventoryComponents/InventoryPopup.vue';
-import AssetComponent from '../AssetComponents/AssetComponent.vue';
-import PlusButton from '../GenericComponents/Buttons/PlusButton.vue';
-
+// Begin props
 interface Props {
   title: string;
   submitText: string;
   strict: boolean;
-  palletRef: PalletSchema;
-  parts: AssetPart[];
-  assets: AssetSchema[];
-  errorHandler?: (err: Error | AxiosError | string) => void;
-  displayMessage?: (message: string) => void;
-  http?: AxiosInstance;
-  router?: Router;
-  partSearch?: boolean;
-  inventorySearch?: boolean;
-  inventory?: AssetPart[];
+  oldPallet: PalletSchema;
   untracked?: boolean;
   isAdmin?: boolean;
+  clearOnReset?: boolean;
 }
-
-// Begin props
 const {
   title,
   submitText,
   strict,
-  palletRef,
-  parts,
-  http,
-  errorHandler,
-  displayMessage,
-  partSearch,
-  inventorySearch,
-  inventory,
+  oldPallet,
   untracked,
   isAdmin,
+  clearOnReset
 } = defineProps<Props>();
 // End props
 let correction = ref(false)
-let partSearchPopup = ref(false);
-let inventorySearchPopup = ref(false);
-let serialsRef = ref("");
-let emit = defineEmits(['palletSubmit', 'palletReset', 'plusPart', 'minusPart', 'deletePart', 'addAll', 'updateQuantity']);
-
-// Emit add part to asset as new record
-function addToPallet(part: PartSchema) {
-  emit('plusPart', { part, quantity: 1 }, correction.value);
-}
-
-// Toggle popup menus
-function togglePopup() {
-  partSearchPopup.value = !partSearchPopup.value;
-  inventorySearchPopup.value = !inventorySearchPopup.value;
-}
-
-// Add Part from user inventory
-function addPartFromInventory(item: LoadedCartItem) {
-  emit('plusPart', item, correction.value);
-}
-
-function addAllFromInventory(item: LoadedCartItem) {
-  emit('addAll', item);
-}
+let palletRef = ref({} as PalletSchema)
+let palletCopy = {} as PalletSchema
+let emit = defineEmits(['palletSubmit', 'palletReset', 'correctionChanged']);
+let key = 0
 
 function submitForm() {
   if((untracked||correction.value)&&!window.confirm("Are you sure you want to submit?"))
     return
-  emit("palletSubmit", serialsRef.value, correction.value)
+  emit("palletSubmit", palletRef.value, correction.value)
 }
 
-function updateQuantity(item: AssetPart, quantity: number) {
-  console.log(item)
-  emit("updateQuantity", item, quantity, correction.value)
+function reset() {
+  palletRef.value = {} as PalletSchema
+  if(clearOnReset!=true)
+    palletRef.value = JSON.parse(JSON.stringify(palletCopy))
+  // Key swap to refresh custom drop downs
+  key++
+  emit("palletReset")
 }
 
 watch(correction, ()=>{
-  emit("palletReset")
+  emit("correctionChanged", correction.value)
+})
+
+onBeforeMount(()=>{
+  console.log("test")
+  if(oldPallet)
+    palletRef.value = JSON.parse(JSON.stringify(oldPallet))
+  if(untracked) {
+    correction.value = true
+  }
+  palletCopy = JSON.parse(JSON.stringify(palletRef.value))
 })
 
 onMounted(()=>{
@@ -99,7 +65,7 @@ onMounted(()=>{
 
 </script>
 <template>
-  <div class="body">
+  <div class="body" :key="key">
     <h1 class="mb-4 text-4xl leading-8 md:leading-10">{{ title }}</h1>
     <div class="flex" v-if="isAdmin">
       <label class="mr-1">Correction mode:</label>
@@ -108,7 +74,7 @@ onMounted(()=>{
     <form
       id="form"
       @submit.prevent="submitForm"
-      @reset.prevent="$emit('palletReset')"
+      @reset.prevent="reset"
       class="grid grid-cols-2"
     >
       <label>Pallet Tag:</label>
@@ -147,103 +113,19 @@ onMounted(()=>{
           placeholder="Drag to resize"
         />
       </div>
-      <div v-if="http != undefined" class="col-span-2">
-        <div class="flex">
-          <h1 class="inline-block text-4xl leading-8 md:leading-10">Parts:</h1>
-          <!-- Plus -->
-	  <PlusButton @click="togglePopup"/>
-        </div>
-        <FullScreenPopupComponent
-          v-if="partSearch || correction"
-          v-show="partSearchPopup"
-          @toggle="togglePopup"
-        >
-          <AssetPartSearchComponent
-            :http="http"
-            :errorHandler="errorHandler!"
-            :displayMessage="displayMessage!"
-            @addPartAction="addToPallet"
-          />
-        </FullScreenPopupComponent>
-        <FullScreenPopupComponent
-          v-if="inventorySearch && inventory && !correction"
-          v-show="inventorySearchPopup"
-          @toggle="togglePopup"
-        >
-          <InventoryPopup
-            @addPartAction="addPartFromInventory"
-            @addAll="addAllFromInventory"
-            :inventory="inventory"
-          />
-        </FullScreenPopupComponent>
-        <p class="my-2 w-full rounded-md bg-red-400 p-2" v-if="correction">
-          You are in pallet correction mode.  Any parts added here will be treat as new inventory and removed parts will be marked as deleted.  
-        </p>
-        <div
-          v-if="(parts!.length > 0)"
-          class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-5 md:leading-10"
-        >
-          <p class="hidden md:block">NXID</p>
-          <p>Manufacturer</p>
-          <p>Name</p>
-          <p>Quantity/SN</p>
-          <p></p>
-        </div>
-        <div v-else class="my-2">
-          <p>No parts yet..</p>
-        </div>
-        <AssetCartItemComponent
-          class="col-span-2"
-          v-for="part in parts"
-          :key="part.part.nxid!+part.serial+(correction ? 't':'f')"
-          :item="part"
-          :untracked="untracked || correction"
-          @delete="$emit('deletePart', part, correction)"
-          @updateQuantity="updateQuantity"
-        />
-      </div>
-    <div class="col-span-full">
-      <h1 class="col-span-2 my-4 text-4xl">Assets:</h1>
-      <div v-if="strict" class="col-span-2 grid grid-cols-2">
-        <label>Add Assets:</label>
-        <textarea
-          class="textbox m-1"
-          v-model="serialsRef"
-          placeholder="One tag per line.  Drag to resize"
-        />
-      </div>
-        <p v-if="assets.length>0" class="my-2 w-full rounded-md bg-green-500 p-2 font-bold">
-          To remove an asset, edit its "Pallet" field and provide a new location in the Edit Asset menu.
-      </p>
-      <div
-        v-if="assets.length>0"
-        class="relative grid grid-cols-4 py-1 text-center font-bold leading-8 transition md:grid-cols-6 md:py-2 md:leading-10 mt-auto"
-      >
-        <p class="mt-auto">NXID</p>
-        <p class="mt-auto">Building</p>
-        <p class="hidden md:block mt-auto">Type</p>
-        <p class="hidden md:block mt-auto">Chassis</p>
-        <p class="mt-auto">Status</p>
-      </div>
-      <div class="md:animate-bottom" v-if="assets.length>0">
-        <AssetComponent
-          :add="false"
-          :edit="false"
-          :view="false"
-          v-for="asset in assets"
-          v-bind:key="asset._id"
-          :asset="asset"
-        />
-      </div>
-    </div>
-      <input
-        class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
-        type="reset"
-        value="Reset"
-      />
-      <input 
+      <slot 
         v-on:keydown.enter.prevent
-        class="submit col-span-2" type="submit" :value="submitText" />
+      >
+      </slot>
+    <input
+      class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
+      type="reset"
+      value="Reset"
+    />
+    <input 
+      v-on:keydown.enter.prevent
+      class="submit col-span-2" type="submit" :value="submitText"
+    />
     </form>
   </div>
 </template>

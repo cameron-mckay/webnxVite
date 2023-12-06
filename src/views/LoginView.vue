@@ -90,7 +90,6 @@ async function login() {
             let user = data as User
             store.commit("updateUserData", user)
             displayMessage('Successfully logged in.');
-            console.log(user)
           });
         });
         // Save user data to vuex store

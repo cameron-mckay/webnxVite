@@ -30,6 +30,7 @@ import { injectionKey } from './plugins/axios';
 import { checkAuth, getCurrentUser } from './plugins/dbCommands/userManager';
 import type { Message, User } from './plugins/interfaces';
 import { useStore } from './plugins/store';
+import Cacher from './plugins/Cacher';
 
 // Global instances passed through props
 const http = inject<AxiosInstance>(injectionKey)!;
@@ -68,10 +69,15 @@ function redirect() {
 // Before app is created
 onBeforeMount(()=>{
   routeConfigured.value = false;
+  Cacher.assignAxios(http)
+  Cacher.assignRouter(router)
+  Cacher.validateCache()
+  Cacher.assignErrorHandler(errorHandler)
   checkAuth(http, async (data, err) => {
     // If not authenticated
     if (err)
       return firstLoadRevokeLogin()
+    Cacher.loadAllUsersFromAPI()
     // If authenticated, set status
     getCurrentUser(http, (data, err) => {
       if (err) {
@@ -84,13 +90,19 @@ onBeforeMount(()=>{
       let user = data as User
       store.commit("updateUserData", user)
       displayMessage('Successfully logged in.');
-      console.log(user)
       configureRouter()
     });
   });
 })
 
 function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized, next?: NavigationGuardNext) {
+  // Clear cache on page change
+  if(from&&to.name!=from.name) {
+    Cacher.validateCache()
+    if(store.state.isAuth) {
+      Cacher.loadAllUsersFromAPI()
+    }
+  }
   // Make sure they are admin for admin routes
   if (!store.state.user.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
     redirect()

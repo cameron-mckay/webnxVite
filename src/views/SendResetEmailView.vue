@@ -1,32 +1,5 @@
-<template>
-  <div class="card mx-auto max-w-sm shadow-xl md:max-w-sm">
-    <img
-      class="mx-auto mb-4 h-fit w-fit"
-      alt="WebNX logo"
-      src="../assets/logo.webp"
-    />
-    <form class="text-center" @submit.prevent="sendEmail" v-if="!submitted">
-      <input
-        class="textbox my-1"
-        type="email"
-        id="email"
-        v-model="form.email"
-        placeholder="Email"
-        required
-        autofocus
-      />
-     <input class="submit my-1 w-full" type="submit" value="Submit" />
-    </form>
-    <div v-else>
-      <p>A password reset link has been sent to your email.</p>
-      <RouterLink id="link" to="/login">Return to login</RouterLink>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { onMounted } from 'vue';
-
 import type { AxiosError, AxiosInstance } from 'axios';
 import { ref } from 'vue'
 import { Router } from 'vue-router';
@@ -80,3 +53,28 @@ async function redirectIfLoggedIn() {
     });
 }
 </script>
+<template>
+  <div class="card mx-auto max-w-sm shadow-xl md:max-w-sm">
+    <img
+      class="mx-auto mb-4 h-fit w-fit"
+      alt="WebNX logo"
+      src="../assets/logo.webp"
+    />
+    <form class="text-center" @submit.prevent="sendEmail" v-if="!submitted">
+      <input
+        class="textbox my-1"
+        type="email"
+        id="email"
+        v-model="form.email"
+        placeholder="Email"
+        required
+        autofocus
+      />
+     <input class="submit my-1 w-full" type="submit" value="Submit" />
+    </form>
+    <div v-else>
+      <p>A password reset link has been sent to your email.</p>
+      <RouterLink id="link" to="/login">Return to login</RouterLink>
+    </div>
+  </div>
+</template>

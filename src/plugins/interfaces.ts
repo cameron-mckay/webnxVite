@@ -2,19 +2,32 @@ import type { AxiosError, AxiosInstance } from 'axios';
 
 // For db commands
 export interface apiResponse {
-  (data: object | Array<object> | string, err: Error | AxiosError | null): void;
+  (data: object | Array<object> | string, err: AxiosError | null): void;
 }
 
 export interface loadPageCallback {
-  (pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean): Promise<Page>;
+  (pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean): Promise<AnalyticsSearchPage>;
 }
 
-export interface Page {
+export interface textSearchCallback {
+  (building: number, pageNum: number, searchString: string) : Promise<TextSearchPage>
+}
+
+export interface advancedSearchCallback {
+  (building: number, pageNum: number, searchObject: any) : Promise<TextSearchPage>
+}
+
+export interface AnalyticsSearchPage {
   total: number;
   pages: number;
   events: any[];
 }
 
+export interface TextSearchPage {
+  total: number;
+  pages: number;
+  items: any[];
+}
 
 // For axios.ts
 export interface AxiosOptions {
@@ -159,6 +172,7 @@ export interface User {
   enabled?: boolean;
   _v?: number;
   _id?: string;
+  default?: boolean;
 }
 
 export type AssetHistory = AssetEvent[];
@@ -222,6 +236,10 @@ export interface CheckInEvent {
 
 export interface CheckOutEvent extends CheckInRequest {
   location: string
+}
+
+export interface EbaySaleEvent extends CheckInRequest {
+  order: string
 }
 
 export interface AssetPart extends LoadedCartItem {

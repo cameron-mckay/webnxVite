@@ -35,7 +35,7 @@ export function getAssetsByTextSearch(
       // Success and send back results
       callback(res.data as { numPages: number, numAssets: number, assets: AssetSchema[]}, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Send error to callback
       callback({}, err);
     });
@@ -64,7 +64,7 @@ export function getAssetByID(
       // Success and send back results
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Send error to callback function
       callback({}, err);
     });
@@ -88,7 +88,7 @@ export function getAssetsByData(
         // Success - send results to callback
         callback(res.data, null);
       })
-      .catch((err: Error | AxiosError) => {
+      .catch((err: AxiosError) => {
         // Error - send error to callback
         callback({}, err);
       });
@@ -115,7 +115,7 @@ export function createAsset(
       // Success - send response to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -142,7 +142,7 @@ export function updateAsset(
       // Success - send response to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -164,27 +164,9 @@ export function getPartsOnAsset(
     .get('/api/asset/parts', { params: { asset_tag } })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
-      let partsArr = res.data.parts as PartCache;
-      let records = res.data.records as CartItem[];
-      let parts = new Map<string, PartSchema>();
-      partsArr.map((obj) => {
-        parts.set(obj.nxid, obj.part);
-      });
-      let returnValue = records.map((item) => {
-        if (item.serial) {
-          return {
-            part: parts.get(item.nxid),
-            serial: item.serial,
-          } as LoadedCartItem;
-        }
-        return {
-          part: parts.get(item.nxid),
-          quantity: item.quantity,
-        } as LoadedCartItem;
-      });
-      callback(returnValue, null);
+      callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -216,8 +198,30 @@ export function getAssetHistory(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
+}
+
+export function getNodesOnAsset(
+  http: AxiosInstance,
+  asset_tag: string,
+  callback: apiResponse
+) {
+  http
+    .get('/api/asset/nodes', { 
+      params: { 
+        asset_tag
+      } 
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+
 }

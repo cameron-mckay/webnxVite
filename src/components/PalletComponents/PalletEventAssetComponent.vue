@@ -12,12 +12,12 @@ const { asset } = defineProps<Props>();
 <template>
   <div class="group relative col-span-4 my-1">
     <div
-      class="group-hover:bab-hover background-and-border grid grid-cols-3 rounded-lg p-1 text-center leading-8 md:p-2 md:leading-10"
+      class="group-hover:bab-hover background-and-border grid grid-cols-2 md:grid-cols-3 rounded-lg p-1 text-center leading-8 md:p-2 md:leading-10"
     >
-      <div class="hidden md:flex">
+      <div class="flex">
         <!-- Plus -->
         <svg
-          class="mx-0.5 my-auto h-8 w-8 shrink-0 p-2 text-green-500 shadow-none md:mx-1 md:h-10 md:w-10"
+          class="my-auto h-8 w-8 shrink-0 p-2 text-green-500 shadow-none mx-1 md:h-10 md:w-10"
           v-if="plus"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
@@ -49,7 +49,7 @@ const { asset } = defineProps<Props>();
         ></svg>
         <p>{{ asset.asset_tag }}</p>
       </div>
-      <p class="break-words">{{ asset.manufacturer }}</p>
+      <p class="break-words hidden md:block">{{ asset.manufacturer }}</p>
       <p class="break-words">{{ asset.asset_type }}</p>
     </div>
     <div

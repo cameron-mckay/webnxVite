@@ -12,9 +12,10 @@ interface Props {
   nextNXID?: () => Promise<string>;
   oldPart?: PartSchema;
   customResetText?: string;
+  clearOnReset?: boolean;
 }
 
-const { title, submitText, strict, oldPart, customResetText, nextNXID } =
+const { title, submitText, strict, oldPart, customResetText, nextNXID, clearOnReset } =
   defineProps<Props>();
 // END OF PROPS
 let part: Ref<PartSchema> = ref(
@@ -24,16 +25,20 @@ let partCopy = JSON.parse(JSON.stringify(oldPart));
 let image = ref<File>();
 let imageUrl = ref<string>();
 let url = import.meta.env.VITE_API_URL;
+let key = ref(0)
 let serials = ref('');
 const allowedFileTypes = ['image/png', 'image/jpeg', 'image/webp'];
 // Reset form
 function resetForm() {
   part.value = JSON.parse(JSON.stringify(partCopy));
+  if(clearOnReset)
+    part.value = {}
   image = ref<File>();
   imageUrl.value = '';
   if (oldPart && JSON.stringify(oldPart) != JSON.stringify({}))
     imageUrl.value = `${url}/images/parts/${oldPart.nxid}`;
   serials.value = '';
+  key.value++
 }
 
 // Any type because typedefs do not exists for File Uploads
@@ -62,6 +67,8 @@ onMounted(() => {
     imageUrl.value = `${url}/images/parts/${oldPart.nxid}`;
   if (JSON.stringify(oldPart) == JSON.stringify({}) && strict)
     part.value.serialized = false;
+  if(oldPart)
+    part.value = JSON.parse(JSON.stringify(oldPart))
 
   watch(
     () => part.value.type,
@@ -123,7 +130,7 @@ async function getNXID() {
 </script>
 
 <template>
-  <div class="body">
+  <div class="body" :key="key">
     <h1 class="mb-4 text-4xl">{{ title }}</h1>
     <form
       id="form"

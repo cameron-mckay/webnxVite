@@ -4,32 +4,21 @@ import InlinePartSpecComponent from '../PartComponents/InlinePartSpecComponent.v
 import { ref, watch } from 'vue';
 interface Props {
   item: AssetPart;
+  maxQuantity?: number;
   hideButtons?: boolean;
   untracked?: boolean;
 }
-const { item, hideButtons, untracked } = defineProps<Props>();
-const emit = defineEmits(['updateQuantity']);
-let quantityInvisible = item.quantity ? item.quantity : 0
+const { item, maxQuantity, hideButtons, untracked } = defineProps<Props>();
+const emit = defineEmits(['movePart']);
 let quantityVisible = ref(item.quantity ? item.quantity : 0)
 let serial = ref(item.serial?item.serial:"")
 
-function updateQuantity(q: number) {
-  // If serialized part
-  if(item.serial)
-    return emit("updateQuantity", item, -1)
-  // If no max quantity
-  if(untracked||item.max_quantity==undefined)
-    return emit("updateQuantity", item, q-quantityInvisible)
-  // If quantity is unchanged
-  if(q==item.quantity)
-    return
-  // Clamp quantity to max quantity
-  q = q > item.max_quantity ? item.max_quantity : q
-  // Clamp negative values to zero
-  if(q<1)
-    q = 0
-  // Emit update
-  emit("updateQuantity", item, q-quantityInvisible)
+function updateQuantity() {
+  if(maxQuantity&&quantityVisible.value!>maxQuantity)
+    quantityVisible.value = maxQuantity
+  if(quantityVisible.value!<0)
+    quantityVisible.value = 0
+  emit('movePart', item.part, quantityVisible.value!-item.quantity!)
 }
 
 // Watch for changes in props
@@ -37,7 +26,6 @@ watch(()=>item.quantity, ()=>{
   if(item.quantity) {
     // Update visible and invisble quantities to match
     quantityVisible.value = item.quantity
-    quantityInvisible = item.quantity
   }
 })
 
@@ -77,9 +65,9 @@ function updateSerial() {
           type="number"
           min="0"
           step="1"
-          v-on:focusout="updateQuantity(quantityVisible)"
+          v-on:focusout="updateQuantity"
         />
-        <p class="break-words" v-if="!untracked">/ {{ item.max_quantity }}</p>
+        <p class="break-words" v-if="!untracked">/ {{ maxQuantity }}</p>
       </div>
       <p class="break-words" v-else>{{ item.quantity }}</p>
       <div v-if="hideButtons != true" class="my-auto flex justify-end">
@@ -89,7 +77,7 @@ function updateSerial() {
           viewBox="0 0 448 512"
           class="button-icon hover:button-icon-hover active:button-icon-active"
           v-if="!(item.part.serialized || item.serial)"
-          v-on:click="updateQuantity(quantityVisible+1)"
+          v-on:click="$emit('movePart', item.part, 1, item.serial)"
         >
           <path
             stroke="currentColor"
@@ -104,7 +92,7 @@ function updateSerial() {
           viewBox="0 0 448 512"
           v-if="!(item.part.serialized || item.serial)"
           class="button-icon hover:button-icon-hover active:button-icon-active no-margin-on-mobile"
-          v-on:click="updateQuantity(quantityVisible-1)"
+          v-on:click="$emit('movePart', item.part, -1, item.serial)"
         >
           <path
             stroke="currentColor"
@@ -118,7 +106,7 @@ function updateSerial() {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 384 512"
           class="button-icon hover:button-icon-hover active:button-icon-active"
-          v-on:click="updateQuantity(0)"
+          v-on:click="$emit('movePart', item.part, item.quantity ? item.quantity * -1 : -1, item.serial)"
         >
           <path
             fill="currentColor"

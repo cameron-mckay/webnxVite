@@ -48,7 +48,7 @@ export function getPartsByTextSearch(
       // Success and send back results
       callback(res.data as { numPages: number, numParts: number, parts: PartSchema[] }, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Send error to callback
       callback({}, err);
     });
@@ -83,7 +83,7 @@ export function getPartByID(
       // Success and send back results
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Send error to callback function
       callback({}, err);
     });
@@ -109,7 +109,7 @@ export function getPartsByData(
       // Success - send results to callback
       callback(res.data as { numPages: number, numParts: number, parts: PartSchema[] }, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -142,7 +142,7 @@ export function createPart(
       // Success - send response to callback
       callback(res.data as PartSchema, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -166,7 +166,7 @@ export function updatePart(
       // Success - send response to callback
       callback(res.data , null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -195,7 +195,7 @@ export function checkout(
       // Authenticated - send null error to callback
       callback(res.data as string, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Unauthenticated - send error to callback
       callback({}, err);
     });
@@ -224,7 +224,7 @@ export function checkin(
       // Authenticated - send null error to callback
       callback(res.data as string, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Unauthenticated - send error to callback
       callback({}, err);
     });
@@ -254,7 +254,7 @@ export function getUniqueOnPartInfo(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -284,7 +284,7 @@ export function getUniqueOnPartRecord(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -312,7 +312,7 @@ export function createNewPartRecords(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -340,7 +340,7 @@ export function getPartRecordsByID(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -368,7 +368,7 @@ export function getPartHistoryByID(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -393,7 +393,7 @@ export function movePart(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => { // Error - send error to callback
+    .catch((err: AxiosError) => {
       callback({}, err);
     });
 }
@@ -413,7 +413,7 @@ export function sellOnEbay(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => { // Error - send error to callback
+    .catch((err: AxiosError) => {
       callback({}, err);
     });
 }
@@ -445,7 +445,7 @@ export function updatePartImage(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -464,7 +464,7 @@ export function getPartRecords(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -485,7 +485,7 @@ export function deletePart(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -512,7 +512,7 @@ export function deleteFromPartsRoom(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -533,7 +533,7 @@ export function auditPart(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -549,7 +549,7 @@ export function getNextNXID(
       // Success - send results to callback
       callback(res.data as string, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -565,7 +565,7 @@ export function getCheckInQueue(
       // Success - send results to callback
       callback(res.data as string, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -582,7 +582,7 @@ export function processCheckInRequest(
       // Success - send results to callback
       callback(res.data as string, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -615,7 +615,7 @@ export function getPartCreateAndDeleteHistory(
       // Success - send results to callback
       callback(res.data as string, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });

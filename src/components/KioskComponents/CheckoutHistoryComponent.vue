@@ -33,9 +33,9 @@ onBeforeMount(()=>{
     </div>
     <div>
       <div
-        class="relative grid grid-cols-4 py-1 text-center font-bold leading-8 transition md:py-2 md:leading-10 mt-auto"
+        class="relative grid grid-cols-3 md:grid-cols-4 py-1 text-center font-bold leading-8 transition md:py-2 md:leading-10 mt-auto"
       >
-        <p class="mt-auto">NXID</p>
+        <p class="mt-auto hidden md:block">NXID</p>
         <p class="mt-auto">Manufacturer</p>
         <p class="mt-auto">Name</p>
         <p class="mt-auto">Quantity/SN</p>

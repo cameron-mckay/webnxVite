@@ -9,8 +9,10 @@ interface Props {
 let { router, prevPath } = defineProps<Props>()
 </script>
 <template>
-  <BackButton @click="router.options.history.state.back ? router.back() : router.push(prevPath)" class="mr-2 mb-2"/>
-  <PageHeaderComponent>
-    <slot></slot>
-  </PageHeaderComponent>
+  <div>
+    <BackButton @click="router.options.history.state.back ? router.back() : router.push(prevPath)" class="mr-2 mb-2"/>
+    <PageHeaderComponent>
+      <slot></slot>
+    </PageHeaderComponent>
+  </div>
 </template>

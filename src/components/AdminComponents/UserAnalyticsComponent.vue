@@ -15,7 +15,7 @@ const { newPallets, palletsUpdated, user, assetsUpdated, newAssets, checkins, ch
 <template>
   <div class="group relative p-0">
     <div
-      class="background-and-border relative m-1 p-1 leading-8 hover:rounded-md md:p-2 md:leading-10"
+      class="background-and-border relative md:mx-1 my-1 p-1 leading-8 hover:rounded-md md:p-2 md:leading-10"
     >
       <h1 class="text-2xl leading-8 md:leading-10 p-2">
         {{ `${user.first_name} ${user.last_name}` }}

@@ -6,13 +6,15 @@ import type { Store } from 'vuex';
 import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
 import PartEventComponent from '../../components/AdminComponents/PartEventComponent.vue';
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import {
-  Page,
+  AnalyticsSearchPage,
   PartEvent,
   UserState,
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import { getPartCreateAndDeleteHistory } from '../../plugins/dbCommands/partManager';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -32,15 +34,15 @@ let analyticsSearchObject:AnalyticsSearch<PartEvent>;
 
 
 onBeforeMount(async ()=>{
-  analyticsSearchObject = await AnalyticsSearch.createAnalyticsSearch(http, router, 
+  analyticsSearchObject = new AnalyticsSearch(
     (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts)=>{
-      return new Promise<Page>((res)=>{
+      return new Promise<AnalyticsSearchPage>((res)=>{
         getPartCreateAndDeleteHistory(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err)=>{
           if(err) {
             return res({total: 0, pages: 0, events: []})
           }
           // Load all users now.
-          let p = data as Page
+          let p = data as AnalyticsSearchPage
           res(p)
         },
         userFilters,
@@ -54,15 +56,14 @@ onBeforeMount(async ()=>{
 
 async function displayResults(page: PartEvent[])
 {
-  console.log(page)
   // Load all the required info into the caches
   for(let e of page) {
     // Evil ass promise code
     await Promise.all(e.added.map((p)=>{
-      return analyticsSearchObject.getPartInfo(p)
+      return Cacher.getPartInfo(p)
     }))
     await Promise.all(e.removed.map((p)=>{
-      return analyticsSearchObject.getPartInfo(p)
+      return Cacher.getPartInfo(p)
     }))
   }
   allTechsHistory.value = page
@@ -79,9 +80,7 @@ function showLoader() {
     <PageHeaderWithBackButton :prev-path="'/manage'" :router="router">
       Part Action History
     </PageHeaderWithBackButton>
-    <div v-if="!loaded" class="my-4 flex justify-center">
-      <div class="loader text-center"></div>
-    </div>
+    <LoaderComponent v-if="!loaded"/>
     <AnalyticsSearchComponent v-else 
       :resultsLoading="resultsLoading"
       :searchComponent="analyticsSearchObject"
@@ -92,8 +91,8 @@ function showLoader() {
     >
     <PartEventComponent v-for="event of allTechsHistory" 
         :event="event"
-        :users="analyticsSearchObject.getAllUserMap()"
-        :parts="analyticsSearchObject.partsCache"
+        :users="Cacher.getAllUserMap()"
+        :parts="Cacher.getPartCache()"
       />
     </AnalyticsSearchComponent>
   </div>

@@ -17,9 +17,8 @@
       <!-- Asset part component for each search result -->
       <PopupInventoryItemComponent
         v-for="item in inventory"
-        v-bind:key="item.part._id"
-        @plus="$emit('addPartAction', item)"
-        @addAll="$emit('addAll', item)"
+        :key="item.part._id!+item.serial+item.quantity"
+        @movePart="movePart"
         :item="item"
       />
     </div>
@@ -32,13 +31,15 @@
 <script setup lang="ts">
 import type { LoadedCartItem } from '../../plugins/interfaces';
 import PopupInventoryItemComponent from './PopupInventoryItemComponent.vue';
-
 // Props interface
 interface Props {
   inventory: LoadedCartItem[];
 }
-
 // Define shit
 let { inventory } = defineProps<Props>();
+let emit = defineEmits(['movePart'])
 // Search function
+function movePart(item: LoadedCartItem, difference: number, serial?: string) {
+  emit('movePart', item, difference, serial)
+}
 </script>

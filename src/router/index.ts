@@ -92,6 +92,11 @@ const routes = [
     component: () => import('../views/Parts/SellOnEbay.vue'),
   },
   {
+    path: '/ebay/history',
+    name: 'Ebay Sales History',
+    component: () => import('../views/Admin/EbaySaleHistoryView.vue'),
+  },
+  {
     path: '/manage/parts/create',
     name: 'Create Part',
     component: () => import('../views/Admin/CreatePartView.vue'),

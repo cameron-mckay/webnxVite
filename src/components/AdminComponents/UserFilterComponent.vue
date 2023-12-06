@@ -22,7 +22,7 @@ function togglePopup() {
 <template>
   <div>
     <!-- Button to be displayed inline -->
-    <UserButton class="mr-4" :title="'Filter Users'" @click="togglePopup"/>
+    <UserButton class="mt-auto md:mb-0 mb-2" :title="'Filter Users'" @click="togglePopup"/>
     <!-- Popup that covers the screen when button is pressed -->
     <FullScreenPopupComponent
       v-show="filterVisible"

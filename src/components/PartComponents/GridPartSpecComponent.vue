@@ -19,60 +19,55 @@ let url = import.meta.env.VITE_API_URL;
         {{ part.type!='Cable' ? part.manufacturer : '' }} {{ part.name }}
       </h1>
       <PlusButton v-if="showPlus" class="ml-4" @click="$emit('plus')"/>
-      <div class="flex flex-wrap">
+      <div 
+        class="flex flex-wrap"
+        v-if="showHistory"
+      >
         <a
           class="cursor-pointer text-sm my-auto mt-4 mr-2 rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none"
           @click="$emit('loadHistory')"
-          v-if="showHistory"
         >
           Add/Remove History
         </a>
         <a
           class="cursor-pointer text-sm my-auto mt-4 mr-2 rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none"
           @click="$emit('loadCheckouts')"
-          v-if="showHistory"
         >
           Check Out History
         </a>
         <a
           class="cursor-pointer text-sm my-auto mt-4 mr-2 rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none"
           @click="$emit('loadCheckins')"
-          v-if="showHistory"
         >
           Check In History
         </a>
         <a
           class="cursor-pointer text-sm my-auto mt-4 mr-2 rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none"
           @click="$emit('loadAssetUpdates')"
-          v-if="showHistory"
         >
           Asset Update History
         </a>
         <a
           class="cursor-pointer text-sm my-auto mt-4 mr-2 rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none"
           @click="$emit('loadNewAssets')"
-          v-if="showHistory"
         >
           New Asset History
         </a>
         <a
           class="cursor-pointer text-sm my-auto mt-4 mr-2 rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none"
           @click="$emit('loadPalletUpdates')"
-          v-if="showHistory"
         >
           Pallet Update History
         </a>
         <a
           class="cursor-pointer text-sm my-auto mt-4 mr-2 rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none"
           @click="$emit('loadNewPallets')"
-          v-if="showHistory"
         >
           New Pallet History
         </a>
         <a
           class="cursor-pointer text-sm my-auto mt-4 mr-2 rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none"
           @click="$emit('loadAllTechs')"
-          v-if="showHistory"
         >
           All Techs History
         </a>

@@ -9,11 +9,12 @@ import PageHeaderWithBackButton from '../../components/GenericComponents/PageHea
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import { getNewAssets } from '../../plugins/dbCommands/userManager';
 import {
-AssetEvent,
-  Page,
+  AssetEvent,
+  AnalyticsSearchPage,
   UserState,
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -33,13 +34,13 @@ let analyticsSearchObject:AnalyticsSearch<AssetEvent>;
 
 
 onBeforeMount(async ()=>{
-  analyticsSearchObject = await AnalyticsSearch.createAnalyticsSearch(http, router, 
+  analyticsSearchObject = new AnalyticsSearch(
     (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts)=>{
-      return new Promise<Page>((res, rej)=>{
+      return new Promise<AnalyticsSearchPage>((res, rej)=>{
         getNewAssets(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
           if(err)
             return res({total: 0, pages: 0, events: []})
-          let p = data as Page
+          let p = data as AnalyticsSearchPage
           res(p)
         },
         userFilters,
@@ -59,16 +60,16 @@ async function displayResults(page: AssetEvent[])
     // Evil ass promise code
     await Promise.all([
       Promise.all(e.added.map((p)=>{
-        return analyticsSearchObject.getPartInfo(p)
+        return Cacher.getPartInfo(p)
       })),
       Promise.all(e.removed.map((p)=>{
-        return analyticsSearchObject.getPartInfo(p)
+        return Cacher.getPartInfo(p)
       })),
       Promise.all(e.existing.map((p)=>{
-        return analyticsSearchObject.getPartInfo(p)
+        return Cacher.getPartInfo(p)
       }))
     ])
-    await analyticsSearchObject.getAsset(e.asset_id)
+    await Cacher.getAsset(e.asset_id)
   }
   assetEvents.value = page
   resultsLoading.value = false
@@ -84,7 +85,6 @@ function showLoader() {
     <PageHeaderWithBackButton :prev-path="'/manage'" :router="router">
       New Asset History
     </PageHeaderWithBackButton>
-
     <LoaderComponent v-if="!loaded"/>
     <AnalyticsSearchComponent v-else 
       :resultsLoading="resultsLoading"
@@ -94,17 +94,13 @@ function showLoader() {
       @displayResults="displayResults"
       @showLoader="showLoader"
     >
-
-
       <AssetEventComponent
-        :assets="analyticsSearchObject.assetCache"
-        :user="analyticsSearchObject.getUser(event.by)!"
-        :parts="analyticsSearchObject.partsCache"
+        :assets="Cacher.getAssetCache()"
+        :user="Cacher.getUser(event.by)!"
+        :parts="Cacher.getPartCache()"
         :event="event"
         v-for="event in assetEvents"
       />
-
-
     </AnalyticsSearchComponent>
   </div>
 </template>

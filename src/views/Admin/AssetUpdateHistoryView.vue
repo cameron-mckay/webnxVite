@@ -6,13 +6,15 @@ import type { Store } from 'vuex';
 import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
 import AssetEventComponent from '../../components/AssetComponents/AssetEventComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import { getAssetUpdates } from '../../plugins/dbCommands/userManager';
 import {
-AssetEvent,
-  Page,
+  AssetEvent,
+  AnalyticsSearchPage,
   UserState,
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -32,13 +34,13 @@ let analyticsSearchObject:AnalyticsSearch<AssetEvent>;
 
 
 onBeforeMount(async ()=>{
-  analyticsSearchObject = await AnalyticsSearch.createAnalyticsSearch(http, router, 
+  analyticsSearchObject = new AnalyticsSearch(
     (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts)=>{
-      return new Promise<Page>((res, rej)=>{
+      return new Promise<AnalyticsSearchPage>((res, rej)=>{
         getAssetUpdates(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
           if(err)
             return res({total: 0, pages: 0, events: []})
-          let p = data as Page
+          let p = data as AnalyticsSearchPage
           res(p)
         },
         userFilters,
@@ -58,16 +60,16 @@ async function displayResults(page: AssetEvent[])
     // Evil ass promise code
     await Promise.all([
       Promise.all(e.added.map((p)=>{
-        return analyticsSearchObject.getPartInfo(p)
+        return Cacher.getPartInfo(p)
       })),
       Promise.all(e.removed.map((p)=>{
-        return analyticsSearchObject.getPartInfo(p)
+        return Cacher.getPartInfo(p)
       })),
       Promise.all(e.existing.map((p)=>{
-        return analyticsSearchObject.getPartInfo(p)
+        return Cacher.getPartInfo(p)
       }))
     ])
-    await analyticsSearchObject.getAsset(e.asset_id)
+    await Cacher.getAsset(e.asset_id)
   }
   assetEvents.value = page
   resultsLoading.value = false
@@ -83,9 +85,7 @@ function showLoader() {
     <PageHeaderWithBackButton :prev-path="'/manage'" :router="router">
       Asset Update History
     </PageHeaderWithBackButton>
-    <div v-if="!loaded" class="my-4 flex justify-center">
-      <div class="loader text-center"></div>
-    </div>
+    <LoaderComponent v-if="!loaded"/>
     <AnalyticsSearchComponent v-else 
       :resultsLoading="resultsLoading"
       :searchComponent="analyticsSearchObject"
@@ -95,9 +95,9 @@ function showLoader() {
       @showLoader="showLoader"
     >
       <AssetEventComponent
-        :assets="analyticsSearchObject.assetCache"
-        :user="analyticsSearchObject.getUser(event.by)!"
-        :parts="analyticsSearchObject.partsCache"
+        :assets="Cacher.getAssetCache()"
+        :user="Cacher.getUser(event.by)!"
+        :parts="Cacher.getPartCache()"
         :event="event"
         v-for="event in assetEvents"
       />

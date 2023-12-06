@@ -25,9 +25,17 @@ let { event, user, parts } = defineProps<Props>()
       </p>
     </div>
     <div>
-      <div v-for="p of event.parts" class="my-2 background-and-border group-hover:bab-hover grid grid-cols-4 p-1 text-center leading-8 md:p-2 md:leading-10">
+      <div
+        class="relative grid grid-cols-3 md:grid-cols-4 py-1 text-center font-bold leading-8 transition md:py-2 md:leading-10 mt-auto"
+      >
+        <p class="mt-auto hidden md:block">NXID</p>
+        <p class="mt-auto">Name</p>
+        <p class="mt-auto">Quantity/SN</p>
+        <p class="mt-auto">Approved</p>
+      </div>
+      <div v-for="p of event.parts" class="my-2 background-and-border group-hover:bab-hover grid grid-cols-3 md:grid-cols-4 p-1 text-center leading-8 md:p-2 md:leading-10">
         <div class="md:col-span-2 flex flex-wrap md:grid md:grid-cols-2">
-          <p class="w-full md:w-auto">{{ p.nxid ? p.nxid : "PNX0000000" }}</p>
+          <p class="w-full md:w-auto hidden md:block">{{ p.nxid ? p.nxid : "PNX0000000" }}</p>
           <p class="w-full md:w-auto">{{ parts.has(p.nxid) && parts.get(p.nxid)!.name ? parts.get(p.nxid)!.manufacturer + " " + parts.get(p.nxid)!.name : "DELETED PART" }}</p>
         </div>
         <p>{{ p.serial ? p.serial : p.quantity }}</p>

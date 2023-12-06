@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
-import { PartSchema, User } from '../../../plugins/interfaces';
+import { AssetSchema, PartSchema, User } from '../../../plugins/interfaces';
 import DateRangeComponent from '../DateRangeComponent.vue';
 import SearchNavButtons from './SearchNavButtons.vue';
 import SearchFooterComponent from './SearchFooterComponent.vue';
@@ -9,6 +9,7 @@ import AnalyticsSearch from '../../../plugins/AnalyticsSearchClass';
 import UserFilterComponent from '../../AdminComponents/UserFilterComponent.vue';
 import PartFilterComponent from '../../PartComponents/PartFilterComponent.vue';
 import FilterTag from '../FilterTag.vue';
+import Cacher from '../../../plugins/Cacher';
 
 // Erm... Im gonna need an analytics search helper
 interface Props {
@@ -22,8 +23,10 @@ let { searchComponent, resultsLoading, showUserFilters, showPartFilters } = defi
 // Filter maps
 let userFilterMap = ref(new Map<string, User>())
 let partFilterMap = ref(new Map<string, PartSchema>())
+let assetFilterMap = ref(new Map<string, AssetSchema>())
 let userFilterArray = [] as string[]
 let partFilterArray = [] as string[]
+let assetFilterArray = [] as string[]
 // Cache the dates inbetween searches
 let startDateCache = new Date()
 let endDateCache = new Date()
@@ -49,7 +52,6 @@ onBeforeMount(async ()=>{
   endDateCache = searchComponent.getEndDateFromRouter()
   hideOtherPartsRef.value = searchComponent.getHideOthersFromRouter()
   hideOtherPartsCache = hideOtherPartsRef.value
-  console.log(startDateCache.getTime())
   pageNumRef.value = searchComponent.getPageNumFromRouter()
   loadPage(pageNumRef.value)
 })
@@ -77,7 +79,6 @@ async function loadPage(pageNum: number) {
   let page = await searchComponent.loadPage(pageNum, startDateCache, endDateCache, userFilterArray, partFilterArray, hideOtherPartsCache)
   numPages.value = searchComponent.getNumPages()
   // CALL TO PARENT HERE
-  console.log(page)
   emit("displayResults", page)
 }
 </script>
@@ -85,11 +86,11 @@ async function loadPage(pageNum: number) {
   <div>
     <!-- Search header -->
     <div>
-      <div class="flex justify-between my-2">
+      <div class="flex justify-between md:mb-2">
         <!-- Date range component -->
-        <DateRangeComponent :startDate="startDateCache" :endDate="endDateCache" @search="updateDates">
-          <PartFilterComponent v-if="showPartFilters" :http="searchComponent.getHttp()" :filterMap="partFilterMap"/>
-          <UserFilterComponent v-if="showUserFilters" :users="searchComponent.getAllUserMap()" :filterMap="userFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}"/>
+        <DateRangeComponent :startDate="startDateCache" :endDate="endDateCache" @search="updateDates" class="flex">
+          <PartFilterComponent v-if="showPartFilters" :http="Cacher.getHttp()" :filterMap="partFilterMap" class="mt-auto ml-1"/>
+          <UserFilterComponent v-if="showUserFilters" :users="Cacher.getAllUserMap()" :filterMap="userFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}" class="mt-auto ml-1"/>
         </DateRangeComponent>
         <!-- Navigation buttons -->
         <SearchNavButtons :numPages="numPages" :pageNum="pageNumRef" @loadPage="loadPage"/>
@@ -107,7 +108,9 @@ async function loadPage(pageNum: number) {
     <!-- Loading spinner -->
     <LoaderComponent v-if="resultsLoading"/>
     <!-- Search results go here -->
-    <slot v-else></slot>
+    <slot v-else>
+      <p>No results...</p>
+    </slot>
     <!-- Search footer - hidden while loading -->
     <SearchFooterComponent v-if="!resultsLoading" :numPages="numPages" :pageNum="pageNumRef" @loadPage="loadPage"/>
   </div>

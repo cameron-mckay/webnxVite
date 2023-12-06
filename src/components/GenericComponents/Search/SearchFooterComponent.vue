@@ -17,7 +17,6 @@ function loadPage(pageNum: number) {
     class="float-right select-none mb-4"
   >
     <SearchNavButtons :numPages="numPages" :pageNum="pageNum" @loadPage="loadPage"/>
-    <br>
     <SearchJumper :numPages="numPages" :pageNum="pageNum" @loadPage="loadPage"/>
   </div>
 </template>

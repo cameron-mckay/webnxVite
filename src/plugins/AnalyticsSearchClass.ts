@@ -1,25 +1,14 @@
-import { User, PartSchema, AssetEvent, AssetSchema, CartItem, loadPageCallback, apiResponse, PalletSchema } from "./interfaces"
-import { AxiosInstance } from "axios"
 import { Router } from "vue-router"
-import { getAllUsers } from "./dbCommands/userManager"
-import { getPartByID } from "./dbCommands/partManager"
-import { getAssetByID } from "./dbCommands/assetManager"
+import { User, PartSchema, loadPageCallback } from "./interfaces"
 import { getLastMonth, getTodaysDate } from "./dateFunctions"
-import { getPalletByID } from "./dbCommands/palletManager"
+import Cacher from "./Cacher"
 
 export default class AnalyticsSearch<Type> {
   // Vue shit
-  private http: AxiosInstance;
   private router: Router
   // Search cached vars
   private numItems: number
   private numPages: number
-  // Cache all users
-  private allUsers: Map<string, User>
-  // Cache loaded parts and assets
-  public partsCache: Map<string, PartSchema>
-  public assetCache: Map<string, AssetSchema>
-  public palletCache: Map<string, PalletSchema>
   // Store filters from last search
   private lastUserFilters: string[]
   private lastPartFilters: string[]
@@ -31,39 +20,13 @@ export default class AnalyticsSearch<Type> {
   private pageCache: Map<number, Type[]>
   // Callback in case of cache miss
   private loadPageCallback: loadPageCallback
-
-  // Analytics search factory
-  static createAnalyticsSearch<Type>(http: AxiosInstance, router: Router, loadCallback: loadPageCallback):Promise<AnalyticsSearch<Type>> {
-    // Needs promise to load user cache
-    return new Promise<AnalyticsSearch<Type>>((res, rej)=>{
-      // Get all users
-      getAllUsers(http, async (data, err) => {
-        if(err) {
-          return rej()
-        }
-        // Temporary array
-        let allUsers = data as User[]
-        // Process all users
-        let part_ids = router.currentRoute.value.query.parts ? (Array.isArray(router.currentRoute.value.query.parts) ? router.currentRoute.value.query.parts : [router.currentRoute.value.query.parts]) : []
-        let partInfo = await Promise.all(part_ids.map((p)=>AnalyticsSearch.loadPart(http, p as string)))
-        // Push check in queue to ref
-        res(new AnalyticsSearch(http, allUsers, partInfo, router, loadCallback))
-      })
-    })
-  }
-
   // Constructor for Analytics search - factory funtion should be used instead
-  constructor(http: AxiosInstance, allUsers: User[], parts: PartSchema[], router: Router, loadCallback: loadPageCallback) {
-    this.http = http;
+  constructor(loadCallback: loadPageCallback) {
     // Initialize dependencies
-    this.router = router
+    this.router = Cacher.getRouter()
     this.numPages = 0
     this.numItems = 0
     // Initialize caches
-    this.allUsers = new Map<string, User>()
-    this.partsCache = new Map<string, PartSchema>()
-    this.assetCache = new Map<string, AssetSchema>()
-    this.palletCache = new Map<string, PalletSchema>()
     this.pageCache = new Map<number, Type[]>()
     // Cache the last search params
     this.lastUserFilters = []
@@ -71,23 +34,13 @@ export default class AnalyticsSearch<Type> {
     this.lastStartDate = -1
     this.lastEndDate = -1
     this.lastHideOtherParts = false
-    // Add cached parts
-    for (let part of parts) {
-      this.partsCache.set(part.nxid!, part)
-    }
-    // Load all users
-    for (let user of allUsers) {
-      this.allUsers.set(user._id!, user)
-    }
     // Register callback
     this.loadPageCallback = loadCallback
   }
-
   // Gets the part filters from the provided instance
   static getPartFiltersFromRouter(router: Router) {
     return router.currentRoute.value.query.parts ? (Array.isArray(router.currentRoute.value.query.parts) ? router.currentRoute.value.query.parts : [router.currentRoute.value.query.parts]) : []
   }
-
   // Gets the user filters from the provided instance
   static getUserFiltersFromRouter(router: Router) {
     return router.currentRoute.value.query.users ? (Array.isArray(router.currentRoute.value.query.users) ? router.currentRoute.value.query.users : [router.currentRoute.value.query.users]) : []
@@ -98,7 +51,7 @@ export default class AnalyticsSearch<Type> {
       // Get nxids from router
       let nxids = AnalyticsSearch.getPartFiltersFromRouter(this.router) as string[]
       // Get info array from this object, will use cache or save newly loaded parts to cache
-      let infoArray = await this.getPartInfoArray(nxids)
+      let infoArray = await Cacher.getPartInfoArray(nxids)
       // Create a map
       let partFilterMap = new Map<string, PartSchema>()
       // Loop through loaded parts
@@ -112,16 +65,12 @@ export default class AnalyticsSearch<Type> {
   }
 
   getUserFilterMapFromRouter() {
-    let userFilterArray = AnalyticsSearch.getUserFiltersFromRouter(this.router).map((u)=>this.getUser(u as string))
+    let userFilterArray = AnalyticsSearch.getUserFiltersFromRouter(this.router).map((u)=>Cacher.getUser(u as string))
     let userFilterMap = new Map<string, User>()
     for(let u of userFilterArray) {
       userFilterMap.set((u as User)._id!, u!)
     }
     return userFilterMap
-  }
-
-  getAllUserMap() {
-    return this.allUsers
   }
 
   getStartDateFromRouter() {
@@ -136,165 +85,8 @@ export default class AnalyticsSearch<Type> {
     return (this.router.currentRoute.value.query.hideOtherParts as string) == "true" ? true : false
   }
 
-  getAllUsers() {
-    return Array.from(this.allUsers.values())
-  }
-
-  getHttp() {
-    return this.http
-  }
-
   getPageNumFromRouter() {
     return isNaN(parseInt(this.router.currentRoute.value.query.pageNum as string)) ? 1 : parseInt(this.router.currentRoute.value.query.pageNum as string)
-  }
-
-  static loadPart(http: AxiosInstance, part: string|CartItem) {
-    return new Promise<PartSchema>((res)=>{
-      let nxid = ""
-      if(typeof(part)=="string") {
-        nxid = part
-      }
-      else {
-        nxid = part.nxid
-      }
-      getPartByID(http, nxid, 3, (data, err)=>{
-        if (err) {
-          res({})
-          return;
-        }
-        // Set new value
-        res(data as PartSchema)
-      });
-    })
-  }
-
-  static loadAsset(http: AxiosInstance, asset: string|AssetSchema) {
-    return new Promise<AssetSchema>((res)=>{
-      let asset_tag = ""
-      if(typeof(asset)=="string") {
-        asset_tag = asset
-      }
-      else {
-        asset_tag = asset.asset_tag!
-      }
-      getAssetByID(http, asset_tag, (data, err)=>{
-        if(err) {
-          res({})
-          return
-        }
-        res(data as AssetSchema)
-      })
-    })
-  }
-
-  static loadPallet(http: AxiosInstance, pallet: string|PalletSchema) {
-    return new Promise<PalletSchema>((res)=>{
-      let pallet_tag = ""
-      if(typeof(pallet)=="string") {
-        pallet_tag = pallet
-      }
-      else {
-        pallet_tag = pallet.pallet_tag!
-      }
-      getPalletByID(http, pallet_tag, (data, err)=>{
-        if(err) {
-          res({} as PalletSchema)
-          return
-        }
-        res(data as PalletSchema)
-      })
-    })
-  }
-
-  getAsset(asset: string|AssetSchema) {
-    return new Promise<AssetSchema>(async (res)=>{
-      let asset_tag = ""
-      if(typeof(asset)=="string") {
-        asset_tag = asset
-      }
-      else {
-        asset_tag = asset.asset_tag!
-      }
-      if(this.assetCache.has(asset_tag))
-        return res(this.assetCache.get(asset_tag)!)
-      // Set temp value
-      this.assetCache.set(asset_tag, {});
-      // Fetch asset from API
-      let p = await AnalyticsSearch.loadAsset(this.http, asset_tag)
-      this.assetCache.set(asset_tag, p);
-      // Check if asset loaded properly
-      if(JSON.stringify(p)==JSON.stringify({}))
-          this.assetCache.delete(asset_tag);
-      res(p)
-    })
-  }
-
-  getPallet(pallet: string|PalletSchema) {
-    return new Promise<PalletSchema>(async (res)=>{
-      let pallet_tag = ""
-      if(typeof(pallet)=="string") {
-        pallet_tag = pallet
-      }
-      else {
-        pallet_tag = pallet.pallet_tag!
-      }
-      if(this.palletCache.has(pallet_tag))
-        return res(this.palletCache.get(pallet_tag)!)
-      // Set temp value
-      this.palletCache.set(pallet_tag, {} as PalletSchema);
-      // Fetch pallet from API
-      let p = await AnalyticsSearch.loadPallet(this.http, pallet_tag)
-      this.palletCache.set(pallet_tag, p);
-      // Check if pallet loaded properly
-      if(JSON.stringify(p)==JSON.stringify({}))
-          this.palletCache.delete(pallet_tag);
-      res(p)
-    })
-  }
-  
-  static getPartInfoArray(http: AxiosInstance, parts: CartItem[]|string[]) {
-    return Promise.all(parts.map((p)=>AnalyticsSearch.loadPart(http, p)))
-  }
-  
-  getPartInfoArray(parts: CartItem[]|string[]) {
-    return Promise.all(parts.map((p)=>this.getPartInfo(p)))
-  }
-
-  getPartInfo(part: CartItem|string) {
-    return new Promise<PartSchema>(async (res)=>{
-      let nxid = ""
-      if(typeof(part)=="string") {
-        nxid = part
-      }
-      else {
-        nxid = part.nxid
-      }
-      // Check if part is already mapped
-      if (this.partsCache.has(nxid))
-        return res(this.partsCache.get(nxid)!)
-      // Set temp value
-      this.partsCache.set(nxid, {});
-      // Fetch part from API
-      let p = await AnalyticsSearch.loadPart(this.http, nxid)
-      this.partsCache.set(nxid, p);
-      // Check if part loaded properly
-      if(JSON.stringify(p)==JSON.stringify({}))
-          this.partsCache.delete(nxid);
-      res(p)
-    })
-  }
-
-  getUser(id: string) {
-    // Return user if they exist
-    return this.allUsers.has(id) ? this.allUsers.get(id) : {
-      email: "NOT FOUND",
-      first_name: "NOT FOUND",
-      last_name: "NOT FOUND",
-      enabled: false,
-      building: 0,
-      data_created: "NEVER",
-      roles: []
-    }
   }
 
   getNumItems() {
@@ -326,7 +118,6 @@ export default class AnalyticsSearch<Type> {
         // Update local info
         this.loadPageCallback(localPage, new Date(this.lastStartDate), new Date(this.lastEndDate), this.lastUserFilters, this.lastPartFilters, this.lastHideOtherParts)
           .then((page) => {
-            console.log(page)
             // Set new value
             this.numPages = page.pages
             this.numItems = page.total
@@ -355,7 +146,6 @@ export default class AnalyticsSearch<Type> {
         // Get page from api
         this.loadPageCallback(localPage, new Date(this.lastStartDate), new Date(this.lastEndDate), this.lastUserFilters, this.lastPartFilters, this.lastHideOtherParts)
           .then((page) => {
-            console.log(page)
             // Set new value
             this.numPages = page.pages
             this.numItems = page.total

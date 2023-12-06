@@ -5,14 +5,16 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import { getCheckoutHistory } from '../../plugins/dbCommands/userManager';
 import {
   CheckOutEvent,
-  Page,
+  AnalyticsSearchPage,
   UserState,
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import CheckoutHistoryComponent from '../../components/KioskComponents/CheckoutHistoryComponent.vue';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -32,15 +34,15 @@ let analyticsSearchObject:AnalyticsSearch<CheckOutEvent>;
 
 
 onBeforeMount(async ()=>{
-  analyticsSearchObject = await AnalyticsSearch.createAnalyticsSearch(http, router, 
+  analyticsSearchObject = new AnalyticsSearch(
     (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts)=>{
-      return new Promise<Page>((res)=>{
+      return new Promise<AnalyticsSearchPage>((res)=>{
         getCheckoutHistory(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err)=>{
           if(err) {
             return res({total: 0, pages: 0, events: []})
           }
           // Load all users now.
-          let p = data as Page
+          let p = data as AnalyticsSearchPage
           res(p)
         },
         userFilters,
@@ -54,12 +56,11 @@ onBeforeMount(async ()=>{
 
 async function displayResults(page: CheckOutEvent[])
 {
-  console.log(page)
   // Load all the required info into the caches
   for(let e of page) {
     // Evil ass promise code
     await Promise.all(e.parts.map((p)=>{
-      return analyticsSearchObject.getPartInfo(p)
+      return Cacher.getPartInfo(p)
     }))
   }
   checkoutEvents.value = page
@@ -76,9 +77,7 @@ function showLoader() {
     <PageHeaderWithBackButton :prev-path="'/manage'" :router="router">
       Check Out History
     </PageHeaderWithBackButton>
-    <div v-if="!loaded" class="my-4 flex justify-center">
-      <div class="loader text-center"></div>
-    </div>
+    <LoaderComponent v-if="!loaded"/>
     <AnalyticsSearchComponent v-else 
       :resultsLoading="resultsLoading"
       :searchComponent="analyticsSearchObject"
@@ -90,8 +89,8 @@ function showLoader() {
       <CheckoutHistoryComponent
         v-for="checkout of checkoutEvents"
         :checkout="checkout"
-        :user="analyticsSearchObject.getUser(checkout.by)!"
-        :parts="analyticsSearchObject.partsCache"
+        :user="Cacher.getUser(checkout.by)!"
+        :parts="Cacher.getPartCache()"
       />
       
     </AnalyticsSearchComponent>

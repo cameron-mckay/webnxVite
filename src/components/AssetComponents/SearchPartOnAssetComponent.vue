@@ -1,16 +1,13 @@
-<!-- Identical to PartSearchComponent but without quantities and query strings -->
+<!-- Identical to PartSearchComponent but without quantities and query strings
 <template>
   <div>
     <form class="flex justify-between" @submit.prevent="searchButtonPressed">
-      <!-- Search box -->
       <input
         class="search"
         type="text"
         v-model="visibleSearchText"
         placeholder="🔍 keywords..."
       />
-      <!-- Toggle advance search button -->
-      <!-- Sliders -->
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="button-icon hover:button-icon-hover active:button-icon-active"
@@ -23,9 +20,7 @@
           d="M0 416c0-17.7 14.3-32 32-32l54.7 0c12.3-28.3 40.5-48 73.3-48s61 19.7 73.3 48L480 384c17.7 0 32 14.3 32 32s-14.3 32-32 32l-246.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 448c-17.7 0-32-14.3-32-32zm192 0c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32zM384 256c0-17.7-14.3-32-32-32s-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32zm-32-80c32.8 0 61 19.7 73.3 48l54.7 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-54.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l246.7 0c12.3-28.3 40.5-48 73.3-48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32s-14.3-32-32-32zm73.3 0L480 64c17.7 0 32 14.3 32 32s-14.3 32-32 32l-214.7 0c-12.3 28.3-40.5 48-73.3 48s-61-19.7-73.3-48L32 128C14.3 128 0 113.7 0 96S14.3 64 32 64l86.7 0C131 35.7 159.2 16 192 16s61 19.7 73.3 48z"
         />
       </svg>
-      <!-- Search button -->
       <input class="search-button" type="submit" value="Search" />
-      <!-- Advanced search object -->
       <AdvancedSearchComponent
         :http="http"
         v-show="showAdvanced"
@@ -33,22 +28,16 @@
         @toggle="toggleAdvanced"
       />
     </form>
-    <!-- If there are parts -->
     <div v-if="parts.length != 0">
-      <!-- Headers -->
       <div
         class="relative grid grid-cols-4 p-1 text-center font-bold leading-8 transition md:p-2 md:leading-10"
       >
-        <p>NXID</p>
-        <p>Manufacturer</p>
-        <p>Name</p>
 
         <div
           v-if="totalPages > 1"
           class="float-right flex select-none justify-between"
         >
           <p class="my-auto inline-block">{{ `Page: ${pageNum}` }}</p>
-          <!-- Left Caret -->
           <div
             v-if="totalPages > 1 && !loading"
             class="float-right flex select-none"
@@ -59,7 +48,6 @@
               v-if="pageNum > 1"
             />
             <div v-else class="button-icon opacity-0"></div>
-            <!-- Right Caret -->
             <RightCaretButton
               v-if="pageNum<totalPages"
               v-on:click="nextPage"
@@ -68,7 +56,6 @@
           </div>
         </div>
       </div>
-      <!-- Asset part component for each search result -->
       <AssetPartComponent
         v-for="part in parts"
         v-bind:key="part._id"
@@ -76,11 +63,9 @@
         :part="part"
       />
     </div>
-    <!-- If there are no results -->
     <div v-else>
       <p>No results...</p>
     </div>
-    <!-- Next and previous buttons for search -->
 
       <div
         v-if="totalPages > 1 && !loading"
@@ -94,7 +79,6 @@
               v-if="pageNum > 1"
             />
             <div v-else class="button-icon opacity-0"></div>
-            <!-- Right Caret -->
             <RightCaretButton
               v-if="pageNum<totalPages"
               v-on:click="nextPage"
@@ -110,7 +94,6 @@
           <a class="mx-1" id="link" @click="goTo(totalPages)">{{ totalPages}}</a>
         </div>
       </div>
-
   </div>
 </template>
 <script setup lang="ts">
@@ -127,7 +110,6 @@ import AdvancedSearchComponent from '../PartComponents/PartAdvancedSearchCompone
 import SlidersButton from '../GenericComponents/Buttons/SlidersButton.vue'
 import LeftCaretButton from '../GenericComponents/Buttons/LeftCaretButton.vue'
 import RightCaretButton from '../GenericComponents/Buttons/RightCaretButton.vue'
-import AssetPartComponent from './PartOnAssetComponent.vue';
 interface AddObject {
   show: boolean;
 }
@@ -442,3 +424,107 @@ function getPageAdvanced(page: number, part: PartSchema) {
   });
 }
 </script>
+-->
+<script setup lang="ts">
+import { onBeforeMount, ref, Ref } from 'vue';
+import { PartSchema, TextSearchPage } from '../../plugins/interfaces';
+import { getPartsByData, getPartsByTextSearch } from '../../plugins/dbCommands/partManager';
+
+import SlidersButton from '../../components/GenericComponents/Buttons/SlidersButton.vue'
+import AdvancedSearchComponent from '../../components/PartComponents/PartAdvancedSearchComponent.vue';
+import TextSearchComponent from '../../components/GenericComponents/Search/TextSearchComponent.vue';
+import TextSearch from '../../plugins/TextSearchClass';
+import PageHeaderComponent from '../../components/GenericComponents/PageHeaderComponent.vue';
+import Cacher from '../../plugins/Cacher';
+import AssetPartComponent from './PartOnAssetComponent.vue';
+
+// Default building is Ogden - 3
+let parts: Ref<PartSchema[]> = ref([]);
+let showAdvanced = ref(false);
+let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
+let http = Cacher.getHttp()
+onBeforeMount(()=>{
+  searchObject.disableRouter()
+})
+
+function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
+  return new Promise<TextSearchPage>((res)=>{
+    getPartsByTextSearch(http, searchString, pageNum, 3, (data: any, err) => {
+      if (err) {
+        // Send error to error handler
+        return res({pages: 0, total: 0, items: []})
+      }
+      // Typecast response
+      let response = data as TextSearchPage
+      // Resolve promise
+      res(response);
+    });
+  })
+}
+
+function advancedSearchCallback(buildingNum: number, pageNum: number, searchObject: PartSchema) {
+  return new Promise<TextSearchPage>((res)=>{
+    searchObject['advanced'] = 'true';
+    searchObject['pageNum'] = pageNum;
+    searchObject['pageSize'] = 50;
+    // Send request to api
+    getPartsByData(http, searchObject, (data, err) => {
+      if (err) {
+        // Send error to error handler
+        return res({pages: 0, total: 0, items: []})
+      }
+      let response = data as TextSearchPage
+      // Resolve promise
+      res(response);
+    });
+  })
+}
+
+// Toggle advanced search
+function toggleAdvanced() {
+  // Negate
+  showAdvanced.value = !showAdvanced.value;
+}
+
+async function advancedSearchButtonPressed(part: PartSchema) {
+  searchObject.newAdvancedSearch(3, 1, part)
+  toggleAdvanced()
+}
+
+function displayResults(page: PartSchema[]) {
+  parts.value = page
+}
+
+</script>
+<template>
+  <div>
+    <PageHeaderComponent class="mb-4">Part Search</PageHeaderComponent>
+    <TextSearchComponent
+      :search-object="searchObject"
+      @display-results="displayResults"
+    >
+      <template v-slot:searchIcons>
+        <SlidersButton @click="toggleAdvanced"/>
+        <AdvancedSearchComponent
+          v-if="showAdvanced"
+          :startPart="searchObject.getAdvancedSearchObjectFromRouter() as PartSchema"
+          @toggle="toggleAdvanced"
+          @partSearch="advancedSearchButtonPressed"
+        />
+      </template>
+      <template v-slot:searchHeader>
+        <p>NXID</p>
+        <p>Manufacturer</p>
+        <p>Name</p>
+      </template>
+      <template v-slot:searchResults>
+        <AssetPartComponent
+          v-for="part in parts"
+          v-bind:key="part._id"
+          @addPartAction="$emit('addPartAction', part)"
+          :part="part"
+        />
+      </template>
+    </TextSearchComponent>
+  </div>
+</template>

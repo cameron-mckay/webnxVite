@@ -156,10 +156,10 @@ onMounted(() => {
           Assets:
         </h1>
         <div
-          class="grid grid-cols-3 text-center font-bold"
+          class="grid grid-cols-2 md:grid-cols-3 text-center font-bold"
         >
           <p >NXID</p>
-          <p>Manufacturer</p>
+          <p class="md:block hidden">Manufacturer</p>
           <p>Type</p>
         </div>
         <PalletEventAssetComponent v-for="item of existingAssets" :asset="item" />

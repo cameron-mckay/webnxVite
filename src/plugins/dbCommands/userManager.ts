@@ -1,10 +1,6 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import type {
   apiResponse,
-  CartItem,
-  LoadedCartItem,
-  PartCache,
-  PartSchema,
   User,
 } from '../interfaces';
 
@@ -25,7 +21,7 @@ export function getCurrentUser(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -54,7 +50,7 @@ export function getUserByID(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -76,7 +72,7 @@ export function checkAuth(http: AxiosInstance, callback: apiResponse) {
       // Authenticated - send null error to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Unauthenticated - send error to callback
       callback({}, err);
     });
@@ -94,7 +90,7 @@ export function getAllUsers(http: AxiosInstance, callback: apiResponse) {
     .then((res: AxiosResponse) => {
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       callback({}, err);
     });
 }
@@ -117,7 +113,7 @@ export function updateUser(
       // Success - send response to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -137,27 +133,9 @@ export function getUserInventory(
     .get('/api/user/inventory')
     .then((res: AxiosResponse) => {
       // Success - send response to callback
-      let partsArr = res.data.parts as PartCache;
-      let records = res.data.records as CartItem[];
-      let parts = new Map<string, PartSchema>();
-      partsArr.map((obj) => {
-        parts.set(obj.nxid, obj.part);
-      });
-      let returnValue = records.map((item) => {
-        if (item.serial) {
-          return {
-            part: parts.get(item.nxid),
-            serial: item.serial,
-          } as LoadedCartItem;
-        }
-        return {
-          part: parts.get(item.nxid),
-          quantity: item.quantity,
-        } as LoadedCartItem;
-      });
-      callback(returnValue, null);
+      callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -183,27 +161,9 @@ export function getUserInventoryByID(
     })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
-      let partsArr = res.data.parts as PartCache;
-      let records = res.data.records as CartItem[];
-      let parts = new Map<string, PartSchema>();
-      partsArr.map((obj) => {
-        parts.set(obj.nxid, obj.part);
-      });
-      let returnValue = records.map((item) => {
-        if (item.serial) {
-          return {
-            part: parts.get(item.nxid),
-            serial: item.serial,
-          } as LoadedCartItem;
-        }
-        return {
-          part: parts.get(item.nxid),
-          quantity: item.quantity,
-        } as LoadedCartItem;
-      });
-      callback(returnValue, null);
+      callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -223,7 +183,7 @@ export function getAllTechsInventory(
       // Success - send response to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -239,7 +199,7 @@ export function checkRoles(http: AxiosInstance, roles: string[], callback: apiRe
       // Success - send response to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -255,7 +215,7 @@ export function sendPasswordResetEmail(http: AxiosInstance, email: string, callb
       // Success - send response to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -271,7 +231,7 @@ export function submitNewPassword(http: AxiosInstance, user_id: string, token: s
       // Success - send response to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -305,7 +265,7 @@ export function getAssetUpdates(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -339,7 +299,7 @@ export function getAssetUpdatesNoDetails(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -373,7 +333,7 @@ export function getNewAssets(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -407,7 +367,7 @@ export function getNewAssetsNoDetails(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -441,7 +401,7 @@ export function getCheckinHistory(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -475,7 +435,7 @@ export function getCheckoutHistory(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -509,7 +469,7 @@ export function getAllTechsHistory(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -543,7 +503,7 @@ export function getNewPallets(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -577,7 +537,7 @@ export function getNewPalletsNoDetails(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -611,7 +571,7 @@ export function getPalletUpdates(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -645,7 +605,41 @@ export function getPalletUpdatesNoDetails(
       // Success - send response data to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getEbayHistory(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
+) {
+  // Send request to API
+  http
+    .get('/api/history/sales', {
+    params: {
+      startDate,
+      endDate,
+      pageNum,
+      pageSize,
+      users,
+      nxids,
+      hideOthers
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });

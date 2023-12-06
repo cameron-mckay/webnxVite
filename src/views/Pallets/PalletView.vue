@@ -6,6 +6,8 @@ import type { Store } from 'vuex';
 import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import AssetCartItemComponent from '../../components/AssetComponents/AssetCartItemComponent.vue';
 import AssetComponent from '../../components/AssetComponents/AssetComponent.vue';
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
+import PencilButton from '../../components/GenericComponents/Buttons/PencilButton.vue';
 import {
   getPalletByID,
   getPartsOnPallet,
@@ -14,8 +16,10 @@ import type {
 PalletSchema,
 LoadedCartItem,
 UserState,
-AssetSchema
+AssetSchema,
+CartItem
 } from '../../plugins/interfaces';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -35,22 +39,27 @@ let pallet = ref({
 } as PalletSchema);
 let parts = ref([] as LoadedCartItem[]);
 let assets = ref([] as AssetSchema[]);
+let palletLoading = ref(false)
+let partsLoading = ref(false)
 
 onBeforeMount(() => {
   if (router.currentRoute.value.query.pallet_tag) {
+    palletLoading.value = true
+    partsLoading.value = true
     let nxid = router.currentRoute.value.query.pallet_tag as string;
     getPalletByID(http, nxid, (res, err) => {
       if (err) {
         errorHandler(err);
       }
       pallet.value = res as PalletSchema;
-      getPartsOnPallet(http, pallet.value.pallet_tag!, (res, err) => {
+      palletLoading.value = false
+      getPartsOnPallet(http, pallet.value.pallet_tag!, async (res, err) => {
         if (err) {
           errorHandler(err);
         }
         // Doing this cause I'm too lazy to fix type defs
         let res2 = res as any
-        let temp = res2.parts as LoadedCartItem[]
+        let temp = await Cacher.loadCartItems((res as any).parts as CartItem[])
         assets.value = res2.assets
         // Create sorted list using array filters
         let sortedList = temp.filter((p)=>p.part.type == "Motherboard")
@@ -70,9 +79,9 @@ onBeforeMount(() => {
           p.part.type != "Peripheral Card"&&
           p.part.type != "Cable")
         )) 
-        console.log(res2)
         parts.value = sortedList
         assets.value = res2.assets as AssetSchema[]
+        partsLoading.value = false
       });
     });
   }
@@ -95,7 +104,8 @@ function viewAsset(asset: AssetSchema) {
 </script>
 
 <template>
-  <div class="body">
+  <LoaderComponent v-if="palletLoading" class="mt-16"/>
+  <div v-else class="body">
     <BackButton @click="router.options.history.state.back ? router.back() : router.push('/pallets')" class="mr-2 mb-2"/>
     <div
       class="relative grid grid-cols-2 rounded-lg group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-4"
@@ -105,19 +115,10 @@ function viewAsset(asset: AssetSchema) {
           {{ pallet.pallet_tag + ':' }}
         </h1>
         <!-- Pencil -->
-        <svg
+        <PencilButton
           v-on:click="edit"
-            v-if="!store.state.user.roles?.includes('sales')"
-          class="button-icon hover:button-icon-hover active:button-icon-active"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-        >
-          <path
-            fill="currentColor"
-            stroke="currentColor"
-            d="M421.7 220.3l-11.3 11.3-22.6 22.6-205 205c-6.6 6.6-14.8 11.5-23.8 14.1L30.8 511c-8.4 2.5-17.5 .2-23.7-6.1S-1.5 489.7 1 481.2L38.7 353.1c2.6-9 7.5-17.2 14.1-23.8l205-205 22.6-22.6 11.3-11.3 33.9 33.9 62.1 62.1 33.9 33.9zM96 353.9l-9.3 9.3c-.9 .9-1.6 2.1-2 3.4l-25.3 86 86-25.3c1.3-.4 2.5-1.1 3.4-2l9.3-9.3H112c-8.8 0-16-7.2-16-16V353.9zM453.3 19.3l39.4 39.4c25 25 25 65.5 0 90.5l-14.5 14.5-22.6 22.6-11.3 11.3-33.9-33.9-62.1-62.1L314.3 67.7l11.3-11.3 22.6-22.6 14.5-14.5c25-25 65.5-25 90.5 0z"
-          />
-        </svg>
+          v-if="!store.state.user.roles?.includes('sales')"
+        />
         <RouterLink
           class="my-auto ml-2 rounded-md p-2 font-bold transition-colors hover:bg-gray-400 hover:dark:bg-zinc-700"
           :to="`/pallets/history?pallet_tag=${pallet.pallet_tag}`"
@@ -140,50 +141,53 @@ function viewAsset(asset: AssetSchema) {
         </div>
       </div>
     </div>
-    <div v-if="parts.length > 0">
-      <h1 class="col-span-2 my-4 text-4xl">Parts:</h1>
-      <div
-        v-if="(parts!.length > 0)"
-        class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-5 md:leading-10"
-      >
-        <p class="hidden md:block">NXID</p>
-        <p>Manufacturer</p>
-        <p>Name</p>
-        <p>Quantity/SN</p>
-        <p></p>
-      </div>
-      <AssetCartItemComponent
-        class="col-span-2"
-        v-for="part in parts"
-        :item="part"
-        @plus="$emit('plusPart', part)"
-        @minus="$emit('minusPart', part)"
-        @delete="$emit('deletePart', part)"
-        :hideButtons="true"
-      />
-    </div>
-    <div v-if="assets.length > 0">
-      <h1 class="col-span-2 my-4 text-4xl">Assets:</h1>
-      <div
-        class="relative grid grid-cols-4 py-1 text-center font-bold leading-8 transition md:grid-cols-6 md:py-2 md:leading-10 mt-auto"
-      >
-        <p class="mt-auto">NXID</p>
-        <p class="mt-auto">Building</p>
-        <p class="hidden md:block mt-auto">Type</p>
-        <p class="hidden md:block mt-auto">Chassis</p>
-        <p class="mt-auto">Status</p>
-      </div>
-      <div class="md:animate-bottom">
-        <AssetComponent
-          :add="false"
-          :edit="true"
-          :view="true"
-          v-for="asset in assets"
-          v-bind:key="asset._id"
-          @editPartAction="toggleEdit(asset)"
-          @viewPartAction="viewAsset(asset)"
-          :asset="asset"
+    <LoaderComponent v-if="partsLoading"/>
+    <div v-else>
+      <div v-if="parts.length > 0">
+        <h1 class="col-span-2 my-4 text-4xl">Parts:</h1>
+        <div
+          v-if="(parts!.length > 0)"
+          class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-5 md:leading-10"
+        >
+          <p class="hidden md:block">NXID</p>
+          <p>Manufacturer</p>
+          <p>Name</p>
+          <p>Quantity/SN</p>
+          <p></p>
+        </div>
+        <AssetCartItemComponent
+          class="col-span-2"
+          v-for="part in parts"
+          :item="part"
+          @plus="$emit('plusPart', part)"
+          @minus="$emit('minusPart', part)"
+          @delete="$emit('deletePart', part)"
+          :hideButtons="true"
         />
+      </div>
+      <div v-if="assets.length > 0">
+        <h1 class="col-span-2 my-4 text-4xl">Assets:</h1>
+        <div
+          class="relative grid grid-cols-3 py-1 text-center font-bold leading-8 transition md:grid-cols-6 md:py-2 md:leading-10 mt-auto"
+        >
+          <p class="mt-auto">NXID</p>
+          <p class="mt-auto md:block hidden">Building</p>
+          <p class="mt-auto">Type</p>
+          <p class="hidden md:block mt-auto">Chassis</p>
+          <p class="hidden md:block mt-auto">Status</p>
+        </div>
+        <div class="md:animate-bottom">
+          <AssetComponent
+            :add="false"
+            :edit="true"
+            :view="true"
+            v-for="asset in assets"
+            v-bind:key="asset._id"
+            @editPartAction="toggleEdit(asset)"
+            @viewPartAction="viewAsset(asset)"
+            :asset="asset"
+          />
+        </div>
       </div>
     </div>
   </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { LoadedCartItem, PartSchema } from '../../plugins/interfaces';
 import InlinePartSpecComponent from '../PartComponents/InlinePartSpecComponent.vue';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 interface Props {
   isCurrentUser: boolean;
   item: LoadedCartItem;
@@ -13,6 +13,12 @@ const { maxQuantity, isCurrentUser, item, untracked, serialOptional } = definePr
 let quantityVisible = ref(item.quantity)
 let emit = defineEmits(['movePart'])
 let serial = ref(item.serial?item.serial:"")
+
+onMounted(()=>{
+  if(item.quantity) {
+    quantityVisible.value = item.quantity
+  }
+})
 
 watch(()=>item.quantity, ()=>{
   if(item.quantity) {

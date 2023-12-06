@@ -6,17 +6,17 @@ import type { Store } from 'vuex';
 import GridPartSpecComponent from '../../components/PartComponents/GridPartSpecComponent.vue';
 import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import PartRecordComponent from '../../components/PartComponents/PartRecordComponent.vue';
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import {
   getPartByID,
   getPartRecordsByID,
 } from '../../plugins/dbCommands/partManager';
-import { getUserByID } from '../../plugins/dbCommands/userManager';
 import type {
   PartRecord,
   PartSchema,
-  User,
   UserState,
 } from '../../plugins/interfaces';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -35,15 +35,13 @@ const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 
 let part = ref({} as PartSchema);
-let partRecords = ref([] as PartRecord[]);
 let groupedRecords = ref([] as GroupedRecords[]);
-let users = ref([] as User[]);
-let loading = ref(false)
-
-const getUserExclude = ["all", "testing", "la", "ny", "og", "hdd"]
+let loadingPart = ref(false)
+let loadingGroups = ref(false)
 
 onBeforeMount(() => {
-  loading.value = true
+  loadingPart.value = true
+  loadingGroups.value = true
   if (router.currentRoute.value.query.nxid) {
     let nxid = router.currentRoute.value.query.nxid as string;
     getPartByID(http, nxid, store.state.user.building ? store.state.user.building : 3, (res, err) => {
@@ -51,54 +49,41 @@ onBeforeMount(() => {
         errorHandler(err);
       }
       part.value = res as PartSchema;
-      loading.value = false
-    });
-    getPartRecordsByID(http, nxid, async (res, err) => {
-      if (err) {
-        errorHandler(err);
-      }
-      let tempGroups = [] as GroupedRecords[]
-      for (const record of res as PartRecord[]) {
-        // Check if group already exists
-        let existingGroup = tempGroups.find(
-          (e) =>
-            e.record.nxid == record.nxid &&
-            e.record.location == record.location &&
-            e.record.owner == record.owner &&
-            e.record.asset_tag == record.asset_tag
+      loadingPart.value = false
+      getPartRecordsByID(http, nxid, async (res, err) => {
+        if (err) {
+          errorHandler(err);
+        }
+        let tempGroups = [] as GroupedRecords[]
+        for (const record of res as PartRecord[]) {
+          // Check if group already exists
+          let existingGroup = tempGroups.find(
+            (e) =>
+              e.record.nxid == record.nxid &&
+              e.record.location == record.location &&
+              e.record.owner == record.owner &&
+              e.record.asset_tag == record.asset_tag
+          );
+          // Increment if exists and continue
+          if (existingGroup) {
+            existingGroup.quantity += 1;
+            continue;
+          } else {
+            // Create new group
+            tempGroups.push({
+              record: record,
+              quantity: 1,
+            });
+          }
+        }
+        // Sort array by quantity
+        tempGroups.sort((r1, r2) =>
+          r1.quantity < r2.quantity ? 1 : -1
         );
-        // Increment if exists and continue
-        if (existingGroup) {
-          existingGroup.quantity += 1;
-          continue;
-        } else {
-          // Create new group
-          tempGroups.push({
-            record: record,
-            quantity: 1,
-          });
-        }
-        // Check
-        // IF USER IS NOT IN ARRAY, FIND AND ADD TO ARRAy
-        if (
-          record.owner &&
-          !getUserExclude.includes(record.owner) &&
-          users.value.find((e) => e._id == record.owner) === undefined
-        ) {
-          getUserByID(http, record.owner, (res, err) => {
-            if (err) {
-              errorHandler(err);
-            }
-            users.value.push(res as User);
-          });
-        }
-      }
-      // Sort array by quantity
-      tempGroups.sort((r1, r2) =>
-        r1.quantity < r2.quantity ? 1 : -1
-      );
-      // Advanced key switch to fix owners (hacker man)
-      groupedRecords.value = tempGroups
+        // Advanced key switch to fix owners (hacker man)
+        groupedRecords.value = tempGroups
+        loadingGroups.value = false
+      });
     });
   }
 });
@@ -118,6 +103,7 @@ function viewHistory(record: PartRecord, quantity: number) {
         location: record.location,
         building: record.building?.toString(),
         asset_tag: record.asset_tag,
+        pallet_tag: record.pallet_tag
       },
     });
 }
@@ -195,11 +181,7 @@ function loadAllTechs() {
 }
 </script>
 <template>
-  <div v-if="loading" >
-    <div class="my-4 flex justify-center">
-      <div class="loader text-center"></div>
-    </div>
-  </div>
+  <LoaderComponent v-if="loadingPart" class="mt-16"/>
   <div v-else>
     <BackButton @click="router.options.history.state.back ? router.back() : router.push('/parts')" class="mr-2 mb-2"/>
     <GridPartSpecComponent
@@ -217,24 +199,27 @@ function loadAllTechs() {
       @loadAllTechs="loadAllTechs"
     />
     <!-- PART RECORDS GO HERE -->
-    <div
-      v-if="groupedRecords.length > 0"
-      class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
-    >
-      <p>Building</p>
-      <p>Location</p>
-      <p class="col-span-2">Owner</p>
-      <p class="hidden md:block">Quantity</p>
-      <!-- <p class="hidden md:block">Date Updated</p> -->
-      <p></p>
+    <LoaderComponent v-if="loadingGroups"/>
+    <div v-else>
+      <div
+        v-if="groupedRecords.length > 0"
+        class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
+      >
+        <p>Building</p>
+        <p>Location</p>
+        <p class="col-span-2">Owner</p>
+        <p class="hidden md:block">Quantity</p>
+        <!-- <p class="hidden md:block">Date Updated</p> -->
+        <p></p>
+      </div>
+      <PartRecordComponent
+        v-for="group in groupedRecords"
+        :users="Cacher.getAllUsers()"
+        :record="group.record"
+        :quantity="group.quantity"
+        :view="true"
+        @viewPartAction="viewHistory"
+      />
     </div>
-    <PartRecordComponent
-      v-for="group in groupedRecords"
-      :users="users"
-      :record="group.record"
-      :quantity="group.quantity"
-      :view="true"
-      @viewPartAction="viewHistory"
-    />
   </div>
 </template>

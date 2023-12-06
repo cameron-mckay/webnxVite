@@ -65,6 +65,12 @@ onMounted(() => {
           event.info.asset_tag
         }}
       </p>
+      <p v-else-if="event.info.owner&&event.info.owner=='sold'">
+        eBay Order ID:
+        {{
+          event.info.ebay ? event.info.ebay : "Order ID not present"
+        }}
+      </p>
       <p v-else-if="event.info.owner">
         User Inventory:
         {{

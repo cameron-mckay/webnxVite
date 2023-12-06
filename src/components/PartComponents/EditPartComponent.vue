@@ -15,7 +15,6 @@ const emit = defineEmits(['updatePart', 'deletePart']);
 let showDelete = ref(false);
 
 function submit(part: PartSchema, image: File) {
-  console.log(part)
   emit('updatePart', part, image);
 }
 </script>

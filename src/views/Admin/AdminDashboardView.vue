@@ -8,7 +8,7 @@ interface Props {
 }
 
 let {store} = defineProps<Props>()
-
+// Roles
 let kiosk = ref(false);
 let tech = ref(false);
 let clerk = ref(false);
@@ -32,9 +32,7 @@ function setRoles(){
     }
 }
 
-onMounted(async()=>{
-  setRoles()
-})
+onMounted(setRoles)
 </script>
 <template>
   <div class="background-and-border p-4">
@@ -46,7 +44,7 @@ onMounted(async()=>{
       <h1 class="mt-4 text-xl ml-2">
         Parts
       </h1>
-      <div class="grid grid-cols-3">
+      <div class="grid grid-cols-2 md:grid-cols-3">
         <RouterLink
           to="/manage/parts/create"
           class="manager-button"
@@ -86,6 +84,12 @@ onMounted(async()=>{
         >
           Check In History
         </RouterLink>
+        <RouterLink
+          to="/ebay/history"
+          class="manager-button"
+        >
+          Ebay Sales History
+        </RouterLink>
       </div>
     </div>
 
@@ -94,7 +98,7 @@ onMounted(async()=>{
       <h1 class="mt-4 text-xl ml-2" v-if="lead||admin">
         Users
       </h1>
-      <div class="grid grid-cols-3">
+      <div class="grid grid-cols-2 md:grid-cols-3">
         <RouterLink
           v-if="lead||admin"
           to="/manage/users/analytics"
@@ -122,7 +126,7 @@ onMounted(async()=>{
       <h1 class="mt-4 text-xl ml-2">
         Assets
       </h1>
-      <div class="grid grid-cols-3">
+      <div class="grid grid-cols-2 md:grid-cols-3">
         <RouterLink
           to="/manage/user/assetsUpdated"
           class="manager-button"
@@ -143,7 +147,7 @@ onMounted(async()=>{
       <h1 class="mt-4 text-xl ml-2">
         Pallets
       </h1>
-      <div class="grid grid-cols-3">
+      <div class="grid grid-cols-2 md:grid-cols-3">
         <RouterLink
           to="/manage/user/palletsUpdated"
           class="manager-button"

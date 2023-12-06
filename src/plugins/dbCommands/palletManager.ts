@@ -35,7 +35,7 @@ export function getPalletsByTextSearch(
       // Success and send back results
       callback(res.data as { numPages: number, numPallets: number, pallets: PalletSchema[]}, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Send error to callback
       callback({}, err);
     });
@@ -64,7 +64,7 @@ export function getPalletByID(
       // Success and send back results
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Send error to callback function
       callback({}, err);
     });
@@ -88,7 +88,7 @@ export function getPalletsByData(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -116,7 +116,7 @@ export function createPallet(
       // Success - send response to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -143,7 +143,7 @@ export function updatePallet(
       // Success - send response to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -165,27 +165,9 @@ export function getPartsOnPallet(
     .get('/api/pallet/parts', { params: { pallet_tag } })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
-      let partsArr = res.data.parts as PartCache;
-      let records = res.data.records as CartItem[];
-      let parts = new Map<string, PartSchema>();
-      partsArr.map((obj) => {
-        parts.set(obj.nxid, obj.part);
-      });
-      let returnParts = records.map((item) => {
-        if (item.serial) {
-          return {
-            part: parts.get(item.nxid),
-            serial: item.serial,
-          } as LoadedCartItem;
-        }
-        return {
-          part: parts.get(item.nxid),
-          quantity: item.quantity,
-        } as LoadedCartItem;
-      });
-      callback({ parts: returnParts, assets: res.data.assets}, null);
+      callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });
@@ -217,7 +199,7 @@ export function getPalletHistory(
       // Success - send results to callback
       callback(res.data, null);
     })
-    .catch((err: Error | AxiosError) => {
+    .catch((err: AxiosError) => {
       // Error - send error to callback
       callback({}, err);
     });

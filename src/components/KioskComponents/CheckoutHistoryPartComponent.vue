@@ -14,9 +14,9 @@ const emit = defineEmits(['plus', 'minus', 'delete']);
 <template>
   <div class="group relative my-1">
     <div
-      class="group-hover:bab-hover background-and-border grid p-1 text-center leading-8 grid-cols-4 md:p-2 md:leading-10"
+      class="group-hover:bab-hover background-and-border grid p-1 text-center leading-8 grid-cols-3 md:grid-cols-4 md:p-2 md:leading-10"
     >
-      <p>{{ item.part.nxid ? item.part.nxid : "PNX0000000" }}</p>
+      <p class="hidden md:block">{{ item.part.nxid ? item.part.nxid : "PNX0000000" }}</p>
       <p class="break-words">{{ item.part.manufacturer ? item.part.manufacturer : "DELETED PART" }}</p>
       <p class="break-words">{{ item.part.name ? item.part.name : "DELETED PART" }}</p>
       <input

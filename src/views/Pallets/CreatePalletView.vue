@@ -1,132 +1,133 @@
 <script setup lang="ts">
-import type { AxiosError, AxiosInstance } from 'axios';
-import { onMounted, ref, watch } from 'vue';
+import type { AxiosInstance } from 'axios';
+import { onBeforeMount, ref } from 'vue';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import PalletManagerComponent from '../../components/PalletComponents/PalletManagerComponent.vue';
 import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
-import { createPallet } from '../../plugins/dbCommands/palletManager';
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
+import Cacher from '../../plugins/Cacher';
+import PalletManagerComponent from '../../components/PalletComponents/PalletManagerComponent.vue';
+import AssetPartInventoryComponent from '../../components/AssetComponents/AssetPartInventoryComponent.vue';
+import AssetComponent from '../../components/AssetComponents/AssetComponent.vue';
 import type {
-PalletSchema,
-CartItem,
-LoadedCartItem,
-UserState,
+  AssetSchema,
+  UserState,
+  PalletSchema
 } from '../../plugins/interfaces';
+import Inventory from '../../plugins/InventoryClass';
+import { createPallet } from '../../plugins/dbCommands/palletManager';
 
 interface Props {
   http: AxiosInstance;
   store: Store<UserState>;
   router: Router;
-  errorHandler: (err: Error | AxiosError | string) => void;
-  displayMessage: (message: string) => void;
 }
-const { http, store, router, errorHandler, displayMessage } =
-  defineProps<Props>();
 
-let palletRef = ref({} as PalletSchema);
-let partsOnPallet = ref([] as LoadedCartItem[]);
+const { http, store, router } = defineProps<Props>();
+
+let oldPallet = {} as PalletSchema;
+let assets = ref([] as AssetSchema[])
+let loading = ref(false)
 let processingSubmission = false
+let inventory = new Inventory(store.state.user)
+let correction = ref(false)
+let serialsRef = ref("")
 
-function palletSubmit(assets: string) {
+onBeforeMount(async () => {
+    loading.value = true
+    // get asset tag from url
+    inventory.setCorrection(true)
+    loading.value = false
+    // Get user inventory from api
+});
+
+function palletSubmit(updatedPallet: PalletSchema) {
   if(processingSubmission)
     return
   processingSubmission = true
-  // Use create part method from API commands
-  let unloadedParts = [] as CartItem[];
-  // Iterate through list of parts and strip only the NXID and quantity
-  for (const part of partsOnPallet.value) {
-    if (part.serial) {
-      unloadedParts.push({
-        nxid: part.part.nxid as string,
-        serial: part.serial,
-      });
-    } else {
-      unloadedParts.push({
-        nxid: part.part.nxid as string,
-        quantity: part.quantity,
-      });
-    }
-  }
-  createPallet(http, palletRef.value, unloadedParts, assets, (data, err) => {
+  let unloadedParts = Cacher.unloadParts(inventory.getDestInv())
+  createPallet(http, updatedPallet, unloadedParts, serialsRef.value, (data, err) => {
     processingSubmission = false
     if (err) {
-      return errorHandler(err);
+        return Cacher.errorHandler(err);
     }
-    router.back();
+    if(updatedPallet.pallet_tag) {
+      router.push({ name: 'View Pallet', query: { pallet_tag: updatedPallet.value.pallet_tag } });
+    }
+    else {
+      router.back();
+    }
   });
 }
 
-function plusPart(item: LoadedCartItem) {
-  if (item.part.serialized) {
-    // Find existing item
-    partsOnPallet.value.push({
-      part: item.part,
-      serial: item.serial ? item.serial : '',
-    });
-  } else {
-    // Find matching part in array 1
-    let item2 = partsOnPallet.value.find((e) => e.part.nxid == item.part.nxid);
-    // If it doesn't exist, push a new entry
-    if (!item2) partsOnPallet.value.push({ part: item.part, quantity: 1 });
-    // Otherwise increment existing entry
-    else item2.quantity! += 1;
-  }
+async function reset() {
+  // Reset inventory component
+  inventory.setCorrection(correction.value)
+  await inventory.loadSourceInv(inventory.thisUser._id!)
+  await inventory.loadDestFromPallet(oldPallet.pallet_tag!)
 }
 
-function minusPart(item: LoadedCartItem) {
-  if (item.part.serialized) {
-    // Find existing item
-    let i = partsOnPallet.value.indexOf(item);
-    partsOnPallet.value.splice(i, 1);
-  } else {
-    // Find matching part in array 1
-    let item2 = partsOnPallet.value.find((e) => e.part.nxid == item.part.nxid);
-    // If it doesn't exist, push a new entry
-    if (!item2) return;
-    // Otherwise increment existing entry
-    else item2.quantity! -= 1;
-    if (item.quantity! < 1) {
-      let i = partsOnPallet.value.indexOf(item2);
-      partsOnPallet.value.splice(i, 1);
-    }
-  }
-}
-
-function updateQuantity(item: LoadedCartItem, quantity: number) {
-  item.quantity! += quantity
-  if (item.part.serialized||item.quantity! < 1) {
-    let i = partsOnPallet.value.indexOf(item);
-    partsOnPallet.value.splice(i, 1);
-  }
-}
-
-function deletePart(part: LoadedCartItem) {
-  partsOnPallet.value.splice(partsOnPallet.value.indexOf(part), 1);
+function correctionChanged(newCorrection: boolean) {
+  correction.value = newCorrection
+  reset()
 }
 </script>
 
 <template>
+  <LoaderComponent class="mt-16" v-if="loading"/>
   <div
+    v-else
     class="background-and-border p-4"
   >
-    <BackButton @click="router.back()" class="mr-2 mb-2"/>
+    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/pallets')" class="mr-2 mb-2"/>
     <PalletManagerComponent
-      :http="http"
       :title="'Create Pallet:'"
-      :untracked="true"
       :submitText="'Create Pallet'"
       :strict="true"
-      :palletRef="palletRef"
-      :parts="partsOnPallet"
-      :assets="[]"
-      :errorHandler="errorHandler"
-      :displayMessage="displayMessage"
-      :partSearch="true"
+      :oldPallet="oldPallet"
+      :untracked="true"
       @palletSubmit="palletSubmit"
-      @plusPart="plusPart"
-      @minusPart="minusPart"
-      @deletePart="deletePart"
-      @updateQuantity="updateQuantity"
-    />
+      @palletReset="reset"
+      @correctionChanged="correctionChanged"
+    >
+      <AssetPartInventoryComponent 
+        :inventory="inventory"
+        :untracked="true"
+      />
+      <div class="col-span-full">
+        <h1 class="col-span-2 my-4 text-4xl">Assets:</h1>
+        <div class="col-span-2 grid grid-cols-2">
+          <label>Add Assets:</label>
+          <textarea
+            class="textbox m-1"
+            v-model="serialsRef"
+            placeholder="One tag per line.  Drag to resize"
+          />
+        </div>
+          <p v-if="assets.length>0" class="my-2 w-full rounded-md bg-green-500 p-2 font-bold">
+            To remove an asset, edit its "Pallet" field and provide a new location in the Edit Asset menu.
+        </p>
+        <div
+          v-if="assets.length>0"
+          class="relative grid grid-cols-4 py-1 text-center font-bold leading-8 transition md:grid-cols-6 md:py-2 md:leading-10 mt-auto"
+        >
+          <p class="mt-auto">NXID</p>
+          <p class="mt-auto md:block hidden">Building</p>
+          <p class="mt-auto">Type</p>
+          <p class="hidden md:block mt-auto">Chassis</p>
+          <p class="hidden md:block mt-auto">Status</p>
+        </div>
+        <div class="md:animate-bottom" v-if="assets.length>0">
+          <AssetComponent
+            :add="false"
+            :edit="false"
+            :view="false"
+            v-for="asset in assets"
+            v-bind:key="asset._id"
+            :asset="asset"
+          />
+        </div>
+      </div>
+    </PalletManagerComponent>
   </div>
 </template>

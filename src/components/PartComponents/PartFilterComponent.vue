@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import FilterButton from '../GenericComponents/Buttons/FilterButton.vue'
 import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
 import FilterTag from '../GenericComponents/FilterTag.vue';
+import PartButton from '../GenericComponents/Buttons/PartButton.vue';
 import type { AxiosError, AxiosInstance } from 'axios';
 import AssetPartSearchComponent from '../AssetComponents/SearchPartOnAssetComponent.vue'
 import type { PartSchema }from '../../plugins/interfaces'
@@ -23,14 +23,13 @@ function togglePopup() {
 </script>
 <template>
   <div>
-    <FilterButton class="mr-4" @click="togglePopup"/>
+    <PartButton class="mt-auto md:mb-0 mb-2" @click="togglePopup"/>
     <FullScreenPopupComponent
       v-show="filterVisible"
       @toggle="togglePopup"
     >
       <h1 class="my-auto text-4xl mb-2">Filter Parts</h1>
       <FilterTag class="mb-2" v-for="part of Array.from(filterMap.keys())" :name="part" @remove="filterMap.delete(part)"/>
-      <!-- Fuck this -->
       <AssetPartSearchComponent
         :http="http"
         :errorHandler="(err: Error | AxiosError | string) => {}"

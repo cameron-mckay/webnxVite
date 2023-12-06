@@ -9,11 +9,12 @@ import PageHeaderWithBackButton from '../../components/GenericComponents/PageHea
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import { getNewPallets } from '../../plugins/dbCommands/userManager';
 import {
-  Page,
+  AnalyticsSearchPage,
   PalletEvent,
   UserState,
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -33,13 +34,13 @@ let analyticsSearchObject:AnalyticsSearch<PalletEvent>;
 
 
 onBeforeMount(async ()=>{
-  analyticsSearchObject = await AnalyticsSearch.createAnalyticsSearch(http, router, 
+  analyticsSearchObject = new AnalyticsSearch(
     (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts)=>{
-      return new Promise<Page>((res, rej)=>{
+      return new Promise<AnalyticsSearchPage>((res, rej)=>{
         getNewPallets(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
           if(err)
             return res({total: 0, pages: 0, events: []})
-          let p = data as Page
+          let p = data as AnalyticsSearchPage
           res(p)
         },
         userFilters,
@@ -59,25 +60,25 @@ async function displayResults(page: PalletEvent[])
     // Evil ass promise code
     await Promise.all([
       Promise.all(e.addedParts.map((p)=>{
-        return analyticsSearchObject.getPartInfo(p)
+        return Cacher.getPartInfo(p)
       })),
       Promise.all(e.removedParts.map((p)=>{
-        return analyticsSearchObject.getPartInfo(p)
+        return Cacher.getPartInfo(p)
       })),
       Promise.all(e.existingParts.map((p)=>{
-        return analyticsSearchObject.getPartInfo(p)
+        return Cacher.getPartInfo(p)
       })),
       Promise.all(e.addedAssets.map((p)=>{
-        return analyticsSearchObject.getAsset(p)
+        return Cacher.getAsset(p)
       })),
       Promise.all(e.removedAssets.map((p)=>{
-        return analyticsSearchObject.getAsset(p)
+        return Cacher.getAsset(p)
       })),
       Promise.all(e.existingAssets.map((p)=>{
-        return analyticsSearchObject.getAsset(p)
+        return Cacher.getAsset(p)
       }))
     ])
-    await analyticsSearchObject.getPallet(e.pallet_id)
+    await Cacher.getPallet(e.pallet_id)
   }
   palletEvents.value = page
   resultsLoading.value = false
@@ -103,10 +104,10 @@ function showLoader() {
       @showLoader="showLoader"
     >
       <PalletEventComponent
-        :assets="analyticsSearchObject.assetCache"
-        :user="analyticsSearchObject.getUser(event.by)!"
-        :parts="analyticsSearchObject.partsCache"
-        :pallets="analyticsSearchObject.palletCache"
+        :assets="Cacher.getAssetCache()"
+        :user="Cacher.getUser(event.by)!"
+        :parts="Cacher.getPartCache()"
+        :pallets="Cacher.getPalletCache()"
         :event="event"
         v-for="event in palletEvents"
       />
