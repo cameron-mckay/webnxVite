@@ -2,7 +2,9 @@
   <div>
     <HeaderComponent v-if="store.state.isAuth&&routeConfigured" :http="http" :store="store" :revokeLogin="revokeLogin" />
     <MessageComponent :messages="messages" :errors="errorMessages" />
+    <LoaderComponent v-if="routeConfigured"/>
     <router-view
+      v-else
       class="my-16 mx-4 w-[calc(100%-2rem)] text-sm md:mx-auto md:max-w-5xl md:text-base"
       :http="http"
       :store="store"
@@ -31,6 +33,7 @@ import { checkAuth, getCurrentUser } from './plugins/dbCommands/userManager';
 import type { Message, User } from './plugins/interfaces';
 import { useStore } from './plugins/store';
 import Cacher from './plugins/Cacher';
+import LoaderComponent from './components/GenericComponents/LoaderComponent.vue';
 
 // Global instances passed through props
 const http = inject<AxiosInstance>(injectionKey)!;
