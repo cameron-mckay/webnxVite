@@ -75,8 +75,10 @@ onBeforeMount(()=>{
   Cacher.assignErrorHandler(errorHandler)
   checkAuth(http, async (data, err) => {
     // If not authenticated
-    if (err||data=="You must login to continue.")
+    if (err||data=="You must login to continue.") {
+      console.log("TESTING AUTH")
       return firstLoadRevokeLogin()
+    }
     Cacher.loadAllUsersFromAPI()
     // If authenticated, set status
     getCurrentUser(http, (data, err) => {
