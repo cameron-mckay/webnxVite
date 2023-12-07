@@ -6,6 +6,7 @@ import SearchFooterComponent from './SearchFooterComponent.vue';
 import TextSearch from '../../../plugins/TextSearchClass';
 import LoaderComponent from '../LoaderComponent.vue';
 import { onBeforeMount, onMounted, ref, watch } from 'vue';
+import { isMobile } from '../../../plugins/CommonMethods';
 // Props interface
 interface Props {
   searchObject: TextSearch<any>
@@ -40,7 +41,8 @@ onBeforeMount(()=>{
 
 onMounted(()=>{
   // Focus the search box on load
-  document.getElementById("searchBox")?.focus()
+  if(!isMobile())
+    document.getElementById("searchBox")?.focus()
   // Add handle resize functin to resize event
   window.addEventListener('resize', handleResize)
 })
