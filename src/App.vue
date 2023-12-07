@@ -67,7 +67,6 @@ function redirect() {
 
 // Before app is created
 onBeforeMount(()=>{
-  console.log("TEST BEFORE MOUNT SCRIPT")
   routeConfigured.value = false;
   Cacher.assignAxios(http)
   Cacher.assignRouter(router)
@@ -76,7 +75,6 @@ onBeforeMount(()=>{
   checkAuth(http, async (data, err) => {
     // If not authenticated
     if (err||data=="You must login to continue.") {
-      console.log("TESTING AUTH")
       return firstLoadRevokeLogin()
     }
     Cacher.loadAllUsersFromAPI()
@@ -144,7 +142,6 @@ function configureRouter() {
   checkRoute(router.currentRoute.value)
   router.beforeEach(checkRoute);
   routeConfigured.value = true
-  console.log("CONFIGURED")
 }
 /**
  * @brief Briefly print an error to an on screen popup
@@ -258,8 +255,9 @@ function revokeLogin() {
   store.commit('logout', http);
   // redirect
   if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Password Reset') {
-    router.replace({ query: undefined })
-    router.push({ name: 'Login' });
+    router.replace({ query: undefined }).then(()=>{
+      router.push({ name: 'Login' })
+    })
   }
 }
 
