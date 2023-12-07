@@ -60,7 +60,6 @@ function moveToSourceList(part: PartSchema, difference: number, serial?: string)
 function refreshInv() {
   // Set loader
   loading.value = true
-  console.log("refreshing")
   // Get inventories from helper class
   sourceInv.value = inventory.getSourceInv()
   destInv.value = inventory.getDestInv()

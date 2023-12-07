@@ -243,7 +243,6 @@ export default class TextSearch<Type> {
         building != this.lastSearchBuilding ||
         searchString != this.lastSearchString
       ) {
-        console.log("HUH")
         // Clear the page cache
         this.pageCache.clear()
         // Set flag

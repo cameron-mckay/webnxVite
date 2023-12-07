@@ -47,7 +47,6 @@ onBeforeMount(reload)
 function reload() {
   if (router.currentRoute.value.query.asset_tag) {
     let nxid = router.currentRoute.value.query.asset_tag as string;
-    console.log(nxid)
     asset.value = {}
     assetLoading.value = true
     partsLoading.value = true

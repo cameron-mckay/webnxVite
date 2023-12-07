@@ -50,7 +50,6 @@ watch(correction, ()=>{
 })
 
 onBeforeMount(()=>{
-  console.log("test")
   if(oldPallet)
     palletRef.value = JSON.parse(JSON.stringify(oldPallet))
   if(untracked) {

@@ -44,7 +44,6 @@ var errorMessages: Ref<Message[]> = ref([]);
 
 // Check theme
 onMounted(() => {
-  console.log("TEST MOUNT SCRIPT")
   if (
     localStorage.getItem('theme') == 'dark' ||
     (localStorage.getItem('theme') == null &&

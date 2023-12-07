@@ -28,7 +28,6 @@ onBeforeMount(()=>{
 })
 
 function moveToDestList(part: PartSchema, difference: number, serial?: string) {
-  console.log(part)
   // User the helper function
   inventory.moveToDestList(part, difference, serial)
 }
