@@ -38,6 +38,6 @@ onBeforeMount(()=>{
       </div>
       <slot>
       </slot>
-      <input class="search-button mr-0 mt-auto md:ml-1 mb-2 md:mb-0" type="submit" value="Go" />
+      <input class="search-button mr-0 md:ml-1 mb-2 md:mb-0" type="submit" value="Go" />
     </form>
 </template>

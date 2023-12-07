@@ -1,5 +1,5 @@
 import { Router } from "vue-router"
-import { User, PartSchema, loadPageCallback } from "./interfaces"
+import { User, PartSchema, loadPageCallback, AssetSchema } from "./interfaces"
 import { getLastMonth, getTodaysDate } from "./dateFunctions"
 import Cacher from "./Cacher"
 
@@ -12,6 +12,7 @@ export default class AnalyticsSearch<Type> {
   // Store filters from last search
   private lastUserFilters: string[]
   private lastPartFilters: string[]
+  private lastAssetFilters: string[]
   private lastHideOtherParts: boolean
   // Store dates from last search
   private lastStartDate: number
@@ -31,6 +32,7 @@ export default class AnalyticsSearch<Type> {
     // Cache the last search params
     this.lastUserFilters = []
     this.lastPartFilters = []
+    this.lastAssetFilters = []
     this.lastStartDate = -1
     this.lastEndDate = -1
     this.lastHideOtherParts = false
@@ -46,6 +48,9 @@ export default class AnalyticsSearch<Type> {
     return router.currentRoute.value.query.users ? (Array.isArray(router.currentRoute.value.query.users) ? router.currentRoute.value.query.users : [router.currentRoute.value.query.users]) : []
   }
   
+  static getAssetFiltersFromRouter(router: Router) {
+    return router.currentRoute.value.query.assets ? (Array.isArray(router.currentRoute.value.query.assets) ? router.currentRoute.value.query.assets : [router.currentRoute.value.query.assets]) : []
+  }
   getPartFilterMapFromRouter() {
     return new Promise<Map<string, PartSchema>>(async (res)=>{
       // Get nxids from router
@@ -61,6 +66,24 @@ export default class AnalyticsSearch<Type> {
       }
       // Resolve promse
       res(partFilterMap)
+    })
+  }
+
+  getAssetFilterMapFromRouter() {
+    return new Promise<Map<string, PartSchema>>(async (res)=>{
+      // Get nxids from router
+      let asset_tags = AnalyticsSearch.getAssetFiltersFromRouter(this.router) as string[]
+      // Get info array from this object, will use cache or save newly loaded parts to cache
+      let infoArray = await Promise.all(asset_tags.map((a)=>Cacher.getAsset(a)))
+      // Create a map
+      let assetFilterMap = new Map<string, AssetSchema>()
+      // Loop through loaded parts
+      for (let p of infoArray) {
+        // Add to map
+        assetFilterMap.set(p.nxid!, p)
+      }
+      // Resolve promse
+      res(assetFilterMap)
     })
   }
 
@@ -161,12 +184,13 @@ export default class AnalyticsSearch<Type> {
     }
   }
 
-  hasPage(pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean) {
+  hasPage(pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean, assetFilters?: string[]) {
       if(
         startDate.getTime()!=this.lastStartDate||
         endDate.getTime()!=this.lastEndDate ||
         (userFilters?JSON.stringify(userFilters):JSON.stringify([]))!=JSON.stringify(this.lastUserFilters) ||
         (partFilters?JSON.stringify(partFilters):JSON.stringify([]))!=JSON.stringify(this.lastPartFilters) ||
+        (assetFilters?JSON.stringify(assetFilters):JSON.stringify([]))!=JSON.stringify(this.lastAssetFilters) ||
         hideOtherParts != this.lastHideOtherParts
       ) {
         return false
@@ -174,7 +198,7 @@ export default class AnalyticsSearch<Type> {
       return this.pageCache.has(pageNum)
   }
 
-  async loadPage(pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean) {
+  async loadPage(pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean, assetFilters?: string[]) {
     return new Promise<Type[]>(async (res)=>{
       let searchParamChanged = false
       // Check for change in search params
@@ -195,6 +219,7 @@ export default class AnalyticsSearch<Type> {
       this.lastEndDate = endDate.getTime()
       this.lastUserFilters = userFilters ? JSON.parse(JSON.stringify(userFilters)) : []
       this.lastPartFilters = partFilters ? JSON.parse(JSON.stringify(partFilters)) : []
+      this.lastAssetFilters = assetFilters ? JSON.parse(JSON.stringify(assetFilters)) : []
       this.lastHideOtherParts = hideOtherParts == true ? true : false
       // Local variable for fetching page
       let thisPage = [] as Type[]
@@ -206,7 +231,8 @@ export default class AnalyticsSearch<Type> {
           endDate: endDate.getTime(),
           users: userFilters,
           parts: partFilters,
-          hideOtherParts: this.lastHideOtherParts ? "true" : "false"
+          hideOtherParts: this.lastHideOtherParts ? "true" : "false",
+          assets: assetFilters
         }
       });
       // Early return if the request doesn't make sense
@@ -216,7 +242,7 @@ export default class AnalyticsSearch<Type> {
       // If the cache doesn't have the page
       if(!this.pageCache.has(pageNum)) {
         // Load page from callback
-        let page = await this.loadPageCallback(pageNum, startDate, endDate, this.lastUserFilters, this.lastPartFilters, this.lastHideOtherParts)
+        let page = await this.loadPageCallback(pageNum, startDate, endDate, this.lastUserFilters, this.lastPartFilters, this.lastHideOtherParts, this.lastAssetFilters)
         // Update local info
         this.numPages = page.pages
         this.numItems = page.total

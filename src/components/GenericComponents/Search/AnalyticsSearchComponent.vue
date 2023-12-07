@@ -8,6 +8,7 @@ import LoaderComponent from '../LoaderComponent.vue';
 import AnalyticsSearch from '../../../plugins/AnalyticsSearchClass';
 import UserFilterComponent from '../../AdminComponents/UserFilterComponent.vue';
 import PartFilterComponent from '../../PartComponents/PartFilterComponent.vue';
+import AssetFilterComponent from '../../AssetComponents/AssetFilterComponent.vue';
 import FilterTag from '../FilterTag.vue';
 import Cacher from '../../../plugins/Cacher';
 
@@ -17,9 +18,10 @@ interface Props {
   searchComponent: AnalyticsSearch<any>
   showUserFilters?: boolean
   showPartFilters?: boolean
+  showAssetFilters?: boolean
 }
 // Deref the search helper
-let { searchComponent, resultsLoading, showUserFilters, showPartFilters } = defineProps<Props>()
+let { searchComponent, resultsLoading, showUserFilters, showPartFilters, showAssetFilters } = defineProps<Props>()
 // Filter maps
 let userFilterMap = ref(new Map<string, User>())
 let partFilterMap = ref(new Map<string, PartSchema>())
@@ -44,6 +46,7 @@ onBeforeMount(async ()=>{
   // Load filters from serch helper
   partFilterMap.value = await searchComponent.getPartFilterMapFromRouter()
   userFilterMap.value = searchComponent.getUserFilterMapFromRouter()
+  assetFilterMap.value = await searchComponent.getAssetFilterMapFromRouter()
   // Update filters
   partFilterArray = Array.from(partFilterMap.value.keys())
   userFilterArray = Array.from(userFilterMap.value.keys())
@@ -65,6 +68,7 @@ function updateDates(startDate: Date, endDate: Date) {
   // Update filters
   partFilterArray = Array.from(partFilterMap.value.keys())
   userFilterArray = Array.from(userFilterMap.value.keys())
+  assetFilterArray = Array.from(assetFilterMap.value.keys())
   // Load the first page
   loadPage(1)
 }
@@ -76,7 +80,7 @@ async function loadPage(pageNum: number) {
   // Set page num
   pageNumRef.value = pageNum
   // Load page from search helper
-  let page = await searchComponent.loadPage(pageNum, startDateCache, endDateCache, userFilterArray, partFilterArray, hideOtherPartsCache)
+  let page = await searchComponent.loadPage(pageNum, startDateCache, endDateCache, userFilterArray, partFilterArray, hideOtherPartsCache, assetFilterArray)
   numPages.value = searchComponent.getNumPages()
   // CALL TO PARENT HERE
   emit("displayResults", page)
@@ -89,8 +93,9 @@ async function loadPage(pageNum: number) {
       <div class="flex justify-between md:mb-2">
         <!-- Date range component -->
         <DateRangeComponent :startDate="startDateCache" :endDate="endDateCache" @search="updateDates" class="flex">
-          <PartFilterComponent v-if="showPartFilters" :http="Cacher.getHttp()" :filterMap="partFilterMap" class="mt-auto ml-1"/>
-          <UserFilterComponent v-if="showUserFilters" :users="Cacher.getAllUserMap()" :filterMap="userFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}" class="mt-auto ml-1"/>
+          <PartFilterComponent v-if="showPartFilters" :http="Cacher.getHttp()" :filterMap="partFilterMap" class="mb-auto ml-1"/>
+          <UserFilterComponent v-if="showUserFilters" :users="Cacher.getAllUserMap()" :filterMap="userFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}" class="mb-auto ml-1"/>
+          <AssetFilterComponent v-if="showAssetFilters" :http="Cacher.getHttp()" :filterMap="assetFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}" class="mb-auto ml-1"/>
         </DateRangeComponent>
         <!-- Navigation buttons -->
         <SearchNavButtons :numPages="numPages" :pageNum="pageNumRef" @loadPage="loadPage"/>
@@ -99,6 +104,7 @@ async function loadPage(pageNum: number) {
       <FilterTag class="mt-2" v-for="user of Array.from(userFilterMap.keys())" :name="userFilterMap.has(user) ? userFilterMap.get(user)!.email! : 'ERROR'" @remove="userFilterMap.delete(user)"/>
       <!-- Part Filter tags -->
       <FilterTag v-for="part of Array.from(partFilterMap.keys())" :name="part" @remove="partFilterMap.delete(part)" class="background-and-border mt-2"/>
+      <FilterTag v-for="asset of Array.from(assetFilterMap.keys())" :name="asset" @remove="assetFilterMap.delete(asset)" class="background-and-border mt-2"/>
       <!-- Hide other parts toggle -->
       <div v-if="partFilterMap.size>0" class="mt-4">
         <label>Hide Other Parts: </label>

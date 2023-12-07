@@ -6,7 +6,7 @@ export interface apiResponse {
 }
 
 export interface loadPageCallback {
-  (pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean): Promise<AnalyticsSearchPage>;
+  (pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean, assetFilters?: string[]): Promise<AnalyticsSearchPage>;
 }
 
 export interface textSearchCallback {

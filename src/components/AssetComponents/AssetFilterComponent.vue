@@ -2,15 +2,15 @@
 import { ref } from 'vue';
 import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
 import FilterTag from '../GenericComponents/FilterTag.vue';
-import PartButton from '../GenericComponents/Buttons/PartButton.vue';
+import ServerButton from '../GenericComponents/Buttons/ServerButton.vue';
+import AssetSearchPopupComponent from './AssetSearchPopupComponent.vue';
 import type { AxiosError, AxiosInstance } from 'axios';
-import AssetPartSearchComponent from '../AssetComponents/SearchPartOnAssetComponent.vue'
-import type { PartSchema }from '../../plugins/interfaces'
+import type { AssetSchema, PartSchema }from '../../plugins/interfaces'
 
 
 interface Props {
   http: AxiosInstance;
-  filterMap: Map<string, PartSchema>;
+  filterMap: Map<string, AssetSchema>;
 }
 
 let { filterMap } = defineProps<Props>()
@@ -23,16 +23,18 @@ function togglePopup() {
 </script>
 <template>
   <div>
-    <PartButton class="mt-auto md:mb-0 mb-2" @click="togglePopup"/>
+    <ServerButton class="mt-auto md:mb-0 mb-2" @click="togglePopup"/>
     <FullScreenPopupComponent
       v-show="filterVisible"
       @toggle="togglePopup"
     >
-      <h1 class="my-auto text-4xl mb-2">Filter Parts</h1>
+      <h1 class="my-auto text-4xl mb-2">Filter Assets</h1>
       <FilterTag class="mb-2" v-for="part of Array.from(filterMap.keys())" :name="part" @remove="filterMap.delete(part)"/>
-      <AssetPartSearchComponent
-        :hide-header="true"
-        @addPartAction="(part: PartSchema)=>{filterMap.set(part.nxid!, part)}"
+      <AssetSearchPopupComponent
+        :http="http"
+        :errorHandler="(err: Error | AxiosError | string) => {}"
+        :displayMessage="(message: string) => {}"
+        @addAssetAction="(asset: AssetSchema)=>{filterMap.set(asset.asset_tag!, asset)}"
       />
     </FullScreenPopupComponent>
   </div>

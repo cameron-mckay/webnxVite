@@ -1,33 +1,26 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, Ref } from 'vue';
-import { PartSchema, TextSearchPage } from '../../plugins/interfaces';
-import { getPartsByData, getPartsByTextSearch } from '../../plugins/dbCommands/partManager';
-
+import { AssetSchema, PartSchema, TextSearchPage } from '../../plugins/interfaces';
 import SlidersButton from '../../components/GenericComponents/Buttons/SlidersButton.vue'
-import AdvancedSearchComponent from '../../components/PartComponents/PartAdvancedSearchComponent.vue';
+import AdvancedSearchComponent from '../../components/AssetComponents/AssetAdvancedSearchComponent.vue';
 import TextSearchComponent from '../../components/GenericComponents/Search/TextSearchComponent.vue';
 import TextSearch from '../../plugins/TextSearchClass';
-import PageHeaderComponent from '../../components/GenericComponents/PageHeaderComponent.vue';
+import AssetComponent from './AssetComponent.vue';
 import Cacher from '../../plugins/Cacher';
-import AssetPartComponent from './PartOnAssetComponent.vue';
-
-interface Props {
-  hideHeader?: boolean
-}
+import { getAssetsByData, getAssetsByTextSearch } from '../../plugins/dbCommands/assetManager';
 
 // Default building is Ogden - 3
-let parts: Ref<PartSchema[]> = ref([]);
+let assets: Ref<AssetSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
 let http = Cacher.getHttp()
-let { hideHeader } = defineProps<Props>()
 onBeforeMount(()=>{
   searchObject.disableRouter()
 })
 
 function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
   return new Promise<TextSearchPage>((res)=>{
-    getPartsByTextSearch(http, searchString, pageNum, 3, (data: any, err) => {
+    getAssetsByTextSearch(http, searchString, pageNum, (data: any, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})
@@ -40,13 +33,13 @@ function textSearchCallback(buildingNum: number, pageNum: number, searchString: 
   })
 }
 
-function advancedSearchCallback(buildingNum: number, pageNum: number, searchObject: PartSchema) {
+function advancedSearchCallback(buildingNum: number, pageNum: number, searchObject: AssetSchema) {
   return new Promise<TextSearchPage>((res)=>{
     searchObject['advanced'] = 'true';
     searchObject['pageNum'] = pageNum;
     searchObject['pageSize'] = 50;
     // Send request to api
-    getPartsByData(http, searchObject, (data, err) => {
+    getAssetsByData(http, searchObject, (data, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})
@@ -69,14 +62,13 @@ async function advancedSearchButtonPressed(part: PartSchema) {
   toggleAdvanced()
 }
 
-function displayResults(page: PartSchema[]) {
-  parts.value = page
+function displayResults(page: AssetSchema[]) {
+  assets.value = page
 }
 
 </script>
 <template>
   <div>
-    <PageHeaderComponent class="mb-4" v-if="hideHeader!=true">Part Search</PageHeaderComponent>
     <TextSearchComponent
       :search-object="searchObject"
       @display-results="displayResults"
@@ -85,22 +77,25 @@ function displayResults(page: PartSchema[]) {
         <SlidersButton @click="toggleAdvanced"/>
         <AdvancedSearchComponent
           v-if="showAdvanced"
-          :startPart="searchObject.getAdvancedSearchObjectFromRouter() as PartSchema"
+          :start-asset="searchObject.getAdvancedSearchObjectFromRouter() as AssetSchema"
+          @assetSearch="advancedSearchButtonPressed"
           @toggle="toggleAdvanced"
-          @partSearch="advancedSearchButtonPressed"
         />
       </template>
       <template v-slot:searchHeader>
-        <p>NXID</p>
-        <p>Manufacturer</p>
-        <p>Name</p>
+        <p class="mt-auto">NXID</p>
+        <p class="mt-auto md:block hidden">Building</p>
+        <p class="mt-auto">Type</p>
+        <p class="hidden md:block mt-auto">Chassis</p>
+        <p class="hidden md:block mt-auto">Status</p>
       </template>
       <template v-slot:searchResults>
-        <AssetPartComponent
-          v-for="part in parts"
-          v-bind:key="part._id"
-          @addPartAction="$emit('addPartAction', part)"
-          :part="part"
+        <AssetComponent
+          :add="true"
+          @addPartAction="$emit('addAssetAction', asset)"
+          v-for="asset in assets"
+          v-bind:key="asset._id"
+          :asset="asset"
         />
       </template>
     </TextSearchComponent>

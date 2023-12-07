@@ -10,7 +10,7 @@
       @click="$emit('toggle')"
     ></div>
     <div
-      class="card pointer-events-auto relative z-40 mx-4 mt-32 block max-w-2xl p-4 shadow-lg transition md:mx-auto"
+      class="card pointer-events-auto relative z-40 mx-4 mt-32 block max-w-4xl p-4 shadow-lg transition md:mx-auto pb-32"
     >
       <slot></slot>
     </div>

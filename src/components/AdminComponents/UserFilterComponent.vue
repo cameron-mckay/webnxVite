@@ -29,7 +29,7 @@ function togglePopup() {
       @toggle="togglePopup"
     >
       <!-- Component title -->
-      <h1 class="my-auto text-4xl mb-2">Filter Parts</h1>
+      <h1 class="my-auto text-4xl mb-2">Filter Users</h1>
       <!-- Filter tags -->
       <FilterTag class="mb-2" v-for="user of Array.from(filterMap.keys())" :name="filterMap.has(user) ? filterMap.get(user)!.email! : 'ERROR'" @remove="filterMap.delete(user)"/>
       <!-- User Section -->

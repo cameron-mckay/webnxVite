@@ -26,6 +26,7 @@ let windowWidth = ref(window.innerWidth)
 let numCols = ref(1)
 let buttonPressed = false
 let showHeader = ref(false)
+let id = Math.random()
 
 onBeforeMount(()=>{
   pageNumRef.value = searchObject.getPageNumFromRouter()
@@ -50,7 +51,7 @@ onMounted(()=>{
 function handleResize() {
   windowWidth.value = window.innerWidth
   // Select the header div
-  let el = document.getElementById('header')
+  let el = document.getElementById('header'+id)
   // If there are no children, return
   if(!el||!el.children)
     return
@@ -152,7 +153,7 @@ watch(loading, () => {
     </form>
     <div>
       <div
-        id="header"
+        :id="'header'+id"
         class="mt-1 relative grid py-1 text-center font-bold leading-8 transition md:py-2 md:leading-10 [&>p]:mt-auto"
         :style="{ 'grid-template-columns': 'repeat(' + numCols + ', minmax(0, 1fr))'}"
       >

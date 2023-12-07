@@ -9,22 +9,14 @@ import SearchFooterComponent from '../../components/GenericComponents/Search/Sea
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import {
-  getPalletByID,
   getPalletHistory,
 } from '../../plugins/dbCommands/palletManager';
-import { getAssetByID } from '../../plugins/dbCommands/assetManager';
-import { getPartByID } from '../../plugins/dbCommands/partManager';
-import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import {
-  AssetSchema,
-  PalletSchema,
   PalletHistory,
   PalletEvent,
-  CartItem,
-  PartSchema,
-  User,
   UserState,
 } from '../../plugins/interfaces';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -36,10 +28,6 @@ interface Props {
 
 const { http, router, errorHandler } =
   defineProps<Props>();
-let pallets = ref(new Map<string, PalletSchema>());
-let users = new Map<string, User>();
-let parts = ref(new Map<string, PartSchema>());
-let assets = ref(new Map<string, AssetSchema>());
 let pallet_tag = ref('');
 let history = ref([] as PalletHistory);
 let pageSize = 10;
@@ -49,124 +37,32 @@ let pageCache = new Map<number, PalletHistory>();
 let loading = ref(true)
 let totalEvents = ref(0)
 
-// Check if part is in map and add it if it isn't
-function checkPart(part: CartItem) {
-  return new Promise<string>((res, rej)=>{
-    // Check if part is already mapped
-    if (parts.value.has(part.nxid))
-      return res("")
-    // Set temp value
-    parts.value.set(part.nxid, {});
-    // Fetch part from API
-    getPartByID(http, part.nxid, 3, (data, err) => {
-      if (err) {
-        parts.value.delete(part.nxid);
-        errorHandler(err);
-        rej("")
-        return;
-      }
-      // Set new value
-      parts.value.set(part.nxid, data as PartSchema);
-      res("")
-    });
-  })
-}
-// Check if asset is in map and add it if it isn't
-function checkAsset(asset_id: string) {
-  return new Promise<void>((res, rej)=>{
-    // Check if part is already mapped
-    if (assets.value.has(asset_id))
-      return res()
-    // Set temp value
-    assets.value.set(asset_id, {});
-    // Fetch part from API
-    getAssetByID(http, asset_id, (data, err) => {
-      if (err) {
-        assets.value.delete(asset_id);
-        errorHandler(err);
-        res()
-        return;
-      }
-      // Set new value
-      assets.value.set(asset_id, data as AssetSchema);
-      res()
-    });
-  })
-}
-
 // Check if asset in in map and add it if it isn't
 function checkPallets(historyEvent: PalletEvent) {
-  return new Promise<string>(async (res, rej)=>{
-    // Check if asset is already cached
-    if (!pallets.value.has(historyEvent.pallet_id)) {
-      // Set temporary value
-      pallets.value.set(historyEvent.pallet_id, {} as PalletSchema);
-      // Get asset from API
-      getPalletByID(http, historyEvent.pallet_id, async (data, err) => {
-        if (err) {
-          // Clear value so other threads can try again
-          pallets.value.delete(historyEvent.pallet_id);
-          errorHandler(err);
-          rej()
-          return;
-        }
-        // Set temp variable for type casting
-        let temp = data as PalletSchema;
-        // Set new value
-        pallets.value.set(historyEvent.pallet_id, temp);
-        // Map all existing parts
-        await Promise.all(historyEvent.existingParts.map(checkPart))
-        // Map all added parts
-        await Promise.all(historyEvent.addedParts.map(checkPart))
-        // Map all removed parts
-        await Promise.all(historyEvent.removedParts.map(checkPart))
-        // Map all existing assets
-        await Promise.all(historyEvent.existingAssets.map(checkAsset))
-        // Map all added assets
-        await Promise.all(historyEvent.addedAssets.map(checkAsset))
-        // Map all removed assets
-        await Promise.all(historyEvent.removedAssets.map(checkAsset))
-        res("")
-      });
-    }
-    else {
-      // Map all existing parts
-      await Promise.all(historyEvent.existingParts.map(checkPart))
-      // Map all added parts
-      await Promise.all(historyEvent.addedParts.map(checkPart))
-      // Map all removed parts
-      await Promise.all(historyEvent.removedParts.map(checkPart))
-      // Map all existing assets
-      await Promise.all(historyEvent.existingAssets.map(checkAsset))
-      // Map all added assets
-      await Promise.all(historyEvent.addedAssets.map(checkAsset))
-      // Map all removed assets
-      await Promise.all(historyEvent.removedAssets.map(checkAsset))
-      res("")
-    }
-  })
+  return Promise.all([
+    Cacher.getPallet(historyEvent.pallet_id),
+    // Map all existing parts
+    Promise.all(historyEvent.existingParts.map(Cacher.getPartInfo)),
+    // Map all added parts
+    Promise.all(historyEvent.addedParts.map(Cacher.getPartInfo)),
+    // Map all removed parts
+    Promise.all(historyEvent.removedParts.map(Cacher.getPartInfo)),
+    // Map all existing assets
+    Promise.all(historyEvent.existingAssets.map(Cacher.getAsset)),
+    // Map all added assets
+    Promise.all(historyEvent.addedAssets.map(Cacher.getAsset)),
+    // Map all removed assets
+    Promise.all(historyEvent.removedAssets.map(Cacher.getAsset))
+  ])
 }
 
 onBeforeMount(() => {
-  getAllUsers(http, (data, err) => {
-    if(err) {
-      return errorHandler("Could not load users.")
-    }
-    // Temporary array
-    let allUsers = data as User[]
-    // Process all users
-    for (let u of allUsers) {
-      // Set user map
-      users.set(u._id!, u)
-    }
-    // Push check in queue to ref
-    loadPage(pageNum.value)
-  })
   pallet_tag.value = router.currentRoute.value.query.pallet_tag as string;
   pageNum.value = router.currentRoute.value.query.pageNum ? parseInt(router.currentRoute.value.query.pageNum as string) : 1
   router.replace({
     query: { pallet_tag: pallet_tag.value, pageNum: pageNum.value.toString() },
   });
+  loadPage(pageNum.value)
 });
 
 async function loadPage(page: number) {
@@ -248,10 +144,10 @@ function checkCache() {
     <LoaderComponent v-if="loading"/>
     <PalletEventComponent
       v-else
-      :pallets="pallets"
-      :assets="assets"
-      :user="users.get(event.by)!"
-      :parts="parts"
+      :pallets="Cacher.getPalletCache()"
+      :assets="Cacher.getAssetCache()"
+      :parts="Cacher.getPartCache()"
+      :user="Cacher.getUser(event.by)"
       :event="event"
       v-for="event in history"
     />

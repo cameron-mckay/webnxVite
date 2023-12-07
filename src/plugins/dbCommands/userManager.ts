@@ -247,6 +247,7 @@ export function getAssetUpdates(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
+  asset_tags?: string[]
 ) {
   // Send request to API
   http
@@ -258,7 +259,8 @@ export function getAssetUpdates(
       pageNum,
       pageSize,
       nxids,
-      hideOthers
+      hideOthers,
+      asset_tags
     }
   })
     .then((res: AxiosResponse) => {
@@ -281,6 +283,7 @@ export function getAssetUpdatesNoDetails(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
+  asset_tags?: string[]
 ) {
   // Send request to API
   http
@@ -292,7 +295,8 @@ export function getAssetUpdatesNoDetails(
       pageNum,
       pageSize,
       nxids,
-      hideOthers
+      hideOthers,
+      asset_tags
     }
   })
     .then((res: AxiosResponse) => {

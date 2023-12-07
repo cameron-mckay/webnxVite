@@ -9,20 +9,14 @@ import SearchFooterComponent from '../../components/GenericComponents/Search/Sea
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import {
-  getAssetByID,
   getAssetHistory,
 } from '../../plugins/dbCommands/assetManager';
-import { getPartByID } from '../../plugins/dbCommands/partManager';
-import { getAllUsers } from '../../plugins/dbCommands/userManager';
 import {
   AssetEvent,
   AssetHistory,
-  AssetSchema,
-  CartItem,
-  PartSchema,
-  User,
   UserState,
 } from '../../plugins/interfaces';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -34,9 +28,6 @@ interface Props {
 
 const { http, router, errorHandler } =
   defineProps<Props>();
-let assets = ref(new Map<string, AssetSchema>());
-let users = new Map<string, User>();
-let parts = ref(new Map<string, PartSchema>());
 let asset_tag = ref('');
 let history = ref([] as AssetHistory);
 let pageSize = 10;
@@ -46,89 +37,23 @@ let pageCache = new Map<number, AssetHistory>();
 let loading = ref(true)
 let totalEvents = ref(0)
 
-// Check if part is in map and add it if it isn't
-function checkPart(part: CartItem) {
-  return new Promise<string>((res, rej)=>{
-    // Check if part is already mapped
-    if (parts.value.has(part.nxid))
-      return res("")
-    // Set temp value
-    parts.value.set(part.nxid, {});
-    // Fetch part from API
-    getPartByID(http, part.nxid, 3, (data, err) => {
-      if (err) {
-        parts.value.delete(part.nxid);
-        rej("")
-        return;
-      }
-      // Set new value
-      parts.value.set(part.nxid, data as PartSchema);
-      res("")
-    });
-  })
-}
-
 // Check if asset in in map and add it if it isn't
 function checkAssetAndParts(historyEvent: AssetEvent) {
-  return new Promise<string>(async (res, rej)=>{
-    // Check if asset is already cached
-    if (!assets.value.has(historyEvent.asset_id)) {
-      // Set temporary value
-      assets.value.set(historyEvent.asset_id, {});
-      // Get asset from API
-      getAssetByID(http, historyEvent.asset_id, async (data, err) => {
-        if (err) {
-          // Clear value so other threads can try again
-          assets.value.delete(historyEvent.asset_id);
-          errorHandler(err);
-          rej()
-          return;
-        }
-        // Set temp variable for type casting
-        let temp = data as AssetSchema;
-        // Set new value
-        assets.value.set(historyEvent.asset_id, temp);
-        // Map all existing parts
-        await Promise.all(historyEvent.existing.map(checkPart))
-        // Map all added parts
-        await Promise.all(historyEvent.added.map(checkPart))
-        // Map all removed parts
-        await Promise.all(historyEvent.removed.map(checkPart))
-        res("")
-      });
-    }
-    else {
-      // Map all existing parts
-      await Promise.all(historyEvent.existing.map(checkPart))
-      // Map all added parts
-      await Promise.all(historyEvent.added.map(checkPart))
-      // Map all removed parts
-      await Promise.all(historyEvent.removed.map(checkPart))
-      res("")
-    }
-  })
+  return Promise.all([
+    Cacher.getAsset(historyEvent.asset_id),
+    Promise.all(historyEvent.existing.map(Cacher.getPartInfo)),
+    Promise.all(historyEvent.added.map(Cacher.getPartInfo)),
+    Promise.all(historyEvent.removed.map(Cacher.getPartInfo)),
+  ])
 }
 
 onBeforeMount(() => {
-  getAllUsers(http, (data, err) => {
-    if(err) {
-      return errorHandler("Could not load users.")
-    }
-    // Temporary array
-    let allUsers = data as User[]
-    // Process all users
-    for (let u of allUsers) {
-      // Set user map
-      users.set(u._id!, u)
-    }
-    // Push check in queue to ref
-    loadPage(pageNum.value)
-  })
   asset_tag.value = router.currentRoute.value.query.nxid as string;
   pageNum.value = router.currentRoute.value.query.pageNum ? parseInt(router.currentRoute.value.query.pageNum as string) : 1
   router.replace({
     query: { nxid: asset_tag.value, pageNum: pageNum.value.toString() },
   });
+  loadPage(pageNum.value)
 });
 
 async function loadPage(page: number) {
@@ -210,9 +135,9 @@ async function checkCache() {
     <LoaderComponent v-if="loading"/>
     <AssetEventComponent
       v-else
-      :assets="assets"
-      :user="users.get(event.by)!"
-      :parts="parts"
+      :assets="Cacher.getAssetCache()"
+      :parts="Cacher.getPartCache()"
+      :user="Cacher.getUser(event.by)"
       :event="event"
       v-for="event in history"
     />

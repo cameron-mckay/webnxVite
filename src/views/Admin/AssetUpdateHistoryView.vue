@@ -35,7 +35,7 @@ let analyticsSearchObject:AnalyticsSearch<AssetEvent>;
 
 onBeforeMount(async ()=>{
   analyticsSearchObject = new AnalyticsSearch(
-    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts)=>{
+    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts, assetFilters)=>{
       return new Promise<AnalyticsSearchPage>((res, rej)=>{
         getAssetUpdates(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
           if(err)
@@ -45,7 +45,8 @@ onBeforeMount(async ()=>{
         },
         userFilters,
         partFilters,
-        hideOtherParts
+        hideOtherParts,
+        assetFilters
         )
       })
     }
@@ -59,6 +60,7 @@ async function displayResults(page: AssetEvent[])
   for(let e of page) {
     // Evil ass promise code
     await Promise.all([
+      Cacher.getAsset(e.asset_id),
       Promise.all(e.added.map((p)=>{
         return Cacher.getPartInfo(p)
       })),
@@ -69,7 +71,6 @@ async function displayResults(page: AssetEvent[])
         return Cacher.getPartInfo(p)
       }))
     ])
-    await Cacher.getAsset(e.asset_id)
   }
   assetEvents.value = page
   resultsLoading.value = false
@@ -91,6 +92,7 @@ function showLoader() {
       :searchComponent="analyticsSearchObject"
       :show-user-filters="true"
       :show-part-filters="true"
+      :show-asset-filters="true"
       @displayResults="displayResults"
       @showLoader="showLoader"
     >
