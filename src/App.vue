@@ -98,10 +98,10 @@ onBeforeMount(()=>{
 function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized, next?: NavigationGuardNext) {
   checkAuth(http, (data, err)=>{
     if (err||data=="You must login to continue.") {
-      revokeLogin()
+      return revokeLogin()
     }
     // Clear cache on page change
-    else if(from&&to.name!=from.name) {
+    if(from&&to.name!=from.name) {
       Cacher.validateCache()
       if(store.state.isAuth) {
         Cacher.loadAllUsersFromAPI()
