@@ -74,7 +74,7 @@ onBeforeMount(()=>{
   Cacher.assignErrorHandler(errorHandler)
   checkAuth(http, async (data, err) => {
     // If not authenticated
-    if (store.state.isAuth&&(err||data=="You must login to continue.")) {
+    if (err||data=="You must login to continue.") {
       return firstLoadRevokeLogin()
     }
     Cacher.loadAllUsersFromAPI()
@@ -97,7 +97,7 @@ onBeforeMount(()=>{
 
 function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized, next?: NavigationGuardNext) {
   checkAuth(http, (data, err)=>{
-    if (err||data=="You must login to continue.") {
+    if (store.state.isAuth&&(err||data=="You must login to continue.")) {
       return revokeLogin()
     }
     // Clear cache on page change
