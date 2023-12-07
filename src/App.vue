@@ -270,8 +270,11 @@ function firstLoadRevokeLogin() {
   // redirect
   if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Password Reset') {
     console.log("REDIRECT TO LOGIN")
-    router.replace({ query: undefined })
-    router.push({ name: 'Login' });
+    router.replace({ query: undefined }).then(()=>{
+      router.push({ name: 'Login' }).then(()=>{
+        console.log(router.currentRoute.value)
+      })
+    })
   }
 }
 
