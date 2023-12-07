@@ -71,6 +71,7 @@ onBeforeMount(()=>{
   routeConfigured.value = false;
   Cacher.assignAxios(http)
   Cacher.assignRouter(router)
+  Cacher.assignStore(store)
   Cacher.validateCache()
   Cacher.assignErrorHandler(errorHandler)
   checkAuth(http, async (data, err) => {

@@ -1,14 +1,16 @@
 import { AxiosError, AxiosInstance } from "axios";
 import { Router } from "vue-router";
-import { AssetSchema, CartItem, LoadedCartItem, PalletSchema, PartSchema, User } from "./interfaces";
+import { AssetSchema, CartItem, LoadedCartItem, PalletSchema, PartSchema, User, UserState } from "./interfaces";
 import { getAllUsers } from "./dbCommands/userManager";
 import { getPartByID } from "./dbCommands/partManager";
 import { getPalletByID } from "./dbCommands/palletManager";
 import { getAssetByID } from "./dbCommands/assetManager";
+import { Store } from "vuex";
 
 export default class Cacher {
   private static http: AxiosInstance;
   private static router: Router;
+  private static store: Store<UserState>;
   // Cache all users
   private static allUsers = new Map<string, User>()
   // Cache loaded parts and assets
@@ -44,6 +46,10 @@ export default class Cacher {
 
   static assignRouter(router: Router) {
     Cacher.router = router
+  }
+  
+  static assignStore(store: Store<UserState>) {
+    Cacher.store = store
   }
 
   static assignErrorHandler(errorHandler: (err: AxiosError | string)=>void) {
@@ -144,9 +150,13 @@ export default class Cacher {
     })
   }
 
+  static getCurrentUser() {
+    return Cacher.getUser(Cacher.store.state.user._id!)
+  }
+
   static getUser(id: string) {
     // Return user if they exist
-    return Cacher.allUsers.has(id) ? Cacher.allUsers.get(id) : {
+    return Cacher.allUsers.has(id) ? Cacher.allUsers.get(id)! : {
       email: "NOT FOUND",
       first_name: "NOT FOUND",
       last_name: "NOT FOUND",
@@ -154,7 +164,7 @@ export default class Cacher {
       building: 0,
       data_created: "NEVER",
       roles: []
-    }
+    } as User
   }
 
   static getAllUserMap() {

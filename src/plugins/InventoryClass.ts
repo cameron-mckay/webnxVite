@@ -182,6 +182,9 @@ export default class Inventory {
       // Add special admin only dests
       returnVal = returnVal.concat(JSON.parse(JSON.stringify(this.adminOnlySourceUsers)))
     }
+    else {
+      returnVal.push(Cacher.getCurrentUser())
+    }
     returnVal = returnVal.concat(JSON.parse(JSON.stringify(this.extraSourceUsers)) as User[])
     return returnVal
   }
@@ -189,7 +192,6 @@ export default class Inventory {
   getDestUsers() {
     // Get the extra dest users
     let returnVal = [] as User[]
-    returnVal = returnVal.concat(JSON.parse(JSON.stringify(this.extraDestUsers)) as User[])
     // If admin, add admin only dests
     if(this.thisUser.roles?.includes('admin')) {
       // Add the users without sales or kiosk roles
@@ -197,6 +199,10 @@ export default class Inventory {
       // Add special admin only dests
       returnVal = returnVal.concat(JSON.parse(JSON.stringify(this.adminOnlyDestUsers)))
     }
+    else {
+      returnVal.push(Cacher.getCurrentUser())
+    }
+    returnVal = returnVal.concat(JSON.parse(JSON.stringify(this.extraDestUsers)) as User[])
     return returnVal
   }
 
