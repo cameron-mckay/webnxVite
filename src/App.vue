@@ -12,7 +12,6 @@
       :errorHandler="errorHandler"
       :displayMessage="displayMessage"
       :revokeLogin="revokeLogin"
-      v-if="routeConfigured"
     />
   </div>
 </template>
@@ -35,7 +34,6 @@ import LoaderComponent from './components/GenericComponents/LoaderComponent.vue'
 // Global instances passed through props
 const http = inject<AxiosInstance>(injectionKey)!;
 const router = useRouter();
-const route = useRoute();
 const store = useStore();
 
 let routeConfigured = ref(false)
@@ -268,13 +266,13 @@ function revokeLogin() {
 function firstLoadRevokeLogin() {
   // set status
   store.commit('logout', http);
+  configureRouter();
   // redirect
   if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Password Reset') {
     console.log("REDIRECT TO LOGIN")
     router.replace({ query: undefined })
     router.push({ name: 'Login' });
   }
-  configureRouter();
 }
 
 </script>
