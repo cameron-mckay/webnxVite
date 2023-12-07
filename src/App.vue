@@ -96,46 +96,51 @@ onBeforeMount(()=>{
 })
 
 function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized, next?: NavigationGuardNext) {
-  // Clear cache on page change
-  if(from&&to.name!=from.name) {
-    Cacher.validateCache()
-    if(store.state.isAuth) {
-      Cacher.loadAllUsersFromAPI()
+  checkAuth(http, (data, err)=>{
+    if (err||data=="You must login to continue.") {
+      revokeLogin()
     }
-  }
-  // Make sure they are admin for admin routes
-  if (!store.state.user.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
-    redirect()
-  }
-  if (
-    !(store.state.user.roles?.includes('admin')||
-    store.state.user.roles?.includes('clerk')||
-    store.state.user.roles?.includes('lead')) &&
-    (/\/manage\/*/.test(to.path)||
-    /\/manage/.test(to.path))
-  ) {
-    redirect()
-  }
-  if (
-    !(store.state.user.roles?.includes('admin')||
-    store.state.user.roles?.includes('clerk')) &&
-    /\/clerk\/*/.test(to.path)
-  ) {
-    redirect()
-  }
-  if (!(store.state.user.roles?.includes('admin')||
-    store.state.user.roles?.includes('ebay')) &&
-    (/\/ebay\/*/.test(to.path)||
-    /\/ebay/.test(to.path))
-  ) {
-    redirect()
-  }
-  // This goes through the matched routes from last to first, finding the closest route with a title.
-  // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
-  // `/nested`'s will be chosen.
-  document.title = `WebNX${to.name?" - "+to.name.toString():""}`;
-  if(next)
-    next();
+    // Clear cache on page change
+    else if(from&&to.name!=from.name) {
+      Cacher.validateCache()
+      if(store.state.isAuth) {
+        Cacher.loadAllUsersFromAPI()
+      }
+    }
+    // Make sure they are admin for admin routes
+    if (!store.state.user.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
+      redirect()
+    }
+    if (
+      !(store.state.user.roles?.includes('admin')||
+      store.state.user.roles?.includes('clerk')||
+      store.state.user.roles?.includes('lead')) &&
+      (/\/manage\/*/.test(to.path)||
+      /\/manage/.test(to.path))
+    ) {
+      redirect()
+    }
+    if (
+      !(store.state.user.roles?.includes('admin')||
+      store.state.user.roles?.includes('clerk')) &&
+      /\/clerk\/*/.test(to.path)
+    ) {
+      redirect()
+    }
+    if (!(store.state.user.roles?.includes('admin')||
+      store.state.user.roles?.includes('ebay')) &&
+      (/\/ebay\/*/.test(to.path)||
+      /\/ebay/.test(to.path))
+    ) {
+      redirect()
+    }
+    // This goes through the matched routes from last to first, finding the closest route with a title.
+    // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
+    // `/nested`'s will be chosen.
+    document.title = `WebNX${to.name?" - "+to.name.toString():""}`;
+    if(next)
+      next();
+  })
 }
 
 function configureRouter() {
