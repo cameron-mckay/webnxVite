@@ -98,6 +98,7 @@ onBeforeMount(()=>{
 function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized, next?: NavigationGuardNext) {
   checkAuth(http, (data, err)=>{
     if (store.state.isAuth&&(err||data=="You must login to continue.")) {
+      errorHandler("Login expired.")
       return revokeLogin()
     }
     // Clear cache on page change
