@@ -207,6 +207,7 @@ export default class AnalyticsSearch<Type> {
         endDate.getTime()!=this.lastEndDate ||
         (userFilters?JSON.stringify(userFilters):JSON.stringify([]))!=JSON.stringify(this.lastUserFilters) ||
         (partFilters?JSON.stringify(partFilters):JSON.stringify([]))!=JSON.stringify(this.lastPartFilters) ||
+        (assetFilters?JSON.stringify(assetFilters):JSON.stringify([]))!=JSON.stringify(this.lastAssetFilters) ||
         hideOtherParts != this.lastHideOtherParts
       ) {
         // Clear the page cache
