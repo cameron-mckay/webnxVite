@@ -49,13 +49,9 @@ onMounted(() => {
     (localStorage.getItem('theme') == null &&
       window.matchMedia('(prefers-color-scheme: dark)').matches)
   ) {
-    //setTimeout(() => {
-      document.documentElement.classList.add('dark');
-    //}, 100);
+    document.documentElement.classList.add('dark');
   } else {
-    //setTimeout(() => {
-      localStorage.setItem('theme', 'light');
-    //}, 100);
+    localStorage.setItem('theme', 'light');
   }
 });
 
@@ -278,6 +274,8 @@ function firstLoadRevokeLogin() {
         configureRouter();
       })
     })
+  } else {
+    configureRouter();
   }
 }
 
