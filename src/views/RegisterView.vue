@@ -84,7 +84,7 @@ async function focus() {
     />
     <form class="text-center" @submit.prevent="register">
       <input
-        class="textbox my-1"
+        class="textbox my-1 mx-0"
         type="first_name"
         id="first_name"
         v-model="form.first_name"
@@ -92,28 +92,28 @@ async function focus() {
         required
       />
       <input
-        class="textbox my-1"
+        class="textbox my-1 mx-0"
         type="last_name"
         v-model="form.last_name"
         placeholder="Last name"
         required
       />
       <input
-        class="textbox my-1"
+        class="textbox my-1 mx-0"
         type="email"
         v-model="form.email"
         placeholder="Email"
         required
       />
       <input
-        class="textbox my-1"
+        class="textbox my-1 mx-0"
         type="password"
         v-model="form.password"
         placeholder="Password"
         required
       />
       <input
-        class="textbox my-1"
+        class="textbox my-1 mx-0"
         type="password"
         v-model="form.password2"
         placeholder="Confirm password"

@@ -62,7 +62,7 @@ async function redirectIfLoggedIn() {
     />
     <form class="text-center" @submit.prevent="sendEmail" v-if="!submitted">
       <input
-        class="textbox my-1"
+        class="textbox my-1 mx-0"
         type="email"
         id="email"
         v-model="form.email"

@@ -66,14 +66,14 @@ async function redirectIfLoggedIn() {
     />
     <form class="text-center" @submit.prevent="updatePassword">
      <input
-        class="textbox my-1"
+        class="textbox my-1 mx-0"
         type="password"
         v-model="form.password"
         placeholder="Password"
         required
       />
       <input
-        class="textbox my-1"
+        class="textbox my-1 mx-0"
         type="password"
         v-model="form.password2"
         placeholder="Confirm password"

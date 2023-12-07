@@ -7,7 +7,7 @@
     />
     <form class="text-center" @submit.prevent="login">
       <input
-        class="textbox my-1"
+        class="textbox my-1 mx-0"
         type="email"
         id="email"
         v-model="form.email"
@@ -16,7 +16,7 @@
         autofocus
       />
       <input
-        class="textbox my-1"
+        class="textbox my-1 mx-0"
         type="password"
         v-model="form.password"
         placeholder="Password"
