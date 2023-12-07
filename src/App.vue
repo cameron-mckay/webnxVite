@@ -266,13 +266,11 @@ function revokeLogin() {
 function firstLoadRevokeLogin() {
   // set status
   store.commit('logout', http);
-  configureRouter();
   // redirect
   if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Password Reset') {
-    console.log("REDIRECT TO LOGIN")
     router.replace({ query: undefined }).then(()=>{
       router.push({ name: 'Login' }).then(()=>{
-        console.log(router.currentRoute.value)
+        configureRouter();
       })
     })
   }
