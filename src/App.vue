@@ -61,8 +61,9 @@ onMounted(() => {
 });
 
 function redirect() {
-  router.push({ name: 'Parts' });
-  errorHandler('You are not authorized to access this page.');
+  router.push({ name: 'Parts' }).then(()=>{
+    errorHandler('You are not authorized to access this page.');
+  });
 }
 
 // Before app is created
@@ -110,7 +111,7 @@ function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized,
     }
     // Make sure they are admin for admin routes
     if (!store.state.user.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
-      redirect()
+      return redirect()
     }
     if (
       !(store.state.user.roles?.includes('admin')||
@@ -119,21 +120,21 @@ function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized,
       (/\/manage\/*/.test(to.path)||
       /\/manage/.test(to.path))
     ) {
-      redirect()
+      return redirect()
     }
     if (
       !(store.state.user.roles?.includes('admin')||
       store.state.user.roles?.includes('clerk')) &&
       /\/clerk\/*/.test(to.path)
     ) {
-      redirect()
+      return redirect()
     }
     if (!(store.state.user.roles?.includes('admin')||
       store.state.user.roles?.includes('ebay')) &&
       (/\/ebay\/*/.test(to.path)||
       /\/ebay/.test(to.path))
     ) {
-      redirect()
+      return redirect()
     }
     // This goes through the matched routes from last to first, finding the closest route with a title.
     // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
