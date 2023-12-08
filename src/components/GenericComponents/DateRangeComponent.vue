@@ -26,15 +26,17 @@ onBeforeMount(()=>{
 </script>
 <template>
     <form @submit.prevent="$emit('search', HTMLToDate(startDateRef), HTMLToDate(endDateRef))" class="flex flex-wrap">
-      <div class="mb-2 md:m-0">
-        <label>Start Date: </label>
-        <br class="md:hidden">
-        <input class="textbox w-auto md:mr-1" type="date" v-model="startDateRef" :max="endDateRef"/>
-      </div>
-      <div class="mb-2 md:m-0">
-        <label class="md:m-2">End Date: </label>
-        <br class="md:hidden">
-        <input class="textbox w-auto md:mr-1" type="date" v-model="endDateRef" :min="startDateRef" :max="dateToHTML(getTodaysDate())"/>
+      <div class="w-full md:w-auto flex">
+        <div class="mb-2 md:m-0">
+          <label>Start Date: </label>
+          <br class="md:hidden">
+          <input class="textbox w-auto md:mr-1" type="date" v-model="startDateRef" :max="endDateRef"/>
+        </div>
+        <div class="mb-2 md:m-0">
+          <label class="md:m-2">End Date: </label>
+          <br class="md:hidden">
+          <input class="textbox w-auto md:mr-1" type="date" v-model="endDateRef" :min="startDateRef" :max="dateToHTML(getTodaysDate())"/>
+        </div>
       </div>
       <slot>
       </slot>
