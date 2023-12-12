@@ -58,13 +58,13 @@ function assetSubmit(updatedAsset: AssetSchema, correction: boolean) {
     if (err) {
         return Cacher.errorHandler(err);
     }
-    if(correction&&oldAsset.value.asset_tag!=updatedAsset.asset_tag) {
+    if(correction&&updatedAsset.asset_tag) {
       router.push({ name: 'View Asset', query: { asset_tag: updatedAsset.value.asset_tag } });
     }
     else {
       router.back();
     }
-  }, correction&&oldAsset.value.asset_tag!=updatedAsset.asset_tag ? oldAsset.asset_tag : undefined);
+  }, correction&&oldAsset&&oldAsset.asset_tag!=updatedAsset.asset_tag ? oldAsset.asset_tag : undefined);
 }
 
 
