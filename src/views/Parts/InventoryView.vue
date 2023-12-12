@@ -55,6 +55,9 @@ onBeforeMount(async ()=>{
       {_id: 'ny', first_name: "NY Transfers"},
       {_id: 'la', first_name: "LA Transfers"},
       {_id: 'og', first_name: "Ogden Transfers"},
+      {_id: 'deleted', first_name: "Deleted"},
+      {_id: 'lost', first_name: "Lost"},
+      {_id: 'broken', first_name: "Broken"},
     ]
   )
   loading.value = false
