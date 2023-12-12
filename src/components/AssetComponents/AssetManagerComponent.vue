@@ -82,7 +82,6 @@ onMounted(()=>{
       id="form"
       @submit.prevent="submitForm"
       @reset.prevent="reset"
-      v-on:keydown.enter.prevent
       class="grid grid-cols-2"
     >
       <!-- -->
