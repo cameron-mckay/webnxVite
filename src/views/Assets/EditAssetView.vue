@@ -59,7 +59,7 @@ function assetSubmit(updatedAsset: AssetSchema, correction: boolean) {
         return Cacher.errorHandler(err);
     }
     if(correction&&updatedAsset.asset_tag) {
-      router.push({ name: 'View Asset', query: { asset_tag: updatedAsset.value.asset_tag } });
+      router.push({ name: 'View Asset', query: { asset_tag: updatedAsset.asset_tag } });
     }
     else {
       router.back();
