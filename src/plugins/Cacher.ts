@@ -19,8 +19,10 @@ export default class Cacher {
   private static palletCache = new Map<string, PalletSchema>()
   static errorHandler = (err: AxiosError | string) => {}
   static messageHandler = (msg: string) => {}
+  private static loadingUsers = false;
 
   static loadAllUsersFromAPI() {
+    Cacher.loadingUsers = true
     getAllUsers(Cacher.http, async (data, err) => {
       if(err) {
         Cacher.errorHandler(err)
@@ -29,6 +31,7 @@ export default class Cacher {
       for(let u of data as User[]) {
         Cacher.allUsers.set(u._id!, u)
       }
+      Cacher.loadingUsers = false
     })
   }
 
@@ -156,15 +159,7 @@ export default class Cacher {
 
   static getUser(id: string) {
     // Return user if they exist
-    return Cacher.allUsers.has(id) ? Cacher.allUsers.get(id)! : {
-      email: "NOT FOUND",
-      first_name: "NOT FOUND",
-      last_name: "NOT FOUND",
-      enabled: false,
-      building: 0,
-      data_created: "NEVER",
-      roles: []
-    } as User
+    return Cacher.allUsers.has(id) ? Cacher.allUsers.get(id)! : {} as User
   }
 
   static getAllUserMap() {

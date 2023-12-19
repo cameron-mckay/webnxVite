@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onBeforeMount } from 'vue';
+import { ref, onMounted } from 'vue';
 import {
   User,
   CartItem
@@ -29,8 +29,8 @@ let inventory:Inventory;
 let loading = ref(true);
 let processingMove = false
 
-onBeforeMount(async ()=>{
-  inventory = new Inventory(store.state.user,
+onMounted(()=>{
+  inventory = new Inventory(JSON.parse(JSON.stringify(store.state.user)),
     // Source users
     [
       {_id: 'all', first_name: "All Techs"},
