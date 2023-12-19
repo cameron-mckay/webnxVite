@@ -29,7 +29,7 @@ let oldPallet = {} as PalletSchema;
 let assets = ref([] as AssetSchema[])
 let loading = ref(false)
 let processingSubmission = false
-let inventory = new Inventory(store.state.user)
+let inventory:Inventory;
 let correction = ref(false)
 let serialsRef = ref("")
 
@@ -37,6 +37,8 @@ onBeforeMount(async () => {
   if (router.currentRoute.value.query.pallet_tag) {
     loading.value = true
     // get asset tag from url
+    await Cacher.loadAllUsersFromAPISync()
+    inventory = new Inventory(store.state.user)
     let nxid = router.currentRoute.value.query.pallet_tag as string;
     await inventory.loadSourceInv(inventory.thisUser._id!)
     await inventory.loadDestFromPallet(nxid)

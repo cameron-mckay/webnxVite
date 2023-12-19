@@ -13,6 +13,7 @@ import EbayInventory from '../../plugins/EbayClass';
 import InventoryComponent from '../../components/InventoryComponents/InventoryComponent.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import { sellOnEbay } from '../../plugins/dbCommands/partManager';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -31,6 +32,7 @@ let processingMove = false
 let orderID = ref("")
 
 onBeforeMount(async ()=>{
+  await Cacher.loadAllUsersFromAPISync()
   inventory = new EbayInventory(store.state.user)
   loading.value = false
 })

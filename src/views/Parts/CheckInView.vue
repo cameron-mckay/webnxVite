@@ -13,6 +13,7 @@ import Inventory from '../../plugins/InventoryClass';
 import InventoryComponent from '../../components/InventoryComponents/InventoryComponent.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import { checkin, movePart } from '../../plugins/dbCommands/partManager';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -30,6 +31,7 @@ let loading = ref(true);
 let processingCheckin = false
 
 onBeforeMount(async ()=>{
+  await Cacher.loadAllUsersFromAPISync()
   inventory = new Inventory(store.state.user)
   loading.value = false
 })

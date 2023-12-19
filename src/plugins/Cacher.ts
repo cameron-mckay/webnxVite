@@ -6,6 +6,7 @@ import { getPartByID } from "./dbCommands/partManager";
 import { getPalletByID } from "./dbCommands/palletManager";
 import { getAssetByID } from "./dbCommands/assetManager";
 import { Store } from "vuex";
+import { ref } from "vue";
 
 export default class Cacher {
   private static http: AxiosInstance;
@@ -29,6 +30,21 @@ export default class Cacher {
       for(let u of data as User[]) {
         Cacher.allUsers.set(u._id!, u)
       }
+    })
+  }
+
+  static loadAllUsersFromAPISync() {
+    return new Promise<User[]>((res)=>{
+      getAllUsers(Cacher.http, async (data, err) => {
+        if(err) {
+          Cacher.errorHandler(err)
+          return
+        }
+        for(let u of data as User[]) {
+          Cacher.allUsers.set(u._id!, u)
+        }
+        res(data as User[])
+      })
     })
   }
 
@@ -156,15 +172,7 @@ export default class Cacher {
 
   static getUser(id: string) {
     // Return user if they exist
-    return Cacher.allUsers.has(id) ? Cacher.allUsers.get(id)! : {
-      email: "NOT FOUND",
-      first_name: "NOT FOUND",
-      last_name: "NOT FOUND",
-      enabled: false,
-      building: 0,
-      data_created: "NEVER",
-      roles: []
-    } as User
+    return Cacher.allUsers.has(id) ? Cacher.allUsers.get(id)! : {} as User
   }
 
   static getAllUserMap() {

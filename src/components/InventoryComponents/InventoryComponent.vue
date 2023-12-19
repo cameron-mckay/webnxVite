@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, watch } from 'vue';
+import { onBeforeMount, onMounted, ref, watch } from 'vue';
 import InventoryPartHeaderComponent from './InventoryPartHeaderComponent.vue';
 import LoaderComponent from '../GenericComponents/LoaderComponent.vue';
 import {
@@ -30,15 +30,16 @@ let destUsers = ref([] as User[])
 let loading = ref(true)
 let emit = defineEmits(['submit'])
 
-onBeforeMount(async ()=>{
+onMounted(()=>{
   inventory.registerRefreshCallback(refreshInv)
-  for (let u of inventory.getSourceUsers()) {
+  sourceUsers.value = inventory.getSourceUsers()
+  destUsers.value = inventory.getDestUsers()
+  console.log(sourceUsers.value)
+  for (let u of sourceUsers.value) {
     if(u._id==inventory.thisUser._id) {
       sourceUser.value = u
     }
   }
-  sourceUsers.value = inventory.getSourceUsers()
-  destUsers.value = inventory.getDestUsers()
   for(let u of destUsers.value) {
     if(u.default)
       destUser.value = u
@@ -112,7 +113,6 @@ function submit() {
                 <option 
                   v-for="user of sourceUsers" 
                   :value="user"
-                  :selected="inventory.thisUser._id == user._id"
                 >
                   {{ inventory.thisUser._id == user._id ? "Your inventory" : (user.last_name ? user.first_name + " " + user.last_name : user.first_name) }}
                 </option>

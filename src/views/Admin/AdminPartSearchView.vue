@@ -96,7 +96,7 @@ function toggleAdvanced() {
 }
 
 async function advancedSearchButtonPressed(part: PartSchema) {
-  await searchObject.loadPageAdvanced(store.state.user.building!, 1, part)
+  searchObject.newAdvancedSearch(store.state.user.building!, 1, part)
   toggleAdvanced()
 }
 

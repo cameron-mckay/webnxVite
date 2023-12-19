@@ -42,8 +42,9 @@ function assetSubmit(updatedAsset: AssetSchema) {
   processingSubmission = true
   let unloadedParts = [] as CartItem[]
   // Only fetch the parts if this is a server
-  if(updatedAsset.asset_type=="Server")
-    Cacher.unloadParts(inventory.getDestInv())
+  if(updatedAsset.asset_type=="Server") {
+    unloadedParts = Cacher.unloadParts(inventory.getDestInv())
+  }
   createAsset(http, updatedAsset, unloadedParts, (data, err) => {
     processingSubmission = false
     if (err) {

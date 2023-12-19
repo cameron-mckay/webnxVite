@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onBeforeMount } from 'vue';
+import { ref, onMounted } from 'vue';
 import {
   User,
   CartItem
@@ -13,6 +13,7 @@ import Inventory from '../../plugins/InventoryClass';
 import InventoryComponent from '../../components/InventoryComponents/InventoryComponent.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import { movePart } from '../../plugins/dbCommands/partManager';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -29,8 +30,9 @@ let inventory:Inventory;
 let loading = ref(true);
 let processingMove = false
 
-onBeforeMount(async ()=>{
-  inventory = new Inventory(store.state.user,
+onMounted(async ()=>{
+  await Cacher.loadAllUsersFromAPISync()
+  inventory = new Inventory(JSON.parse(JSON.stringify(store.state.user)),
     // Source users
     [
       {_id: 'all', first_name: "All Techs"},
@@ -55,6 +57,9 @@ onBeforeMount(async ()=>{
       {_id: 'ny', first_name: "NY Transfers"},
       {_id: 'la', first_name: "LA Transfers"},
       {_id: 'og', first_name: "Ogden Transfers"},
+      {_id: 'deleted', first_name: "Deleted"},
+      {_id: 'lost', first_name: "Lost"},
+      {_id: 'broken', first_name: "Broken"},
     ]
   )
   loading.value = false
