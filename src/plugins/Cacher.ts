@@ -6,6 +6,7 @@ import { getPartByID } from "./dbCommands/partManager";
 import { getPalletByID } from "./dbCommands/palletManager";
 import { getAssetByID } from "./dbCommands/assetManager";
 import { Store } from "vuex";
+import { ref } from "vue";
 
 export default class Cacher {
   private static http: AxiosInstance;
@@ -19,10 +20,8 @@ export default class Cacher {
   private static palletCache = new Map<string, PalletSchema>()
   static errorHandler = (err: AxiosError | string) => {}
   static messageHandler = (msg: string) => {}
-  private static loadingUsers = false;
 
   static loadAllUsersFromAPI() {
-    Cacher.loadingUsers = true
     getAllUsers(Cacher.http, async (data, err) => {
       if(err) {
         Cacher.errorHandler(err)
@@ -31,7 +30,21 @@ export default class Cacher {
       for(let u of data as User[]) {
         Cacher.allUsers.set(u._id!, u)
       }
-      Cacher.loadingUsers = false
+    })
+  }
+
+  static loadAllUsersFromAPISync() {
+    return new Promise<User[]>((res)=>{
+      getAllUsers(Cacher.http, async (data, err) => {
+        if(err) {
+          Cacher.errorHandler(err)
+          return
+        }
+        for(let u of data as User[]) {
+          Cacher.allUsers.set(u._id!, u)
+        }
+        res(data as User[])
+      })
     })
   }
 

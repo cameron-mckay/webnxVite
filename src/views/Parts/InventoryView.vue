@@ -13,6 +13,7 @@ import Inventory from '../../plugins/InventoryClass';
 import InventoryComponent from '../../components/InventoryComponents/InventoryComponent.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import { movePart } from '../../plugins/dbCommands/partManager';
+import Cacher from '../../plugins/Cacher';
 
 interface Props {
   http: AxiosInstance;
@@ -29,7 +30,8 @@ let inventory:Inventory;
 let loading = ref(true);
 let processingMove = false
 
-onMounted(()=>{
+onMounted(async ()=>{
+  await Cacher.loadAllUsersFromAPISync()
   inventory = new Inventory(JSON.parse(JSON.stringify(store.state.user)),
     // Source users
     [

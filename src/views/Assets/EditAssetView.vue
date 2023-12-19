@@ -29,13 +29,15 @@ const { http, store, router } = defineProps<Props>();
 let oldAsset = {} as AssetSchema;
 let loading = ref(false)
 let processingSubmission = false
-let inventory = new Inventory(store.state.user)
+let inventory:Inventory;
 let correction = ref(false)
 
 onBeforeMount(async () => {
   if (router.currentRoute.value.query.asset_tag) {
     loading.value = true
     // get asset tag from url
+    await Cacher.loadAllUsersFromAPISync()
+    inventory = new Inventory(store.state.user)
     let nxid = router.currentRoute.value.query.asset_tag as string;
     await inventory.loadSourceInv(inventory.thisUser._id!)
     await inventory.loadDestFromAsset(nxid)
