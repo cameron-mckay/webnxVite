@@ -316,6 +316,7 @@ function audit() {
 
     <AddInventoryComponent
       v-if="addPart"
+      @toggle="toggleAdd"
       @submitRequest="submitAddToInventory"
       @audit="audit"
       @kioskChange="changeKiosk"

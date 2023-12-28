@@ -22,7 +22,7 @@ let request = ref({
 
 // Owner
 let owner = ref({} as User);
-let quantity = ref(JSON.parse(JSON.stringify(part.quantity)));
+let quantity = ref(part.quantity?part.quantity:0);
 let serials = ref('');
 let emit = defineEmits(['submitRequest', 'audit', 'kioskChange']);
 let currentKiosk = ref("")
@@ -51,7 +51,7 @@ onMounted(() => {
   watch(currentKiosk, ()=>{
     emit("kioskChange", part, currentKiosk.value)
     request.value.location = currentKiosk.value
-    setTimeout(()=>{quantity.value = part.quantity},250)
+    setTimeout(()=>{quantity.value = part.quantity?part.quantity:0},250)
   })
   watch(request, () => {
     switch (request.value.location) {
