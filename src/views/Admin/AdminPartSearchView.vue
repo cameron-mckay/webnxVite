@@ -190,7 +190,7 @@ function submitAddToInventory(
       let n = currentPart.value.nxid!
       // Reset
       toggleAdd({});
-      toggleAdd(Cacher.getPartInfo(n));
+      toggleAdd(await Cacher.getPartInfo(n));
     });
   }
   else if (
@@ -210,7 +210,7 @@ function submitAddToInventory(
       let n = currentPart.value.nxid!
       // Reset
       toggleAdd({});
-      toggleAdd(Cacher.getPartInfo(n));
+      toggleAdd(await Cacher.getPartInfo(n));
     });
   } else if (
     request.quantity != undefined &&
@@ -230,7 +230,7 @@ function submitAddToInventory(
         let n = currentPart.value.nxid!
         // Reset
         toggleAdd({});
-        toggleAdd(Cacher.getPartInfo(n));
+        toggleAdd(await Cacher.getPartInfo(n));
     }) 
   } else {
     return errorHandler('Quantity error');
