@@ -190,6 +190,7 @@ export default class TextSearch<Type> {
       // Omit page size from query string
       let pageSize = queryObject["pageSize"]
       delete queryObject.pageSize
+      delete queryObject.text
       // Update the router
       if(!this.routerDisabled)
         this.router.replace({
