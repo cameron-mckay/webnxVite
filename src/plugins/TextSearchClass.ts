@@ -229,8 +229,8 @@ export default class TextSearch<Type> {
     let pageNum = this.lastPageNum
     // This will cause the reload callback to run
     this.lastPageNum = -1
-    this.lastSearchString = "kajsdfpasidfjj"
-    this.lastAdvancedSearchObject = {} as Type
+    // this.lastSearchString = "kajsdfpasidfjj"
+    // this.lastAdvancedSearchObject = {} as Type
     this.loadPageCallback(pageNum)
   }
 
