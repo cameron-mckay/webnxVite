@@ -183,11 +183,14 @@ function submitAddToInventory(
       if (err) {
         return errorHandler(err);
       }
-      currentPart.value = await Cacher.getPartInfo(currentPart.value.nxid!)
       // Display confirmation
       displayMessage('Successfully added to inventory');
       // Refresh parts list
       searchObject.forceReloadPage()
+      let n = currentPart.value.nxid!
+      // Reset
+      toggleAdd({});
+      toggleAdd(Cacher.getPartInfo(n));
     });
   }
   else if (
@@ -200,11 +203,14 @@ function submitAddToInventory(
       if (err) {
         return errorHandler(err);
       }
-      currentPart.value = await Cacher.getPartInfo(currentPart.value.nxid!)
       // Display confirmation
       displayMessage('Successfully added to inventory');
       // Refresh parts list
       searchObject.forceReloadPage()
+      let n = currentPart.value.nxid!
+      // Reset
+      toggleAdd({});
+      toggleAdd(Cacher.getPartInfo(n));
     });
   } else if (
     request.quantity != undefined &&
@@ -216,11 +222,15 @@ function submitAddToInventory(
             // Handle errors
           return errorHandler(err);
         }
-        currentPart.value = await Cacher.getPartInfo(currentPart.value.nxid!)
         displayMessage(data as string);
+        // Reset
+        toggleAdd({});
         // Refresh parts list
         searchObject.forceReloadPage()
-
+        let n = currentPart.value.nxid!
+        // Reset
+        toggleAdd({});
+        toggleAdd(Cacher.getPartInfo(n));
     }) 
   } else {
     return errorHandler('Quantity error');
