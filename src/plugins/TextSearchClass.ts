@@ -197,6 +197,7 @@ export default class TextSearch<Type> {
           query: queryObject
         })
       queryObject["pageSize"] = pageSize
+      console.log(searchObject)
       //
       let thisPage = [] as Type[]
       // Early return if the request doesn't make sense
