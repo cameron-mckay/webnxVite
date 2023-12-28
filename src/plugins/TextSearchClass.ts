@@ -171,7 +171,7 @@ export default class TextSearch<Type> {
     }
   }
 
-  async loadPageAdvanced(building: number, pageNum: number, searchObject: Type) {
+  async loadPageAdvanced(building: number, pageNum: number, searchObject: any) {
     return new Promise<Type[]>(async (res, rej) => {
       if(
         !this.lastSearchAdvanced ||
@@ -197,7 +197,7 @@ export default class TextSearch<Type> {
           query: queryObject
         })
       queryObject["pageSize"] = pageSize
-      console.log(searchObject)
+      delete searchObject.text
       //
       let thisPage = [] as Type[]
       // Early return if the request doesn't make sense
