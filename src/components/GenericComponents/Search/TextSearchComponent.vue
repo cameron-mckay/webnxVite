@@ -107,10 +107,13 @@ async function loadPage(pageNum: number) {
   let page = []
   // If search was advanced
   if(searchObject.wasLastSearchAdvanced()&&!buttonPressed) {
+    console.log("load advanced")
     // Load advanced search page
+    console.log(searchObject.getLastAdvancedSearchObject())
     page = await searchObject.loadPageAdvanced(3, pageNum, searchObject.getLastAdvancedSearchObject())
   }
   else {
+    console.log("load text")
     buttonPressed = false
     // Load text search page
     page = await searchObject.loadPage(3, pageNum, searchText.value)
