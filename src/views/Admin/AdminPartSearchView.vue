@@ -183,10 +183,9 @@ function submitAddToInventory(
       if (err) {
         return errorHandler(err);
       }
+      currentPart.value = await Cacher.getPartInfo(currentPart.value.nxid!)
       // Display confirmation
       displayMessage('Successfully added to inventory');
-      // Reset
-      toggleAdd({});
       // Refresh parts list
       searchObject.forceReloadPage()
     });
@@ -201,10 +200,9 @@ function submitAddToInventory(
       if (err) {
         return errorHandler(err);
       }
+      currentPart.value = await Cacher.getPartInfo(currentPart.value.nxid!)
       // Display confirmation
       displayMessage('Successfully added to inventory');
-      // Reset
-      toggleAdd({});
       // Refresh parts list
       searchObject.forceReloadPage()
     });
@@ -218,9 +216,8 @@ function submitAddToInventory(
             // Handle errors
           return errorHandler(err);
         }
+        currentPart.value = await Cacher.getPartInfo(currentPart.value.nxid!)
         displayMessage(data as string);
-        // Reset
-        toggleAdd({});
         // Refresh parts list
         searchObject.forceReloadPage()
 
