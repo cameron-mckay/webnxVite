@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
-import { Ref, onActivated, ref } from 'vue';
+import { Ref, onActivated, ref, onBeforeMount } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AddInventoryComponent from '../../components/PartComponents/AddInventoryComponent.vue';
@@ -10,6 +10,7 @@ import TextSearchComponent from '../../components/GenericComponents/Search/TextS
 import SlidersButton from '../../components/GenericComponents/Buttons/SlidersButton.vue';
 import AdvancedSearchComponent from '../../components/PartComponents/PartAdvancedSearchComponent.vue';
 import PartComponent from '../../components/PartComponents/PartComponent.vue';
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import {
   createNewPartRecords,
   deletePart,
@@ -47,14 +48,24 @@ let editPart = ref(false);
 let addPart = ref(false);
 let currentPart: Ref<PartSchema> = ref({});
 let currentBuilding = ref(3);
-let users = Cacher.getAllUsers()
-let kiosks = Cacher.getKiosks()
-
+let users:User[]
+let kiosks:User[]
+let loading = ref(false)
 
 // Default building is Ogden - 3
 let parts: Ref<PartSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
+
+onBeforeMount(async ()=>{
+  // Set loader
+  loading.value = true
+  // Load users n shit
+  users = await Cacher.loadAllUsersFromAPISync()
+  kiosks = Cacher.getKiosks()
+  // unset loader
+  loading.value = false
+})
 
 function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
   return new Promise<TextSearchPage>((res)=>{
@@ -256,9 +267,11 @@ function audit() {
     displayMessage("Part audited.")
   })
 }
-</script> <template> <div>
+</script>
+<template>
+  <LoaderComponent v-if="loading"/>
+  <div v-else>
     <PageHeaderWithBackButton class="mb-4" :prev-path="'/manage'" :router="router">Manage Parts</PageHeaderWithBackButton>
-
     <TextSearchComponent
       :search-object="searchObject"
       @display-results="displayResults"
@@ -308,6 +321,7 @@ function audit() {
       @submitRequest="submitAddToInventory"
       @audit="audit"
       @kioskChange="changeKiosk"
+      :key="currentPart.nxid!+Date.now()"
       :users="users"
       :kiosks="kiosks.map((u)=>u.first_name + ' ' + u.last_name)"
       :buildings="buildings"
