@@ -234,8 +234,6 @@ function submitAddToInventory(
           return errorHandler(err);
         }
         displayMessage(data as string);
-        // Reset
-        toggleAdd({});
         // Refresh parts list
         searchObject.forceReloadPage()
         let n = currentPart.value.nxid!
@@ -263,7 +261,8 @@ function audit() {
     if(err) {
       return errorHandler(err)
     }
-    currentPart.value = data as PartSchema
+    toggleAdd({});
+    toggleAdd(data as PartSchema);
     displayMessage("Part audited.")
   })
 }
@@ -317,11 +316,10 @@ function audit() {
 
     <AddInventoryComponent
       v-if="addPart"
-      @toggle="toggleAdd"
       @submitRequest="submitAddToInventory"
       @audit="audit"
       @kioskChange="changeKiosk"
-      :key="currentPart.nxid!+Date.now()"
+      :key="currentPart.nxid!+currentPart.audited?currentPart.audited:Date.now()"
       :users="users"
       :kiosks="kiosks.map((u)=>u.first_name + ' ' + u.last_name)"
       :buildings="buildings"
