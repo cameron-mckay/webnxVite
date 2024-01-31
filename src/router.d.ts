@@ -3,7 +3,8 @@ import 'vue-router'
 declare module 'vue-router' {
   interface RouteMeta {
     // is optional
-    allowedRoles?: string[]
+    allowedRoles?: string[],
+    unauthenticated?: boolean
   }
 }
 

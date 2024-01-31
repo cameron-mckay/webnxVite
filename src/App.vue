@@ -236,9 +236,7 @@ function revokeLogin() {
   // set status
   store.commit('logout', http);
   // redirect
-  if (router.currentRoute.value.name != 'Register'
-    &&router.currentRoute.value.name != 'Forgot Password'
-    &&router.currentRoute.value.name != 'Password Reset') {
+  if (!router.currentRoute.value.meta.unauthenticated) {
     router.replace({ query: undefined }).then(()=>{
       router.push({ name: 'Login' })
     })
@@ -249,9 +247,7 @@ function firstLoadRevokeLogin() {
   // set status
   store.commit('logout', http);
   // redirect
-  if (router.currentRoute.value.name != 'Register'
-    &&router.currentRoute.value.name != 'Forgot Password'
-    &&router.currentRoute.value.name != 'Password Reset') {
+  if (!router.currentRoute.value.meta.unauthenticated) {
     router.replace({ query: undefined }).then(()=>{
       router.push({ name: 'Login' }).then(()=>{
         configureRouter();

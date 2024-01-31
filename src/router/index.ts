@@ -10,21 +10,33 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: () => import('../views/RegisterView.vue'),
+    meta: {
+      unauthenticated: true
+    }
   },
   {
     path: '/login',
     name: 'Login',
     component: () => import('../views/LoginView.vue'),
+    meta: {
+      unauthenticated: true
+    }
   },
   {
     path: '/forgotPassword',
     name: 'Forgot Password',
     component: () => import('../views/SendResetEmailView.vue'),
+    meta: {
+      unauthenticated: true
+    }
   },
   {
     path: '/passwordReset',
     name: 'Password Reset',
     component: () => import('../views/ResetPasswordView.vue'),
+    meta: {
+      unauthenticated: true
+    }
   },
   {
     path: '/cart',
