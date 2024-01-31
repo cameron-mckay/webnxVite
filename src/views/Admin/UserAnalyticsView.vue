@@ -43,7 +43,7 @@ function getUsers(startDate: Date, endDate: Date) {
     if (err) {
       return errorHandler(err);
     }
-    let temp = (data as User[]).filter((u)=>!(u.roles?.includes("kiosk")||u.roles?.includes("sales")))
+    let temp = (data as User[]).filter((u)=>u.roles?.includes("own_parts"))
     await Promise.all(
       [
         Promise.all(temp.map((u)=>{

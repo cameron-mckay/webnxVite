@@ -107,7 +107,7 @@ function displayResults(page: PalletSchema[]) {
           @palletSearch="advancedSearchButtonPressed"
           @toggle="toggleAdvanced"
         />
-        <PlusButton @click="addUntrackedPallet" v-if="!store.state.user.roles?.includes('sales')"/>
+        <PlusButton @click="addUntrackedPallet" v-if="store.state.user.roles?.includes('edit_pallets')"/>
       </template>
       <template v-slot:searchHeader>
         <p>Pallet Tag</p>
@@ -117,7 +117,7 @@ function displayResults(page: PalletSchema[]) {
       <template v-slot:searchResults>
         <PalletComponent
           :add="false"
-          :edit="true"
+          :edit="store.state.user.roles?.includes('edit_pallets')"
           :view="true"
           v-for="pallet in pallets"
           v-bind:key="pallet._id"

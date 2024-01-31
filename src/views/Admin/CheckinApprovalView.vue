@@ -77,7 +77,7 @@ function loadQueue() {
       kiosks.value = []
       for (let u of allUsers) {
         // Check if kiosk
-        if(u.roles&&u.roles.includes("kiosk")) {
+        if(u.roles&&u.roles.includes("is_kiosk")) {
           // Push to kiosks array
           kiosks.value.push(u)
         }

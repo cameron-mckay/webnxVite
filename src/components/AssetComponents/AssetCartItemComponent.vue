@@ -11,7 +11,7 @@ interface Props {
 const { item, maxQuantity, hideButtons, untracked } = defineProps<Props>();
 const emit = defineEmits(['movePart']);
 let quantityVisible = ref(item.quantity ? item.quantity : 0)
-let serial = ref(item.serial?item.serial:"")
+// let serial = ref(item.serial?item.serial:"")
 
 function updateQuantity() {
   if(maxQuantity&&quantityVisible.value!>maxQuantity)
@@ -32,9 +32,9 @@ watch(()=>item.quantity, ()=>{
 // Function called on exit since serial is used as 
 // key, and key updates reset the component.
 // Direct model was causing dropped or delayed input
-function updateSerial() {
-  item.serial = serial.value
-}
+// function updateSerial() {
+//   item.serial = serial.value
+// }
 </script>
 
 <template>
@@ -45,6 +45,7 @@ function updateSerial() {
       <p class="hidden md:block">{{ item.part.nxid }}</p>
       <p class="break-words">{{ item.part.manufacturer }}</p>
       <p class="break-words">{{ item.part.name }}</p>
+      <!--
       <input
         class="textbox pl-2 "
         v-if="untracked && item.part.serialized"
@@ -54,7 +55,11 @@ function updateSerial() {
         placeholder="Serial"
         v-on:focusout="updateSerial"
       />
-      <p class="break-words" v-else-if="item.part.serialized || item.serial">
+      <p class="break-words" v-else-if="item.serial">
+        {{ item.serial }}
+      </p>
+      -->
+      <p class="break-words" v-if="item.serial">
         {{ item.serial }}
       </p>
       <div class="flex justify-center" v-else-if="!hideButtons">
@@ -76,7 +81,7 @@ function updateSerial() {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"
           class="button-icon hover:button-icon-hover active:button-icon-active"
-          v-if="!(item.part.serialized || item.serial)"
+          v-if="!(item.serial)"
           v-on:click="$emit('movePart', item.part, 1, item.serial)"
         >
           <path
@@ -90,7 +95,7 @@ function updateSerial() {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"
-          v-if="!(item.part.serialized || item.serial)"
+          v-if="!(item.serial)"
           class="button-icon hover:button-icon-hover active:button-icon-active no-margin-on-mobile"
           v-on:click="$emit('movePart', item.part, -1, item.serial)"
         >

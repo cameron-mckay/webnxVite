@@ -27,7 +27,7 @@ const emit = defineEmits(['plus', 'minus', 'delete']);
         type="text"
         placeholder="Serial"
       />
-      <p class="break-words" v-else-if="item.part.serialized || item.serial">
+      <p class="break-words" v-else-if="item.serial">
         {{ item.serial ? item.serial : "DELETED" }}
       </p>
       <p class="break-words" v-else>{{ item.quantity ? item.quantity : "DELETED" }}</p>

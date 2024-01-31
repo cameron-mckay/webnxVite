@@ -189,22 +189,23 @@ function submitAddToInventory(
 ) {
   request.building = store.state.user.building
   // Send creation details to API
-  if(part.serialized) {
-    createNewPartRecords(http, request, owner, async (records, err) => {
-      if (err) {
-        return errorHandler(err);
-      }
-      // Display confirmation
-      displayMessage('Successfully added to inventory');
-      // Refresh parts list
-      searchObject.forceReloadPage()
-      let n = currentPart.value.nxid!
-      // Reset
-      toggleAdd({});
-      toggleAdd(await Cacher.getPartInfo(n));
-    });
-  }
-  else if (
+  // if(part.serialized) {
+  //   createNewPartRecords(http, request, owner, async (records, err) => {
+  //     if (err) {
+  //       return errorHandler(err);
+  //     }
+  //     // Display confirmation
+  //     displayMessage('Successfully added to inventory');
+  //     // Refresh parts list
+  //     searchObject.forceReloadPage()
+  //     let n = currentPart.value.nxid!
+  //     // Reset
+  //     toggleAdd({});
+  //     toggleAdd(await Cacher.getPartInfo(n));
+  //   });
+  // }
+  // else 
+  if (
     request.quantity != undefined &&
     part.quantity != undefined &&
     request.quantity > part.quantity
@@ -296,6 +297,7 @@ function audit() {
           :view="true"
           :edit="true"
           :add="true"
+          :showAudit="store.state.user.roles?.includes('view_audit_date')"
           v-for="part in parts"
           @editPartAction="toggleEdit(part)"
           @addPartAction="toggleAdd(part)"

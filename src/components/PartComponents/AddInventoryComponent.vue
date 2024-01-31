@@ -23,7 +23,7 @@ let request = ref({
 // Owner
 let owner = ref({} as User);
 let quantity = ref(part.quantity?part.quantity:0);
-let serials = ref('');
+// let serials = ref('');
 let emit = defineEmits(['submitRequest', 'audit', 'kioskChange']);
 let currentKiosk = ref("")
 let kioskNames = [] as string[]
@@ -35,11 +35,11 @@ function resetForm() {
 }
 
 function submit() {
-  if (part.serialized) {
-    request.value.serial = serials.value;
-  } else {
+  // if (part.serialized) {
+  //   request.value.serial = serials.value;
+  // } else {
     request.value.quantity = quantity.value;
-  }
+  //}
   emit('submitRequest', request.value, owner.value, part);
 }
 
@@ -105,9 +105,9 @@ onMounted(() => {
       <p class="col-span-2 mb-4 text-xl">
         Current {{currentKiosk}} Quantity: {{ part.quantity }}
       </p>
-      <label v-if="!part.serialized&&currentKiosk">New Quantity:</label>
+      <label v-if="currentKiosk">New Quantity:</label>
       <input
-        v-if="!part.serialized&&currentKiosk"
+        v-if="currentKiosk"
         class="textbox m-1"
         required
         v-model="quantity"
@@ -115,6 +115,7 @@ onMounted(() => {
         min="0"
         placeholder="Quantity"
       />
+      <!--
       <label v-if="part.serialized&&currentKiosk">Serial numbers:</label>
       <textarea
         class="textbox m-1"
@@ -122,20 +123,19 @@ onMounted(() => {
         v-model="serials"
         placeholder="One per line.  Drag to resize"
       />
+      -->
       <div
         v-if="
-          ((quantity > part.quantity!) || part.serialized)&&!part.consumable
+          (quantity > part.quantity!)&&!part.consumable
         "
         class="col-span-2 grid grid-cols-2"
       >
-        <!--
         <label>Building:</label>
         <select required v-model="request.building" class="textbox m-1">
           <option>3</option>
           <option>1</option>
           <option>4</option>
         </select>
-        -->
         <label>Location:</label>
         <select required v-model="request.location" class="textbox m-1">
           <option>Tech Inventory</option>
@@ -175,8 +175,7 @@ onMounted(() => {
       <p
         v-if="
           part.quantity != undefined &&
-          quantity > part.quantity &&
-          !part.serialized
+          quantity > part.quantity
         "
         class="col-span-2 mb-4 text-xl"
       >
@@ -186,15 +185,14 @@ onMounted(() => {
       <p
         v-else-if="
           part.quantity != undefined &&
-          quantity < part.quantity &&
-          !part.serialized
+          quantity < part.quantity
         "
         class="col-span-2 mb-4 text-xl"
       >
         Removing {{ part.quantity - quantity }} from {{currentKiosk}}
       </p>
       <p
-        v-else-if="part.quantity != undefined && !part.serialized"
+        v-else-if="part.quantity != undefined"
         class="col-span-2 mb-4 text-xl"
       >
         No change.

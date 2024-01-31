@@ -38,65 +38,88 @@
             Parts
           </RouterLink>
           <RouterLink
-            v-if="!kiosk"
+            v-if="store.state.user.roles?.includes('request_build_kit')||store.state.user.roles?.includes('claim_build_kit')||store.state.user.roles?.includes('is_kiosk')"
+            class="header-button-colors w-24 text-center leading-10 transition"
+            to="/buildKit/search"
+          >
+            Build Kits
+          </RouterLink>
+          <RouterLink
+            v-if="store.state.user.roles?.includes('view_assets')"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/assets"
           >
             Assets
           </RouterLink>
           <RouterLink
-            v-if="!kiosk"
+            v-if="store.state.user.roles?.includes('view_pallets')"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/pallets"
           >
             Pallets
           </RouterLink>
-          <!-- <RouterLink to="/assets">Assets</RouterLink> -->
           <RouterLink
-            v-if="kiosk"
-            v-show="
-              store.state.cart.unserialized.size > 0 ||
-              store.state.cart.serialized.length > 0
-            "
+            v-if="store.state.user.roles?.includes('request_parts')"
+            v-show="store.state.parts.size > 0"
+            class="header-button-colors w-36 text-center leading-10 transition"
+            to="/requestParts"
+          >
+            Request Parts ({{ store.getters.getTotalNumItems }})
+          </RouterLink>
+          <RouterLink
+            v-if="store.state.user.roles?.includes('request_parts')"
+            v-show="store.state.parts.size < 1"
+            class="header-button-colors w-36 text-center leading-10 transition"
+            to="/requestParts"
+          >
+            Request Parts
+          </RouterLink>
+          <RouterLink
+            v-if="store.state.user.roles?.includes('fulfill_part_requests')"
+            class="header-button-colors w-24 text-center leading-10 transition"
+            to="/clerk/partRequests"
+          >
+            Requests
+          </RouterLink>
+          <RouterLink
+            v-if="store.state.user.roles?.includes('is_kiosk')"
+            v-show="store.state.parts.size > 0"
             class="header-button-colors w-28 text-center leading-10 transition"
             to="/cart"
           >
             {{ `Check Out(${store.getters.getTotalNumItems})` }}
           </RouterLink>
           <RouterLink
-            v-if="kiosk"
-            v-show="
-              store.state.cart.unserialized.size < 1 &&
-              store.state.cart.serialized.length < 1
-            "
+            v-if="store.state.user.roles?.includes('is_kiosk')"
+            v-show="store.state.parts.size < 1"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/cart"
           >
             Check Out
           </RouterLink>
           <RouterLink
-            v-if="kiosk"
+            v-if="store.state.user.roles?.includes('is_kiosk')"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/checkin"
           >
             Check In
           </RouterLink>
           <RouterLink
-            v-if="tech||clerk||ebay||admin"
+            v-if="store.state.user.roles?.includes('own_parts')"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/inventory"
           >
             Inventory
           </RouterLink>
           <RouterLink
-            v-if="ebay||admin"
+            v-if="store.state.user.roles?.includes('sell_on_ebay')"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/ebay/sell"
           >
             eBay
           </RouterLink>
             <RouterLink
-            v-if="clerk||admin||lead"
+            v-if="store.state.user.roles?.includes('view_manage_menu')"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/manage"
           >
@@ -111,7 +134,6 @@
         <p class="mr-2 hidden pl-2 leading-10 md:block">
           {{ store.state.user.first_name + ' ' + store.state.user.last_name }}
         </p>
-        <!-- User icon -->
         <svg
           class="user-icon"
           xmlns="http://www.w3.org/2000/svg"
@@ -123,10 +145,8 @@
             d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"
           />
         </svg>
-        <!--  -->
       </div>
     </div>
-    <!-- User drop down -->
     <div
       class="fixed top-0 z-30 h-full w-full"
       v-on:click="toggleProfile"
@@ -172,65 +192,75 @@
     >
       <RouterLink class="mobile-nav-button" to="/parts">Parts</RouterLink>
       <RouterLink
-        v-if="!kiosk"
+        v-if="store.state.user.roles?.includes('view_assets')"
         class="mobile-nav-button"
         to="/assets"
       >
         Assets
       </RouterLink>
       <RouterLink
-        v-if="!kiosk"
+        v-if="store.state.user.roles?.includes('view_pallets')"
         class="mobile-nav-button"
         to="/pallets"
       >
         Pallets
       </RouterLink>
-      <!-- <RouterLink to="/assets">Assets</RouterLink> -->
       <RouterLink
-        v-if="kiosk"
-        v-show="
-          store.state.cart.unserialized.size > 0 ||
-          store.state.cart.serialized.length > 0
-        "
-        class="header-button-colors w-28 text-center leading-10 transition"
+        v-if="store.state.user.roles?.includes('request_parts')"
+        v-show="store.state.parts.size > 0"
+        class="mobile-nav-button"
+        to="/requestParts"
+      >
+        Check Out ({{ store.getters.getTotalNumItems }})
+      </RouterLink>
+      <RouterLink
+        v-if="store.state.user.roles?.includes('request_parts')"
+        v-show="store.state.parts.size < 1"
+        class="mobile-nav-button"
+        to="/requestParts"
+      >
+        Check Out
+      </RouterLink>
+
+      <RouterLink
+        v-if="store.state.user.roles?.includes('is_kiosk')"
+        v-show="store.state.parts.size > 0"
+        class="mobile-nav-button"
         to="/cart"
       >
         {{ `Check Out(${store.getters.getTotalNumItems})` }}
       </RouterLink>
       <RouterLink
-        v-if="kiosk"
+        v-if="store.state.user.roles?.includes('is_kiosk')"
+        v-show="store.state.parts.size < 1"
         class="mobile-nav-button"
-        v-show="
-          store.state.cart.unserialized.size < 1 &&
-          store.state.cart.serialized.length < 1
-        "
         to="/cart"
       >
         Check Out
       </RouterLink>
       <RouterLink
-        v-if="kiosk"
+        v-if="store.state.user.roles?.includes('is_kiosk')"
         class="mobile-nav-button"
         to="/checkin"
       >
         Check In
       </RouterLink>
       <RouterLink
-        v-if="tech||clerk||admin||ebay"
+        v-if="store.state.user.roles?.includes('own_parts')"
         class="mobile-nav-button"
         to="/inventory"
       >
         Inventory
       </RouterLink>
       <RouterLink
-        v-if="ebay||admin"
+        v-if="store.state.user.roles?.includes('sell_on_ebay')"
         class="mobile-nav-button"
         to="/ebay/sell"
       >
         eBay
       </RouterLink>
       <RouterLink
-        v-if="clerk||admin||lead"
+        v-if="store.state.user.roles?.includes('view_manage_menu')"
         class="mobile-nav-button"
         to="/manage"
       >
@@ -240,13 +270,10 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import type { AxiosInstance } from 'axios';
 import { onMounted, ref, watch } from 'vue';
 import { Store } from 'vuex';
 import { UserState } from '../../plugins/interfaces';
-import router from '../../router';
 document.documentElement.classList.remove('dark');
 interface Props {
   store: Store<UserState>;
@@ -258,24 +285,7 @@ let showMenu = ref(false);
 let dark = ref(false);
 let showProfile = ref(false);
 
-let kiosk = ref(false);
-let tech = ref(false);
-let clerk = ref(false);
-let ebay = ref(false);
-let admin = ref(false);
-let lead = ref(false)
-
 onMounted(() => {
-  // Load theme preference
-  let roles = store.state.user.roles
-  if(roles) {
-    kiosk.value = roles.includes("kiosk")
-    tech.value = roles.includes("tech")
-    clerk.value = roles.includes("clerk")
-    ebay.value = roles.includes("ebay")
-    admin.value = roles.includes("admin")
-    lead.value = roles.includes("lead")
-  }
   if (
     localStorage.getItem('theme') == 'dark' ||
     (localStorage.getItem('theme') == null &&

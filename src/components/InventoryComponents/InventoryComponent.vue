@@ -34,7 +34,6 @@ onMounted(()=>{
   inventory.registerRefreshCallback(refreshInv)
   sourceUsers.value = inventory.getSourceUsers()
   destUsers.value = inventory.getDestUsers()
-  console.log(sourceUsers.value)
   for (let u of sourceUsers.value) {
     if(u._id==inventory.thisUser._id) {
       sourceUser.value = u
@@ -172,7 +171,7 @@ function submit() {
             <p
               class="my-2 w-full rounded-md bg-red-400 p-2"
               v-if="
-                destUser._id == 'testing' && !(inventory.thisUser.roles?.includes('admin')||inventory.thisUser.roles?.includes('lead')||inventory.thisUser.roles?.includes('testing'))
+                destUser._id == 'testing' && !inventory.thisUser.roles?.includes('transfer_out_testing')
               "
             >
               Your current role does not allow you to transfer parts from the

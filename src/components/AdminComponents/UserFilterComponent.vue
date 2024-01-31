@@ -44,7 +44,7 @@ function togglePopup() {
         </div>
         <!-- User objects -->
         <UserComponentNoRoles
-          v-for="user of Array.from(users.values()).filter((u)=>!(u.roles?.includes('kiosk')||u.roles?.includes('sales')))" :user="user"
+          v-for="user of Array.from(users.values()).filter((u)=>u.roles?.includes('own_parts'))" :user="user"
           :add="true"
           @add="filterMap.set(user._id!, user)"
         />

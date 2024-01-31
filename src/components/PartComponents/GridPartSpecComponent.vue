@@ -7,18 +7,21 @@ interface Props {
   quantity?: number;
   showPlus?: boolean;
   showHistory?: boolean;
+  showAudit?: boolean;
 }
 
-let { part, serial, quantity, showPlus } = defineProps<Props>();
+let { part, serial, quantity, showPlus, showAudit } = defineProps<Props>();
 let url = import.meta.env.VITE_API_URL;
 </script>
 <template>
   <div class="detail-table">
     <div class="detail-title">
-      <h1>
-        {{ part.type!='Cable' ? part.manufacturer : '' }} {{ part.name }}
-      </h1>
-      <PlusButton v-if="showPlus" class="ml-4" @click="$emit('plus')"/>
+      <div class="flex">
+        <h1>
+          {{ part.type!='Cable' ? part.manufacturer : '' }} {{ part.name }}
+        </h1>
+        <PlusButton v-if="showPlus" class="ml-4" @click="$emit('plus')"/>
+      </div>
       <div 
         class="flex flex-wrap"
         v-if="showHistory"
@@ -87,8 +90,10 @@ let url = import.meta.env.VITE_API_URL;
       <p class="detail-label">Total Quantity:</p>
       <p class="detail-data">{{ part.total_quantity }}</p>
     </div>
-    <p class="detail-label" v-if="part.audited">Last Audited:</p>
-    <p class="detail-data" v-if="part.audited">{{new Date(Date.parse(part.audited!)).toLocaleString()}}</p>
+
+    <p class="detail-label" v-if="part.audited&&showAudit">Last Audited:</p>
+    <p class="detail-data" v-if="part.audited&&showAudit">{{new Date(Date.parse(part.audited!)).toLocaleString()}}</p>
+
     <p class="detail-label">Type:</p>
     <p class="detail-data">{{ part.type }}</p>
     <p class="detail-label" v-if="part.serialized && serial">Serial:</p>

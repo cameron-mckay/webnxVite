@@ -5,7 +5,6 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import { PartSchema, TextSearchPage, UserState } from '../../plugins/interfaces';
 import { getPartsByData, getPartsByTextSearch } from '../../plugins/dbCommands/partManager';
-
 import SlidersButton from '../../components/GenericComponents/Buttons/SlidersButton.vue'
 import AdvancedSearchComponent from '../../components/PartComponents/PartAdvancedSearchComponent.vue';
 import TextSearchComponent from '../../components/GenericComponents/Search/TextSearchComponent.vue';
@@ -30,7 +29,7 @@ let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
 
 function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
   return new Promise<TextSearchPage>((res)=>{
-    getPartsByTextSearch(http, searchString, pageNum, 3, (data: any, err) => {
+    getPartsByTextSearch(http, searchString, pageNum, buildingNum, (data: any, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})
@@ -101,6 +100,7 @@ function addToCart(part: PartSchema) {
     <PageHeaderComponent class="mb-4">Part Search</PageHeaderComponent>
     <TextSearchComponent
       :search-object="searchObject"
+      :hide-q-r="true"
       @display-results="displayResults"
     >
       <template v-slot:searchIcons>
@@ -121,8 +121,9 @@ function addToCart(part: PartSchema) {
       </template>
       <template v-slot:searchResults>
         <PartComponent
-          :add="store.state.user.roles?.includes('kiosk')"
+          :add="store.state.user.roles?.includes('is_kiosk')||store.state.user.roles?.includes('request_parts')"
           :view="true"
+          :showAudit="store.state.user.roles?.includes('view_audit_date')"
           v-for="part in parts"
           @addPartAction="addToCart(part)"
           @viewPartAction="viewPart(part)"

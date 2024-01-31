@@ -19,6 +19,7 @@ const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 // END OF PROPS
 let submitted = ref(false)
+let sending = false
 // Form data binding
 let form = {
   email: '',
@@ -30,7 +31,11 @@ onMounted(() => {
 });
 
 function sendEmail() {
+  if(sending)
+    return
+  sending = true
   sendPasswordResetEmail(http, form.email, (data, err) => {
+    sending = false
     if(err) {
       return errorHandler(err)
     }

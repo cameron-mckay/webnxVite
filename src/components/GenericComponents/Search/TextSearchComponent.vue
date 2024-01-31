@@ -10,10 +10,12 @@ import { isMobile } from '../../../plugins/CommonMethods';
 // Props interface
 interface Props {
   searchObject: TextSearch<any>
+  hideQR?: boolean
 }
 
 let {
   searchObject,
+  hideQR
 } = defineProps<Props>();
 
 let pageNumRef = ref(1)
@@ -139,7 +141,9 @@ watch(loading, () => {
         v-model="searchText"
         placeholder="🔍 keywords..."
       />
-      <QRCodeButton @click="toggleQR" 
+      <QRCodeButton
+        v-if="hideQR!=true"
+        @click="toggleQR" 
         :title="'Open QR scanner'"
       />
       <QRCodeScannerPopupComponent

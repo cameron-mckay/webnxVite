@@ -96,7 +96,7 @@ function correctionChanged(newCorrection: boolean) {
       :strict="true"
       :oldAsset="oldAsset"
       :untracked="oldAsset.migrated?true:false"
-      :isAdmin="(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('lead'))?true:false"
+      :isAdmin="store.state.user.roles?.includes('correct_assets')?true:false"
       @assetSubmit="assetSubmit"
       @assetReset="reset"
       @correctionChanged="correctionChanged"

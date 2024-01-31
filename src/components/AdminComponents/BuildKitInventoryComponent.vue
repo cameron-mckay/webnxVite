@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
-import { LoadedCartItem, PartSchema } from '../../plugins/interfaces';
+import { KioskQuantities, KioskQuantity, LoadedCartItem, PartSchema } from '../../plugins/interfaces';
 import Inventory from '../../plugins/InventoryClass';
 import PlusButton from '../GenericComponents/Buttons/PlusButton.vue';
-import InventoryPopup from '../InventoryComponents/InventoryPopup.vue';
 import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
-import AssetCartItemComponent from './AssetCartItemComponent.vue';
-import SearchPartOnAssetComponent from './SearchPartOnAssetComponent.vue';
+import SearchPartOnAssetComponent from '../AssetComponents/SearchPartOnAssetComponent.vue';
+import BuildKitPartComponent from './BuildKitPartComponent.vue';
+import Cacher from '../../plugins/Cacher';
+import { getKioskQuantities } from '../../plugins/dbCommands/partManager';
 
 interface Props {
   inventory: Inventory;
@@ -21,6 +22,8 @@ let invParts = ref([] as LoadedCartItem[])
 let assetParts = ref([] as LoadedCartItem[])
 let showPopup = ref(false)
 let key = ref(Date.now())
+let quantityMap = new Map<string, KioskQuantity[]>()
+let emit = defineEmits(['update'])
 
 onBeforeMount(()=>{
   inventory.registerRefreshCallback(refreshInv)
@@ -38,7 +41,7 @@ function moveToSourceList(part: PartSchema, difference: number, serial?: string)
 }
 
 // Uses the loader to force a component refresh
-function refreshInv() {
+async function refreshInv() {
   // Set loader
   loading.value = true
   // This is hacky and stupid but this is what makes the asset inv load properly
@@ -48,7 +51,13 @@ function refreshInv() {
   invParts.value = inventory.getSourceInv()
   assetParts.value = inventory.getDestInv()
   key.value = Date.now()
-  // Unset loaer
+
+  let partSet = new Set<string>()
+  // Load part info
+  for(let r of assetParts.value) {
+    partSet.add(r.part.nxid!)
+    await Cacher.getPartInfo(r.part.nxid!)
+  }
   loading.value = false
 }
 
@@ -57,7 +66,22 @@ function togglePopup() {
 }
 
 function addPartFromSearch(part: PartSchema) {
-  moveToDestList(part, -1)
+  getKioskQuantities(Cacher.getHttp(), [part.nxid!], (data, err) => {
+    if(err)
+      return
+    // Save to var
+    let quantities = data as KioskQuantities[]
+    // Iterate and create map
+    for (let q of quantities) {
+      quantityMap.set(q.nxid, q.kiosk_quantities)
+    }
+    // Page is loaded
+    moveToDestList(part, -1)
+  })
+}
+
+function updateSliders(nxid: string, quantities: KioskQuantity[], serials: string[]) {
+  emit("update", nxid, quantities, serials)
 }
 </script>
 <template>
@@ -74,43 +98,33 @@ function addPartFromSearch(part: PartSchema) {
     >
       <SearchPartOnAssetComponent
         @addPartAction="addPartFromSearch"
+        :showQuantity="true"
       />
     </FullScreenPopupComponent>
-    <FullScreenPopupComponent
-      v-else
-      v-show="showPopup"
-      @toggle="togglePopup"
-    >
-      <InventoryPopup
-        @movePart="moveToDestList"
-        :inventory="invParts"
-        :key="key"
+    <div>
+      <div
+        v-if="(assetParts.length > 0)"
+        class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-5 md:leading-10"
+      >
+        <p class="hidden md:block">NXID</p>
+        <p>Manufacturer</p>
+        <p>Name</p>
+        <p>Quantity/SN</p>
+        <p></p>
+      </div>
+      <div v-else class="my-2">
+        <p>No parts yet..</p>
+      </div>
+      <BuildKitPartComponent
+        class="col-span-2"
+        v-for="part in assetParts"
+        :key="key+assetParts.indexOf(part)"
+        :item="part"
+        :maxQuantity="part.part.quantity!"
+        :kiosk_quantities="quantityMap"
+        @move-part="moveToSourceList"
+        @update="updateSliders"
       />
-    </FullScreenPopupComponent>
-    <p class="my-2 w-full rounded-md bg-red-400 p-2" v-if="correction">
-      You are in correction mode.  Any parts added here will be treat as new inventory and removed parts will be marked as deleted.  
-    </p>
-    <div
-      v-if="(assetParts.length > 0)"
-      class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-5 md:leading-10"
-    >
-      <p class="hidden md:block">NXID</p>
-      <p>Manufacturer</p>
-      <p>Name</p>
-      <p>Quantity/SN</p>
-      <p></p>
     </div>
-    <div v-else class="my-2">
-      <p>No parts yet..</p>
-    </div>
-    <AssetCartItemComponent
-      class="col-span-2"
-      v-for="part in assetParts"
-      :key="key+assetParts.indexOf(part)"
-      :item="part"
-      :maxQuantity="correction?undefined:inventory.getMaxQuantity(part.part.nxid!)"
-      :untracked="correction||untracked"
-      @move-part="moveToSourceList"
-    />
   </div>
 </template>

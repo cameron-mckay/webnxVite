@@ -191,7 +191,7 @@ async function getNXID() {
         class="textbox m-1"
       >
         <option selected :value="false">No</option>
-        <!--<option :value="true">Yes</option>-->
+        <option :value="true">Yes</option>
       </select>
       <label
         v-if="

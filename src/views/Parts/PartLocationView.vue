@@ -177,8 +177,9 @@ function loadAllTechs() {
     <BackButton @click="router.back()" class="mr-2 mb-2"/>
     <GridPartSpecComponent
       @plus="addToCart"
-      :showHistory="store.state.user.roles?.includes('clerk')||store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('lead')"
-      :showPlus="store.state.user.roles?.includes('kiosk')"
+      :showHistory="store.state.user.roles?.includes('view_analytics')"
+      :showAudit="store.state.user.roles?.includes('view_audit_date')"
+      :showPlus="store.state.user.roles?.includes('is_kiosk')"
       :part="part"
       @loadHistory="loadActionHistory"
       @loadCheckouts="loadCheckouts"
@@ -194,6 +195,7 @@ function loadAllTechs() {
       <h1 class="detail-title mt-4">
         {{ pageTitle }}
       </h1>
+      <!--
       <div
         v-if="partRecords.length > 0 && part.serialized"
         class="relative my-2 grid grid-cols-3 rounded-xl p-2 text-center font-bold leading-8 transition md:leading-10"
@@ -202,8 +204,8 @@ function loadAllTechs() {
         <p class="hidden md:block">Date Updated</p>
         <p></p>
       </div>
+      -->
       <div
-        v-else-if="partRecords.length > 0"
         class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
       >
         <p>Building</p>
@@ -212,6 +214,7 @@ function loadAllTechs() {
         <p class="hidden md:block">Date Updated</p>
         <p></p>
       </div>
+      <!--
       <SerializedPartRecordComponent
         v-if="part.serialized"
         v-for="record in partRecords"
@@ -221,8 +224,8 @@ function loadAllTechs() {
         :showSerial="true"
         @viewPartAction="viewHistory"
       />
+      -->
       <PartRecordComponent
-        v-else
         v-for="record in partRecords"
         :users="Cacher.getAllUsers()"
         :record="record"

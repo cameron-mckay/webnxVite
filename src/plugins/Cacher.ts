@@ -89,7 +89,7 @@ export default class Cacher {
   }
 
   static getKiosks() {
-    return Array.from(this.allUsers.values()).filter((u)=>u.roles?.includes('kiosk'))
+    return Array.from(this.allUsers.values()).filter((u)=>u.roles?.includes('is_kiosk'))
   }
 
   static getAsset(asset: string|AssetSchema) {
@@ -154,10 +154,31 @@ export default class Cacher {
       // Check if part is already mapped
       if (Cacher.partsCache.has(nxid))
         return res(Cacher.partsCache.get(nxid)!)
+      // Fetch part from API
+      let p = await Cacher.loadPartFromAPI(nxid)
+      Cacher.partsCache.set(nxid, p);
+      // Check if part loaded properly
+      if(JSON.stringify(p)==JSON.stringify({}))
+          Cacher.partsCache.delete(nxid);
+      res(p)
+    })
+  }
+  static getPartInfoKiosk(part: CartItem|string, kiosk: User) {
+    return new Promise<PartSchema>(async (res)=>{
+      let nxid = ""
+      if(typeof(part)=="string") {
+        nxid = part
+      }
+      else {
+        nxid = part.nxid
+      }
+      // Check if part is already mapped
+      if (Cacher.partsCache.has(nxid))
+        return res(Cacher.partsCache.get(nxid)!)
       // Set temp value
       Cacher.partsCache.set(nxid, {});
       // Fetch part from API
-      let p = await Cacher.loadPartFromAPI(nxid)
+      let p = await Cacher.loadPartFromAPI(nxid, kiosk)
       Cacher.partsCache.set(nxid, p);
       // Check if part loaded properly
       if(JSON.stringify(p)==JSON.stringify({}))
@@ -191,7 +212,7 @@ export default class Cacher {
     return Cacher.router
   }
 
-  private static loadPartFromAPI(part: string|CartItem) {
+  private static loadPartFromAPI(part: string|CartItem, kiosk?: User) {
     return new Promise<PartSchema>((res)=>{
       let nxid = ""
       if(typeof(part)=="string") {
@@ -208,7 +229,7 @@ export default class Cacher {
         }
         // Set new value
         res(data as PartSchema)
-      });
+      }, kiosk ? kiosk.first_name + " " + kiosk.last_name  : undefined);
     })
   }
 

@@ -117,7 +117,7 @@ function viewAsset(asset: AssetSchema) {
         <!-- Pencil -->
         <PencilButton
           v-on:click="edit"
-          v-if="!store.state.user.roles?.includes('sales')"
+          v-if="store.state.user.roles?.includes('edit_pallets')"
         />
         <RouterLink
           class="my-auto ml-2 rounded-md p-2 font-bold transition-colors hover:bg-gray-400 hover:dark:bg-zinc-700"
@@ -179,8 +179,8 @@ function viewAsset(asset: AssetSchema) {
         <div class="md:animate-bottom">
           <AssetComponent
             :add="false"
-            :edit="true"
-            :view="true"
+            :edit="store.state.user.roles?.includes('edit_assets')"
+            :view="store.state.user.roles?.includes('view_assets')"
             v-for="asset in assets"
             v-bind:key="asset._id"
             @editPartAction="toggleEdit(asset)"

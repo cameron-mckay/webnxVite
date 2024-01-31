@@ -7,9 +7,10 @@ interface Props {
   edit?: boolean;
   add?: boolean;
   view?: boolean;
+  showAudit?:boolean;
 }
 
-const { part } = defineProps<Props>();
+const { part, showAudit } = defineProps<Props>();
 </script>
 
 <template>
@@ -85,6 +86,7 @@ const { part } = defineProps<Props>();
       </div>
     </div>
     <InlinePartSpecComponent
+      :show-audit="showAudit"
       class="group-hover:bab-drop-hover bab-drop"
       :part="part"
     />

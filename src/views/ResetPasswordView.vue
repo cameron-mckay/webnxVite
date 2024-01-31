@@ -24,17 +24,24 @@ let form = {
   password2: '',
 };
 
+let sending = false
+
 // Lifecycle hook
 onMounted(() => {
   redirectIfLoggedIn();
 });
 
 function updatePassword() {
+  if(sending)
+    return
+  sending = true
   if(form.password != form.password2) {
+    sending = false
     return errorHandler(new Error("Passwords do not match"))
   }
   let { userId, token } = router.currentRoute.value.query
   submitNewPassword(http, userId as string, token as string, form.password, (data, err) => {
+    sending = false
     if(err) {
       return errorHandler(err)
     }

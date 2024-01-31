@@ -13,6 +13,7 @@ import AssetPartComponent from './PartOnAssetComponent.vue';
 
 interface Props {
   hideHeader?: boolean
+  showQuantity?: boolean
 }
 
 // Default building is Ogden - 3
@@ -20,7 +21,7 @@ let parts: Ref<PartSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
 let http = Cacher.getHttp()
-let { hideHeader } = defineProps<Props>()
+let { hideHeader, showQuantity } = defineProps<Props>()
 onBeforeMount(()=>{
   searchObject.disableRouter()
 })
@@ -94,6 +95,7 @@ function displayResults(page: PartSchema[]) {
         <p>NXID</p>
         <p>Manufacturer</p>
         <p>Name</p>
+        <p v-if="showQuantity">Quantity</p>
       </template>
       <template v-slot:searchResults>
         <AssetPartComponent
@@ -101,6 +103,7 @@ function displayResults(page: PartSchema[]) {
           v-bind:key="part._id"
           @addPartAction="$emit('addPartAction', part)"
           :part="part"
+          :showQuantity="showQuantity"
         />
       </template>
     </TextSearchComponent>

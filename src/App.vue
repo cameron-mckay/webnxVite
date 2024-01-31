@@ -98,39 +98,18 @@ function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized,
       errorHandler("Login expired.")
       return revokeLogin()
     }
+    if(to.meta.allowedRoles) {
+      let overlappedRoles = to.meta.allowedRoles.filter((value: string) => store.state.user.roles?.includes(value));
+      if(overlappedRoles.length==0) {
+        redirect()
+      }
+    }
     // Clear cache on page change
     if(from&&to.name!=from.name) {
       Cacher.validateCache()
       if(store.state.isAuth) {
         Cacher.loadAllUsersFromAPI()
       }
-    }
-    // Make sure they are admin for admin routes
-    if (!store.state.user.roles?.includes('admin') && /\/admin\/*/.test(to.path)) {
-      return redirect()
-    }
-    if (
-      !(store.state.user.roles?.includes('admin')||
-      store.state.user.roles?.includes('clerk')||
-      store.state.user.roles?.includes('lead')) &&
-      (/\/manage\/*/.test(to.path)||
-      /\/manage/.test(to.path))
-    ) {
-      return redirect()
-    }
-    if (
-      !(store.state.user.roles?.includes('admin')||
-      store.state.user.roles?.includes('clerk')) &&
-      /\/clerk\/*/.test(to.path)
-    ) {
-      return redirect()
-    }
-    if (!(store.state.user.roles?.includes('admin')||
-      store.state.user.roles?.includes('ebay')) &&
-      (/\/ebay\/*/.test(to.path)||
-      /\/ebay/.test(to.path))
-    ) {
-      return redirect()
     }
     // This goes through the matched routes from last to first, finding the closest route with a title.
     // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
@@ -257,7 +236,9 @@ function revokeLogin() {
   // set status
   store.commit('logout', http);
   // redirect
-  if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Forgot Password') {
+  if (router.currentRoute.value.name != 'Register'
+    &&router.currentRoute.value.name != 'Forgot Password'
+    &&router.currentRoute.value.name != 'Password Reset') {
     router.replace({ query: undefined }).then(()=>{
       router.push({ name: 'Login' })
     })
@@ -268,7 +249,9 @@ function firstLoadRevokeLogin() {
   // set status
   store.commit('logout', http);
   // redirect
-  if (router.currentRoute.value.name != 'Register'&&router.currentRoute.value.name != 'Forgot Password') {
+  if (router.currentRoute.value.name != 'Register'
+    &&router.currentRoute.value.name != 'Forgot Password'
+    &&router.currentRoute.value.name != 'Password Reset') {
     router.replace({ query: undefined }).then(()=>{
       router.push({ name: 'Login' }).then(()=>{
         configureRouter();

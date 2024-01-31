@@ -143,7 +143,7 @@ function prev() {
         <!-- Pencil -->
         <PencilButton
           v-on:click="edit"
-          v-if="!store.state.user.roles?.includes('sales')"
+          v-if="store.state.user.roles?.includes('edit_assets')"
         />
         <RouterLink
           class="my-auto ml-2 rounded-md p-2 font-bold transition-colors hover:bg-gray-400 hover:dark:bg-zinc-700"

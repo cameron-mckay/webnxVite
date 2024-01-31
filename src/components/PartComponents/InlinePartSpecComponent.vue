@@ -2,8 +2,9 @@
 import { PartSchema } from '../../plugins/interfaces';
 interface Props {
   part: PartSchema;
+  showAudit?: boolean;
 }
-let { part } = defineProps<Props>();
+let { part, showAudit } = defineProps<Props>();
 </script>
 <template>
   <div class="group-hover:bab-drop-hover bab-drop">
@@ -66,7 +67,7 @@ let { part } = defineProps<Props>();
       <!-- Placeholder -->
     </div>
     <p v-if="part.consumable">{{ `Consumable: ${part.consumable?"Yes":"No"}` }}</p>
-    <p v-if="part.audited">{{ `Last Audited: ${new Date(Date.parse(part.audited!)).toLocaleString()}` }}</p>
+    <p v-if="part.audited&&showAudit">{{ `Last Audited: ${new Date(Date.parse(part.audited!)).toLocaleString()}` }}</p>
     <br v-if="part.notes">
     <pre class="font-extrabold" v-if="part.notes">Notes:<br><span class="font-normal">{{ part.notes }}</span></pre>
   </div>

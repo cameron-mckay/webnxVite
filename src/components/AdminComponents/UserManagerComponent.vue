@@ -10,7 +10,35 @@ const emit = defineEmits(['update']);
 
 const props = defineProps<Props>();
 // All possible roles
-const roles = ['sales', 'tech', 'clerk', 'ebay', 'kiosk', 'lead', 'testing', 'admin'];
+const roles = [
+  'persist_login',
+  'is_kiosk',
+  'own_parts',
+  'request_parts',
+  'create_build_kit',
+  'request_build_kit',
+  'claim_build_kit',
+  'view_assets',
+  'edit_assets',
+  'correct_assets',
+  'view_pallets',
+  'edit_pallets',
+  'correct_pallets',
+  'check_out_parts',
+  'sell_on_ebay',
+  'building_transfer',
+  'manage_others_inventory',
+  'view_audit_date',
+  'view_analytics',
+  'process_checkins',
+  'fulfill_part_requests',
+  'create_parts',
+  'manage_parts',
+  'manage_users',
+  'transfer_out_testing',
+  'view_manage_menu',
+  'delete_parts'
+];
 let user: Ref<User> = ref({});
 user.value = props.user;
 
@@ -21,11 +49,16 @@ function toggleRole(role: string) {
   user.value.roles?.push(role)
 }
 
+function submit() {
+  user.value.roles = user.value.roles?.filter((v)=>roles.includes(v))
+  emit('update', user.value)
+}
+
 </script>
 <template>
   <FullScreenPopupComponent>
     <h1 class="mb-4 text-4xl leading-8 md:leading-10">Edit User:</h1>
-    <form @submit.prevent="$emit('update', user)" class="grid grid-cols-2">
+    <form @submit.prevent="submit" class="grid grid-cols-2">
       <label>Email:</label>
       <input class="textbox my-1" type="email" v-model="user.email" />
       <label>First Name:</label>

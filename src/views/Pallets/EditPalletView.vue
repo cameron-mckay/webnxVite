@@ -98,7 +98,7 @@ function correctionChanged(newCorrection: boolean) {
       :strict="true"
       :oldPallet="oldPallet"
       :untracked="oldPallet.migrated?true:false"
-      :isAdmin="(store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('lead'))?true:false"
+      :isAdmin="store.state.user.roles?.includes('correct_pallets')"
       @palletSubmit="palletSubmit"
       @palletReset="reset"
       @correctionChanged="correctionChanged"

@@ -15,12 +15,22 @@ const { user } = defineProps<Props>();
     <div
       class="hover:bab-hover background-and-border relative col-span-5 my-1 grid grid-cols-3 p-1 text-center leading-8 hover:rounded-md md:col-span-5 md:grid-cols-5 md:p-2 md:leading-10"
     >
-      <p class="hidden md:grid">{{ user.email }}</p>
-      <p class="hidden md:grid">{{ user.first_name }}</p>
-      <p class="hidden md:grid">{{ user.last_name }}</p>
-      <p class="grid md:hidden">{{ `${user.first_name} ${user.last_name}` }}</p>
+      <div class="hidden md:block">
+        <p class="mb-auto mt-0">{{ user.email }}</p>
+      </div>
+      <div class="hidden md:block">
+        <p class="mb-auto mt-0">{{ user.first_name }}</p>
+      </div>
+      <div class="hidden md:block">
+        <p class="mb-auto mt-0">{{ user.last_name }}</p>
+      </div>
+      <div class="block md:hidden">
+        <p class="mb-auto mt-0">{{ `${user.first_name} ${user.last_name}` }}</p>
+      </div>
+      <div>
       <p>{{ user.roles?.join(', ') }}</p>
-      <div class="flex justify-end">
+      </div>
+      <div class="flex justify-end mb-auto">
         <!-- Pencil -->
         <PencilButton v-if="edit==true" v-on:click="$emit('edit')"/>
         <PlusButton v-if="add==true" v-on:click="$emit('add')"/>

@@ -158,7 +158,7 @@ export interface UserState {
   isAuth: boolean;
   user: User;
   http: AxiosInstance;
-  cart: Cart;
+  parts: Map<string, number>;
 }
 
 // User schema
@@ -198,11 +198,6 @@ export type PartCache = PartCacheEntry[];
 export interface SNAvailable {
   serial: string;
   available: boolean;
-}
-
-export interface Cart {
-  serialized: CartItem[];
-  unserialized: Map<string, number>;
 }
 
 export interface InventoryEntry {
@@ -291,4 +286,47 @@ export interface PartEvent {
   info: PartRecord,
   added: CartItem[],
   removed: CartItem[]
+}
+
+export interface PartRequestSchema {
+  _id?: string,
+  requested_by: string,
+  parts: CartItem[],
+  date_created: Date,
+  date_fulfilled?: Date,
+  fulfilled_by?: string,
+  fulfilled_list?: {kiosk: string, parts: InventoryEntry[]}[]
+  build_kit_id?: string,
+  cancelled?: boolean,
+  tech_notes?: string,
+  clerk_notes?: string
+}
+
+export interface KioskQuantity {
+  kiosk: string,
+  quantity: number,
+  max: number
+}
+
+export interface KioskQuantities {
+  nxid: string,
+  kiosk_quantities: KioskQuantity[],
+  serials?: string[]
+}
+
+export interface BuildKitSchema {
+  _id: string,
+  kit_name: string,
+  building: number,
+  // parts on the request
+  claimed_parts?: CartItem[],
+  // Date the part request was created
+  date_created: Date,
+  date_claimed?: Date,
+  created_by: string,
+  requested_by?: string,
+  claimed_by?: string,
+  notes: string,
+  parts?: CartItem[],
+  kiosk: string
 }

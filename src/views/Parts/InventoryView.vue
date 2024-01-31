@@ -32,36 +32,42 @@ let processingMove = false
 
 onMounted(async ()=>{
   await Cacher.loadAllUsersFromAPISync()
-  inventory = new Inventory(JSON.parse(JSON.stringify(store.state.user)),
-    // Source users
-    [
-      {_id: 'all', first_name: "All Techs"},
 
-    ],
-    // Dest users
-    [
-      {_id: 'all', first_name: "All Techs", default: true},
-      {_id: 'hdd', first_name: "Drive Wipe Shelf"},
-      {_id: 'testing', first_name: "Testing Center"}
-    ],
-    // Admin sources
-    [
+  let sourceUsers = [
+    {_id: 'all', first_name: "All Techs"},
+  ]
+  let destUsers = [
+    {_id: 'all', first_name: "All Techs"},
+    {_id: 'hdd', first_name: "Drive Wipe Shelf"},
+    {_id: 'testing', first_name: "Testing Center"}
+  ]
+
+  if(store.state.user.roles?.includes('building_transfer')) {
+    sourceUsers = sourceUsers.concat([
       {_id: 'ny', first_name: "NY Transfers"},
       {_id: 'la', first_name: "LA Transfers"},
       {_id: 'og', first_name: "Ogden Transfers"},
+    ])
+    destUsers = destUsers.concat([
+      {_id: 'ny', first_name: "NY Transfers"},
+      {_id: 'la', first_name: "LA Transfers"},
+      {_id: 'og', first_name: "Ogden Transfers"},
+    ])
+  }
+  if(store.state.user.roles?.includes('transfer_out_testing')) {
+    sourceUsers = sourceUsers.concat([
       {_id: 'testing', first_name: "Testing Center"},
       {_id: 'hdd', first_name: "Drive Wipe Shelf"},
-    ],
-    // Admin destinations
-    [
-      {_id: 'ny', first_name: "NY Transfers"},
-      {_id: 'la', first_name: "LA Transfers"},
-      {_id: 'og', first_name: "Ogden Transfers"},
+    ])
+  }
+  if(store.state.user.roles?.includes('delete_parts')) {
+    destUsers = destUsers.concat([
       {_id: 'deleted', first_name: "Deleted"},
       {_id: 'lost', first_name: "Lost"},
       {_id: 'broken', first_name: "Broken"},
-    ]
-  )
+    ])
+  }
+  inventory = new Inventory(JSON.parse(JSON.stringify(store.state.user)), sourceUsers, destUsers)
   loading.value = false
 })
 

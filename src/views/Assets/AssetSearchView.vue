@@ -110,7 +110,7 @@ function displayResults(page: AssetSchema[]) {
           @assetSearch="advancedSearchButtonPressed"
           @toggle="toggleAdvanced"
         />
-        <PlusButton @click="addUntrackedAsset" v-if="!store.state.user.roles?.includes('sales')"/>
+        <PlusButton @click="addUntrackedAsset" v-if="store.state.user.roles?.includes('edit_assets')"/>
       </template>
       <template v-slot:searchHeader>
         <p class="mt-auto">NXID</p>
@@ -122,7 +122,7 @@ function displayResults(page: AssetSchema[]) {
       <template v-slot:searchResults>
         <AssetComponent
           :add="false"
-          :edit="true"
+          :edit="store.state.user.roles?.includes('edit_assets')"
           :view="true"
           v-for="asset in assets"
           v-bind:key="asset._id"

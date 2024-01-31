@@ -182,7 +182,7 @@ export function updatePart(
  */
 export function checkout(
   http: AxiosInstance,
-  cart: Array<CartItem>,
+  cart: Array<InventoryEntry>,
   user_id: string,
   callback: apiResponse
 ) {
@@ -617,6 +617,302 @@ export function getPartCreateAndDeleteHistory(
     })
     .catch((err: AxiosError) => {
       // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getKioskQuantities(
+  http: AxiosInstance,
+  part: string|string[],
+  callback: apiResponse,
+) {
+  http
+    .get('/api/part/quantities', {
+      params: {
+        part
+      }
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getActivePartRequests(
+  http: AxiosInstance,
+  callback: apiResponse,
+  id?: string
+) {
+  http
+    .get('/api/part/requests/active', {
+      params: {
+        id
+      }
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getFulfilledPartRequests(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+) {
+  http
+    .get('/api/part/requests/fulfilled', {
+      params: {
+        startDate,
+        endDate,
+        pageNum,
+        pageSize,
+        users,
+      }
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function requestParts(
+  http: AxiosInstance,
+  parts: Array<CartItem>,
+  notes: string,
+  callback: apiResponse
+) {
+  http
+    .post('/api/part/request/create', {
+      parts,
+      notes
+    })
+    .then((res: AxiosResponse) => {
+      // Authenticated - send null error to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Unauthenticated - send error to callback
+      callback({}, err);
+    });
+}
+
+export function cancelPartRequest(
+  http: AxiosInstance,
+  id: string,
+  callback: apiResponse
+) {
+  http
+    .post('/api/part/request/cancel', {
+      id
+    })
+    .then((res: AxiosResponse) => {
+      // Authenticated - send null error to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Unauthenticated - send error to callback
+      callback({}, err);
+    });
+}
+
+export function fulfillPartRequest(
+  http: AxiosInstance,
+  request_id: string,
+  parts: Array<{kiosk: string, parts: InventoryEntry[]}>,
+  notes: string,
+  approved: boolean,
+  callback: apiResponse
+) {
+  http
+    .post('/api/part/request/fulfill', {
+      request_id,
+      list: parts,
+      notes,
+      approved
+    })
+    .then((res: AxiosResponse) => {
+      // Authenticated - send null error to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Unauthenticated - send error to callback
+      callback({}, err);
+    });
+}
+
+export function createBuildKit(
+  http: AxiosInstance,
+  kit_name: string,
+  parts: Array<{kiosk: string, parts: InventoryEntry[]}>,
+  kiosk: string,
+  notes: string,
+  callback: apiResponse
+) {
+  http
+    .post('/api/buildKit', {
+      kit_name,
+      parts,
+      kiosk,
+      notes
+    })
+    .then((res: AxiosResponse) => {
+      // Authenticated - send null error to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Unauthenticated - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getBuildKitsByTextSearch(
+  http: AxiosInstance,
+  searchString: string,
+  pageNum: number,
+  building: number,
+  callback: apiResponse,
+  location?: string
+) {
+  // Send string query to API
+  http
+    .get('/api/buildKit/search', {
+      params: {
+        searchString,
+        pageNum,
+        pageSize: 10,
+        building,
+        location,
+      },
+    })
+    .then((res: AxiosResponse) => {
+      // Success and send back results
+      callback(res.data as { numPages: number, numParts: number, parts: PartSchema[] }, null);
+    })
+    .catch((err: AxiosError) => {
+      // Send error to callback
+      callback({}, err);
+    });
+}
+
+export function claimBuildKit(
+  http: AxiosInstance,
+  kit_id: string,
+  callback: apiResponse,
+  user_id?: string
+) {
+  http
+    .put('/api/buildKit', {
+      kit_id,
+      user_id
+    })
+    .then((res: AxiosResponse) => {
+      // Authenticated - send null error to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Unauthenticated - send error to callback
+      callback({}, err);
+    });
+}
+
+export function requestBuildKit(
+  http: AxiosInstance,
+  kit_id: string,
+  callback: apiResponse
+) {
+  http
+    .post('/api/buildKit/request', {
+      kit_id
+    })
+    .then((res: AxiosResponse) => {
+      // Authenticated - send null error to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Unauthenticated - send error to callback
+      callback({}, err);
+    });
+}
+
+export function deleteBuildKit(
+  http: AxiosInstance,
+  kit_id: string,
+  parts: Array<{kiosk: string, parts: CartItem[]}>,
+  callback: apiResponse
+) {
+  http
+    .post('/api/buildKit/delete', {
+      kit_id,
+      parts,
+    })
+    .then((res: AxiosResponse) => {
+      // Authenticated - send null error to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Unauthenticated - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getBuildKitByID(
+  http: AxiosInstance,
+  id: string,
+  callback: apiResponse,
+) {
+  // Send string query to API
+  http
+    .get('/api/buildKit', {
+      params: {
+        id
+      },
+    })
+    .then((res: AxiosResponse) => {
+      // Success and send back results
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Send error to callback
+      callback({}, err);
+    });
+}
+
+export function processBuildKitRequest(
+  http: AxiosInstance,
+  request_id: string,
+  notes: string,
+  approved: boolean,
+  callback: apiResponse
+) {
+  http
+    .post('/api/buildKit/request/process', {
+      request_id,
+      notes,
+      approved
+    })
+    .then((res: AxiosResponse) => {
+      // Authenticated - send null error to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Unauthenticated - send error to callback
       callback({}, err);
     });
 }

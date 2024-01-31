@@ -12,13 +12,11 @@ export default class Inventory {
   destList: LoadedCartItem[]
   extraDestUsers: User[]
   extraSourceUsers: User[]
-  adminOnlySourceUsers: User[]
-  adminOnlyDestUsers: User[]
   refreshComponentsCallback: () => void
   correction: boolean
   moving: boolean
 
-  constructor(thisUser: User, extraSourceUsers?: User[], extraDestUsers?: User[], adminOnlySources?: User[], adminOnlyDests?: User[]) {
+  constructor(thisUser: User, extraSourceUsers?: User[], extraDestUsers?: User[]) {
     // Initialize all the class variables
     this.maxQuantites = new Map<string, number>();
     this.sourceList = [];
@@ -26,8 +24,6 @@ export default class Inventory {
     this.thisUser = thisUser;
     this.extraDestUsers = extraDestUsers ? extraDestUsers : [];
     this.extraSourceUsers = extraSourceUsers ? extraSourceUsers : [];
-    this.adminOnlySourceUsers = adminOnlySources ? adminOnlySources : [];
-    this.adminOnlyDestUsers = adminOnlyDests ? adminOnlyDests : [];
     this.correction = false;
     this.moving = false;
     this.refreshComponentsCallback = ()=>{ console.log("unregistered callback") }
@@ -176,11 +172,9 @@ export default class Inventory {
     // Get the extra dest users
     let returnVal = [] as User[]
     // If admin, add admin only dests
-    if(this.thisUser.roles?.includes('admin')||this.thisUser.roles?.includes('kiosk')) {
+    if(this.thisUser.roles?.includes('manage_others_inventory')||this.thisUser.roles?.includes('is_kiosk')) {
       // Add the users without sales or kiosk roles
-      returnVal = returnVal.concat(JSON.parse(JSON.stringify(Cacher.getAllUsers().filter((u)=>!(u.roles?.includes('kiosk')||u.roles?.includes('sales'))))))
-      // Add special admin only dests
-      returnVal = returnVal.concat(JSON.parse(JSON.stringify(this.adminOnlySourceUsers)))
+      returnVal = returnVal.concat(JSON.parse(JSON.stringify(Cacher.getAllUsers().filter((u)=>u.roles?.includes("own_parts")))))
     }
     else {
       returnVal.push(Cacher.getCurrentUser())
@@ -193,11 +187,9 @@ export default class Inventory {
     // Get the extra dest users
     let returnVal = [] as User[]
     // If admin, add admin only dests
-    if(this.thisUser.roles?.includes('admin')) {
+    if(this.thisUser.roles?.includes('manage_others_inventory')) {
       // Add the users without sales or kiosk roles
-      returnVal = returnVal.concat(JSON.parse(JSON.stringify(Cacher.getAllUsers().filter((u)=>!(u.roles?.includes('kiosk')||u.roles?.includes('sales'))))))
-      // Add special admin only dests
-      returnVal = returnVal.concat(JSON.parse(JSON.stringify(this.adminOnlyDestUsers)))
+      returnVal = returnVal.concat(JSON.parse(JSON.stringify(Cacher.getAllUsers().filter((u)=>u.roles?.includes('own_parts')))))
     }
     else {
       returnVal.push(Cacher.getCurrentUser())
@@ -273,7 +265,7 @@ export default class Inventory {
     // If item is serialized
     if (serial != undefined) {
       // Find existing item
-      item1 = array1.find((e) => e.serial == serial);
+      item1 = array1.find((e) => e.serial == serial && e.part.nxid == part.nxid);
       // Return if not found
       if (!item1) {
         this.refreshComponentsCallback()
@@ -285,7 +277,7 @@ export default class Inventory {
       array2.push({ part, serial: serial });
     } else {
       // Find matching part in array 1
-      item1 = array1.find((e) => e.part.nxid == part.nxid);
+      item1 = array1.find((e) => e.part.nxid == part.nxid && e.serial == undefined);
       // Return if not found
       if (!item1 || !quantity) {
         this.refreshComponentsCallback()
@@ -297,7 +289,7 @@ export default class Inventory {
       if (item1.quantity! < 1)
         array1.splice(array1.indexOf(item1), 1);
       // Find in array 2
-      let item2 = array2.find((e) => e.part.nxid == part.nxid);
+      let item2 = array2.find((e) => ((e.part.nxid == part.nxid) && (e.serial == undefined)));
       // If it doesn't exist, push a new entry
       if (!item2) array2.push({ part, quantity });
       // Otherwise increment existing entry
@@ -321,16 +313,16 @@ export default class Inventory {
   }
 
   correctionAdd(part: PartSchema, difference: number) {
-    if(part.serialized) {
-      this.destList.push({ part, serial: ""})
-    }
-    else {
+    // if(part.serialized) {
+    //   this.destList.push({ part, serial: ""})
+    // }
+    // else {
       let item2 = this.destList.find((e) => e.part.nxid == part.nxid);
       // If it doesn't exist, push a new entry
       if (!item2) this.destList.push({ part, quantity: 1 });
       // Otherwise increment existing entry
       else item2.quantity! += difference;
-    }
+    // }
     this.refreshComponentsCallback()
   }
   registerRefreshCallback(newCallback: ()=>void) {

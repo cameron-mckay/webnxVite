@@ -134,8 +134,9 @@ function loadAllTechs() {
     <BackButton @click="router.back()" class="mr-2 mb-2"/>
     <GridPartSpecComponent
       @plus="addToCart"
-      :showHistory="store.state.user.roles?.includes('clerk')||store.state.user.roles?.includes('admin')||store.state.user.roles?.includes('lead')"
-      :showPlus="store.state.user.roles?.includes('kiosk')"
+      :showHistory="store.state.user.roles?.includes('view_analytics')"
+      :showPlus="store.state.user.roles?.includes('is_kiosk')"
+      :showAudit="store.state.user.roles?.includes('view_audit_date')"
       :part="part"
       @loadHistory="loadActionHistory"
       @loadCheckouts="loadCheckouts"

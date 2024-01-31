@@ -1,19 +1,24 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { PartSchema } from '../../plugins/interfaces';
+import { LoadedCartItem } from '../../plugins/interfaces';
 import InlinePartSpecComponent from '../PartComponents/InlinePartSpecComponent.vue';
 
 interface Props {
-  part: PartSchema;
-  quantity: number;
+  item: LoadedCartItem;
+  serialize?: boolean;
+  hideButtons?: boolean;
 }
-const { part, quantity } = defineProps<Props>();
-const emit = defineEmits(['plus', 'minus', 'delete', 'updateQuantity']);
+const { item, serialize, hideButtons } = defineProps<Props>();
+const emit = defineEmits(['plus', 'minus', 'delete', 'updateQuantity', 'dupeSerialized']);
 
-let item_quantity = ref(quantity);
+let item_quantity = ref(item.quantity?item.quantity:0);
+let serial = ref(item.serial?item.serial:"")
 
 function plus() {
-  if (item_quantity.value < part.quantity!) {
+  if(serialize&&item.part.serialized){
+    return emit('dupeSerialized')
+  }
+  if (item_quantity.value < item.part.quantity!) {
     item_quantity.value = item_quantity.value + 1;
   }
   emit('plus');
@@ -25,9 +30,13 @@ function minus() {
 }
 
 function updateQuantity() {
-  if(part.quantity&&item_quantity.value>part.quantity)
-    item_quantity.value = part.quantity
-  emit("updateQuantity", item_quantity.value, part.nxid!)
+  if(item.part.quantity&&item_quantity.value>item.part.quantity)
+    item_quantity.value = item.part.quantity
+  emit("updateQuantity", item_quantity.value, item.part.nxid!)
+}
+
+function updateSerial() {
+  item.serial = serial.value
 }
 </script>
 
@@ -36,30 +45,43 @@ function updateQuantity() {
     <div
       class="group-hover:bab-hover background-and-border grid grid-cols-4 p-1 text-center leading-10 md:grid-cols-6 md:p-2"
     >
-      <p class="hidden md:block">{{ part.nxid }}</p>
-      <p class="break-words">{{ part.manufacturer }}</p>
-      <p class="break-words">{{ part.name }}</p>
+      <p class="hidden md:block">{{ item.part.nxid }}</p>
+      <p class="break-words">{{ item.part.manufacturer }}</p>
+      <p class="break-words">{{ item.part.name }}</p>
       <p class="hidden break-words md:block">
         {{
-          `${part.rack_num ? part.rack_num : ''}${
-            part.shelf_location ? part.shelf_location : ''
+          `${item.part.rack_num ? item.part.rack_num : ''}${
+            item.part.shelf_location ? item.part.shelf_location : ''
           }`
         }}
       </p>
-      <div class="flex justify-center">
+      <p class="break-words" v-if="hideButtons&&item.serial">
+        {{ item.serial }}
+      </p>
+      <p class="break-words" v-else-if="hideButtons">{{ item.quantity }}</p>
+      <input
+        class="textbox pl-2 "
+        v-else-if="serialize&&item.part.serialized"
+        v-model="serial"
+        type="text"
+        placeholder="Serial"
+        v-on:focusout="updateSerial"
+      />
+      <div class="flex justify-center" v-else>
         <input
           class="textbox pl-2 w-16 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none text-right"
           required
           v-model="item_quantity"
           type="number"
           min="0"
-          :max="part.quantity"
+          :max="item.part.quantity"
           step="1"
           v-on:focusout="updateQuantity()"
         />
-        <p class="break-words">{{ ` /${part.quantity}` }}</p>
+        <p class="break-words">/ {{ item.part.quantity }}</p>
       </div>
-      <div class="my-auto flex justify-end">
+      <div v-if="hideButtons"></div>
+      <div v-else class="my-auto flex justify-end">
         <!-- Plus -->
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -77,6 +99,7 @@ function updateQuantity() {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"
+          v-if="!serialize||(!(item.part.serialized || item.serial))"
           class="button-icon hover:button-icon-hover active:button-icon-active"
           v-on:click="minus"
         >
@@ -103,7 +126,7 @@ function updateQuantity() {
     </div>
     <InlinePartSpecComponent
       class="group-hover:bab-drop-hover bab-drop relative"
-      :part="part"
+      :part="item.part"
     />
   </div>
 </template>
