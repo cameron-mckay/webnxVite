@@ -3,9 +3,9 @@ import Inventory from "./InventoryClass";
 
 export default class EbayInventory extends Inventory {
 
-  constructor(thisUser: User, extraSourceUsers?: User[], extraDestUsers?: User[], adminOnlySources?: User[], adminOnlyDests?: User[]) {
+  constructor(thisUser: User, extraSourceUsers?: User[], extraDestUsers?: User[]) {
     // Initialize parent class
-    super(thisUser, extraSourceUsers, extraDestUsers, adminOnlySources, adminOnlyDests);
+    super(thisUser, extraSourceUsers, extraDestUsers);
   }
 
   move(
