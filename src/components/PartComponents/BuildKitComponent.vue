@@ -64,7 +64,7 @@ onBeforeMount(async ()=>{
         value="Claim Kit"
       />
       <input
-        v-if="buildKit.requested_by&&buildKit.requested_by!=Cacher.getCurrentUser()._id&&request"
+        v-if="buildKit.requested_by&&buildKit.requested_by!=Cacher.getCurrentUser()._id&&(request||claim)"
         class="submit bg-green-300 text-black hover:bg-green-300 hover:cursor-default col-span-2 mx-1 mt-4"
         type="submit"
         value="Requested By Other User"
