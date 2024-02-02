@@ -1,40 +1,51 @@
 <script setup lang="ts">
-import { CartItem, InventoryEntry, LoadedCartItem, PartRequestSchema } from '../../plugins/interfaces'
+import { BuildKitSchema, CartItem, InventoryEntry, LoadedCartItem, PartRequestSchema, User } from '../../plugins/interfaces'
 import { onBeforeMount, ref } from 'vue';
 import Cacher from '../../plugins/Cacher';
 import CartItemComponent from './CartItemComponent.vue';
 
 interface Props {
   request: PartRequestSchema
+  kit?: BuildKitSchema
 }
 
-let { request } = defineProps<Props>()
+let { request, kit } = defineProps<Props>()
 
 let requestCopy = ref(JSON.parse(JSON.stringify(request)) as PartRequestSchema)
 let requestedBy = Cacher.getUser(request.requested_by)
 let fulfilledBy = request.fulfilled_by ? Cacher.getUser(request.fulfilled_by): {}
 let requestedParts = ref([] as LoadedCartItem[])
 let fulfilledParts = ref([] as {kiosk: string, parts: LoadedCartItem[]}[])
+let kiosk = {} as User
 
 onBeforeMount(async ()=>{
-  requestedParts.value = await Cacher.loadCartItems(request.parts)
-  fulfilledParts.value = await Promise.all((request.fulfilled_list ? request.fulfilled_list : []).map((p)=>{
-    return new Promise<{kiosk: string, parts: LoadedCartItem[]}>(async (res)=>{
-      let cartItems = [] as CartItem[]
-      for(let ie of p.parts) {
-        let q = ie.unserialized
-        for(let s of ie.newSerials!) {
-          cartItems.push({nxid: ie.nxid!, serial: s})
-          q--
-        }
-        if(q>0)
-          cartItems.push({nxid: ie.nxid!, quantity: q})
+  if(kit) {
+    if(request.date_fulfilled)
+      requestedParts.value = kit.claimed_parts ? await Cacher.loadCartItems(kit.claimed_parts) : []
+    else
+      requestedParts.value = kit.parts ? await Cacher.loadCartItems(kit.parts) : []
+    kiosk = Cacher.getUser(kit.kiosk)
+  }
+  else {
+    requestedParts.value = await Cacher.loadCartItems(request.parts)
+    fulfilledParts.value = await Promise.all((request.fulfilled_list ? request.fulfilled_list : []).map((p)=>{
+      return new Promise<{kiosk: string, parts: LoadedCartItem[]}>(async (res)=>{
+        let cartItems = [] as CartItem[]
+        for(let ie of p.parts) {
+          let q = ie.unserialized
+          for(let s of ie.newSerials!) {
+            cartItems.push({nxid: ie.nxid!, serial: s})
+            q--
+          }
+          if(q>0)
+            cartItems.push({nxid: ie.nxid!, quantity: q})
 
-      }
-      let parts = await Cacher.loadCartItems(cartItems)
-      res({kiosk: p.kiosk, parts})
-    })
-  }))
+        }
+        let parts = await Cacher.loadCartItems(cartItems)
+        res({kiosk: p.kiosk, parts})
+      })
+    }))
+  }
 })
 
 </script>
@@ -47,6 +58,11 @@ onBeforeMount(async ()=>{
       <p>
         {{ requestedBy.first_name + " " + requestedBy.last_name }}
       </p>
+    </div>
+    <div class="col-span-2 my-4" v-if="kit">
+      <p><span class="font-bold">Kit Name:</span> {{kit.kit_name}}</p>
+      <p><span class="font-bold">Kiosk:</span> {{kiosk.first_name}} {{kiosk.last_name}}</p>
+      <p><span class="font-bold">Kit Notes:</span> {{kit.notes}}</p>
     </div>
     <div class="my-4" v-if="request.tech_notes">
       <h1 class="mb-4 text-4xl">Tech Notes:</h1>
@@ -80,6 +96,7 @@ onBeforeMount(async ()=>{
         </p>
       </div>
       <div
+        v-if="!kit"
         class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
       >
         <p class="hidden md:block">NXID</p>

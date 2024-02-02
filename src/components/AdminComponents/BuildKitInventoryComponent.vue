@@ -119,6 +119,7 @@ function updateSliders(nxid: string, quantities: KioskQuantity[], serials: strin
         class="col-span-2"
         v-for="part in assetParts"
         :key="key+assetParts.indexOf(part)"
+        :untracked="untracked"
         :item="part"
         :maxQuantity="part.part.quantity!"
         :kiosk_quantities="quantityMap"

@@ -13,8 +13,9 @@ PartRequestSchema,
 AnalyticsSearchPage,
 LoadedCartItem,
 CartItem,
+BuildKitSchema,
 } from '../../plugins/interfaces';
-import { getFulfilledPartRequests } from '../../plugins/dbCommands/partManager';
+import { getBuildKitByID, getFulfilledPartRequests } from '../../plugins/dbCommands/partManager';
 import Cacher from '../../plugins/Cacher';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 
@@ -28,6 +29,7 @@ interface Props {
 let loaded = ref(false)
 let resultsLoading = ref(false)
 let requests = ref([] as PartRequestSchema[])
+let buildKits = ref(new Map<string, BuildKitSchema>())
 
 const { http, router, store } =
   defineProps<Props>();
@@ -54,11 +56,28 @@ onBeforeMount(()=>{
   loaded.value = true
 })
 
+function loadBuildKit(kit_id: string) {
+  return new Promise<BuildKitSchema>((res) => {
+    getBuildKitByID(http, kit_id, (data, err) => {
+      if(err)
+        res({} as BuildKitSchema)
+      res(data as BuildKitSchema)
+    })
+  })
+}
 
 async function displayResults(page: PartRequestSchema[])
 {
   // Load all the required info into the caches
   for(let r of page) {
+    if(r.build_kit_id) {
+      let buildKit = await loadBuildKit(r.build_kit_id)
+      buildKits.value.set(buildKit._id, buildKit)
+      await Promise.all(buildKit.parts!.map((p)=>{
+        return Cacher.getPartInfo(p)
+      }))
+      continue
+    }
     await Promise.all(r.parts.map((p)=>{
       return Cacher.getPartInfo(p)
     }))
@@ -106,6 +125,7 @@ function showLoader() {
         v-for="request of requests"
         :key="request.date_created+request.requested_by"
         :request="request"
+        :kit="request.build_kit_id ? buildKits.get(request.build_kit_id) : undefined"
       />
     </AnalyticsSearchComponent>
   </div>

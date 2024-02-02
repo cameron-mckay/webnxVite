@@ -10,8 +10,9 @@ import ReadOnlyPartRequestComponent from '../../components/KioskComponents/ReadO
 import type {
 UserState,
 PartRequestSchema,
+BuildKitSchema,
 } from '../../plugins/interfaces';
-import { getActivePartRequests, cancelPartRequest } from '../../plugins/dbCommands/partManager';
+import { getActivePartRequests, cancelPartRequest, getBuildKitByID } from '../../plugins/dbCommands/partManager';
 import Cacher from '../../plugins/Cacher';
 
 interface Props {
@@ -26,10 +27,21 @@ const { http, store, router, errorHandler, displayMessage } =
 
 let loading = ref(false)
 let requests = ref([] as PartRequestSchema[])
+let buildKits = ref(new Map<string, BuildKitSchema>())
 
 onBeforeMount(()=>{
   loadQueue()
 })
+
+function loadBuildKit(kit_id: string) {
+  return new Promise<BuildKitSchema>((res) => {
+    getBuildKitByID(http, kit_id, (data, err) => {
+      if(err)
+        res({} as BuildKitSchema)
+      res(data as BuildKitSchema)
+    })
+  })
+}
 
 function loadQueue() {
   loading.value = true
@@ -42,6 +54,14 @@ function loadQueue() {
     requests.value = data as PartRequestSchema[]
     // Load part info
     for(let r of requests.value) {
+      if(r.build_kit_id) {
+        let buildKit = await loadBuildKit(r.build_kit_id)
+        buildKits.value.set(buildKit._id, buildKit)
+        await Promise.all(buildKit.parts!.map((p)=>{
+          return Cacher.getPartInfo(p)
+        }))
+        continue
+      }
       await Promise.all(r.parts.map((p)=>{
         // Save nxid to set for getting kiosk quantities
         return Cacher.getPartInfo(p)
@@ -74,6 +94,7 @@ function cancel(id: string) {
     <div v-else>
       <ReadOnlyPartRequestComponent
         v-for="request of requests"
+        :kit="request.build_kit_id ? buildKits.get(request.build_kit_id) : undefined"
         :key="request.date_created+request.requested_by"
         :request="request"
         @cancel="cancel(request._id!)"
