@@ -88,7 +88,10 @@ onBeforeMount(async ()=>{
     </div>
     <div v-else-if="request.date_fulfilled">
       <div class="flex justify-between">
-        <h1 class="text-2xl leading-8 md:leading-10">
+        <h1 v-if="request.denied" class="text-2xl leading-8 md:leading-10 text-red-500 dark:text-red-500">
+          Denied: {{ new Date(requestCopy.date_fulfilled!).toLocaleString() }}
+        </h1>
+        <h1 v-else class="text-2xl leading-8 md:leading-10">
           Fulfilled: {{ new Date(requestCopy.date_fulfilled!).toLocaleString() }}
         </h1>
         <p>
@@ -96,7 +99,7 @@ onBeforeMount(async ()=>{
         </p>
       </div>
       <div
-        v-if="!kit"
+        v-if="!kit&&!request.denied"
         class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
       >
         <p class="hidden md:block">NXID</p>

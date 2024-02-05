@@ -299,7 +299,8 @@ export interface PartRequestSchema {
   build_kit_id?: string,
   cancelled?: boolean,
   tech_notes?: string,
-  clerk_notes?: string
+  clerk_notes?: string,
+  denied?: boolean
 }
 
 export interface KioskQuantity {
