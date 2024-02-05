@@ -100,7 +100,7 @@ function updateSerialArray(newTotal: number) {
       <p class="w-full md:w-auto">{{ info.manufacturer }} {{ info.name }}</p>
     </div>
     <div>
-      <p class="w-full md:w-auto">{{ info.shelf_location }}</p>
+      <p>{{ info.rack_num! + info.shelf_location! }}</p>
     </div>
     <div v-if="view_only!=true">
       <div v-for="q of quantities">
