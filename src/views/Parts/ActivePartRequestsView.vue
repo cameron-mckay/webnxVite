@@ -76,6 +76,7 @@ function cancel(id: string) {
     if(err)
       return errorHandler(err)
     displayMessage(data as string)
+    loadQueue()
   })
 }
 

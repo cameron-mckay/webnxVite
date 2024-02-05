@@ -74,16 +74,16 @@ async function deletePart(item: LoadedCartItem) {
   }
 }
 
-async function addOne(id: string) {
+async function addOne(item: LoadedCartItem) {
   getPartByID(
     http,
-    id,
+    item.part.nxid!,
     store.state.user.building!,
     (data, err) => {
       let part = data as PartSchema;
-      if (part.quantity! > store.getters.getQuantity(id)) {
+      if (part.quantity! > store.getters.getQuantity(item.part.nxid!)) {
         store.commit('addOne', part.nxid);
-
+        item.quantity = store.getters.getQuantity(item.part.nxid!)
       } else {
         errorHandler('Not enough stock');
       }
@@ -91,10 +91,11 @@ async function addOne(id: string) {
   , store.state.user.first_name + " " + store.state.user.last_name);
 }
 
-async function subOne(id: string) {
-  store.commit('removeOne', id);
-  if (store.getters.getQuantity(id) == 0) {
-    parts.value = parts.value.filter((p)=>p.part.nxid! != id)
+async function subOne(item: LoadedCartItem) {
+  store.commit('removeOne', item.part.nxid);
+  item.quantity = item.quantity! -= 1
+  if (store.getters.getQuantity(item.part.nxid) == 0) {
+    parts.value = parts.value.filter((p)=>p.part.nxid! != item.part.nxid)
   }
 }
 
@@ -130,8 +131,6 @@ function localCheckout() {
       newSerials: serialMap.has(k) ? serialMap.get(k)! : []
     })
   })
-
-  processingCheckout = false
   checkout(http, invEntries, currentUser.value._id!, (data, err) => {
     if (err) {
       processingCheckout = false
@@ -170,6 +169,10 @@ async function dupeSerialized(nxid: string) {
   else
     errorHandler('Not enough stock');
 }
+
+function updateSerial(item: LoadedCartItem, serial: string) {
+  item.serial = serial
+}
 </script>
 <template>
   <form @submit.prevent="localCheckout">
@@ -204,10 +207,11 @@ async function dupeSerialized(nxid: string) {
         v-bind:key="item.part.nxid!+item.serial"
         :item="item"
         :serialize="true"
-        @plus="addOne(item.part.nxid!)"
-        @minus="subOne(item.part.nxid!)"
+        @plus="addOne(item)"
+        @minus="subOne(item)"
         @delete="deletePart(item)"
         @updateQuantity="updateQuantity"
+        @update-serial="(serial: string)=>updateSerial(item, serial)"
         @dupe-serialized="dupeSerialized(item.part.nxid!)"
       />
       <div class="flex justify-center">

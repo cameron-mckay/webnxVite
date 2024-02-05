@@ -9,7 +9,7 @@ interface Props {
   hideButtons?: boolean;
 }
 const { item, serialize, hideButtons } = defineProps<Props>();
-const emit = defineEmits(['plus', 'minus', 'delete', 'updateQuantity', 'dupeSerialized']);
+const emit = defineEmits(['plus', 'minus', 'delete', 'updateQuantity', 'dupeSerialized', 'updateSerial']);
 
 let item_quantity = ref(item.quantity?item.quantity:0);
 let serial = ref(item.serial?item.serial:"")
@@ -37,6 +37,7 @@ function updateQuantity() {
 
 function updateSerial() {
   item.serial = serial.value
+  emit("updateSerial", serial.value)
 }
 </script>
 

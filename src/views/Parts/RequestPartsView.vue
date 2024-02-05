@@ -84,11 +84,11 @@ function localCheckout() {
     return
   processingCheckout = true
   let cart = [] as CartItem[];
-
+  
   for (let item of parts.value) {
-    cart.push({ nxid: item.part.nxid!, quantity: item.quantity })
+    cart.push({ nxid: item.part.nxid!, quantity: store.state.parts.get(item.part.nxid!)! })
   }
-  processingCheckout = false
+  console.log(cart)
   requestParts(http, cart, notes.value, (data, err) => {
     if(err) {
       processingCheckout = false
