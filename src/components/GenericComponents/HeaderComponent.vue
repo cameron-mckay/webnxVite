@@ -38,7 +38,7 @@
             Parts
           </RouterLink>
           <RouterLink
-            v-if="store.state.user.roles?.includes('request_build_kit')||store.state.user.roles?.includes('claim_build_kit')||store.state.user.roles?.includes('is_kiosk')"
+            v-if="store.state.user.roles?.includes('create_build_kit')||store.state.user.roles?.includes('request_build_kit')||store.state.user.roles?.includes('claim_build_kit')||store.state.user.roles?.includes('is_kiosk')"
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/buildKit/search"
           >
@@ -59,7 +59,7 @@
             Pallets
           </RouterLink>
           <RouterLink
-            v-if="store.state.user.roles?.includes('request_parts')"
+            v-if="store.state.user.roles?.includes('request_parts')||store.state.user.roles?.includes('fulfill_part_requests')"
             v-show="store.state.parts.size > 0"
             class="header-button-colors w-36 text-center leading-10 transition"
             to="/requestParts"
@@ -67,7 +67,7 @@
             Request Parts ({{ store.getters.getTotalNumItems }})
           </RouterLink>
           <RouterLink
-            v-if="store.state.user.roles?.includes('request_parts')"
+            v-if="store.state.user.roles?.includes('request_parts')||store.state.user.roles?.includes('fulfill_part_requests')"
             v-show="store.state.parts.size < 1"
             class="header-button-colors w-36 text-center leading-10 transition"
             to="/requestParts"
@@ -190,7 +190,19 @@
       v-on:click="toggle"
       class="fixed top-12 z-50 flex h-[calc(100%-2.5rem)] w-full flex-col justify-center text-2xl md:hidden"
     >
-      <RouterLink class="mobile-nav-button" to="/parts">Parts</RouterLink>
+      <RouterLink
+        class="mobile-nav-button"
+        to="/parts"
+      >
+        Parts
+      </RouterLink>
+      <RouterLink
+        v-if="store.state.user.roles?.includes('create_build_kit')||store.state.user.roles?.includes('request_build_kit')||store.state.user.roles?.includes('claim_build_kit')||store.state.user.roles?.includes('is_kiosk')"
+        class="mobile-nav-button"
+        to="/buildKit/search"
+      >
+        Build Kits
+      </RouterLink>
       <RouterLink
         v-if="store.state.user.roles?.includes('view_assets')"
         class="mobile-nav-button"
@@ -206,22 +218,28 @@
         Pallets
       </RouterLink>
       <RouterLink
-        v-if="store.state.user.roles?.includes('request_parts')"
+        v-if="store.state.user.roles?.includes('request_parts')||store.state.user.roles?.includes('fulfill_part_requests')"
         v-show="store.state.parts.size > 0"
         class="mobile-nav-button"
         to="/requestParts"
       >
-        Check Out ({{ store.getters.getTotalNumItems }})
+        Request Parts ({{ store.getters.getTotalNumItems }})
       </RouterLink>
       <RouterLink
-        v-if="store.state.user.roles?.includes('request_parts')"
+        v-if="store.state.user.roles?.includes('request_parts')||store.state.user.roles?.includes('fulfill_part_requests')"
         v-show="store.state.parts.size < 1"
         class="mobile-nav-button"
         to="/requestParts"
       >
-        Check Out
+        Request Parts
       </RouterLink>
-
+      <RouterLink
+        v-if="store.state.user.roles?.includes('fulfill_part_requests')"
+        class="mobile-nav-button"
+        to="/clerk/partRequests"
+      >
+        Requests
+      </RouterLink>
       <RouterLink
         v-if="store.state.user.roles?.includes('is_kiosk')"
         v-show="store.state.parts.size > 0"

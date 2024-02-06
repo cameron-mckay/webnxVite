@@ -150,7 +150,7 @@ const routes = [
     path: '/requestParts',
     name: 'Request Parts',
     meta: {
-      allowedRoles: ["request_parts"]
+      allowedRoles: ["request_parts", "fulfill_part_requests"]
     },
     component: () => import('../views/Parts/RequestPartsView.vue')
   },
@@ -182,7 +182,7 @@ const routes = [
     path: '/buildKit/search',
     name: 'Build Kit Search',
     meta: {
-      allowedRoles: ["request_build_kit", "claim_build_kit", "is_kiosk"]
+      allowedRoles: ["create_build_kit", "request_build_kit", "claim_build_kit", "is_kiosk"]
     },
     component: () => import('../views/Parts/FindBuildKitsView.vue')
   },
