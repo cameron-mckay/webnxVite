@@ -158,7 +158,7 @@ const routes = [
     path: '/partRequests/active',
     name: 'Active Part Requests',
     meta: {
-      allowedRoles: ["request_parts"]
+      allowedRoles: ["request_parts", "fulfill_part_requests"]
     },
     component: () => import('../views/Parts/ActivePartRequestsView.vue')
   },
@@ -166,7 +166,7 @@ const routes = [
     path: '/partRequests/fulfilled',
     name: 'Part Request History',
     meta: {
-      allowedRoles: ["request_parts"]
+      allowedRoles: ["request_parts", "fulfill_part_requests"]
     },
     component: () => import('../views/Parts/PastPartRequestsView.vue')
   },
