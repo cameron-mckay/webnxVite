@@ -148,7 +148,7 @@ async function getNXID() {
         <input
           class="m-1 text-black dark:text-gray-200"
           type="file"
-          accept="image/*"
+          accept="image/*, text/plain"
           id="imageUpload"
           @change="handleImageUpload"
         />
