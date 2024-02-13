@@ -1,12 +1,14 @@
 <template>
   <div>
     <div
+      id="header"
       class="header-color fixed top-0 z-20 flex w-full justify-between shadow-md"
     >
       <div class="flex justify-center">
         <!-- Hamburger nav -->
         <svg
-          class="header-button-colors h-10 w-10 shrink-0 p-2 md:hidden"
+          class="header-button-colors h-10 w-10 shrink-0 p-2"
+          v-if="overflow"
           v-on:click="toggle"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 448 512"
@@ -30,7 +32,9 @@
           src="../../assets/logo.webp"
         />
         <!-- Desktop nav -->
-        <div class="hidden justify-center md:flex">
+        <div class="justify-center flex"
+          v-if="!overflow"
+        >
           <RouterLink
             class="header-button-colors w-24 text-center leading-10 transition"
             to="/parts"
@@ -131,7 +135,9 @@
         class="header-button-colors flex justify-center"
         v-on:click="toggleProfile"
       >
-        <p class="mr-2 hidden pl-2 leading-10 md:block">
+        <p class="mr-2 pl-2 leading-10 block"
+          v-if="!overflow"
+        >
           {{ store.state.user.first_name + ' ' + store.state.user.last_name }}
         </p>
         <svg
@@ -186,9 +192,9 @@
     </div>
     <!-- Mobile nav menu -->
     <div
-      v-if="showMenu"
+      v-if="overflow&&showMenu"
       v-on:click="toggle"
-      class="fixed top-12 z-50 flex h-[calc(100%-2.5rem)] w-full flex-col justify-center text-2xl md:hidden"
+      class="fixed top-12 z-50 flex h-[calc(100%-2.5rem)] w-full flex-col justify-center text-2xl"
     >
       <RouterLink
         class="mobile-nav-button"
@@ -302,6 +308,22 @@ const { store, revokeLogin } = defineProps<Props>();
 let showMenu = ref(false);
 let dark = ref(false);
 let showProfile = ref(false);
+let overflow = ref(false)
+
+function handleResize() {
+  if(overflow)
+    overflow.value = false
+  setTimeout(()=>{
+    let header = document.getElementById("header")!
+    let headerWidth = header.offsetWidth
+    let childWidth = 0;
+    for (let i = 0; i < header.children?.length; i++) {
+      childWidth += header.children.item(i)!.getBoundingClientRect().width
+    }
+    if(childWidth > headerWidth)
+      overflow.value = true
+  },0)
+}
 
 onMounted(() => {
   if (
@@ -323,6 +345,8 @@ onMounted(() => {
       ?.setAttribute('content', '#d1d5db');
   }
   // Enable watcher
+  window.addEventListener('resize', handleResize)
+  handleResize()
   watch(dark, () => {
     updateTheme();
   });
