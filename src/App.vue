@@ -31,7 +31,7 @@ import { useStore } from './plugins/store';
 import Cacher from './plugins/Cacher';
 import LoaderComponent from './components/GenericComponents/LoaderComponent.vue';
 import { urlBase64ToUint8Array } from './plugins/CommonMethods'
-import { getPublicKey } from './plugins/dbCommands/notifications';
+import { getPublicKey, sendNotifiction } from './plugins/dbCommands/notifications';
 
 // Global instances passed through props
 const http = inject<AxiosInstance>(injectionKey)!;
@@ -73,6 +73,10 @@ onMounted(() => {
     })
     .then((sub) => {
       console.log(sub)
+      sendNotifiction(http, sub, (data, err) =>{
+        if(err)
+          return errorHandler(err)
+      })
       // Send the subscription details to the server using the Fetch API.
       // fetch('./register', {
       //   method: 'post',

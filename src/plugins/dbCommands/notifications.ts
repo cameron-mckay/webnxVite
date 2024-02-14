@@ -1,4 +1,5 @@
-import { AxiosInstance } from "axios";
+import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import { apiResponse } from "../interfaces";
 
 export function getPublicKey(
   http: AxiosInstance
@@ -12,4 +13,23 @@ export function getPublicKey(
         rej(err)
       })
   })
+}
+
+export function sendNotifiction(
+  http: AxiosInstance,
+  subscription: string,
+  callback: apiResponse
+) {
+  http
+    .post('/api/part/id', {
+      subscription
+    })
+    .then((res: AxiosResponse) => {
+      // Success and send back results
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Send error to callback function
+      callback({}, err);
+    });
 }
