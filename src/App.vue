@@ -72,8 +72,7 @@ onMounted(() => {
         })
     })
     .then((sub) => {
-      console.log(sub)
-      sendNotifiction(http, sub.endpoint, (data, err) =>{
+      sendNotifiction(http, JSON.stringify(sub), (data, err) =>{
         if(err)
           return errorHandler(err)
       })
