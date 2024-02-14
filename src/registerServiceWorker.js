@@ -6,7 +6,7 @@ if (import.meta.env.VITE_NODE_ENV == 'production') {
       reg.onupdatefound = () => {
         console.log('New content is downloading.');
 
-        const installingWorker = registration.installing
+        const installingWorker = reg.installing
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
