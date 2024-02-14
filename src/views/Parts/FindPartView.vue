@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
-import { ref, Ref } from 'vue';
+import { onMounted, ref, Ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import { PartSchema, TextSearchPage, UserState } from '../../plugins/interfaces';
@@ -26,6 +26,12 @@ const { http, store, router, errorHandler, displayMessage } = defineProps<Props>
 let parts: Ref<PartSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
+
+onMounted(()=>{
+  Notification.requestPermission().then(()=>{
+    new Notification("Test")
+  })
+})
 
 function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
   return new Promise<TextSearchPage>((res)=>{

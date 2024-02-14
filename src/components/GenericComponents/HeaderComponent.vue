@@ -311,8 +311,7 @@ let showProfile = ref(false);
 let overflow = ref(false)
 
 function handleResize() {
-  if(overflow)
-    overflow.value = false
+  overflow.value = false
   setTimeout(()=>{
     let header = document.getElementById("header")!
     let headerWidth = header.offsetWidth

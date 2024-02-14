@@ -1,34 +1,24 @@
-/* eslint-disable no-console */
-
-import { register } from 'register-service-worker';
-
 if (import.meta.env.VITE_NODE_ENV == 'production') {
-  register(`${import.meta.env.VITE_BASE_URL}/service-worker.js`, {
-    ready() {
-      console.log(
-        'App is being served from cache by a service worker.\n' +
-          'For more details, visit https://goo.gl/AFskqB'
-      );
-    },
-    registered() {
+  navigator.serviceWorker.register(`${import.meta.env.VITE_API_URL}/service-worker.js`, {})
+    .then((reg)=>{
       console.log('Service worker has been registered.');
-    },
-    cached() {
-      console.log('Content has been cached for offline use.');
-    },
-    updatefound() {
-      console.log('New content is downloading.');
-    },
-    updated() {
-      console.log('New content is available; please refresh.');
-    },
-    offline() {
-      console.log(
-        'No internet connection found. App is running in offline mode.'
-      );
-    },
-    error(error) {
-      console.error('Error during service worker registration:', error);
-    },
-  });
+      console.log("new service worker biatch")
+      // On update
+      reg.onupdatefound = () => {
+        console.log('New content is downloading.');
+        if (installingWorker.state === 'installed') {
+          if (navigator.serviceWorker.controller) {
+            console.log('New content is available; please refresh.');
+          } else {
+            console.log('Content has been cached for offline use.');
+          } 
+        }
+      }
+    })
+    .catch((err)=>{
+      if (!navigator.onLine) {
+        console.log('No internet connection found. App is running in offline mode.')
+      }
+      console.error(err)
+    })
 }
