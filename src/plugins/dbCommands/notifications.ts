@@ -17,7 +17,7 @@ export function getPublicKey(
 
 export function sendNotifiction(
   http: AxiosInstance,
-  subscription: string,
+  subscription: any,
   callback: apiResponse
 ) {
   http
