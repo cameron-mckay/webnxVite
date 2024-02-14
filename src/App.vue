@@ -72,6 +72,7 @@ onMounted(() => {
         })
     })
     .then((sub) => {
+      console.log(sub)
       // Send the subscription details to the server using the Fetch API.
       // fetch('./register', {
       //   method: 'post',
