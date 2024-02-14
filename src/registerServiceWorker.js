@@ -12,6 +12,7 @@ if (import.meta.env.VITE_NODE_ENV == 'production') {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
               console.log('New content is available; please refresh.');
+              window.location.reload()
             } else {
               console.log('Content has been cached for offline use.');
             } 
