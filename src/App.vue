@@ -30,6 +30,8 @@ import type { Message, User } from './plugins/interfaces';
 import { useStore } from './plugins/store';
 import Cacher from './plugins/Cacher';
 import LoaderComponent from './components/GenericComponents/LoaderComponent.vue';
+import { urlBase64ToUint8Array } from './plugins/CommonMethods'
+import { getPublicKey } from './plugins/dbCommands/notifications';
 
 // Global instances passed through props
 const http = inject<AxiosInstance>(injectionKey)!;
@@ -53,6 +55,34 @@ onMounted(() => {
   } else {
     localStorage.setItem('theme', 'light');
   }
+
+
+  navigator.serviceWorker.ready
+    .then((reg) => {
+      return reg.pushManager.getSubscription()
+        .then(async (sub)=>{
+          if(sub)
+            return sub
+          const key = await getPublicKey(http)
+          const convertedKey = urlBase64ToUint8Array(key)
+          return reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: convertedKey
+          });
+        })
+    })
+    .then((sub) => {
+      // Send the subscription details to the server using the Fetch API.
+      // fetch('./register', {
+      //   method: 'post',
+      //   headers: {
+      //     'Content-type': 'application/json'
+      //   },
+      //   body: JSON.stringify({
+      //     subscription: sub
+      //   }),
+      // });
+    })
 });
 
 function redirect() {
