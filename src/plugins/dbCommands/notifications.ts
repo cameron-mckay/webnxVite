@@ -21,7 +21,7 @@ export function sendNotifiction(
   callback: apiResponse
 ) {
   http
-    .post('/api/part/id', {
+    .post('/api/notifications/send', {
       subscription
     })
     .then((res: AxiosResponse) => {
