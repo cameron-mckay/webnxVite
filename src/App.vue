@@ -76,16 +76,6 @@ onMounted(() => {
         if(err)
           return errorHandler(err)
       })
-      // Send the subscription details to the server using the Fetch API.
-      // fetch('./register', {
-      //   method: 'post',
-      //   headers: {
-      //     'Content-type': 'application/json'
-      //   },
-      //   body: JSON.stringify({
-      //     subscription: sub
-      //   }),
-      // });
     })
 });
 
