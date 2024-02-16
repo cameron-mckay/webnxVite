@@ -60,6 +60,12 @@ function sendNotificationLocal() {
 }
 
 function sendNotifcationRemote() {
-  console.log("nope")
+  navigator.serviceWorker.getRegistration().then(reg => {
+    let sub = reg?.pushManager.getSubscription()
+    sendNotifiction(http, sub, (data, err) => {
+      if(err)
+        errorHandler(err)
+    })
+  })
 }
 </script>
