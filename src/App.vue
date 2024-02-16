@@ -53,13 +53,11 @@ onMounted(() => {
   } else {
     localStorage.setItem('theme', 'light');
   }
-
   const bc = new BroadcastChannel("nx-push")
   bc.onmessage = (event) => {
     const data = event.data
     displayMessage(data, NotificationTypes.Info)
   }
-
   navigator.serviceWorker.ready
     .then((reg) => {
       return reg.pushManager.getSubscription()

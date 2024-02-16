@@ -27,12 +27,6 @@ let parts: Ref<PartSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
 
-onMounted(()=>{
-  Notification.requestPermission().then(()=>{
-    new Notification("Test")
-  })
-})
-
 function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
   return new Promise<TextSearchPage>((res)=>{
     getPartsByTextSearch(http, searchString, pageNum, buildingNum, (data: any, err) => {
