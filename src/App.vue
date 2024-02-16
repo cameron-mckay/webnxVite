@@ -53,13 +53,15 @@ onMounted(() => {
   } else {
     localStorage.setItem('theme', 'light');
   }
+
+  const bc = new BroadcastChannel("nx-push")
+  bc.addEventListener("message", event => {
+    const data = event.data
+    displayMessage(data, NotificationTypes.Info)
+  })
+
   navigator.serviceWorker.ready
     .then((reg) => {
-      reg.addEventListener("push", (event: any) => {
-        console.log("Push")
-        const payload = event.data ? event.data.text() : 'no payload';
-        displayMessage(payload, NotificationTypes.Info)
-      })
       return reg.pushManager.getSubscription()
         .then(async (sub)=>{
           if(sub)
@@ -78,6 +80,7 @@ onMounted(() => {
           return errorHandler(err)
       })
     })
+
 });
 
 function redirect() {

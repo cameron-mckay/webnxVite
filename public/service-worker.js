@@ -31,6 +31,8 @@ self.addEventListener('push', (event) => {
   // Other formats are supported (ArrayBuffer, Blob, JSON), check out the documentation
   // on https://developer.mozilla.org/en-US/docs/Web/API/PushMessageData.
   const payload = event.data ? event.data.text() : 'no payload';
+  const bc = new BroadcastChannel("nx-push")
+  bc.postMessage(payload)
   // Keep the service worker alive until the notification is created.
   event.waitUntil(
     // Show a notification with title 'ServiceWorker Cookbook' and use the payload
