@@ -55,7 +55,7 @@ onMounted(() => {
   }
   navigator.serviceWorker.ready
     .then((reg) => {
-      navigator.serviceWorker.addEventListener("push", (event: any) => {
+      reg.addEventListener("push", (event: any) => {
         console.log("Push")
         const payload = event.data ? event.data.text() : 'no payload';
         displayMessage(payload, NotificationTypes.Info)
