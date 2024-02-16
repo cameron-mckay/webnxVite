@@ -55,6 +55,11 @@ onMounted(() => {
   }
   navigator.serviceWorker.ready
     .then((reg) => {
+      navigator.serviceWorker.addEventListener("push", (event: any) => {
+        console.log("Push")
+        const payload = event.data ? event.data.text() : 'no payload';
+        displayMessage(payload, NotificationTypes.Info)
+      })
       return reg.pushManager.getSubscription()
         .then(async (sub)=>{
           if(sub)
@@ -73,12 +78,6 @@ onMounted(() => {
           return errorHandler(err)
       })
     })
-  console.log(navigator.serviceWorker)
-  navigator.serviceWorker.addEventListener("push", (event: any) => {
-    console.log("Push")
-    const payload = event.data ? event.data.text() : 'no payload';
-    displayMessage(payload, NotificationTypes.Info)
-  })
 });
 
 function redirect() {
