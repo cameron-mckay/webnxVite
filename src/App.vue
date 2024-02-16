@@ -73,6 +73,7 @@ onMounted(() => {
           return errorHandler(err)
       })
     })
+  console.log(navigator.serviceWorker)
   navigator.serviceWorker.addEventListener("push", (event: any) => {
     console.log("Push")
     const payload = event.data ? event.data.text() : 'no payload';

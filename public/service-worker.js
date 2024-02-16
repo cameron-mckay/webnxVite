@@ -16,7 +16,6 @@ async function notifyIfInvisible(event) {
     type: "window",
     includeUncontrolled: true,
   });
-
   for (var i = 0; i < windowClients.length; i++) {
     if (windowClients[i].visibilityState === "visible") {
       return true;
