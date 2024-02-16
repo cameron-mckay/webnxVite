@@ -46,6 +46,7 @@ export interface Notification {
   type: NotificationTypes;
   text: string;
   quantity: number;
+  ms_left: number;
 }
 
 export interface LoadedPartRecord {

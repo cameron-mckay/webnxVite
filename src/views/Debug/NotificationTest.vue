@@ -19,8 +19,6 @@
       >
         <option v-for="option in NotificationTypes" :value="option">{{ option }}</option>
       </select>
-      <label>Remote?</label>
-      <input type="checkbox" v-model="remote"/>
       <input class="search-button mr-0" type="submit" value="Send" />
     </form>
   </div>
@@ -32,7 +30,7 @@ import { NotificationTypes, UserState } from '../../plugins/interfaces';
 import { Router } from 'vue-router';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue';
 import { ref } from 'vue';
-import { sendNotifiction } from '../../plugins/dbCommands/notifications';
+
 interface Props {
   http: AxiosInstance;
   store: Store<UserState>;
@@ -46,26 +44,8 @@ const { http, store, router, errorHandler, displayMessage } =
 
 let type = ref(NotificationTypes.Info)
 let text = ref("")
-let remote = ref(false)
 
 function submit() {
-  if(remote.value)
-    sendNotifcationRemote()
-  else
-    sendNotificationLocal()
-}
-
-function sendNotificationLocal() {
   displayMessage(text.value, type.value)
-}
-
-function sendNotifcationRemote() {
-  navigator.serviceWorker.getRegistration().then(reg => {
-    let sub = reg?.pushManager.getSubscription()
-    sendNotifiction(http, sub, (data, err) => {
-      if(err)
-        errorHandler(err)
-    })
-  })
 }
 </script>

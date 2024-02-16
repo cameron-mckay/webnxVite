@@ -36,6 +36,7 @@ import { getPublicKey, sendNotifiction } from './plugins/dbCommands/notification
 const http = inject<AxiosInstance>(injectionKey)!;
 const router = useRouter();
 const store = useStore();
+const NOTIFICATION_TIME = 5000
 
 let routeConfigured = ref(false)
 
@@ -53,11 +54,13 @@ onMounted(() => {
   } else {
     localStorage.setItem('theme', 'light');
   }
+  // Listens for notifications from service worker
   const bc = new BroadcastChannel("nx-push")
   bc.onmessage = (event) => {
     const data = event.data
     displayMessage(data, NotificationTypes.Info)
   }
+  // Get the registration from service worker
   navigator.serviceWorker.ready
     .then((reg) => {
       return reg.pushManager.getSubscription()
@@ -73,12 +76,12 @@ onMounted(() => {
         })
     })
     .then((sub) => {
+      // Send registration info to server
       sendNotifiction(http, sub, (data, err) =>{
         if(err)
           return errorHandler(err)
       })
     })
-
 });
 
 function redirect() {
@@ -194,6 +197,7 @@ function displayMessage(message: string, type?: NotificationTypes) {
     if (message == existingMessage.text && type == existingMessage.type) {
       // Increment existing message
       existingMessage.quantity += 1;
+      existingMessage.ms_left = NOTIFICATION_TIME
       // Set sentinel value
       match = true;
       // Store a reference so we can delete or decrement after 5 seconds
@@ -202,24 +206,10 @@ function displayMessage(message: string, type?: NotificationTypes) {
   }
   if (!match) {
     // If message doesn't already exist - create and push new
-    notifications.value.push({ type: type, text: message, quantity: 1 } as Notification);
+    notifications.value.push({ type: type, text: message, quantity: 1, ms_left: NOTIFICATION_TIME } as Notification);
     // Keep a references so we can delete or decrement after 5 seconds
     messageRef = notifications.value[notifications.value.length - 1];
   }
-  // Hide after 5 seconds
-  setTimeout(() => {
-    // If last message - delete
-    if (messageRef.quantity < 2) {
-      let i = notifications.value.indexOf(messageRef);
-      if (i > -1) {
-        notifications.value.splice(i, 1);
-      }
-    }
-    // If not last message
-    else {
-      messageRef.quantity -= 1;
-    }
-  }, 5000);
 }
 
 function revokeLogin() {
@@ -247,5 +237,4 @@ function firstLoadRevokeLogin() {
     configureRouter();
   }
 }
-
 </script>
