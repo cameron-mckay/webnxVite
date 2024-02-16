@@ -11,6 +11,9 @@ self.addEventListener('message', (event) => {
 });
 
 async function notifyIfInvisible(event) {
+  // Retrieve the textual payload from event.data (a PushMessageData object).
+  // Other formats are supported (ArrayBuffer, Blob, JSON), check out the documentation
+  // on https://developer.mozilla.org/en-US/docs/Web/API/PushMessageData.
   const payload = event.data ? event.data.text() : 'no payload';
   const windowClients = await clients.matchAll({
     type: "window",
@@ -18,6 +21,9 @@ async function notifyIfInvisible(event) {
   });
   for (var i = 0; i < windowClients.length; i++) {
     if (windowClients[i].visibilityState === "visible") {
+      const bc = new BroadcastChannel("nx-push")
+      bc.postMessage(payload)
+      bc.close()
       return true;
     }
   }
@@ -27,19 +33,11 @@ async function notifyIfInvisible(event) {
   return false;
 }
 self.addEventListener('push', (event) => {
-  // Retrieve the textual payload from event.data (a PushMessageData object).
-  // Other formats are supported (ArrayBuffer, Blob, JSON), check out the documentation
-  // on https://developer.mozilla.org/en-US/docs/Web/API/PushMessageData.
-  const payload = event.data ? event.data.text() : 'no payload';
-  const bc = new BroadcastChannel("nx-push")
-  bc.postMessage(payload)
   // Keep the service worker alive until the notification is created.
   event.waitUntil(
     // Show a notification with title 'ServiceWorker Cookbook' and use the payload
     // as the body.
-    self.registration.showNotification('ServiceWorker Cookbook', {
-      body: payload,
-    })
+    notifyIfInvisible(event)
   );
 })
 
