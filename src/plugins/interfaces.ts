@@ -35,8 +35,15 @@ export interface AxiosOptions {
   token?: string;
 }
 
+export enum NotificationTypes {
+  Warning = "Warning",
+  Error = "Error",
+  Info = "Info",
+}
+
 // For message component
-export interface Message {
+export interface Notification {
+  type: NotificationTypes;
   text: string;
   quantity: number;
 }

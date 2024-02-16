@@ -156,5 +156,22 @@ let {store} = defineProps<Props>()
         </RouterLink>
       </div>
     </div>
+    <div>
+      <h1
+        class="mt-4 text-xl ml-2"
+      >
+        Debug
+      </h1>
+      <div class="grid grid-cols-2 md:grid-cols-3">
+        <RouterLink
+          to="/debug/notifications"
+          class="manager-button"
+        >
+          Notifcations
+        </RouterLink>
+      </div>
+    </div>
+
+
   </div>
 </template>

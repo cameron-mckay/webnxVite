@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { LoadedCartItem } from '../../plugins/interfaces';
 import InlinePartSpecComponent from '../PartComponents/InlinePartSpecComponent.vue';
+import SVGRoundPlus from '../GenericComponents/SVG/SVGRoundPlus.vue';
+import SVGRoundMinus from '../GenericComponents/SVG/SVGRoundMinus.vue';
 interface Props {
   item: LoadedCartItem;
   plus?: boolean;
@@ -17,71 +19,39 @@ const { item } = defineProps<Props>();
     >
       <div class="hidden md:flex">
         <!-- Plus -->
-        <svg
+        <SVGRoundPlus
           class="mx-0.5 my-auto h-8 w-8 shrink-0 p-2 text-green-500 shadow-none md:mx-1 md:h-10 md:w-10"
           v-if="plus"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-        >
-          <path
-            fill="currentColor"
-            stroke="currentColor"
-            d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"
-          />
-        </svg>
+        />
         <!-- Minus -->
-        <svg
+        <SVGRoundMinus
           class="mx-0.5 my-auto h-8 w-8 shrink-0 p-2 text-red-500 shadow-none md:mx-1 md:h-10 md:w-10"
           v-else-if="minus"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-        >
-          <path
-            fill="currentColor"
-            stroke="currentColor"
-            d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM184 232H328c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
-          />
-        </svg>
-        <svg
+        />
+        <div
           class="mx-0.5 my-auto h-8 w-8 shrink-0 p-2 text-green-500 shadow-none md:mx-1 md:h-10 md:w-10"
           v-else
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
-        ></svg>
+        ></div>
         <p>{{ item.part.nxid }}</p>
       </div>
       <div class="flex justify-start md:justify-center">
-        <svg
+        <SVGRoundPlus
           class="mx-0.5 my-auto block h-8 w-8 shrink-0 p-2 text-green-500 shadow-none md:mx-1 md:hidden md:h-10 md:w-10"
           v-if="plus"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-        >
-          <path
-            fill="currentColor"
-            stroke="currentColor"
-            d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"
-          />
-        </svg>
+        />
         <!-- Minus -->
-        <svg
+        <SVGRoundMinus
           class="mx-0.5 my-auto block h-8 w-8 shrink-0 p-2 text-red-500 shadow-none md:mx-1 md:hidden md:h-10 md:w-10"
           v-else-if="minus"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 512 512"
-        >
-          <path
-            fill="currentColor"
-            stroke="currentColor"
-            d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM184 232H328c13.3 0 24 10.7 24 24s-10.7 24-24 24H184c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
-          />
-        </svg>
-        <svg
+        />
+        <div
           class="mx-0.5 my-auto block h-8 w-8 shrink-0 p-2 text-green-500 shadow-none md:mx-1 md:hidden md:h-10 md:w-10"
           v-else
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 512 512"
-        ></svg>
+        ></div>
         <p class="break-words">{{ item.part.manufacturer }}</p>
       </div>
       <p class="break-words">{{ item.part.name }}</p>

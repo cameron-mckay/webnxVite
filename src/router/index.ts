@@ -363,6 +363,14 @@ const routes = [
     component: () => import('../views/Pallets/PalletHistoryView.vue'),
   },
   {
+    path: '/debug/notifications',
+    name: 'Notifications Debug',
+    // meta: {
+    //   allowedRoles: ["debug"]
+    // },
+    component: () => import('../views/Debug/NotificationTest.vue'),
+  },
+  {
     path: '/:catchall(.*)',
     name: '404',
     component: () => import('../views/NotFound.vue'),

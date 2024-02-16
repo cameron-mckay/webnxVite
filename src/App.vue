@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeaderComponent v-if="store.state.isAuth&&routeConfigured" :http="http" :store="store" :revokeLogin="revokeLogin" />
-    <MessageComponent :messages="messages" :errors="errorMessages" />
+    <NotificationComponent :notifications="notifications"/>
     <LoaderComponent v-if="!routeConfigured"/>
     <router-view
       v-else
@@ -18,15 +18,14 @@
 <script setup lang="ts">
 // Vue components
 import HeaderComponent from './components/GenericComponents/HeaderComponent.vue';
-import MessageComponent from './components/GenericComponents/MessageComponent.vue';
-
+import NotificationComponent from './components/GenericComponents/NotificationComponent.vue';
 // Import dependencies
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, inject, onMounted, ref, onBeforeMount } from 'vue';
 import { NavigationGuardNext, RouteLocationNormalized, useRoute, useRouter } from 'vue-router';
 import { injectionKey } from './plugins/axios';
 import { checkAuth, getCurrentUser } from './plugins/dbCommands/userManager';
-import type { Message, User } from './plugins/interfaces';
+import { Notification, NotificationTypes, User } from './plugins/interfaces';
 import { useStore } from './plugins/store';
 import Cacher from './plugins/Cacher';
 import LoaderComponent from './components/GenericComponents/LoaderComponent.vue';
@@ -41,8 +40,7 @@ const store = useStore();
 let routeConfigured = ref(false)
 
 // Global list of messages for the MessageComponent to render
-var messages: Ref<Message[]> = ref([]);
-var errorMessages: Ref<Message[]> = ref([]);
+var notifications: Ref<Notification[]> = ref([]);
 
 // Check theme
 onMounted(() => {
@@ -55,8 +53,6 @@ onMounted(() => {
   } else {
     localStorage.setItem('theme', 'light');
   }
-
-
   navigator.serviceWorker.ready
     .then((reg) => {
       return reg.pushManager.getSubscription()
@@ -77,6 +73,10 @@ onMounted(() => {
           return errorHandler(err)
       })
     })
+  navigator.serviceWorker.addEventListener("push", (event: any) => {
+    const payload = event.data ? event.data.text() : 'no payload';
+    displayMessage(payload, NotificationTypes.Info)
+  })
 });
 
 function redirect() {
@@ -171,45 +171,7 @@ function errorHandler(err: AxiosError | string) {
     // Cast as string
     message = String(err);
   }
-  // Create sentinel value
-  let match = false;
-  // Reference to message for timeout
-  let messageRef: Message;
-  // Search through all messages
-  for (const existingMessage of errorMessages.value) {
-    // If message already exists
-    if (message == existingMessage.text) {
-      // Increment
-      existingMessage.quantity += 1;
-      // Set sentinel flag
-      match = true;
-      // Store reference to message
-      messageRef = existingMessage;
-    }
-  }
-  // If message does not exist
-  if (!match) {
-    // Create new message
-    errorMessages.value.push({ text: message, quantity: 1 } as Message);
-    // Store reference
-    messageRef = errorMessages.value[errorMessages.value.length - 1];
-  }
-  // Hide after 5 seconds
-  setTimeout(() => {
-    // If last message
-    if (messageRef.quantity < 2) {
-      // Delete message
-      let i = errorMessages.value.indexOf(messageRef);
-      if (i > -1) {
-        errorMessages.value.splice(i, 1);
-      }
-    }
-    // If not last message
-    else {
-      // Decrement count
-      messageRef.quantity -= 1;
-    }
-  }, 5000);
+  displayMessage(message, NotificationTypes.Error)
 }
 
 /**
@@ -217,15 +179,17 @@ function errorHandler(err: AxiosError | string) {
  *
  * @param message
  */
-function displayMessage(message: string) {
+function displayMessage(message: string, type?: NotificationTypes) {
+  if(!type)
+    type = NotificationTypes.Info
   // Sentinel value
   let match = false;
   // Reference to message for timeout
-  let messageRef: Message;
+  let messageRef: Notification;
   // Search all messages
-  for (const existingMessage of messages.value) {
+  for (const existingMessage of notifications.value) {
     // If message already exists
-    if (message == existingMessage.text) {
+    if (message == existingMessage.text && type == existingMessage.type) {
       // Increment existing message
       existingMessage.quantity += 1;
       // Set sentinel value
@@ -236,17 +200,17 @@ function displayMessage(message: string) {
   }
   if (!match) {
     // If message doesn't already exist - create and push new
-    messages.value.push({ text: message, quantity: 1 } as Message);
+    notifications.value.push({ type: type, text: message, quantity: 1 } as Notification);
     // Keep a references so we can delete or decrement after 5 seconds
-    messageRef = messages.value[messages.value.length - 1];
+    messageRef = notifications.value[notifications.value.length - 1];
   }
   // Hide after 5 seconds
   setTimeout(() => {
     // If last message - delete
     if (messageRef.quantity < 2) {
-      let i = messages.value.indexOf(messageRef);
+      let i = notifications.value.indexOf(messageRef);
       if (i > -1) {
-        messages.value.splice(i, 1);
+        notifications.value.splice(i, 1);
       }
     }
     // If not last message
