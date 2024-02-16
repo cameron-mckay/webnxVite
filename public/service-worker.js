@@ -32,9 +32,11 @@ self.addEventListener('push', (event) => {
   // Other formats are supported (ArrayBuffer, Blob, JSON), check out the documentation
   // on https://developer.mozilla.org/en-US/docs/Web/API/PushMessageData.
   // Keep the service worker alive until the notification is created.
-  console.log("service worker")
   event.waitUntil(
-    notifyIfInvisible()
+    //notifyIfInvisible()
+    self.registration.showNotification('ServiceWorker Cookbook', {
+      body: payload,
+    })
   );
 })
 
