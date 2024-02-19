@@ -216,6 +216,10 @@ function displayMessage(message: string, type?: NotificationTypes) {
     // Keep a references so we can delete or decrement after 5 seconds
     messageRef = notifications.value[notifications.value.length - 1];
   }
+  if(!document.hasFocus()&&Notification.permission==="granted")
+    new Notification("WebNX Inventory", {
+      body: message
+    })
 }
 
 function revokeLogin() {
