@@ -58,7 +58,7 @@ onMounted(() => {
   const bc = new BroadcastChannel("nx-push")
   bc.onmessage = (event) => {
     const data = event.data
-    displayMessage(data.text, NotificationTypes.Info)
+    displayMessage(data.text, data.type)
   }
   // Get the registration from service worker
   navigator.serviceWorker.ready
