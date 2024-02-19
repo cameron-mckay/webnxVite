@@ -25,7 +25,7 @@ import { Ref, inject, onMounted, ref, onBeforeMount } from 'vue';
 import { NavigationGuardNext, RouteLocationNormalized, useRoute, useRouter } from 'vue-router';
 import { injectionKey } from './plugins/axios';
 import { checkAuth, getCurrentUser } from './plugins/dbCommands/userManager';
-import { Notification, NotificationTypes, User } from './plugins/interfaces';
+import { NotificationSchema, NotificationTypes, User } from './plugins/interfaces';
 import { useStore } from './plugins/store';
 import Cacher from './plugins/Cacher';
 import LoaderComponent from './components/GenericComponents/LoaderComponent.vue';
@@ -41,7 +41,7 @@ const NOTIFICATION_TIME = 5000
 let routeConfigured = ref(false)
 
 // Global list of messages for the MessageComponent to render
-var notifications: Ref<Notification[]> = ref([]);
+var notifications: Ref<NotificationSchema[]> = ref([]);
 
 // Check theme
 onMounted(() => {
@@ -196,7 +196,7 @@ function displayMessage(message: string, type?: NotificationTypes) {
   // Sentinel value
   let match = false;
   // Reference to message for timeout
-  let messageRef: Notification;
+  let messageRef: NotificationSchema;
   // Search all messages
   for (const existingMessage of notifications.value) {
     // If message already exists
@@ -212,7 +212,7 @@ function displayMessage(message: string, type?: NotificationTypes) {
   }
   if (!match) {
     // If message doesn't already exist - create and push new
-    notifications.value.push({ type: type, text: message, quantity: 1, ms_left: NOTIFICATION_TIME } as Notification);
+    notifications.value.push({ type: type, text: message, quantity: 1, ms_left: NOTIFICATION_TIME } as NotificationSchema);
     // Keep a references so we can delete or decrement after 5 seconds
     messageRef = notifications.value[notifications.value.length - 1];
   }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Notification, NotificationTypes } from '../../plugins/interfaces';
+import { NotificationSchema, NotificationTypes } from '../../plugins/interfaces';
 import SVGRoundX from './SVG/SVGRoundX.vue';
 import SVGWarning from './SVG/SVGWarning.vue';
 import SVGInfo from './SVG/SVGInfo.vue';
@@ -7,7 +7,7 @@ import SVGX from './SVG/SVGX.vue';
 import { watch } from 'vue';
 // Define props
 interface Props {
-  notifications: Array<Notification>;
+  notifications: Array<NotificationSchema>;
 }
 // Get messages from app
 const { notifications } = defineProps<Props>();
@@ -18,7 +18,7 @@ const UPDATE_INTERVAL = 16.6
 const NOTIFICATION_TIME = 5000
 
 // Delete message from array
-function deleteNotification(notification: Notification) {
+function deleteNotification(notification: NotificationSchema) {
   let i = notifications.indexOf(notification);
   notifications.splice(i, 1);
 }

@@ -43,7 +43,7 @@ export enum NotificationTypes {
 }
 
 // For message component
-export interface Notification {
+export interface NotificationSchema {
   type: NotificationTypes;
   text: string;
   quantity: number;
