@@ -4,7 +4,7 @@ import SVGRoundX from './SVG/SVGRoundX.vue';
 import SVGWarning from './SVG/SVGWarning.vue';
 import SVGInfo from './SVG/SVGInfo.vue';
 import SVGX from './SVG/SVGX.vue';
-import { onMounted, onUnmounted, watch } from 'vue';
+import { watch } from 'vue';
 // Define props
 interface Props {
   notifications: Array<Notification>;

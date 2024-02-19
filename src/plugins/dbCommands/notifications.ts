@@ -15,6 +15,25 @@ export function getPublicKey(
   })
 }
 
+export function registerEndpoint(
+  http: AxiosInstance,
+  subscription: any,
+  callback: apiResponse
+) {
+  http
+    .post('/api/notifications/register', {
+      subscription
+    })
+    .then((res: AxiosResponse) => {
+      // Success and send back results
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Send error to callback function
+      callback({}, err);
+    });
+}
+
 export function sendNotifiction(
   http: AxiosInstance,
   subscription: any,

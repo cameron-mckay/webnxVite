@@ -39,6 +39,7 @@ export enum NotificationTypes {
   Warning = "Warning",
   Error = "Error",
   Info = "Info",
+  Alert = "Alert",
 }
 
 // For message component

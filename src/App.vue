@@ -30,7 +30,7 @@ import { useStore } from './plugins/store';
 import Cacher from './plugins/Cacher';
 import LoaderComponent from './components/GenericComponents/LoaderComponent.vue';
 import { urlBase64ToUint8Array } from './plugins/CommonMethods'
-import { getPublicKey, sendNotifiction } from './plugins/dbCommands/notifications';
+import { getPublicKey, registerEndpoint } from './plugins/dbCommands/notifications';
 
 // Global instances passed through props
 const http = inject<AxiosInstance>(injectionKey)!;
@@ -77,7 +77,7 @@ onMounted(() => {
     })
     .then((sub) => {
       // Send registration info to server
-      sendNotifiction(http, sub, (data, err) =>{
+      registerEndpoint(http, sub, (data, err) =>{
         if(err)
           return errorHandler(err)
       })
@@ -123,12 +123,16 @@ onBeforeMount(()=>{
 
 function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized, next?: NavigationGuardNext) {
   checkAuth(http, (data, err)=>{
+    // If login is no long valid
     if (store.state.isAuth&&(err||data=="You must login to continue.")) {
       errorHandler("Login expired.")
       return revokeLogin()
     }
+    // If route has required roles
     if(to.meta.allowedRoles) {
+      // Check for overlap with route and user roles
       let overlappedRoles = to.meta.allowedRoles.filter((value: string) => store.state.user.roles?.includes(value));
+      // If no overlap, redirect
       if(overlappedRoles.length==0) {
         redirect()
       }
@@ -140,18 +144,20 @@ function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized,
         Cacher.loadAllUsersFromAPI()
       }
     }
-    // This goes through the matched routes from last to first, finding the closest route with a title.
-    // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
-    // `/nested`'s will be chosen.
+    // Set tab title
     document.title = `WebNX${to.name?" - "+to.name.toString():""}`;
+    // If there is a next location, go to it
     if(next)
       next();
   })
 }
 
 function configureRouter() {
+  // Check current route
   checkRoute(router.currentRoute.value)
+  // Enable route checks
   router.beforeEach(checkRoute);
+  // Set router as configured
   routeConfigured.value = true
 }
 /**
