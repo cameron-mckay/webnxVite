@@ -1,5 +1,5 @@
 import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
-import { apiResponse } from "../interfaces";
+import { apiResponse, NotificationTypes } from "../interfaces";
 
 export function getPublicKey(
   http: AxiosInstance
@@ -34,14 +34,41 @@ export function registerEndpoint(
     });
 }
 
-export function sendNotifiction(
+export function sendNotifictionToUser(
   http: AxiosInstance,
-  subscription: any,
+  user: string,
+  text: string,
+  type: NotificationTypes,
   callback: apiResponse
 ) {
   http
     .post('/api/notifications/send', {
-      subscription
+      user,
+      text,
+      type
+    })
+    .then((res: AxiosResponse) => {
+      // Success and send back results
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Send error to callback function
+      callback({}, err);
+    });
+}
+
+export function sendNotifictionToRole(
+  http: AxiosInstance,
+  role: string,
+  text: string,
+  type: NotificationTypes,
+  callback: apiResponse
+) {
+  http
+    .post('/api/notifications/send', {
+      role,
+      text,
+      type
     })
     .then((res: AxiosResponse) => {
       // Success and send back results

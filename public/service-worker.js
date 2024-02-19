@@ -14,7 +14,7 @@ async function notifyIfInvisible(event) {
   // Retrieve the textual payload from event.data (a PushMessageData object).
   // Other formats are supported (ArrayBuffer, Blob, JSON), check out the documentation
   // on https://developer.mozilla.org/en-US/docs/Web/API/PushMessageData.
-  const payload = event.data ? event.data.text() : 'no payload';
+  const payload = event.data ? event.data.json() : {text: "", type: "Info", date: new Date()};
   const windowClients = await clients.matchAll({
     type: "window",
     includeUncontrolled: true,
@@ -27,8 +27,8 @@ async function notifyIfInvisible(event) {
       return true;
     }
   }
-  await self.registration.showNotification('ServiceWorker Cookbook', {
-    body: payload,
+  await self.registration.showNotification('WebNX Inventory', {
+    body: payload.text,
   })
   return false;
 }
