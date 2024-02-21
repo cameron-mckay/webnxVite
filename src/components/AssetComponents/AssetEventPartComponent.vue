@@ -15,7 +15,7 @@ const { item } = defineProps<Props>();
 <template>
   <div class="group relative col-span-4 my-1">
     <div
-      class="group-hover:bab-hover background-and-border grid grid-cols-3 rounded-lg p-1 text-center leading-8 md:grid-cols-4 md:p-2 md:leading-10"
+      class="group-hover:bab-hover background-and-border grid grid-cols-3 rounded-md p-1 text-center leading-8 md:grid-cols-4 md:p-2 md:leading-10"
     >
       <div class="hidden md:flex">
         <!-- Plus -->

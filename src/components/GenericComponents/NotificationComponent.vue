@@ -18,7 +18,7 @@ const NOTIFICATION_TIME = 5000
 </script>
 <template>
   <div
-    class="pointer-events-auto mb-1 w-fit transition header-color shadow-md"
+    class="pointer-events-auto w-fit transition background-and-border shadow-md p-0 m-0 mb-1 "
   >
     <div class="p-2 flex">
       <div>

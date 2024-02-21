@@ -165,7 +165,7 @@ function updateSerialArray(newTotal: number) {
           <div v-for="q of quantities">
             <div>
               <p class="leading-6">{{q.kiosk}}: {{ q.quantity }}</p>
-              <input class="w-full h-2 rounded-lg accent-green-400 cursor-pointer text-gray-200 dark:text-gray-700" type="range" min="0" :max="quantityVisible! < q.max! ? quantityVisible : q.max" v-model="q.quantity" :disabled="q.kiosk=='Unsorted'"/>
+              <input class="w-full h-2 rounded-md accent-green-400 cursor-pointer text-gray-200 dark:text-gray-700" type="range" min="0" :max="quantityVisible! < q.max! ? quantityVisible : q.max" v-model="q.quantity" :disabled="q.kiosk=='Unsorted'"/>
             </div>
           </div>
 

@@ -6,7 +6,7 @@
 @layer components {
   /* Used in register and login */
   .card {
-    @apply background-and-border mx-auto mt-10 rounded-lg bg-gray-200 p-10 shadow-lg transition-colors dark:bg-zinc-900;
+    @apply background-and-border mx-auto mt-10 rounded-md bg-gray-200 p-10 shadow-lg transition-colors dark:bg-zinc-900;
   }
   pre,
   p,
@@ -50,7 +50,7 @@
     @apply mx-0.5 h-8 shrink-0 cursor-pointer rounded-md bg-green-500 px-4 text-black transition-colors hover:bg-green-600 active:bg-green-700 dark:text-white md:mx-1 md:h-10 md:px-10;
   }
   .submit {
-    @apply my-1 cursor-pointer rounded-lg bg-green-500 px-5 py-2 text-white shadow-lg transition-colors hover:bg-green-600 active:bg-green-700;
+    @apply my-1 cursor-pointer rounded-md bg-green-500 px-5 py-2 text-white shadow-lg transition-colors hover:bg-green-600 active:bg-green-700;
   }
   .button-icon {
     @apply mx-0.5 my-auto h-8 w-8 shrink-0 rounded-md bg-gray-400 p-2 shadow-lg transition-colors first:ml-0 last:mr-0 only:mr-0 dark:bg-zinc-600 dark:text-gray-200 md:mx-1 md:h-10 md:w-10;
@@ -157,7 +157,7 @@
     @apply underline text-green-400 hover:text-green-500 active:text-green-600
   }
   .manager-button {
-    @apply m-2 block rounded-lg p-4 text-center nx-border-color border-2 hover:hover-color active:active-color
+    @apply m-2 block rounded-md p-4 text-center nx-border-color border-2 hover:hover-color active:active-color
   }
 }
 

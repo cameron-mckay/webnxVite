@@ -14,7 +14,7 @@ const { part, showQuantity } = defineProps<Props>();
   <div class="group relative my-1">
     <div
       v-if="showQuantity"
-      class="group-hover:bab-hover background-and-border grid grid-cols-5 rounded-lg p-1 text-center leading-8 md:p-2 md:leading-10"
+      class="group-hover:bab-hover background-and-border grid grid-cols-5 rounded-md p-1 text-center leading-8 md:p-2 md:leading-10"
     >
       <p class="hidden md:block">{{ part.nxid }}</p>
       <p class="break-words">{{ part.manufacturer }}</p>
@@ -29,7 +29,7 @@ const { part, showQuantity } = defineProps<Props>();
     </div>
     <div
       v-else
-      class="group-hover:bab-hover background-and-border grid grid-cols-4 rounded-lg p-1 text-center leading-8 md:p-2 md:leading-10"
+      class="group-hover:bab-hover background-and-border grid grid-cols-4 rounded-md p-1 text-center leading-8 md:p-2 md:leading-10"
     >
       <p class="hidden md:block">{{ part.nxid }}</p>
       <p class="break-words">{{ part.manufacturer }}</p>
