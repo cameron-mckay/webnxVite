@@ -29,17 +29,17 @@ const { http, store, router, errorHandler, displayMessage } =
 
 let loading = ref(false)
 let processing = false
-let interval = setInterval(()=>{},10000)
 let requests = ref([] as PartRequestSchema[])
 let quantityMap = new Map<string, KioskQuantity[]>()
 let buildKits = new Map<string, BuildKitSchema>()
 
 onBeforeMount(()=>{
   loadQueue()
-  interval = setInterval(()=>{
+  const bc = new BroadcastChannel("nx-push")
+  bc.onmessage = (event) => {
     if(requests.value.length==0)
       loadQueue()
-  }, 10000)
+  }
 })
 
 function loadBuildKit(kit_id: string) {
@@ -149,10 +149,6 @@ function submit(request_id: string, req: KioskQuantities[], notes: string) {
 
 }
 
-onBeforeUnmount(() => {
-  clearInterval(interval)
-})
-
 function approve(req: PartRequestSchema, notes: string) {
   processBuildKitRequest(http, req._id!, notes, true, (data, err) => {
     if(err)
@@ -200,6 +196,6 @@ function deny(req: PartRequestSchema, notes: string) {
         @deny="(notes: string)=>{deny(request, notes)}"
       />
     </div>
-    <p class="mt-4" v-if="requests.length<1&&!loading">Queue is empty and will auto refresh every 10 seconds...</p>
+    <p class="mt-4" v-if="requests.length<1&&!loading">Queue is empty and will auto refresh when a new request is received...</p>
   </div>
 </template>

@@ -55,6 +55,7 @@ function loadMore() {
       return errorHandler(err)
     pastNotifications.value = pastNotifications.value.concat(data.notifications as NotificationSchema[])
     total.value = data.total
+    sortNotifications()
     loadingPast.value = false
   })
 }
@@ -65,14 +66,18 @@ function localMarkAsRead(notif: NotificationSchema) {
       errorHandler(err)
     unreadNotifications.value.splice(unreadNotifications.value.indexOf(notif),1)
     pastNotifications.value.unshift(notif)
-    // Sort by date
-    pastNotifications.value = pastNotifications.value
-    .sort((a: NotificationSchema, b: NotificationSchema) => { 
-      if (Date.parse(a.date!.toString()) < Date.parse(b.date!.toString()))
-        return 1
-      return -1
-    })
+    sortNotifications()
     store.commit("updateNotificationCount", store.state.notificationCount-1)
+  })
+}
+
+function sortNotifications() {
+  // Sort by date
+  pastNotifications.value = pastNotifications.value
+  .sort((a: NotificationSchema, b: NotificationSchema) => { 
+    if (Date.parse(a.date!.toString()) < Date.parse(b.date!.toString()))
+      return 1
+    return -1
   })
 }
 </script>
