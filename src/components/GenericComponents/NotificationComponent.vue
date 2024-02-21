@@ -4,6 +4,7 @@ import SVGRoundX from './SVG/SVGRoundX.vue';
 import SVGWarning from './SVG/SVGWarning.vue';
 import SVGInfo from './SVG/SVGInfo.vue';
 import SVGBullhorn from './SVG/SVGBullhorn.vue';
+import SVGQuestion from './SVG/SVGQuestion.vue'
 import SVGX from './SVG/SVGX.vue';
 
 interface Props {
@@ -34,6 +35,10 @@ const NOTIFICATION_TIME = 5000
         <SVGBullhorn
           class="text-black dark:text-gray-200 m-1 w-8 h-8"
           v-else-if="notification.type==NotificationTypes.Alert"
+        />
+        <SVGQuestion
+          class="text-black dark:text-gray-200 m-1 w-8 h-8"
+          v-else-if="notification.type==NotificationTypes.Question"
         />
         <SVGInfo
           class="m-1 w-8 h-8 text-green-400"

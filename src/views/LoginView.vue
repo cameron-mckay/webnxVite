@@ -36,6 +36,8 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState, User } from '../plugins/interfaces';
 import { checkAuth, getCurrentUser } from '../plugins/dbCommands/userManager';
+import { getPublicKey, registerEndpoint } from '../plugins/dbCommands/notifications';
+import { urlBase64ToUint8Array } from '../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -75,6 +77,7 @@ async function login() {
         localStorage.setItem('token', res.data.token);
         // Add token to headers
         http.defaults.headers['Authorization'] = res.data.token;
+
         checkAuth(http, async (data, err) => {
           // If not authenticated
           if (err)
@@ -90,8 +93,32 @@ async function login() {
             let user = data as User
             store.commit("updateUserData", user)
             displayMessage('Successfully logged in.');
+            if(Notification.permission === "granted")
+              // Get the registration from service worker
+              navigator.serviceWorker.ready
+                .then((reg) => {
+                  return reg.pushManager.getSubscription()
+                    .then(async (sub)=>{
+                      if(sub)
+                        return sub
+                      const key = await getPublicKey(http)
+                      const convertedKey = urlBase64ToUint8Array(key)
+                      return reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: convertedKey
+                      });
+                    })
+                })
+                .then((sub) => {
+                  // Send registration info to server
+                  registerEndpoint(http, sub, (data, err) =>{
+                    if(err)
+                      return errorHandler(err)
+                  })
+                })
           });
         });
+
         // Save user data to vuex store
         router.push('/');
       })

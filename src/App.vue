@@ -1,7 +1,12 @@
 <template>
   <div>
     <HeaderComponent v-if="store.state.isAuth&&routeConfigured" :http="http" :store="store" :revokeLogin="revokeLogin" />
-    <NotificationCenterComponent :notifications="notifications"/>
+    <NotificationCenterComponent :notifications="notifications"
+      :store="store"
+      :http="http"
+      :router="router"
+      :errorHandler="errorHandler"
+    />
     <LoaderComponent v-if="!routeConfigured"/>
     <router-view
       v-else
@@ -108,6 +113,7 @@ onBeforeMount(()=>{
   Cacher.assignStore(store)
   Cacher.validateCache()
   Cacher.assignErrorHandler(errorHandler)
+
   checkAuth(http, async (data, err) => {
     // If not authenticated
     if (err||data=="You must login to continue.") {
@@ -117,16 +123,36 @@ onBeforeMount(()=>{
     // If authenticated, set status
     getCurrentUser(http, (data, err) => {
       if (err) {
-        // Error occured - update nothing
-        store.commit('logout')
-        configureRouter()
-        return
+        return firstLoadRevokeLogin()
       }
       // Success - update global user component
       let user = data as User
       store.commit("updateUserData", user)
       displayMessage('Successfully logged in.');
       configureRouter()
+      if(Notification.permission === "granted")
+        // Get the registration from service worker
+        navigator.serviceWorker.ready
+          .then((reg) => {
+            return reg.pushManager.getSubscription()
+              .then(async (sub)=>{
+                if(sub)
+                  return sub
+                const key = await getPublicKey(http)
+                const convertedKey = urlBase64ToUint8Array(key)
+                return reg.pushManager.subscribe({
+                  userVisibleOnly: true,
+                  applicationServerKey: convertedKey
+                });
+              })
+          })
+          .then((sub) => {
+            // Send registration info to server
+            registerEndpoint(http, sub, (data, err) =>{
+              if(err)
+                return errorHandler(err)
+            })
+          })
     });
   });
 })

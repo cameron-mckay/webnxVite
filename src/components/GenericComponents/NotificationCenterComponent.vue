@@ -1,17 +1,26 @@
 <script setup lang="ts">
-import { NotificationSchema } from '../../plugins/interfaces';
+import { NotificationSchema, NotificationTypes, UserState } from '../../plugins/interfaces';
 import NotificationComponent from './NotificationComponent.vue';
-import { watch } from 'vue';
+import { ref, watch } from 'vue';
+import { Store } from 'vuex';
+import { getPublicKey, registerEndpoint } from '../../plugins/dbCommands/notifications';
+import { urlBase64ToUint8Array } from '../../plugins/CommonMethods';
+import { AxiosInstance } from 'axios';
 // Define props
 interface Props {
   notifications: Array<NotificationSchema>;
+  store: Store<UserState>;
+  http: AxiosInstance;
 }
 // Get messages from app
-const { notifications } = defineProps<Props>();
+const { notifications, store, http } = defineProps<Props>();
 let interval: NodeJS.Timer
 let intervalCreated = false
 // Frame time of 60fps
 const UPDATE_INTERVAL = 16.6
+let perms = ref(Notification.permission)
+let hidePopup1 = ref(false)
+let hidePopup2 = ref(false)
 
 // Delete message from array
 function deleteNotification(notification: NotificationSchema) {
@@ -46,11 +55,64 @@ watch(notifications, ()=>{
   }
 })
 
+function requestNotifications() {
+  Notification.requestPermission()
+    .then(()=>{
+      perms.value = Notification.permission
+      if(Notification.permission === "granted")
+        // Get the registration from service worker
+        navigator.serviceWorker.ready
+          .then((reg) => {
+            return reg.pushManager.getSubscription()
+              .then(async (sub)=>{
+                if(sub)
+                  return sub
+                const key = await getPublicKey(http)
+                const convertedKey = urlBase64ToUint8Array(key)
+                return reg.pushManager.subscribe({
+                  userVisibleOnly: true,
+                  applicationServerKey: convertedKey
+                });
+              })
+          })
+          .then((sub) => {
+            // Send registration info to server
+            registerEndpoint(http, sub, (data, err) =>{
+              if(err)
+                return
+            })
+          })
+    })
+}
+
 </script>
 <template>
   <div
     class="pointer-events-none fixed top-12 left-0 z-50 mx-auto block w-full"
   >
+    <NotificationComponent
+      v-if="perms==='default'&&store.state.isAuth&&!hidePopup1"
+      class="max-w-md mx-8"
+      :notification="{
+        text: 'Click to enable push notifications...',
+        type: NotificationTypes.Info,
+      }"
+      @click="requestNotifications"
+      @delete="()=>{
+        hidePopup1 = true
+      }"
+    />
+    <NotificationComponent
+      v-if="perms==='denied'&&store.state.isAuth&&!hidePopup2"
+      class="max-w-md mx-8"
+      :notification="{
+        text: 'You have denied push notification access.  Please allow notifications in site settings...',
+        type: NotificationTypes.Error,
+      }"
+      @delete="()=>{
+        hidePopup2 = true
+      }"
+    />
     <NotificationComponent
       class="max-w-md mx-8"
       v-for="notification in notifications"
