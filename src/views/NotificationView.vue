@@ -9,8 +9,9 @@ NotificationSchema,
   UserState,
 } from '../plugins/interfaces';
 import { onBeforeMount, ref } from 'vue';
-import { getPastNotifications, getUnreadNotifications, markAsRead } from '../plugins/dbCommands/notifications';
+import { getPastNotifications, getUnreadNotifications, markAllAsRead, markAsRead } from '../plugins/dbCommands/notifications';
 import NotificationComponent from '../components/GenericComponents/NotificationComponent.vue';
+import ListCheckButton from '../components/GenericComponents/Buttons/ListCheckButton.vue';
 
 interface Props {
   http: AxiosInstance;
@@ -80,13 +81,29 @@ function sortNotifications() {
     return -1
   })
 }
+
+function localMarkAllAsRead() {
+  markAllAsRead(http, (data,err)=>{
+    if(err)
+      return errorHandler(err)
+    pastNotifications.value = pastNotifications.value.concat(unreadNotifications.value)
+    unreadNotifications.value = []
+    sortNotifications()
+  })
+}
 </script>
 <template>
   <div>
-    <PageHeaderComponent>Notifications</PageHeaderComponent>
+    <PageHeaderComponent class="mb-4">Notifications</PageHeaderComponent>
     <LoaderComponent v-if="loadingUnread" class="mt-16"/>
     <div v-else>
-      <h1 class="text-xl" v-if="unreadNotifications.length>0">Unread:</h1>
+      <div class="flex mb-2" v-if="unreadNotifications.length>0">
+        <h1 class="text-2xl mt-auto">Unread:</h1>
+        <ListCheckButton
+          title="Mark All As Read"
+          @click="localMarkAllAsRead"
+        />
+      </div>
       <NotificationComponent
         v-for="notification in unreadNotifications"
         :notification="notification"
@@ -97,7 +114,7 @@ function sortNotifications() {
     </div>
     <LoaderComponent v-if="loadingPast" class="mt-16"/>
     <div v-else>
-      <h1 class="text-xl" v-if="pastNotifications.length>0">Dismissed:</h1>
+      <h1 class="text-2xl mt-auto" v-if="pastNotifications.length>0">Dismissed:</h1>
       <NotificationComponent
         v-for="notification in pastNotifications"
         :notification="notification"
