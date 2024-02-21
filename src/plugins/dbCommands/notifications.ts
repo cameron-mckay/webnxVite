@@ -98,14 +98,14 @@ export function getUnreadNotifications(
 
 export function getPastNotifications(
   http: AxiosInstance,
-  pageNum: number,
+  skip: number,
   callback: apiResponse
 ) {
   http
     .get('/api/notifications', {
       params: {
-        pageNum,
-        pageSize: 25
+        skip,
+        pageSize: 10
       }
     })
     .then((res: AxiosResponse) => {

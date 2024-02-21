@@ -53,7 +53,7 @@ function loadMore() {
   getPastNotifications(http, pastNotifications.value.length, (data: any, err) => {
     if(err)
       return errorHandler(err)
-    pastNotifications.value = data.notifications as NotificationSchema[]
+    pastNotifications.value = pastNotifications.value.concat(data.notifications as NotificationSchema[])
     total.value = data.total
     loadingPast.value = false
   })
@@ -81,7 +81,7 @@ function localMarkAsRead(notif: NotificationSchema) {
     <PageHeaderComponent>Notifications</PageHeaderComponent>
     <LoaderComponent v-if="loadingUnread" class="mt-16"/>
     <div v-else>
-      <h1 class="text-xl">Unread:</h1>
+      <h1 class="text-xl" v-if="unreadNotifications.length>0">Unread:</h1>
       <NotificationComponent
         v-for="notification in unreadNotifications"
         :notification="notification"
@@ -92,7 +92,7 @@ function localMarkAsRead(notif: NotificationSchema) {
     </div>
     <LoaderComponent v-if="loadingPast" class="mt-16"/>
     <div v-else>
-      <h1 class="text-xl">Dismissed:</h1>
+      <h1 class="text-xl" v-if="pastNotifications.length>0">Dismissed:</h1>
       <NotificationComponent
         v-for="notification in pastNotifications"
         :notification="notification"
@@ -100,7 +100,15 @@ function localMarkAsRead(notif: NotificationSchema) {
         :hide_x="true"
         class="w-full"
       />
-
+      
+      <div class="flex" v-if="total>pastNotifications.length">
+        <input
+          type="submit"
+          class="submit col-span-2 mx-auto mt-4"
+          @click="loadMore"
+          value="Show More"
+        />
+      </div>
     </div>
   </div>
 </template>
