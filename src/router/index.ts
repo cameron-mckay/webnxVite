@@ -39,6 +39,11 @@ const routes = [
     }
   },
   {
+    path: '/notifications',
+    name: 'Notifications',
+    component: () => import('../views/NotificationView.vue'),
+  },
+  {
     path: '/cart',
     name: 'Check Out',
     meta: {

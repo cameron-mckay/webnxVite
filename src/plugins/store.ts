@@ -14,6 +14,7 @@ export function createGlobalStore(app: App): Store<UserState> {
       user: {},
       http: app.config.globalProperties.$http,
       parts: new Map<string, number>(),
+      notificationCount: 0
     }),
     getters: {
       getQuantity: (state: UserState) => (id: string) => {
@@ -70,9 +71,12 @@ export function createGlobalStore(app: App): Store<UserState> {
       },
       // Uses token to fetch user data from the API
       updateUserData(state: UserState, user: User) {
-        store.state.user = user
-        store.state.isAuth = true
+        state.user = user
+        state.isAuth = true
       },
+      updateNotificationCount(state: UserState, count: number) {
+        state.notificationCount = count
+      }
     },
   });
   // Just in case

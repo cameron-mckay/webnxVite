@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeaderComponent v-if="store.state.isAuth&&routeConfigured" :http="http" :store="store" :revokeLogin="revokeLogin" />
-    <NotificationComponent :notifications="notifications"/>
+    <NotificationCenterComponent :notifications="notifications"/>
     <LoaderComponent v-if="!routeConfigured"/>
     <router-view
       v-else
@@ -18,7 +18,7 @@
 <script setup lang="ts">
 // Vue components
 import HeaderComponent from './components/GenericComponents/HeaderComponent.vue';
-import NotificationComponent from './components/GenericComponents/NotificationComponent.vue';
+import NotificationCenterComponent from './components/GenericComponents/NotificationCenterComponent.vue';
 // Import dependencies
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, inject, onMounted, ref, onBeforeMount } from 'vue';
@@ -30,7 +30,7 @@ import { useStore } from './plugins/store';
 import Cacher from './plugins/Cacher';
 import LoaderComponent from './components/GenericComponents/LoaderComponent.vue';
 import { urlBase64ToUint8Array } from './plugins/CommonMethods'
-import { getPublicKey, registerEndpoint } from './plugins/dbCommands/notifications';
+import { getPublicKey, getUnreadNotifications, registerEndpoint } from './plugins/dbCommands/notifications';
 
 // Global instances passed through props
 const http = inject<AxiosInstance>(injectionKey)!;
@@ -54,11 +54,21 @@ onMounted(() => {
   } else {
     localStorage.setItem('theme', 'light');
   }
+  getUnreadNotifications(http,(data: any, err)=>{
+    if(err)
+      return errorHandler(err)
+    store.commit("updateNotificationCount", data.length!)
+  })
   // Listens for notifications from service worker
   const bc = new BroadcastChannel("nx-push")
   bc.onmessage = (event) => {
     const data = event.data
     displayMessage(data.text, data.type)
+    getUnreadNotifications(http,(data: any, err)=>{
+      if(err)
+        return errorHandler(err)
+      store.commit("updateNotificationCount", data.length!)
+    })
   }
   // Get the registration from service worker
   navigator.serviceWorker.ready

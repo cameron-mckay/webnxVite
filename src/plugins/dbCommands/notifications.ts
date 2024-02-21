@@ -79,3 +79,60 @@ export function sendNotifictionToRole(
       callback({}, err);
     });
 }
+
+export function getUnreadNotifications(
+  http: AxiosInstance,
+  callback: apiResponse
+) {
+  http
+    .get('/api/notifications/unread')
+    .then((res: AxiosResponse) => {
+      // Success and send back results
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Send error to callback function
+      callback({}, err);
+    });
+}
+
+export function getPastNotifications(
+  http: AxiosInstance,
+  pageNum: number,
+  callback: apiResponse
+) {
+  http
+    .get('/api/notifications', {
+      params: {
+        pageNum,
+        pageSize: 25
+      }
+    })
+    .then((res: AxiosResponse) => {
+      // Success and send back results
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Send error to callback function
+      callback({}, err);
+    });
+}
+
+export function markAsRead(
+  http: AxiosInstance,
+  _id: string,
+  callback: apiResponse
+) {
+  http
+    .post('/api/notifications/markRead', {
+      _id
+    })
+    .then((res: AxiosResponse) => {
+      // Success and send back results
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Send error to callback function
+      callback({}, err);
+    });
+}

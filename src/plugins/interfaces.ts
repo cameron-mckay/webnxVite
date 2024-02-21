@@ -44,10 +44,13 @@ export enum NotificationTypes {
 
 // For message component
 export interface NotificationSchema {
+  _id?: string;
   type: NotificationTypes;
   text: string;
-  quantity: number;
-  ms_left: number;
+  quantity?: number;
+  ms_left?: number;
+  date?: number;
+  date_read?: number;
 }
 
 export interface LoadedPartRecord {
@@ -168,6 +171,7 @@ export interface UserState {
   user: User;
   http: AxiosInstance;
   parts: Map<string, number>;
+  notificationCount: number
 }
 
 // User schema
