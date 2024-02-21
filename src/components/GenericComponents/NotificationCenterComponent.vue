@@ -29,9 +29,9 @@ watch(notifications, ()=>{
       // Loop through all notifs
       for(let notif of notifications) {
         // Decrement the time left
-        notif.ms_left -= UPDATE_INTERVAL
+        notif.ms_left! -= UPDATE_INTERVAL
         // If they are out of time, delete
-        if(notif.ms_left<=0) {
+        if(notif.ms_left!<=0) {
           notifications.splice(notifications.indexOf(notif),1)
         }
       }

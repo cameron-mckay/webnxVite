@@ -212,7 +212,7 @@ function displayMessage(message: string, type?: NotificationTypes) {
     // If message already exists
     if (message == existingMessage.text && type == existingMessage.type) {
       // Increment existing message
-      existingMessage.quantity += 1;
+      existingMessage.quantity! += 1;
       existingMessage.ms_left = NOTIFICATION_TIME
       // Set sentinel value
       match = true;
