@@ -89,6 +89,7 @@ function localMarkAllAsRead() {
     pastNotifications.value = pastNotifications.value.concat(unreadNotifications.value)
     unreadNotifications.value = []
     sortNotifications()
+    store.commit("updateNotificationCount", 0)
   })
 }
 </script>
@@ -122,7 +123,6 @@ function localMarkAllAsRead() {
         :hide_x="true"
         class="w-full"
       />
-      
       <div class="flex" v-if="total>pastNotifications.length">
         <input
           type="submit"
