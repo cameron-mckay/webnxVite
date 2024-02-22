@@ -55,7 +55,7 @@ export enum NotificationTypes {
 
 export interface NotificationSchema {
   _id?: string;
-  user: string,
+  user?: string,
   type: NotificationTypes,
   text: string,
   date?: Date,
