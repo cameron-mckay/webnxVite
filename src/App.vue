@@ -164,6 +164,11 @@ function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized,
       errorHandler("Login expired.")
       return revokeLogin()
     }
+    getUnreadNotifications(http,(data: any, err)=>{
+      if(err)
+        return errorHandler(err)
+      store.commit("updateNotificationCount", data.length!)
+    })
     // If route has required roles
     if(to.meta.allowedRoles) {
       // Check for overlap with route and user roles
