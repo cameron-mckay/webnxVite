@@ -10,34 +10,53 @@ self.addEventListener('message', (event) => {
   }
 });
 
-async function notifyIfInvisible(event) {
-  // Retrieve the textual payload from event.data (a PushMessageData object).
-  // Other formats are supported (ArrayBuffer, Blob, JSON), check out the documentation
-  // on https://developer.mozilla.org/en-US/docs/Web/API/PushMessageData.
-  const payload = event.data ? event.data.json() : {text: "", type: "Info", date: new Date()};
+async function sendPayloadToChannel(bc, payload) {
   const windowClients = await clients.matchAll({
     type: "window",
     includeUncontrolled: true,
   });
   for (var i = 0; i < windowClients.length; i++) {
     if (windowClients[i].visibilityState === "visible") {
-      const bc = new BroadcastChannel("nx-push")
       bc.postMessage(payload)
       bc.close()
       return true;
     }
   }
-  await self.registration.showNotification('WebNX Inventory', {
-    body: payload.text,
-  })
-  return false;
+  return false
+}
+
+async function handlePush(event) {
+  // Retrieve the textual payload from event.data (a PushMessageData object).
+  // Other formats are supported (ArrayBuffer, Blob, JSON), check out the documentation
+  // on https://developer.mozilla.org/en-US/docs/Web/API/PushMessageData.
+  const push = event.data ? event.data.json() : {type: "Payload", payload: {}};
+  // Default - channel has no listener in app
+  let bc = new BroadcastChannel("nx-push")
+  // If push is a notification
+  if(push.type == "Notification") {
+    bc = new BroadcastChannel("nx-notification")
+  }
+  // If push is a silent payload
+  else if(push.type == "Payload") {
+    bc = new BroadcastChannel("nx-payload")
+  }
+  // Send payload and store if the client is visible
+  let clientVisible = sendPayloadToChannel(bc, push.payload)
+  // If client isn't visble and the push is a notification
+  if(!clientVisible&&push.type == "Notification")
+    // Send the notification
+    await self.registration.showNotification('WebNX Inventory', {
+      body: push.payload.text,
+    })
+  // Return client visibility
+  return clientVisible;
 }
 self.addEventListener('push', (event) => {
   // Keep the service worker alive until the notification is created.
   event.waitUntil(
     // Show a notification with title 'ServiceWorker Cookbook' and use the payload
     // as the body.
-    notifyIfInvisible(event)
+    handlePush(event)
   );
 })
 

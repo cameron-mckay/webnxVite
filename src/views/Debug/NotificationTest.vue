@@ -82,7 +82,33 @@
       />
       <input class="search-button mr-0" type="submit" value="Send" />
     </form>
-
+    <h1 class="text-2xl mt-4 mb-1">
+      Payload Remote Role:
+    </h1>
+    <form class="flex justify-between" @submit.prevent="submitUserPayload">
+      <label>User: </label>
+      <select
+        v-model="payloadUser"
+        class="textbox"
+      >
+        <option v-for="option in allUsers" :value="option._id">{{ option.first_name }} {{ option.last_name }}</option>
+      </select>
+      <input class="search-button mr-0" type="submit" value="Send" />
+    </form>
+    <h1 class="text-2xl mt-4 mb-1">
+      Payload Remote Role:
+    </h1>
+    <form class="flex justify-between" @submit.prevent="submitRolePayload">
+      <label>Role: </label>
+      <input
+        id="searchBox"
+        class="search ml-0"
+        type="text"
+        v-model="payloadRole"
+        placeholder="role...."
+      />
+      <input class="search-button mr-0" type="submit" value="Send" />
+    </form>
   </div>
 </template>
 <script setup lang="ts">
@@ -93,7 +119,7 @@ import { Router } from 'vue-router';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue';
 import { ref } from 'vue';
 import Cacher from '../../plugins/Cacher';
-import { sendNotifictionToRole, sendNotifictionToUser } from '../../plugins/dbCommands/notifications';
+import { sendNotificationToRole, sendNotificationToUser, sendPayloadToRole, sendPayloadToUser } from '../../plugins/dbCommands/notifications';
 
 interface Props {
   http: AxiosInstance;
@@ -114,20 +140,36 @@ let typeRemoteRole = ref(NotificationTypes.Info)
 let textRemoteRole = ref("")
 let currentUser = ref(allUsers.value[0]._id)
 let remoteRole = ref("")
+let payloadUser = ref("")
+let payloadRole = ref("")
 
 function submit() {
   displayMessage(text.value, type.value)
 }
 
 function submitUser() {
-  sendNotifictionToUser(http, currentUser.value!, textRemoteUser.value, typeRemoteUser.value, (data, err)=>{
+  sendNotificationToUser(http, currentUser.value!, textRemoteUser.value, typeRemoteUser.value, (data, err)=>{
     if(err)
       errorHandler(err)
   })
 }
 
 function submitRole() {
-  sendNotifictionToRole(http, remoteRole.value, textRemoteRole.value, typeRemoteRole.value, (data, err)=>{
+  sendNotificationToRole(http, remoteRole.value, textRemoteRole.value, typeRemoteRole.value, (data, err)=>{
+    if(err)
+      errorHandler(err)
+  })
+}
+
+function submitUserPayload() {
+  sendPayloadToUser(http, payloadUser.value, (data, err) => {
+    if(err)
+      errorHandler(err)
+  })
+}
+
+function submitRolePayload() {
+  sendPayloadToRole(http, payloadRole.value, (data, err) => {
     if(err)
       errorHandler(err)
   })

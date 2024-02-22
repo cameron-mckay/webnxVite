@@ -37,7 +37,8 @@ const roles = [
   'manage_users',
   'transfer_out_testing',
   'view_manage_menu',
-  'delete_parts'
+  'delete_parts',
+  'debug'
 ];
 let user: Ref<User> = ref({});
 user.value = props.user;

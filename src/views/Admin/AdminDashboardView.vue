@@ -156,7 +156,7 @@ let {store} = defineProps<Props>()
         </RouterLink>
       </div>
     </div>
-    <div>
+    <div v-if="store.state.user.roles?.includes('debug')">
       <h1
         class="mt-4 text-xl ml-2"
       >
@@ -167,7 +167,7 @@ let {store} = defineProps<Props>()
           to="/debug/notifications"
           class="manager-button"
         >
-          Notifcations
+          Notifications
         </RouterLink>
       </div>
     </div>

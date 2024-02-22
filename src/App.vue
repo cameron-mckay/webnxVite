@@ -65,8 +65,8 @@ onMounted(() => {
     store.commit("updateNotificationCount", data.length!)
   })
   // Listens for notifications from service worker
-  const bc = new BroadcastChannel("nx-push")
-  bc.onmessage = (event) => {
+  const notificationChannel = new BroadcastChannel("nx-notification")
+  notificationChannel.onmessage = (event) => {
     const data = event.data
     displayMessage(data.text, data.type)
     getUnreadNotifications(http,(data: any, err)=>{
@@ -75,9 +75,16 @@ onMounted(() => {
       store.commit("updateNotificationCount", data.length!)
     })
   }
+  const payloadChannel = new BroadcastChannel("nx-payload")
+  payloadChannel.onmessage = (event) => {
+    const data = event.data
+    displayMessage("Payload received")
+    // Log the payload
+    console.log(data)
+  }
   // Get the registration from service worker
   navigator.serviceWorker.ready
-    .then((reg) => {
+    .then(async (reg) => {
       return reg.pushManager.getSubscription()
         .then(async (sub)=>{
           if(sub)

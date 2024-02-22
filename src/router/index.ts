@@ -370,9 +370,9 @@ const routes = [
   {
     path: '/debug/notifications',
     name: 'Notifications Debug',
-    // meta: {
-    //   allowedRoles: ["debug"]
-    // },
+    meta: {
+      allowedRoles: ["debug"]
+    },
     component: () => import('../views/Debug/NotificationTest.vue'),
   },
   {

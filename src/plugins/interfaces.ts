@@ -35,6 +35,16 @@ export interface AxiosOptions {
   token?: string;
 }
 
+export enum PushTypes {
+    Notification = "Notification",
+    Payload = "Payload",
+}
+
+export interface Push {
+    type: PushTypes
+    payload: NotificationSchema | any
+}
+
 export enum NotificationTypes {
   Warning = "Warning",
   Error = "Error",
@@ -43,15 +53,17 @@ export enum NotificationTypes {
   Question = "Question",
 }
 
-// For message component
 export interface NotificationSchema {
   _id?: string;
-  type: NotificationTypes;
-  text: string;
+  user: string,
+  type: NotificationTypes,
+  text: string,
+  date?: Date,
+  date_read?: Date,
+  title?: string,
+  link?: string,
   quantity?: number;
   ms_left?: number;
-  date?: number;
-  date_read?: number;
 }
 
 export interface LoadedPartRecord {

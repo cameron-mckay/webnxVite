@@ -34,7 +34,7 @@ export function registerEndpoint(
     });
 }
 
-export function sendNotifictionToUser(
+export function sendNotificationToUser(
   http: AxiosInstance,
   user: string,
   text: string,
@@ -57,7 +57,7 @@ export function sendNotifictionToUser(
     });
 }
 
-export function sendNotifictionToRole(
+export function sendNotificationToRole(
   http: AxiosInstance,
   role: string,
   text: string,
@@ -69,6 +69,44 @@ export function sendNotifictionToRole(
       role,
       text,
       type
+    })
+    .then((res: AxiosResponse) => {
+      // Success and send back results
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Send error to callback function
+      callback({}, err);
+    });
+}
+
+export function sendPayloadToUser(
+  http: AxiosInstance,
+  user: string,
+  callback: apiResponse
+) {
+  http
+    .post('/api/notifications/payload/send', {
+      user,
+    })
+    .then((res: AxiosResponse) => {
+      // Success and send back results
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Send error to callback function
+      callback({}, err);
+    });
+}
+
+export function sendPayloadToRole(
+  http: AxiosInstance,
+  role: string,
+  callback: apiResponse
+) {
+  http
+    .post('/api/notifications/payload/send', {
+      role,
     })
     .then((res: AxiosResponse) => {
       // Success and send back results
