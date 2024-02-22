@@ -42,10 +42,11 @@ onBeforeMount(()=>{
 
 function loadUnread() {
   loadingUnread.value = true
-  getUnreadNotifications(http, (data,err) => {
+  getUnreadNotifications(http, (data: any,err) => {
     if(err)
       return errorHandler(err)
     unreadNotifications.value = data as NotificationSchema[]
+    store.commit("updateNotificationCount", data.length)
     loadingUnread.value = false
   })
 }
