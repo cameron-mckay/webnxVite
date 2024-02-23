@@ -11,18 +11,20 @@ self.addEventListener('message', (event) => {
 });
 
 async function sendPayloadToChannel(bc, payload) {
-  const windowClients = await clients.matchAll({
+  return clients.matchAll({
     type: "window",
     includeUncontrolled: true,
-  });
-  for (var i = 0; i < windowClients.length; i++) {
-    if (windowClients[i].visibilityState === "visible") {
-      bc.postMessage(payload)
-      bc.close()
-      return true;
+  })
+  .then((windowClients)=>{
+    for (var i = 0; i < windowClients.length; i++) {
+      if (windowClients[i].visibilityState === "visible") {
+        bc.postMessage(payload)
+        bc.close()
+        return true;
+      }
     }
-  }
-  return false
+    return false
+  })
 }
 
 async function handlePush(event) {
@@ -58,6 +60,17 @@ self.addEventListener('push', (event) => {
     // as the body.
     handlePush(event)
   );
+})
+
+self.addEventListener('notificationClick', (event) => {
+  event.waitUntil(
+    self.clients.matchAll().then((clientList) => {
+      if(clientList.length > 0) {
+        return clientList[0].focus()
+      }
+      return self.clients.openWindow('../notifications')
+    })
+  )
 })
 
 workbox.core.clientsClaim();

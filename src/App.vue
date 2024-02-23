@@ -88,7 +88,7 @@ onMounted(() => {
           store.commit("updateNotificationCount", data.length!)
         })
       }
-      displayMessage("Payload received")
+      console.log("Payload received")
       // Log the payload
       console.log(data)
     }
