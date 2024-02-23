@@ -67,20 +67,31 @@ onMounted(() => {
   // Listens for notifications from service worker
   const notificationChannel = new BroadcastChannel("nx-notification")
   notificationChannel.onmessage = (event) => {
-    const data = event.data
-    displayMessage(data.text, data.type)
-    getUnreadNotifications(http,(data: any, err)=>{
-      if(err)
-        return errorHandler(err)
-      store.commit("updateNotificationCount", data.length!)
-    })
+    if(store.state.isAuth) {
+      const data = event.data
+      displayMessage(data.text, data.type)
+      getUnreadNotifications(http,(data: any, err)=>{
+        if(err)
+          return errorHandler(err)
+        store.commit("updateNotificationCount", data.length!)
+      })
+    }
   }
   const payloadChannel = new BroadcastChannel("nx-payload")
   payloadChannel.onmessage = (event) => {
-    const data = event.data
-    displayMessage("Payload received")
-    // Log the payload
-    console.log(data)
+    if(store.state.isAuth) {
+      const data = event.data
+      if(data.type="notificationUpdate") {
+        getUnreadNotifications(http,(data: any, err)=>{
+          if(err)
+            return errorHandler(err)
+          store.commit("updateNotificationCount", data.length!)
+        })
+      }
+      displayMessage("Payload received")
+      // Log the payload
+      console.log(data)
+    }
   }
   // Get the registration from service worker
   navigator.serviceWorker.ready
