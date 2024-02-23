@@ -49,6 +49,7 @@ async function handlePush(event) {
     // Send the notification
     await self.registration.showNotification('WebNX Inventory', {
       body: push.payload.text,
+      data: push.payload
     })
   // Return client visibility
   return clientVisible;
@@ -62,9 +63,10 @@ self.addEventListener('push', (event) => {
   );
 })
 
-self.addEventListener('notificationClick', (event) => {
+self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
     self.clients.matchAll().then((clientList) => {
+      console.log(event)
       if(clientList.length > 0) {
         return clientList[0].focus()
       }
