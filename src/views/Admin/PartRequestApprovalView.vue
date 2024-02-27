@@ -36,6 +36,7 @@ let buildKits = new Map<string, BuildKitSchema>()
 onBeforeMount(()=>{
   loadQueue()
   const payloadChannel = new BroadcastChannel("nx-payload")
+  console.log(payloadChannel)
   payloadChannel.onmessage = (event) => {
     console.log("PAYLOAD RECEIVED")
     const data = event.data

@@ -79,6 +79,9 @@ onMounted(() => {
   }
   const payloadChannel = new BroadcastChannel("nx-payload")
   payloadChannel.onmessage = (event) => {
+    console.log("Payload received")
+    // Log the payload
+    console.log(event.data)
     if(store.state.isAuth) {
       const data = event.data
       if(data.type="notificationUpdate") {
@@ -88,9 +91,6 @@ onMounted(() => {
           store.commit("updateNotificationCount", data.length!)
         })
       }
-      console.log("Payload received")
-      // Log the payload
-      console.log(data)
     }
   }
   // Get the registration from service worker
