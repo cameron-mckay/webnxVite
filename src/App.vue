@@ -84,7 +84,7 @@ onMounted(() => {
     console.log(event.data)
     if(store.state.isAuth) {
       const data = event.data
-      if(data.type="notificationUpdate") {
+      if(data.type=="notificationUpdate") {
         getUnreadNotifications(http,(data: any, err)=>{
           if(err)
             return errorHandler(err)
