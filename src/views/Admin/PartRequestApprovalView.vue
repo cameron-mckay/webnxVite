@@ -7,12 +7,12 @@ import CheckoutRequestComponent from '../../components/KioskComponents/CheckoutR
 import RefreshButton from '../../components/GenericComponents/Buttons/RefreshButton.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import type {
-UserState,
-PartRequestSchema,
-KioskQuantities,
-KioskQuantity,
-InventoryEntry,
-BuildKitSchema
+  UserState,
+  PartRequestSchema,
+  KioskQuantities,
+  KioskQuantity,
+  InventoryEntry,
+  BuildKitSchema
 } from '../../plugins/interfaces';
 import { getKioskQuantities, getActivePartRequests, fulfillPartRequest, getBuildKitByID, processBuildKitRequest } from '../../plugins/dbCommands/partManager';
 import Cacher from '../../plugins/Cacher';
@@ -35,10 +35,15 @@ let buildKits = new Map<string, BuildKitSchema>()
 
 onBeforeMount(()=>{
   loadQueue()
-  const bc = new BroadcastChannel("nx-push")
-  bc.onmessage = (event) => {
-    if(requests.value.length==0)
-      loadQueue()
+  const payloadChannel = new BroadcastChannel("nx-payload")
+  payloadChannel.onmessage = (event) => {
+    const data = event.data
+    if(data.type="partRequestRemoved") {
+      requests.value.splice(requests.value.findIndex((e)=>{
+        return e._id == data.id
+      }), 1)
+      displayMessage("A fulfilled request was removed from the list.")
+    }
   }
 })
 
