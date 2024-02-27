@@ -41,7 +41,7 @@ onBeforeMount(()=>{
     console.log("PAYLOAD RECEIVED")
     const data = event.data
     console.log(data)
-    if(data.type="partRequestRemoved") {
+    if(data.type=="partRequestRemoved") {
       requests.value.splice(requests.value.findIndex((e)=>{
         return e._id == data.id
       }), 1)
