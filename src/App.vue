@@ -27,7 +27,7 @@ import NotificationCenterComponent from './components/GenericComponents/Notifica
 // Import dependencies
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, inject, onMounted, ref, onBeforeMount } from 'vue';
-import { NavigationGuardNext, RouteLocationNormalized, useRoute, useRouter } from 'vue-router';
+import { NavigationGuardNext, RouteLocationNormalized, useRouter } from 'vue-router';
 import { injectionKey } from './plugins/axios';
 import { checkAuth, getCurrentUser } from './plugins/dbCommands/userManager';
 import { NotificationSchema, NotificationTypes, User } from './plugins/interfaces';
@@ -79,9 +79,6 @@ onMounted(() => {
   }
   const payloadChannel = new BroadcastChannel("nx-payload")
   payloadChannel.onmessage = (event) => {
-    console.log("Payload received")
-    // Log the payload
-    console.log(event.data)
     if(store.state.isAuth) {
       const data = event.data
       if(data.type == "notificationUpdate") {

@@ -36,17 +36,23 @@ let buildKits = new Map<string, BuildKitSchema>()
 onBeforeMount(()=>{
   loadQueue()
   const payloadChannel = new BroadcastChannel("nx-payload")
-  console.log(payloadChannel)
   payloadChannel.onmessage = (event) => {
-    console.log("PAYLOAD RECEIVED")
     const data = event.data
-    console.log(data)
     if(data.type=="partRequestRemoved") {
-      requests.value.splice(requests.value.findIndex((e)=>{
+      let index = requests.value.findIndex((e)=>{
         return e._id == data.id
-      }), 1)
-      displayMessage("A fulfilled request was removed from the list.")
+      })
+      if(index>=0) {
+        requests.value.splice(index, 1)
+        displayMessage("A fulfilled request was removed from the list.")
+      }
     }
+  }
+  // Autorefresh on notification
+  const notificationChannel = new BroadcastChannel("nx-notification")
+  notificationChannel.onmessage = (event) => {
+    if(requests.value.length==0)
+      loadQueue()
   }
 })
 
