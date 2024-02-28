@@ -51,6 +51,7 @@ async function handlePush(event) {
       body: push.payload.text,
       data: push.payload
     })
+
   }
   else {
     await self.registration.showNotification('ELSE', {
