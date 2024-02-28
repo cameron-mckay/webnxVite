@@ -3,7 +3,7 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { onMounted, ref, Ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import { PartSchema, TextSearchPage, UserState } from '../../plugins/interfaces';
+import { NotificationTypes, PartSchema, TextSearchPage, UserState } from '../../plugins/interfaces';
 import { getPartsByData, getPartsByTextSearch } from '../../plugins/dbCommands/partManager';
 import SlidersButton from '../../components/GenericComponents/Buttons/SlidersButton.vue'
 import AdvancedSearchComponent from '../../components/PartComponents/PartAdvancedSearchComponent.vue';
@@ -87,7 +87,7 @@ function addToCart(part: PartSchema) {
     store.getters.getQuantity(part.nxid) < part.quantity
   ) {
     // Add to cart
-    displayMessage(`Added ${part.manufacturer} ${part.name} to cart`);
+    displayMessage(`Added ${part.manufacturer} ${part.name} to cart`, NotificationTypes.Info, store.state.user.roles?.includes('kiosk')?'/cart':'/requestParts');
     store.commit('addToCart', part);
   } else {
     // Not enough stock
