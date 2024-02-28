@@ -11,17 +11,15 @@ self.addEventListener('message', (event) => {
 });
 
 async function sendPayloadToChannel(bc, payload) {
-  return clients.matchAll({
-    type: "window",
-    includeUncontrolled: true,
-  })
-  .then((windowClients)=>{
-    for (var i = 0; i < windowClients.length; i++) {
-      if (windowClients[i].visibilityState === "visible") {
-        bc.postMessage(payload)
-        bc.close()
-        return true;
-      }
+  return clients.matchAll()
+  .then((clientList)=>{
+    let focused = clientList.some((client)=>{
+      return client.focused
+    })
+    if(focused || clientList.length > 0) {
+      bc.postMessage(payload)
+      bc.close()
+      return true;
     }
     return false
   })
