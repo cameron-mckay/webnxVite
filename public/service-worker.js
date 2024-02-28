@@ -75,7 +75,13 @@ self.addEventListener('notificationclick', (event) => {
         return false
       })
       if(!hadWindowToFocus)
-        return self.clients.openWindow(self.location.origin+'/notifications')
+        return self.clients.openWindow(self.location.origin+
+            (
+              event.notification.data.link ?
+              event.notification.data.link :
+              '/notifications'
+            )
+          )
           .then((client)=>{
             if(client){
               client.focus()
