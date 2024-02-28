@@ -61,22 +61,26 @@ self.addEventListener('push', (event) => {
 })
 
 self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
   event.waitUntil(
     self.clients.matchAll({
       type: "window",
     }).then(async (clientList) => {
-      if(clientList.length > 0) {
-        await self.registration.showNotification('WebNX Inventory', {
-          body: "Focusing client",
-          data: push.payload
-        })
-        return clientList[0].focus()
-      }
-      await self.registration.showNotification('WebNX Inventory', {
-        body: "Opening new window...",
-        data: push.payload
+
+      const hadWindowToFocus = clientList.some((client)=>{
+        if(client.url === `${self.location.origin}/notifications`){
+          client.focus()
+          return true
+        }
+        return false
       })
-      return self.clients.openWindow(self.location.origin+'/notifications')
+      if(!hadWindowToFocus)
+        return self.clients.openWindow(self.location.origin+'/notifications')
+          .then((client)=>{
+            if(client){
+              client.focus()
+            }
+          })
     })
   )
 })
