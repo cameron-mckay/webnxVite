@@ -64,8 +64,12 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
     self.clients.matchAll({
       type: "window",
-    }).then((clientList) => {
+    }).then(async (clientList) => {
       if(clientList.length > 0) {
+        await self.registration.showNotification('WebNX Inventory', {
+          body: "Focusing client",
+          data: push.payload
+        })
         return clientList[0].focus()
       }
       return self.clients.openWindow(self.location.origin+'/notifications')
