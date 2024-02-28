@@ -68,7 +68,7 @@ self.addEventListener('notificationclick', (event) => {
       if(clientList.length > 0) {
         return clientList[0].focus()
       }
-      return self.clients.openWindow('/')
+      return self.clients.openWindow(self.location.origin+'/notifications')
     })
   )
 })
