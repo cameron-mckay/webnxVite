@@ -15,11 +15,7 @@ async function sendPayloadToChannel(bc, payload) {
   .then(async (clientList)=>{
     let focused = clientList.some((client)=>client.focused)
     if(focused || clientList.length > 0) {
-      await self.registration.showNotification('WebNX Inventory', {
-        body: JSON.stringify(clientList),
-      })
       bc.postMessage(payload)
-      bc.close()
       return true;
     }
     return false
@@ -43,6 +39,7 @@ async function handlePush(event) {
   }
   // Send payload and store if the client is visible
   let clientVisible = await sendPayloadToChannel(bc, push.payload)
+  bc.close()
   // If client isn't visble and the push is a notification
   if(clientVisible==false&&push.type == "Notification") {
     // Send the notification
@@ -65,11 +62,13 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
-    self.clients.matchAll().then((clientList) => {
+    self.clients.matchAll({
+      type: "window",
+    }).then((clientList) => {
       if(clientList.length > 0) {
         return clientList[0].focus()
       }
-      return self.clients.openWindow('/notifications')
+      return self.clients.openWindow('/')
     })
   )
 })
