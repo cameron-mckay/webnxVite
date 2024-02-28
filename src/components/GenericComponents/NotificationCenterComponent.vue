@@ -92,8 +92,12 @@ function navigateToLink(e: Event, notif: NotificationSchema) {
   if(el.id == "x") {
     return
   }
-  if(notif.link)
+  if(notif.link) {
     router.push(notif.link)
+      .then(()=>{
+        notif.ms_left = 0
+      })
+  }
 }
 </script>
 <template>
