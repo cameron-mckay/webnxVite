@@ -87,6 +87,12 @@ self.addEventListener('notificationclick', (event) => {
               client.focus()
             }
           })
+          .catch(()=>{
+            return self.registration.showNotification('WebNX Inventory', {
+              body: "error opening link",
+              data: push.payload
+            })
+          })
     })
   )
 })
