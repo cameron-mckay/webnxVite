@@ -22,9 +22,6 @@ async function sendPayloadToChannel(bc, payload) {
       bc.close()
       return true;
     }
-    await self.registration.showNotification('WebNX Inventory', {
-      body: "Returning false",
-    })
     return false
   })
 }
@@ -46,21 +43,12 @@ async function handlePush(event) {
   }
   // Send payload and store if the client is visible
   let clientVisible = await sendPayloadToChannel(bc, push.payload)
-  await self.registration.showNotification('Returned value', {
-    body: clientVisible ? "true" : "false",
-  })
   // If client isn't visble and the push is a notification
   if(clientVisible==false&&push.type == "Notification") {
     // Send the notification
     await self.registration.showNotification('WebNX Inventory', {
       body: push.payload.text,
       data: push.payload
-    })
-
-  }
-  else {
-    await self.registration.showNotification('ELSE', {
-      body: clientVisible ? "true" : "false",
     })
   }
   // Return client visibility
