@@ -72,6 +72,10 @@ self.addEventListener('notificationclick', (event) => {
         })
         return clientList[0].focus()
       }
+      await self.registration.showNotification('WebNX Inventory', {
+        body: "Opening new window...",
+        data: push.payload
+      })
       return self.clients.openWindow(self.location.origin+'/notifications')
     })
   )
