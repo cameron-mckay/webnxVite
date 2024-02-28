@@ -46,6 +46,9 @@ async function handlePush(event) {
   }
   // Send payload and store if the client is visible
   let clientVisible = sendPayloadToChannel(bc, push.payload)
+  await self.registration.showNotification('Returned value', {
+    body: clientVisible ? "true" : "false",
+  })
   // If client isn't visble and the push is a notification
   if(clientVisible==false&&push.type == "Notification") {
     // Send the notification
