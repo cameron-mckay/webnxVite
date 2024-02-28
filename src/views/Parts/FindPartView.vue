@@ -17,7 +17,7 @@ interface Props {
   store: Store<UserState>;
   router: Router;
   errorHandler: (err: Error | AxiosError | string) => void;
-  displayMessage: (message: string) => void;
+  displayMessage: (message: string, type: NotificationTypes, link?: string) => void;
 }
 // Get global objects from props
 const { http, store, router, errorHandler, displayMessage } = defineProps<Props>();
