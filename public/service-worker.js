@@ -66,11 +66,10 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
     self.clients.matchAll().then((clientList) => {
-      console.log(event)
       if(clientList.length > 0) {
         return clientList[0].focus()
       }
-      return self.clients.openWindow('../notifications')
+      return self.clients.openWindow('/notifications')
     })
   )
 })
