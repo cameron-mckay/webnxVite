@@ -12,11 +12,14 @@ self.addEventListener('message', (event) => {
 
 async function sendPayloadToChannel(bc, payload) {
   return clients.matchAll()
-  .then((clientList)=>{
+  .then(async (clientList)=>{
     let focused = clientList.some((client)=>{
       return client.focused
     })
     if(focused || clientList.length > 0) {
+      await self.registration.showNotification('WebNX Inventory', {
+        body: JSON.stringify(clientList),
+      })
       bc.postMessage(payload)
       bc.close()
       return true;
