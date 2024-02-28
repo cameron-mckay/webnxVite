@@ -53,7 +53,7 @@ async function handlePush(event) {
   }
   else {
     await self.registration.showNotification('ELSE', {
-      body: "ELSE",
+      body: clientVisible ? "true" : "false",
     })
   }
   // Return client visibility
