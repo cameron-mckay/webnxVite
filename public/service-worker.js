@@ -47,7 +47,7 @@ async function handlePush(event) {
   // Send payload and store if the client is visible
   let clientVisible = sendPayloadToChannel(bc, push.payload)
   // If client isn't visble and the push is a notification
-  if(!clientVisible&&push.type == "Notification") {
+  if(clientVisible==false&&push.type == "Notification") {
     // Send the notification
     await self.registration.showNotification('WebNX Inventory', {
       body: push.payload.text,
