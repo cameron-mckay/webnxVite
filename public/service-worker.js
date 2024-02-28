@@ -45,7 +45,7 @@ async function handlePush(event) {
     bc = new BroadcastChannel("nx-payload")
   }
   // Send payload and store if the client is visible
-  let clientVisible = sendPayloadToChannel(bc, push.payload)
+  let clientVisible = await sendPayloadToChannel(bc, push.payload)
   await self.registration.showNotification('Returned value', {
     body: clientVisible ? "true" : "false",
   })
