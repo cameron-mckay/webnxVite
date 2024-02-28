@@ -69,7 +69,7 @@ onMounted(() => {
   notificationChannel.onmessage = (event) => {
     if(store.state.isAuth) {
       const data = event.data
-      displayMessage(data.text, data.type)
+      displayMessage(data.text, data.type, data.link)
       getUnreadNotifications(http,(data: any, err)=>{
         if(err)
           return errorHandler(err)
@@ -107,7 +107,7 @@ onMounted(() => {
     })
     .then((sub) => {
       // Send registration info to server
-      registerEndpoint(http, sub, (data, err) =>{
+      registerEndpoint(http, sub, (_, err) =>{
         if(err)
           return errorHandler(err)
       })
@@ -148,7 +148,7 @@ onBeforeMount(()=>{
       if(Notification.permission === "granted")
         // Get the registration from service worker
         navigator.serviceWorker.ready
-          .then((reg) => {
+          .then(async (reg) => {
             return reg.pushManager.getSubscription()
               .then(async (sub)=>{
                 if(sub)
@@ -163,7 +163,7 @@ onBeforeMount(()=>{
           })
           .then((sub) => {
             // Send registration info to server
-            registerEndpoint(http, sub, (data, err) =>{
+            registerEndpoint(http, sub, (_, err) =>{
               if(err)
                 return errorHandler(err)
             })
@@ -246,13 +246,11 @@ function errorHandler(err: AxiosError | string) {
  *
  * @param message
  */
-function displayMessage(message: string, type?: NotificationTypes) {
+function displayMessage(message: string, type?: NotificationTypes, link?: string) {
   if(!type)
     type = NotificationTypes.Info
   // Sentinel value
   let match = false;
-  // Reference to message for timeout
-  let messageRef: NotificationSchema;
   // Search all messages
   for (const existingMessage of notifications.value) {
     // If message already exists
@@ -262,20 +260,23 @@ function displayMessage(message: string, type?: NotificationTypes) {
       existingMessage.ms_left = NOTIFICATION_TIME
       // Set sentinel value
       match = true;
-      // Store a reference so we can delete or decrement after 5 seconds
-      messageRef = existingMessage;
     }
   }
   if (!match) {
     // If message doesn't already exist - create and push new
-    notifications.value.push({ type: type, text: message, quantity: 1, ms_left: NOTIFICATION_TIME } as NotificationSchema);
-    // Keep a references so we can delete or decrement after 5 seconds
-    messageRef = notifications.value[notifications.value.length - 1];
+    notifications.value.push({ type: type, text: message, quantity: 1, ms_left: NOTIFICATION_TIME, link } as NotificationSchema);
   }
-  if(!document.hasFocus()&&Notification.permission==="granted")
+  if(!document.hasFocus()&&Notification.permission==="granted") {
     new Notification("WebNX Inventory", {
       body: message
     })
+    .onclick = (async () => {
+      if(link) {
+        await router.push(link)
+      }
+      window.focus()
+    })
+  }
 }
 
 function revokeLogin() {

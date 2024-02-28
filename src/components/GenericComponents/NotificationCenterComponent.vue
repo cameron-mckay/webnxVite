@@ -6,14 +6,16 @@ import { Store } from 'vuex';
 import { getPublicKey, registerEndpoint } from '../../plugins/dbCommands/notifications';
 import { urlBase64ToUint8Array } from '../../plugins/CommonMethods';
 import { AxiosInstance } from 'axios';
+import { Router } from 'vue-router';
 // Define props
 interface Props {
   notifications: Array<NotificationSchema>;
   store: Store<UserState>;
   http: AxiosInstance;
+  router: Router
 }
 // Get messages from app
-const { notifications, store, http } = defineProps<Props>();
+const { notifications, store, http, router } = defineProps<Props>();
 let interval: NodeJS.Timer
 let intervalCreated = false
 // Frame time of 60fps
@@ -85,6 +87,14 @@ function requestNotifications() {
     })
 }
 
+function navigateToLink(e: Event, notif: NotificationSchema) {
+  let el = e.target as HTMLElement
+  if(el.id == "x") {
+    return
+  }
+  if(notif.link)
+    router.push(notif.link)
+}
 </script>
 <template>
   <div
@@ -118,6 +128,7 @@ function requestNotifications() {
       v-for="notification in notifications"
       :notification="notification"
       @delete="deleteNotification(notification)"
+      @click="(e)=>navigateToLink(e, notification)"
     />
   </div>
 </template>

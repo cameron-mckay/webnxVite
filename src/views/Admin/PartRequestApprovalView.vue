@@ -2,7 +2,7 @@
 import type { AxiosError, AxiosInstance } from 'axios';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import CheckoutRequestComponent from '../../components/KioskComponents/CheckoutRequestComponent.vue';
 import RefreshButton from '../../components/GenericComponents/Buttons/RefreshButton.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
@@ -50,7 +50,7 @@ onBeforeMount(()=>{
   }
   // Autorefresh on notification
   const notificationChannel = new BroadcastChannel("nx-notification")
-  notificationChannel.onmessage = (event) => {
+  notificationChannel.onmessage = () => {
     if(requests.value.length==0)
       loadQueue()
   }

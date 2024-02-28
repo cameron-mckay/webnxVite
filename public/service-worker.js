@@ -42,6 +42,9 @@ async function handlePush(event) {
   bc.close()
   // If client isn't visble and the push is a notification
   if(clientVisible==false&&push.type == "Notification") {
+    push.payload.link = push.payload.link ?
+      push.payload.link :
+      '/notifications'
     // Send the notification
     await self.registration.showNotification('WebNX Inventory', {
       body: push.payload.text,
@@ -66,32 +69,20 @@ self.addEventListener('notificationclick', (event) => {
     self.clients.matchAll({
       type: "window",
     }).then(async (clientList) => {
-
+      const link = `${self.location.origin}${event.notification.data.link}`
       const hadWindowToFocus = clientList.some((client)=>{
-        if(client.url === `${self.location.origin}/notifications`){
+        if(client.url === link){
           client.focus()
           return true
         }
         return false
       })
       if(!hadWindowToFocus)
-        return self.clients.openWindow(self.location.origin+
-            (
-              event.notification.data.link ?
-              event.notification.data.link :
-              '/notifications'
-            )
-          )
+        return self.clients.openWindow(link)
           .then((client)=>{
             if(client){
               client.focus()
             }
-          })
-          .catch(()=>{
-            return self.registration.showNotification('WebNX Inventory', {
-              body: "error opening link",
-              data: push.payload
-            })
           })
     })
   )

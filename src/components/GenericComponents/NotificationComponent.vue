@@ -15,7 +15,6 @@ interface Props {
 
 let { notification, hide_timer, hide_x } = defineProps<Props>()
 const NOTIFICATION_TIME = 5000
-
 </script>
 <template>
   <div
@@ -53,6 +52,7 @@ const NOTIFICATION_TIME = 5000
         class="ml-auto"
       >
         <SVGX
+          id="x"
           v-if="hide_x!=true"
           class="h-8 w-8 rounded-md p-2 text-black dark:text-gray-200 hover:hover-color active:active-color ml-auto"
           v-on:click="$emit('delete')"
