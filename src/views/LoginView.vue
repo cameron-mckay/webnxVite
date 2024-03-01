@@ -88,8 +88,9 @@ async function login() {
           getCurrentUser(http, (data, err) => {
             if (err) {
               // Error occured - update nothing
-              displayMessage("debug 4")
               errorHandler(err)
+              displayMessage("debug 4")
+              displayMessage(err.message)
               store.commit('logout')
               return
             }
