@@ -93,10 +93,10 @@ async function login() {
             let user = data as User
             store.commit("updateUserData", user)
             displayMessage('Successfully logged in.');
-            if(Notification.permission === "granted")
+            if(Notification.permission === "granted" && 'serviceWorker' in navigator)
               // Get the registration from service worker
               navigator.serviceWorker.ready
-                .then((reg) => {
+                .then(async (reg) => {
                   return reg.pushManager.getSubscription()
                     .then(async (sub)=>{
                       if(sub)
