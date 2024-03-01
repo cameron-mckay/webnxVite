@@ -34,8 +34,8 @@ let partsMap = new Map<string, PartSchema>()
 
 onBeforeMount(()=>{
   loadQueue()
-  const bc = new BroadcastChannel("nx-push")
-  bc.onmessage = (event) => {
+  const bc = new BroadcastChannel("nx-notification")
+  bc.onmessage = () => {
     if(checkInQueue.value.length==0)
       loadQueue()
   }

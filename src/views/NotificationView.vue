@@ -34,7 +34,7 @@ onBeforeMount(()=>{
   loadingPast.value = true
   loadUnread()
   loadMore()
-  const bc = new BroadcastChannel("nx-push")
+  const bc = new BroadcastChannel("nx-notification")
   bc.onmessage = (event) => {
     loadUnread()
   }
