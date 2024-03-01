@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import axios from './plugins/axios';
 import { createGlobalStore, key } from './plugins/store';
-import './registerServiceWorker';
+import './registerServiceWorker.js';
 import router from './router/index';
 import './style.css';
 
