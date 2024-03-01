@@ -44,7 +44,7 @@ onBeforeMount(()=>{
   payloadChannel.onmessage = (event) => {
     const data = event.data
     console.log(data)
-    if(data.type=="partRequestRemoved") {
+    if(data.type=="checkinProcessed") {
       let index = checkInQueue.value.findIndex((e)=>{
         console.log("Request time: "+e.date.toISOString())
         return e.date.toISOString() == data.date && e.by == data.by
