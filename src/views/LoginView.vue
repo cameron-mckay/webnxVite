@@ -89,6 +89,7 @@ async function login() {
             if (err) {
               // Error occured - update nothing
               displayMessage("debug 4")
+              errorHandler(err)
               store.commit('logout')
               return
             }
