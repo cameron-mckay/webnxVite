@@ -46,8 +46,8 @@ onBeforeMount(()=>{
     console.log(data)
     if(data.type=="checkinProcessed") {
       let index = checkInQueue.value.findIndex((e)=>{
-        console.log("Request time: "+e.date.toISOString())
-        return e.date.toISOString() == data.date && e.by == data.by
+        console.log("Request time: "+e.date)
+        return e.date == data.date && e.by == data.by
       })
       if(index>=0) {
         checkInQueue.value.splice(index, 1)
