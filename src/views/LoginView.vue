@@ -80,12 +80,15 @@ async function login() {
 
         checkAuth(http, async (data, err) => {
           // If not authenticated
-          if (err)
+          if (err) {
+            displayMessage("debug 3")
             return
+          }
           // If authenticated, set status
           getCurrentUser(http, (data, err) => {
             if (err) {
               // Error occured - update nothing
+              displayMessage("debug 4")
               store.commit('logout')
               return
             }
@@ -93,6 +96,7 @@ async function login() {
             let user = data as User
             store.commit("updateUserData", user)
             displayMessage('Successfully logged in.');
+            router.push('/parts');
             if(Notification.permission === "granted" && 'serviceWorker' in navigator)
               // Get the registration from service worker
               navigator.serviceWorker.ready
@@ -119,7 +123,6 @@ async function login() {
           });
         });
         // Save user data to vuex store
-        router.push('/parts');
       })
       .catch((err: Error | AxiosError) => {
         // Error
