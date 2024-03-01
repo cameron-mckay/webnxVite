@@ -61,7 +61,7 @@ onMounted(() => {
   }
   getUnreadNotifications(http,(data: any, err)=>{
     if(err)
-      return errorHandler(err)
+      return
     store.commit("updateNotificationCount", data.length!)
   })
   // Listens for notifications from service worker
