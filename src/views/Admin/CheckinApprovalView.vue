@@ -39,6 +39,22 @@ onBeforeMount(()=>{
     if(checkInQueue.value.length==0)
       loadQueue()
   }
+
+  const payloadChannel = new BroadcastChannel("nx-payload")
+  payloadChannel.onmessage = (event) => {
+    const data = event.data
+    console.log(data)
+    if(data.type=="partRequestRemoved") {
+      let index = checkInQueue.value.findIndex((e)=>{
+        return e.date.getTime() == data.date.getTime() && e.by == data.by
+      })
+      if(index>=0) {
+        checkInQueue.value.splice(index, 1)
+        displayMessage("A fulfilled request was removed from the list.")
+      }
+    }
+  }
+
 })
 
 function loadQueue() {
