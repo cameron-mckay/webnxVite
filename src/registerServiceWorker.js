@@ -1,4 +1,4 @@
-if (import.meta.env.VITE_NODE_ENV == 'production') {
+if (import.meta.env.VITE_NODE_ENV == 'production' && 'serviceWorker' in navigator) {
   navigator.serviceWorker.register(`${import.meta.env.VITE_API_URL}/service-worker.js`, {})
     .then((reg)=>{
       console.log('Service worker has been registered.');
