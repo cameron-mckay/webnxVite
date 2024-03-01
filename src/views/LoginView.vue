@@ -122,6 +122,15 @@ async function login() {
                       return errorHandler(err)
                   })
                 })
+                .then(()=>{
+                  navigator.serviceWorker.addEventListener('notificationclick', async (e: any) => {
+                    let { link } = e.notification.data
+                    if(link) {
+                      await router.push(link)
+                    }
+                    window.focus()
+                  })
+                })
           });
         });
         // Save user data to vuex store

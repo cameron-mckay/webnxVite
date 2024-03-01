@@ -148,6 +148,15 @@ onBeforeMount(()=>{
                 return errorHandler(err)
             })
           })
+        .then(()=>{
+          navigator.serviceWorker.addEventListener('notificationclick', async (e: any) => {
+            let { link } = e.notification.data
+            if(link) {
+              await router.push(link)
+            }
+            window.focus()
+          })
+        })
     });
   });
 })
@@ -246,15 +255,16 @@ function displayMessage(message: string, type?: NotificationTypes, link?: string
     // If message doesn't already exist - create and push new
     notifications.value.push({ type: type, text: message, quantity: 1, ms_left: NOTIFICATION_TIME, link } as NotificationSchema);
   }
-  if(!document.hasFocus()&&Notification.permission==="granted") {
-    new Notification("WebNX Inventory", {
-      body: message
-    })
-    .onclick = (async () => {
-      if(link) {
-        await router.push(link)
+  if(!document.hasFocus()&&Notification.permission==="granted"&& 'serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistration().then((reg)=>{
+      if(reg){
+        reg.showNotification("WebNX Inventory", {
+          body: message,
+          data: {
+            link
+          }
+        })
       }
-      window.focus()
     })
   }
 }

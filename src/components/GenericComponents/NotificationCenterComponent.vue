@@ -84,6 +84,15 @@ function requestNotifications() {
                 return
             })
           })
+          .then(()=>{
+            navigator.serviceWorker.addEventListener('notificationclick', async (e: any) => {
+              let { link } = e.notification.data
+              if(link) {
+                await router.push(link)
+              }
+              window.focus()
+            })
+          })
     })
 }
 
