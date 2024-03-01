@@ -118,9 +118,8 @@ async function login() {
                 })
           });
         });
-
         // Save user data to vuex store
-        router.push('/');
+        router.push('/parts');
       })
       .catch((err: Error | AxiosError) => {
         // Error
@@ -136,7 +135,7 @@ async function redirectIfLoggedIn() {
     .then(() => {
       // Go to home
       store.state.isAuth = true;
-      router.push('/');
+      router.push('/parts');
     })
     .catch((err: Error | AxiosError) => {
       // Go to login

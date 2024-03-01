@@ -90,29 +90,6 @@ onMounted(() => {
       }
     }
   }
-  // Get the registration from service worker
-  if('serviceWorker' in navigator)
-    navigator.serviceWorker.ready
-      .then(async (reg) => {
-        return reg.pushManager.getSubscription()
-          .then(async (sub)=>{
-            if(sub)
-              return sub
-            const key = await getPublicKey(http)
-            const convertedKey = urlBase64ToUint8Array(key)
-            return reg.pushManager.subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: convertedKey
-            });
-          })
-      })
-      .then((sub) => {
-        // Send registration info to server
-        registerEndpoint(http, sub, (_, err) =>{
-          if(err)
-            return errorHandler(err)
-        })
-      })
 });
 
 function redirect() {
@@ -146,7 +123,7 @@ onBeforeMount(()=>{
       store.commit("updateUserData", user)
       displayMessage('Successfully logged in.');
       configureRouter()
-      if(Notification.permission === "granted")
+      if(Notification.permission === "granted" && 'serviceWorker' in navigator)
         // Get the registration from service worker
         navigator.serviceWorker.ready
           .then(async (reg) => {
