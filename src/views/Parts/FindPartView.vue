@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
-import { onMounted, ref, Ref } from 'vue';
+import { ref, Ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import { NotificationTypes, PartSchema, TextSearchPage, UserState } from '../../plugins/interfaces';
@@ -42,7 +42,7 @@ function textSearchCallback(buildingNum: number, pageNum: number, searchString: 
   })
 }
 
-function advancedSearchCallback(buildingNum: number, pageNum: number, searchObject: PartSchema) {
+function advancedSearchCallback(_buildingNum: number, pageNum: number, searchObject: PartSchema) {
   return new Promise<TextSearchPage>((res)=>{
     searchObject['advanced'] = 'true';
     searchObject['pageNum'] = pageNum;
