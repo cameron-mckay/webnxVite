@@ -43,10 +43,8 @@ onBeforeMount(()=>{
   const payloadChannel = new BroadcastChannel("nx-payload")
   payloadChannel.onmessage = (event) => {
     const data = event.data
-    console.log(data)
     if(data.type=="checkinProcessed") {
       let index = checkInQueue.value.findIndex((e)=>{
-        console.log("Request time: "+e.date)
         return e.date == data.date && e.by == data.by
       })
       if(index>=0) {
