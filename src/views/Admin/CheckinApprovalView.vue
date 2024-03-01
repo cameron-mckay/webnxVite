@@ -46,6 +46,7 @@ onBeforeMount(()=>{
     console.log(data)
     if(data.type=="partRequestRemoved") {
       let index = checkInQueue.value.findIndex((e)=>{
+        console.log("Request time: "+e.date.toISOString())
         return e.date.toISOString() == data.date && e.by == data.by
       })
       if(index>=0) {
