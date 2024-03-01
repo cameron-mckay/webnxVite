@@ -81,16 +81,12 @@ async function login() {
         checkAuth(http, async (data, err) => {
           // If not authenticated
           if (err) {
-            displayMessage("debug 3")
             return
           }
           // If authenticated, set status
           getCurrentUser(http, (data, err) => {
             if (err) {
               // Error occured - update nothing
-              errorHandler(err)
-              displayMessage("debug 4")
-              displayMessage(err.message)
               store.commit('logout')
               return
             }
