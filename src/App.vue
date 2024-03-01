@@ -110,12 +110,14 @@ onBeforeMount(()=>{
   checkAuth(http, async (data, err) => {
     // If not authenticated
     if (err||data=="You must login to continue.") {
+      displayMessage("debug 1")
       return firstLoadRevokeLogin()
     }
     Cacher.loadAllUsersFromAPI()
     // If authenticated, set status
     getCurrentUser(http, (data, err) => {
       if (err) {
+        displayMessage("debug 2")
         return firstLoadRevokeLogin()
       }
       // Success - update global user component
