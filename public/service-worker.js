@@ -69,7 +69,7 @@ self.addEventListener('notificationclick', (event) => {
     self.clients.matchAll({
       type: "window",
     }).then(async (clientList) => {
-      const link = `${self.location.origin}${event.notification.data.link}`
+      const link = `${self.location.origin}${event.notification.data.link?event.notification.data.link:"/notifications"}`
       const hadWindowToFocus = clientList.some((client)=>{
         if(client.url === link){
           client.focus()
