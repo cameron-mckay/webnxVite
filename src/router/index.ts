@@ -39,6 +39,11 @@ const routes = [
     }
   },
   {
+    path: '/notifications',
+    name: 'Notifications',
+    component: () => import('../views/NotificationView.vue'),
+  },
+  {
     path: '/cart',
     name: 'Check Out',
     meta: {
@@ -361,6 +366,14 @@ const routes = [
       allowedRoles: ["view_pallets"]
     },
     component: () => import('../views/Pallets/PalletHistoryView.vue'),
+  },
+  {
+    path: '/debug/notifications',
+    name: 'Notifications Debug',
+    meta: {
+      allowedRoles: ["debug"]
+    },
+    component: () => import('../views/Debug/NotificationTest.vue'),
   },
   {
     path: '/:catchall(.*)',

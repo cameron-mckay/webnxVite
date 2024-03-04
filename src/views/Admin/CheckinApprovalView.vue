@@ -31,14 +31,29 @@ let checkInQueue = ref([] as CheckInRequest[])
 let kiosks = ref([] as User[])
 let users = new Map<string, User>()
 let partsMap = new Map<string, PartSchema>()
-let interval = setInterval(()=>{},10000)
 
 onBeforeMount(()=>{
   loadQueue()
-  interval = setInterval(()=>{
+  const bc = new BroadcastChannel("nx-notification")
+  bc.onmessage = () => {
     if(checkInQueue.value.length==0)
       loadQueue()
-  }, 10000)
+  }
+
+  const payloadChannel = new BroadcastChannel("nx-payload")
+  payloadChannel.onmessage = (event) => {
+    const data = event.data
+    if(data.type=="checkinProcessed") {
+      let index = checkInQueue.value.findIndex((e)=>{
+        return e.date == data.date && e.by == data.by
+      })
+      if(index>=0) {
+        checkInQueue.value.splice(index, 1)
+        displayMessage("A fulfilled request was removed from the list.")
+      }
+    }
+  }
+
 })
 
 function loadQueue() {
@@ -110,10 +125,6 @@ function submit(req: CheckInRequest) {
   })
 }
 
-onBeforeUnmount(() => {
-  clearInterval(interval)
-})
-
 </script>
 <template>
   <div>
@@ -124,6 +135,6 @@ onBeforeUnmount(() => {
     </div>
     <LoaderComponent v-if="loading"/>
     <CheckInRequestComponent v-for="request of checkInQueue" :key="request.by+request.date" :request="request" :kiosks="kiosks" :user="users.get(request.by)!" :parts="partsMap" @submit="submit"/>
-    <p class="mt-4" v-if="checkInQueue.length<1&&!loading">Queue is empty and will auto refresh every 10 seconds...</p>
+    <p class="mt-4" v-if="checkInQueue.length<1&&!loading">Queue is empty and will auto refresh when a new request is received...</p>
   </div>
 </template>

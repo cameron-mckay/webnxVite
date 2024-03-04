@@ -28,7 +28,7 @@ let loaded = ref(false)
 let resultsLoading = ref(false)
 let checkinEvents = ref([] as CheckInEvent[])
 
-const { http, router } =
+const { http, router, displayMessage } =
   defineProps<Props>();
 let analyticsSearchObject:AnalyticsSearch<CheckInEvent>;
 

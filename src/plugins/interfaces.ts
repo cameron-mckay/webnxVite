@@ -35,10 +35,35 @@ export interface AxiosOptions {
   token?: string;
 }
 
-// For message component
-export interface Message {
-  text: string;
-  quantity: number;
+export enum PushTypes {
+    Notification = "Notification",
+    Payload = "Payload",
+}
+
+export interface Push {
+    type: PushTypes
+    payload: NotificationSchema | any
+}
+
+export enum NotificationTypes {
+  Warning = "Warning",
+  Error = "Error",
+  Info = "Info",
+  Alert = "Alert",
+  Question = "Question",
+}
+
+export interface NotificationSchema {
+  _id?: string;
+  user?: string,
+  type: NotificationTypes,
+  text: string,
+  date?: Date,
+  date_read?: Date,
+  title?: string,
+  link?: string,
+  quantity?: number;
+  ms_left?: number;
 }
 
 export interface LoadedPartRecord {
@@ -159,6 +184,7 @@ export interface UserState {
   user: User;
   http: AxiosInstance;
   parts: Map<string, number>;
+  notificationCount: number
 }
 
 // User schema

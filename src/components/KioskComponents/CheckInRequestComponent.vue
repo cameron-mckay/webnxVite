@@ -76,7 +76,7 @@ function submit() {
           </div>
           <div v-if="p.quantity&&p.quantity>1&&p.approved">
             <p class="leading-6">Approved count: {{ p.approvedCount }}</p>
-            <input class="w-full h-2 rounded-lg accent-green-400 cursor-pointer text-gray-200 dark:text-gray-700" type="range" min="1" :max="p.quantity" v-model="p.approvedCount"/>
+            <input class="w-full h-2 rounded-md accent-green-400 cursor-pointer text-gray-200 dark:text-gray-700" type="range" min="1" :max="p.quantity" v-model="p.approvedCount"/>
           </div>
         </div>
         <select class="textbox my-auto" v-model="p.newLocation" :disabled="!(p.approved === true)">

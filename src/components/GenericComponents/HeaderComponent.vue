@@ -131,26 +131,48 @@
           </RouterLink>
         </div>
       </div>
-      <div
-        class="header-button-colors flex justify-center"
-        v-on:click="toggleProfile"
-      >
-        <p class="mr-2 pl-2 leading-10 block"
-          v-if="!overflow"
+      <div class="flex">
+
+        <RouterLink
+          class="flex header-button-colors"
+          to="/notifications"
         >
-          {{ store.state.user.first_name + ' ' + store.state.user.last_name }}
-        </p>
-        <svg
-          class="user-icon"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 448 512"
-        >
-          <path
-            fill="currentColor"
-            stroke="currentColor"
-            d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"
+          <p
+            v-show="store.state.notificationCount > 0"
+            class="text-center leading-10 transition pl-2 select-none"
+          >
+            {{ store.state.notificationCount }}
+          </p>
+          <SVGBell
+            v-if="store.state.notificationCount == 0"
+            class="h-10 w-10 p-2 shrink-0"
           />
-        </svg>
+          <SVGBellSolid
+            v-else
+            class="h-10 w-10 p-2 shrink-0"
+          />
+        </RouterLink>
+        <div
+          class="header-button-colors flex justify-center"
+          v-on:click="toggleProfile"
+        >
+          <p class="mr-2 pl-2 leading-10 block"
+            v-if="!overflow"
+          >
+            {{ store.state.user.first_name + ' ' + store.state.user.last_name }}
+          </p>
+          <svg
+            class="user-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 448 512"
+          >
+            <path
+              fill="currentColor"
+              stroke="currentColor"
+              d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"
+            />
+          </svg>
+        </div>
       </div>
     </div>
     <div
@@ -298,6 +320,8 @@
 import { onMounted, ref, watch } from 'vue';
 import { Store } from 'vuex';
 import { UserState } from '../../plugins/interfaces';
+import SVGBell from './SVG/SVGBell.vue';
+import SVGBellSolid from './SVG/SVGBellSolid.vue';
 document.documentElement.classList.remove('dark');
 interface Props {
   store: Store<UserState>;
@@ -311,8 +335,7 @@ let showProfile = ref(false);
 let overflow = ref(false)
 
 function handleResize() {
-  if(overflow)
-    overflow.value = false
+  overflow.value = false
   setTimeout(()=>{
     let header = document.getElementById("header")!
     let headerWidth = header.offsetWidth
@@ -346,7 +369,7 @@ onMounted(() => {
   }
   // Enable watcher
   window.addEventListener('resize', handleResize)
-  handleResize()
+  setTimeout(handleResize,0)
   watch(dark, () => {
     updateTheme();
   });

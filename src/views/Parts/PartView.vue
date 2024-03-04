@@ -11,7 +11,8 @@ import {
   getPartByID,
   getPartRecordsByID,
 } from '../../plugins/dbCommands/partManager';
-import type {
+import {
+NotificationTypes,
   PartRecord,
   PartSchema,
   UserState,
@@ -23,7 +24,7 @@ interface Props {
   store: Store<UserState>;
   router: Router;
   errorHandler: (err: Error | AxiosError | string) => void;
-  displayMessage: (message: string) => void;
+  displayMessage: (message: string, type: NotificationTypes, link?: string) => void;
 }
 
 interface GroupedRecords {
@@ -116,7 +117,7 @@ function addToCart() {
     store.getters.getQuantity(part.value.nxid) < part.value.quantity
   ) {
     // Add to cart
-    displayMessage(`Added ${part.value.manufacturer} ${part.value.name} to cart`);
+    displayMessage(`Added ${part.value.manufacturer} ${part.value.name} to cart`, NotificationTypes.Info, store.state.user.roles?.includes('kiosk')?'/cart':'/requestParts');
     store.commit('addToCart', part.value);
   } else {
     // Not enough stock

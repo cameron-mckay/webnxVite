@@ -1,7 +1,12 @@
 <template>
   <div>
     <HeaderComponent v-if="store.state.isAuth&&routeConfigured" :http="http" :store="store" :revokeLogin="revokeLogin" />
-    <MessageComponent :messages="messages" :errors="errorMessages" />
+    <NotificationCenterComponent :notifications="notifications"
+      :store="store"
+      :http="http"
+      :router="router"
+      :errorHandler="errorHandler"
+    />
     <LoaderComponent v-if="!routeConfigured"/>
     <router-view
       v-else
@@ -18,29 +23,30 @@
 <script setup lang="ts">
 // Vue components
 import HeaderComponent from './components/GenericComponents/HeaderComponent.vue';
-import MessageComponent from './components/GenericComponents/MessageComponent.vue';
-
+import NotificationCenterComponent from './components/GenericComponents/NotificationCenterComponent.vue';
 // Import dependencies
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Ref, inject, onMounted, ref, onBeforeMount } from 'vue';
-import { NavigationGuardNext, RouteLocationNormalized, useRoute, useRouter } from 'vue-router';
+import { NavigationGuardNext, RouteLocationNormalized, useRouter } from 'vue-router';
 import { injectionKey } from './plugins/axios';
 import { checkAuth, getCurrentUser } from './plugins/dbCommands/userManager';
-import type { Message, User } from './plugins/interfaces';
+import { NotificationSchema, NotificationTypes, User } from './plugins/interfaces';
 import { useStore } from './plugins/store';
 import Cacher from './plugins/Cacher';
 import LoaderComponent from './components/GenericComponents/LoaderComponent.vue';
+import { urlBase64ToUint8Array } from './plugins/CommonMethods'
+import { getPublicKey, getUnreadNotifications, registerEndpoint } from './plugins/dbCommands/notifications';
 
 // Global instances passed through props
 const http = inject<AxiosInstance>(injectionKey)!;
 const router = useRouter();
 const store = useStore();
+const NOTIFICATION_TIME = 5000
 
 let routeConfigured = ref(false)
 
 // Global list of messages for the MessageComponent to render
-var messages: Ref<Message[]> = ref([]);
-var errorMessages: Ref<Message[]> = ref([]);
+var notifications: Ref<NotificationSchema[]> = ref([]);
 
 // Check theme
 onMounted(() => {
@@ -52,6 +58,37 @@ onMounted(() => {
     document.documentElement.classList.add('dark');
   } else {
     localStorage.setItem('theme', 'light');
+  }
+  getUnreadNotifications(http,(data: any, err)=>{
+    if(err)
+      return
+    store.commit("updateNotificationCount", data.length!)
+  })
+  // Listens for notifications from service worker
+  const notificationChannel = new BroadcastChannel("nx-notification")
+  notificationChannel.onmessage = (event) => {
+    if(store.state.isAuth) {
+      const data = event.data
+      displayMessage(data.text, data.type, data.link)
+      getUnreadNotifications(http,(data: any, err)=>{
+        if(err)
+          return errorHandler(err)
+        store.commit("updateNotificationCount", data.length!)
+      })
+    }
+  }
+  const payloadChannel = new BroadcastChannel("nx-payload")
+  payloadChannel.onmessage = (event) => {
+    if(store.state.isAuth) {
+      const data = event.data
+      if(data.type == "notificationUpdate") {
+        getUnreadNotifications(http,(data: any, err)=>{
+          if(err)
+            return errorHandler(err)
+          store.commit("updateNotificationCount", data.length!)
+        })
+      }
+    }
   }
 });
 
@@ -69,6 +106,7 @@ onBeforeMount(()=>{
   Cacher.assignStore(store)
   Cacher.validateCache()
   Cacher.assignErrorHandler(errorHandler)
+
   checkAuth(http, async (data, err) => {
     // If not authenticated
     if (err||data=="You must login to continue.") {
@@ -78,28 +116,66 @@ onBeforeMount(()=>{
     // If authenticated, set status
     getCurrentUser(http, (data, err) => {
       if (err) {
-        // Error occured - update nothing
-        store.commit('logout')
-        configureRouter()
-        return
+        return firstLoadRevokeLogin()
       }
       // Success - update global user component
       let user = data as User
       store.commit("updateUserData", user)
       displayMessage('Successfully logged in.');
       configureRouter()
+      if(Notification.permission === "granted" && 'serviceWorker' in navigator)
+        // Get the registration from service worker
+        navigator.serviceWorker.ready
+          .then(async (reg) => {
+            return reg.pushManager.getSubscription()
+              .then(async (sub)=>{
+                if(sub)
+                  return sub
+                const key = await getPublicKey(http)
+                const convertedKey = urlBase64ToUint8Array(key)
+                return reg.pushManager.subscribe({
+                  userVisibleOnly: true,
+                  applicationServerKey: convertedKey
+                });
+              })
+          })
+          .then((sub) => {
+            // Send registration info to server
+            registerEndpoint(http, sub, (_, err) =>{
+              if(err)
+                return errorHandler(err)
+            })
+          })
+        .then(()=>{
+          navigator.serviceWorker.addEventListener('notificationclick', async (e: any) => {
+            let { link } = e.notification.data
+            if(link) {
+              await router.push(link)
+            }
+            window.focus()
+          })
+        })
     });
   });
 })
 
 function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized, next?: NavigationGuardNext) {
   checkAuth(http, (data, err)=>{
+    // If login is no long valid
     if (store.state.isAuth&&(err||data=="You must login to continue.")) {
       errorHandler("Login expired.")
       return revokeLogin()
     }
+    getUnreadNotifications(http,(data: any, err)=>{
+      if(err)
+        return 
+      store.commit("updateNotificationCount", data.length!)
+    })
+    // If route has required roles
     if(to.meta.allowedRoles) {
+      // Check for overlap with route and user roles
       let overlappedRoles = to.meta.allowedRoles.filter((value: string) => store.state.user.roles?.includes(value));
+      // If no overlap, redirect
       if(overlappedRoles.length==0) {
         redirect()
       }
@@ -111,18 +187,20 @@ function checkRoute(to: RouteLocationNormalized, from?: RouteLocationNormalized,
         Cacher.loadAllUsersFromAPI()
       }
     }
-    // This goes through the matched routes from last to first, finding the closest route with a title.
-    // e.g., if we have `/some/deep/nested/route` and `/some`, `/deep`, and `/nested` have titles,
-    // `/nested`'s will be chosen.
+    // Set tab title
     document.title = `WebNX${to.name?" - "+to.name.toString():""}`;
+    // If there is a next location, go to it
     if(next)
       next();
   })
 }
 
 function configureRouter() {
+  // Check current route
   checkRoute(router.currentRoute.value)
+  // Enable route checks
   router.beforeEach(checkRoute);
+  // Set router as configured
   routeConfigured.value = true
 }
 /**
@@ -147,45 +225,7 @@ function errorHandler(err: AxiosError | string) {
     // Cast as string
     message = String(err);
   }
-  // Create sentinel value
-  let match = false;
-  // Reference to message for timeout
-  let messageRef: Message;
-  // Search through all messages
-  for (const existingMessage of errorMessages.value) {
-    // If message already exists
-    if (message == existingMessage.text) {
-      // Increment
-      existingMessage.quantity += 1;
-      // Set sentinel flag
-      match = true;
-      // Store reference to message
-      messageRef = existingMessage;
-    }
-  }
-  // If message does not exist
-  if (!match) {
-    // Create new message
-    errorMessages.value.push({ text: message, quantity: 1 } as Message);
-    // Store reference
-    messageRef = errorMessages.value[errorMessages.value.length - 1];
-  }
-  // Hide after 5 seconds
-  setTimeout(() => {
-    // If last message
-    if (messageRef.quantity < 2) {
-      // Delete message
-      let i = errorMessages.value.indexOf(messageRef);
-      if (i > -1) {
-        errorMessages.value.splice(i, 1);
-      }
-    }
-    // If not last message
-    else {
-      // Decrement count
-      messageRef.quantity -= 1;
-    }
-  }, 5000);
+  displayMessage(message, NotificationTypes.Error)
 }
 
 /**
@@ -193,43 +233,38 @@ function errorHandler(err: AxiosError | string) {
  *
  * @param message
  */
-function displayMessage(message: string) {
+function displayMessage(message: string, type?: NotificationTypes, link?: string) {
+  if(!type)
+    type = NotificationTypes.Info
   // Sentinel value
   let match = false;
-  // Reference to message for timeout
-  let messageRef: Message;
   // Search all messages
-  for (const existingMessage of messages.value) {
+  for (const existingMessage of notifications.value) {
     // If message already exists
-    if (message == existingMessage.text) {
+    if (message == existingMessage.text && type == existingMessage.type) {
       // Increment existing message
-      existingMessage.quantity += 1;
+      existingMessage.quantity! += 1;
+      existingMessage.ms_left = NOTIFICATION_TIME
       // Set sentinel value
       match = true;
-      // Store a reference so we can delete or decrement after 5 seconds
-      messageRef = existingMessage;
     }
   }
   if (!match) {
     // If message doesn't already exist - create and push new
-    messages.value.push({ text: message, quantity: 1 } as Message);
-    // Keep a references so we can delete or decrement after 5 seconds
-    messageRef = messages.value[messages.value.length - 1];
+    notifications.value.push({ type: type, text: message, quantity: 1, ms_left: NOTIFICATION_TIME, link } as NotificationSchema);
   }
-  // Hide after 5 seconds
-  setTimeout(() => {
-    // If last message - delete
-    if (messageRef.quantity < 2) {
-      let i = messages.value.indexOf(messageRef);
-      if (i > -1) {
-        messages.value.splice(i, 1);
+  if(!document.hasFocus()&&Notification.permission==="granted"&& 'serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistration().then((reg)=>{
+      if(reg){
+        reg.showNotification("WebNX Inventory", {
+          body: message,
+          data: {
+            link
+          }
+        })
       }
-    }
-    // If not last message
-    else {
-      messageRef.quantity -= 1;
-    }
-  }, 5000);
+    })
+  }
 }
 
 function revokeLogin() {
@@ -257,5 +292,4 @@ function firstLoadRevokeLogin() {
     configureRouter();
   }
 }
-
 </script>

@@ -108,7 +108,7 @@ function viewAsset(asset: AssetSchema) {
   <div v-else class="body">
     <BackButton @click="router.options.history.state.back ? router.back() : router.push('/pallets')" class="mr-2 mb-2"/>
     <div
-      class="relative grid grid-cols-2 rounded-lg group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-4"
+      class="relative grid grid-cols-2 rounded-md group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-4"
     >
       <div class="col-span-2 mb-4 flex md:col-span-4">
         <h1 class="my-auto text-4xl leading-8 md:leading-10">

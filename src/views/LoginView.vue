@@ -36,6 +36,8 @@ import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import type { UserState, User } from '../plugins/interfaces';
 import { checkAuth, getCurrentUser } from '../plugins/dbCommands/userManager';
+import { getPublicKey, registerEndpoint } from '../plugins/dbCommands/notifications';
+import { urlBase64ToUint8Array } from '../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -75,10 +77,12 @@ async function login() {
         localStorage.setItem('token', res.data.token);
         // Add token to headers
         http.defaults.headers['Authorization'] = res.data.token;
+
         checkAuth(http, async (data, err) => {
           // If not authenticated
-          if (err)
+          if (err) {
             return
+          }
           // If authenticated, set status
           getCurrentUser(http, (data, err) => {
             if (err) {
@@ -90,10 +94,42 @@ async function login() {
             let user = data as User
             store.commit("updateUserData", user)
             displayMessage('Successfully logged in.');
+            router.push('/parts');
+            if(Notification.permission === "granted" && 'serviceWorker' in navigator)
+              // Get the registration from service worker
+              navigator.serviceWorker.ready
+                .then(async (reg) => {
+                  return reg.pushManager.getSubscription()
+                    .then(async (sub)=>{
+                      if(sub)
+                        return sub
+                      const key = await getPublicKey(http)
+                      const convertedKey = urlBase64ToUint8Array(key)
+                      return reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: convertedKey
+                      });
+                    })
+                })
+                .then((sub) => {
+                  // Send registration info to server
+                  registerEndpoint(http, sub, (data, err) =>{
+                    if(err)
+                      return errorHandler(err)
+                  })
+                })
+                .then(()=>{
+                  navigator.serviceWorker.addEventListener('notificationclick', async (e: any) => {
+                    let { link } = e.notification.data
+                    if(link) {
+                      await router.push(link)
+                    }
+                    window.focus()
+                  })
+                })
           });
         });
         // Save user data to vuex store
-        router.push('/');
       })
       .catch((err: Error | AxiosError) => {
         // Error
@@ -109,7 +145,7 @@ async function redirectIfLoggedIn() {
     .then(() => {
       // Go to home
       store.state.isAuth = true;
-      router.push('/');
+      router.push('/parts');
     })
     .catch((err: Error | AxiosError) => {
       // Go to login

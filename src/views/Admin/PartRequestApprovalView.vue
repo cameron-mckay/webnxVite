@@ -2,17 +2,17 @@
 import type { AxiosError, AxiosInstance } from 'axios';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import CheckoutRequestComponent from '../../components/KioskComponents/CheckoutRequestComponent.vue';
 import RefreshButton from '../../components/GenericComponents/Buttons/RefreshButton.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import type {
-UserState,
-PartRequestSchema,
-KioskQuantities,
-KioskQuantity,
-InventoryEntry,
-BuildKitSchema
+  UserState,
+  PartRequestSchema,
+  KioskQuantities,
+  KioskQuantity,
+  InventoryEntry,
+  BuildKitSchema
 } from '../../plugins/interfaces';
 import { getKioskQuantities, getActivePartRequests, fulfillPartRequest, getBuildKitByID, processBuildKitRequest } from '../../plugins/dbCommands/partManager';
 import Cacher from '../../plugins/Cacher';
@@ -29,17 +29,31 @@ const { http, store, router, errorHandler, displayMessage } =
 
 let loading = ref(false)
 let processing = false
-let interval = setInterval(()=>{},10000)
 let requests = ref([] as PartRequestSchema[])
 let quantityMap = new Map<string, KioskQuantity[]>()
 let buildKits = new Map<string, BuildKitSchema>()
 
 onBeforeMount(()=>{
   loadQueue()
-  interval = setInterval(()=>{
+  const payloadChannel = new BroadcastChannel("nx-payload")
+  payloadChannel.onmessage = (event) => {
+    const data = event.data
+    if(data.type=="partRequestRemoved") {
+      let index = requests.value.findIndex((e)=>{
+        return e._id == data.id
+      })
+      if(index>=0) {
+        requests.value.splice(index, 1)
+        displayMessage("A fulfilled request was removed from the list.")
+      }
+    }
+  }
+  // Autorefresh on notification
+  const notificationChannel = new BroadcastChannel("nx-notification")
+  notificationChannel.onmessage = () => {
     if(requests.value.length==0)
       loadQueue()
-  }, 10000)
+  }
 })
 
 function loadBuildKit(kit_id: string) {
@@ -149,10 +163,6 @@ function submit(request_id: string, req: KioskQuantities[], notes: string) {
 
 }
 
-onBeforeUnmount(() => {
-  clearInterval(interval)
-})
-
 function approve(req: PartRequestSchema, notes: string) {
   processBuildKitRequest(http, req._id!, notes, true, (data, err) => {
     if(err)
@@ -200,6 +210,6 @@ function deny(req: PartRequestSchema, notes: string) {
         @deny="(notes: string)=>{deny(request, notes)}"
       />
     </div>
-    <p class="mt-4" v-if="requests.length<1&&!loading">Queue is empty and will auto refresh every 10 seconds...</p>
+    <p class="mt-4" v-if="requests.length<1&&!loading">Queue is empty and will auto refresh when a new request is received...</p>
   </div>
 </template>
