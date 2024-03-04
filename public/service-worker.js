@@ -42,7 +42,7 @@ async function handlePush(event) {
   bc.close()
   // If client isn't visble and the push is a notification
   if(clientVisible==false&&push.type == "Notification") {
-    push.payload.link = push.payload.link ?
+    push.payload.link = push.payload.link != undefined ?
       push.payload.link :
       '/notifications'
     // Send the notification
