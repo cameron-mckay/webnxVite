@@ -5,22 +5,16 @@ import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import AssetCartItemComponent from '../../components/AssetComponents/AssetCartItemComponent.vue';
-import AssetComponent from '../../components/AssetComponents/AssetComponent.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import PencilButton from '../../components/GenericComponents/Buttons/PencilButton.vue';
-import BoxComponent from '../../components/BoxComponents/BoxComponent.vue';
-import {
-  getPalletByID,
-  getPartsOnPallet,
-} from '../../plugins/dbCommands/palletManager';
 import type {
-PalletSchema,
-LoadedCartItem,
-UserState,
-AssetSchema,
-CartItem
+  LoadedCartItem,
+  UserState,
+  CartItem,
+  BoxSchema
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
+import { getBoxByID, getPartsOnBox } from '../../plugins/dbCommands/boxManager';
 
 interface Props {
   http: AxiosInstance;
@@ -32,38 +26,32 @@ interface Props {
 const { http, store, router, errorHandler, displayMessage } =
   defineProps<Props>();
 
-let pallet = ref({
-  pallet_tag: '',
+let box = ref({
+  box_tag: '',
   building: 3,
   location: '',
   notes: ''
-} as PalletSchema);
+} as BoxSchema);
 let parts = ref([] as LoadedCartItem[]);
-let assets = ref([] as AssetSchema[]);
-let boxes = ref([] as AssetSchema[]);
-let palletLoading = ref(false)
+let boxLoading = ref(false)
 let partsLoading = ref(false)
 
 onBeforeMount(() => {
-  if (router.currentRoute.value.query.pallet_tag) {
-    palletLoading.value = true
+  if (router.currentRoute.value.query.box_tag) {
+    boxLoading.value = true
     partsLoading.value = true
-    let nxid = router.currentRoute.value.query.pallet_tag as string;
-    getPalletByID(http, nxid, (res, err) => {
+    let nxid = router.currentRoute.value.query.box_tag as string;
+    getBoxByID(http, nxid, (res, err) => {
       if (err) {
         errorHandler(err);
       }
-      pallet.value = res as PalletSchema;
-      palletLoading.value = false
-      getPartsOnPallet(http, pallet.value.pallet_tag!, async (res, err) => {
+      box.value = res as BoxSchema;
+      boxLoading.value = false
+      getPartsOnBox(http, box.value.box_tag!, async (res, err) => {
         if (err) {
           errorHandler(err);
         }
-        // Doing this cause I'm too lazy to fix type defs
-        let res2 = res as any
-        let temp = await Cacher.loadCartItems((res as any).parts as CartItem[])
-        assets.value = res2.assets
-        boxes.value = res2.boxes
+        let temp = await Cacher.loadCartItems(res as CartItem[])
         // Create sorted list using array filters
         let sortedList = temp.filter((p)=>p.part.type == "Motherboard")
         sortedList = sortedList.concat(temp.filter((p)=>p.part.type == "CPU"))
@@ -83,7 +71,6 @@ onBeforeMount(() => {
           p.part.type != "Cable")
         )) 
         parts.value = sortedList
-        assets.value = res2.assets as AssetSchema[]
         partsLoading.value = false
       });
     });
@@ -92,55 +79,47 @@ onBeforeMount(() => {
 
 function edit() {
   router.push({
-    name: 'Edit Pallet',
-    query: { pallet_tag: pallet.value.pallet_tag },
+    name: 'Edit Box',
+    query: { box_tag: box.value.box_tag },
   });
-}
-
-function toggleEdit(asset: AssetSchema) {
-  router.push({ name: 'Edit Asset', query: { asset_tag: asset.asset_tag } });
-}
-
-function viewAsset(asset: AssetSchema) {
-  router.push({ name: 'View Asset', query: { asset_tag: asset.asset_tag } });
 }
 </script>
 
 <template>
-  <LoaderComponent v-if="palletLoading" class="mt-16"/>
+  <LoaderComponent v-if="boxLoading" class="mt-16"/>
   <div v-else class="body">
-    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/pallets')" class="mr-2 mb-2"/>
+    <BackButton @click="router.options.history.state.back ? router.back() : router.push('/boxes')" class="mr-2 mb-2"/>
     <div
       class="relative grid grid-cols-2 rounded-md group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-4"
     >
       <div class="col-span-2 mb-4 flex md:col-span-4">
         <h1 class="my-auto text-4xl leading-8 md:leading-10">
-          {{ pallet.pallet_tag + ':' }}
+          {{ box.box_tag + ':' }}
         </h1>
         <!-- Pencil -->
         <PencilButton
           v-on:click="edit"
-          v-if="store.state.user.roles?.includes('edit_pallets')"
+          v-if="store.state.user.roles?.includes('edit_boxes')"
         />
         <RouterLink
           class="my-auto ml-2 rounded-md p-2 font-bold transition-colors hover:bg-gray-400 hover:dark:bg-zinc-700"
-          :to="`/pallets/history?pallet_tag=${pallet.pallet_tag}`"
+          :to="`/boxes/history?box_tag=${box.box_tag}`"
         >
           View History
         </RouterLink>
       </div>
       <div class="detail-row">
         <p>Building:</p>
-        <p>{{ pallet.building }}</p>
+        <p>{{ box.building }}</p>
         <p>Location:</p>
-        <p>{{ pallet.location }}</p>
+        <p>{{ box.location }}</p>
         <p>Last Updated:</p>
         <p>
-          {{ new Date(pallet.date_created).toLocaleString() }}
+          {{ new Date(box.date_created).toLocaleString() }}
         </p>
-        <div class="col-span-2 my-4" v-if="pallet.notes">
+        <div class="col-span-2 my-4" v-if="box.notes">
           <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
-          <pre>{{ pallet.notes }}</pre>
+          <pre>{{ box.notes }}</pre>
         </div>
       </div>
     </div>
@@ -167,50 +146,6 @@ function viewAsset(asset: AssetSchema) {
           @delete="$emit('deletePart', part)"
           :hideButtons="true"
         />
-      </div>
-      <div v-if="assets.length > 0">
-        <h1 class="col-span-2 my-4 text-4xl">Assets:</h1>
-        <div
-          class="relative grid grid-cols-3 py-1 text-center font-bold leading-8 transition md:grid-cols-6 md:py-2 md:leading-10 mt-auto"
-        >
-          <p class="mt-auto">NXID</p>
-          <p class="mt-auto md:block hidden">Building</p>
-          <p class="mt-auto">Type</p>
-          <p class="hidden md:block mt-auto">Chassis</p>
-          <p class="hidden md:block mt-auto">Status</p>
-        </div>
-        <div class="md:animate-bottom">
-          <AssetComponent
-            :add="false"
-            :edit="store.state.user.roles?.includes('edit_assets')"
-            :view="store.state.user.roles?.includes('view_assets')"
-            v-for="asset in assets"
-            v-bind:key="asset._id"
-            @editPartAction="toggleEdit(asset)"
-            @viewPartAction="viewAsset(asset)"
-            :asset="asset"
-          />
-        </div>
-      </div>
-      <div v-if="boxes.length > 0">
-        <h1 class="col-span-2 my-4 text-4xl">Boxes:</h1>
-        <div
-          class="relative grid grid-cols-4 py-1 text-center font-bold leading-8 transition md:py-2 md:leading-10 mt-auto"
-        >
-          <p class="mt-auto">Box Tag</p>
-          <p class="mt-auto">Building</p>
-          <p class="mt-auto">Location</p>
-        </div>
-        <div class="md:animate-bottom">
-          <BoxComponent
-            :add="false"
-            :edit="store.state.user.roles?.includes('edit_boxes')"
-            :view="store.state.user.roles?.includes('view_boxes')"
-            v-for="box in boxes"
-            v-bind:key="box._id"
-            :box="box"
-          />
-        </div>
       </div>
     </div>
   </div>

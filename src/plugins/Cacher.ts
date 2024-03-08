@@ -1,12 +1,13 @@
 import { AxiosError, AxiosInstance } from "axios";
 import { Router } from "vue-router";
-import { AssetSchema, CartItem, LoadedCartItem, PalletSchema, PartSchema, User, UserState } from "./interfaces";
+import { AssetSchema, BoxSchema, CartItem, LoadedCartItem, PalletSchema, PartSchema, User, UserState } from "./interfaces";
 import { getAllUsers } from "./dbCommands/userManager";
 import { getPartByID } from "./dbCommands/partManager";
 import { getPalletByID } from "./dbCommands/palletManager";
 import { getAssetByID } from "./dbCommands/assetManager";
 import { Store } from "vuex";
 import { ref } from "vue";
+import { getBoxByID } from "./dbCommands/boxManager";
 
 export default class Cacher {
   private static http: AxiosInstance;
@@ -18,6 +19,7 @@ export default class Cacher {
   private static partsCache = new Map<string, PartSchema>()
   private static assetCache = new Map<string, AssetSchema>()
   private static palletCache = new Map<string, PalletSchema>()
+  private static boxCache = new Map<string, BoxSchema>()
   static errorHandler = (err: AxiosError | string) => {}
   static messageHandler = (msg: string) => {}
 
@@ -88,6 +90,10 @@ export default class Cacher {
     return Cacher.palletCache
   }
 
+  static getBoxCache() {
+    return Cacher.boxCache
+  }
+
   static getKiosks() {
     return Array.from(this.allUsers.values()).filter((u)=>u.roles?.includes('is_kiosk'))
   }
@@ -134,6 +140,29 @@ export default class Cacher {
       // Check if pallet loaded properly
       if(JSON.stringify(p)==JSON.stringify({}))
           Cacher.palletCache.delete(pallet_tag);
+      res(p)
+    })
+  }
+
+  static getBox(box: string|BoxSchema) {
+    return new Promise<BoxSchema>(async (res)=>{
+      let box_tag = ""
+      if(typeof(box)=="string") {
+        box_tag = box
+      }
+      else {
+        box_tag = box.box_tag!
+      }
+      if(Cacher.boxCache.has(box_tag))
+        return res(Cacher.boxCache.get(box_tag)!)
+      // Set temp value
+      Cacher.boxCache.set(box_tag, {} as BoxSchema);
+      // Fetch box from API
+      let p = await Cacher.loadBoxFromAPI(box_tag)
+      Cacher.boxCache.set(box_tag, p);
+      // Check if box loaded properly
+      if(JSON.stringify(p)==JSON.stringify({}))
+          Cacher.boxCache.delete(box_tag);
       res(p)
     })
   }
@@ -269,6 +298,26 @@ export default class Cacher {
           return
         }
         res(data as PalletSchema)
+      })
+    })
+  }
+
+  private static loadBoxFromAPI(box: string|BoxSchema) {
+    return new Promise<BoxSchema>((res)=>{
+      let box_tag = ""
+      if(typeof(box)=="string") {
+        box_tag = box
+      }
+      else {
+        box_tag = box.box_tag!
+      }
+      getBoxByID(Cacher.http, box_tag, (data, err)=>{
+        if(err) {
+          Cacher.errorHandler(err)
+          res({} as BoxSchema)
+          return
+        }
+        res(data as BoxSchema)
       })
     })
   }

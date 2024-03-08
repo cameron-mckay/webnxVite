@@ -368,6 +368,46 @@ const routes = [
     component: () => import('../views/Pallets/PalletHistoryView.vue'),
   },
   {
+    path: '/boxes',
+    name: 'Boxes',
+    meta: {
+      allowedRoles: ["view_boxes"]
+    },
+    component: () => import('../views/Boxes/BoxSearchView.vue'),
+  },
+  {
+    path: '/boxes/add',
+    name: 'Create Box',
+    meta: {
+      allowedRoles: ["edit_boxes"]
+    },
+    component: () => import('../views/Boxes/CreateBoxView.vue'),
+  },
+  {
+    path: '/boxes/edit',
+    name: 'Edit Box',
+    meta: {
+      allowedRoles: ["edit_boxes"]
+    },
+    component: () => import('../views/Boxes/EditBoxView.vue'),
+  },
+  {
+    path: '/boxes/view',
+    name: 'View Box',
+    meta: {
+      allowedRoles: ["view_boxes"]
+    },
+    component: () => import('../views/Boxes/BoxView.vue'),
+  },
+  {
+    path: '/boxes/history',
+    name: 'Box History',
+    meta: {
+      allowedRoles: ["view_boxes"]
+    },
+    component: () => import('../views/Boxes/BoxHistoryView.vue'),
+  },
+  {
     path: '/debug/notifications',
     name: 'Notifications Debug',
     meta: {

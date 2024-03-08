@@ -291,11 +291,26 @@ export interface PalletEvent {
   removedParts: CartItem[],
   existingAssets: string[],
   addedAssets: string[],
-  removedAssets: string[]
+  removedAssets: string[],
+  existingBoxes: string[],
+  addedBoxes: string[],
+  removedBoxes: string[]
 }
 
 
 export type PalletHistory = PalletEvent[]
+
+export interface BoxEvent {
+    date_begin: Date,
+    box_id: string,
+    by: string,
+    info_updated: boolean,
+    existingParts: CartItem[],
+    addedParts: CartItem[],
+    removedParts: CartItem[],
+}
+
+export type BoxHistory = BoxEvent[]
 
 export interface AllTechsEvent {
   by: string,
@@ -357,3 +372,20 @@ export interface BuildKitSchema {
   parts?: CartItem[],
   kiosk: string
 }
+
+export interface BoxSchema {
+  [index: string]: any;
+  _id?: string,
+  box_tag: string,
+  building: number,
+  by: string,
+  date_created: Date,
+  date_replaced: Date,
+  notes: string,
+  prev?: string,
+  next?: string,
+  location: string,
+  prev_location?: string,
+  next_location?: string,
+}
+

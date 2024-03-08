@@ -8,19 +8,22 @@ import {
   LoadedCartItem,
   PartSchema,
   User,
+  BoxSchema,
 } from '../../plugins/interfaces';
 import AssetEventPartComponent from '../AssetComponents/AssetEventPartComponent.vue';
 import PalletEventAssetComponent from './PalletEventAssetComponent.vue';
+import PalletEventBoxComponent from './PalletEventBoxComponent.vue';
 
 interface Props {
   pallets: Map<string, PalletSchema>;
   user: User;
   parts: Map<string, PartSchema>;
   assets: Map<string, AssetSchema>;
+  boxes: Map<string, BoxSchema>;
   event: PalletEvent;
 }
 
-let { pallets, user, parts, assets, event } = defineProps<Props>();
+let { pallets, user, parts, assets, boxes, event } = defineProps<Props>();
 
 let pallet = ref({
   _id: '',
@@ -42,6 +45,9 @@ let removedParts = ref([] as LoadedCartItem[]);
 let existingAssets = ref([] as AssetSchema[]);
 let addedAssets = ref([] as AssetSchema[]);
 let removedAssets = ref([] as AssetSchema[]);
+let existingBoxes = ref([] as BoxSchema[]);
+let addedBoxes = ref([] as BoxSchema[]);
+let removedBoxes = ref([] as BoxSchema[]);
 
 function loadPart(part: CartItem) {
   // Load part from map
@@ -67,6 +73,10 @@ onMounted(() => {
   existingAssets.value = event.existingAssets.map((a)=>{return assets.has(a)?assets.get(a)!:{} as AssetSchema})
   addedAssets.value = event.addedAssets.map((a)=>{return assets.has(a)?assets.get(a)!:{} as AssetSchema})
   removedAssets.value = event.removedAssets.map((a)=>{return assets.has(a)?assets.get(a)!:{} as AssetSchema})
+  existingBoxes.value = event.existingBoxes.map((a)=>{return boxes.has(a)?boxes.get(a)!:{} as BoxSchema})
+  addedBoxes.value = event.addedBoxes.map((a)=>{return boxes.has(a)?boxes.get(a)!:{} as BoxSchema})
+  removedBoxes.value = event.removedBoxes.map((a)=>{return boxes.has(a)?boxes.get(a)!:{} as BoxSchema})
+
   // Check if asset info is updated
   if (event.info_updated && pallet.value?.prev != null) {
     // Get previous asset for strikethrough
@@ -156,9 +166,9 @@ onMounted(() => {
           Assets:
         </h1>
         <div
-          class="grid grid-cols-2 md:grid-cols-3 text-center font-bold"
+          class="grid grid-cols-2 md:grid-cols-3 text-center font-bold px-2"
         >
-          <p >NXID</p>
+          <p>Asset Tag</p>
           <p class="md:block hidden">Manufacturer</p>
           <p>Type</p>
         </div>
@@ -172,6 +182,35 @@ onMounted(() => {
           <PalletEventAssetComponent
             v-for="item of removedAssets"
             :asset="item"
+            :minus="true"
+          />
+        </del>
+      </div>
+      <div class="col-span-2"
+          v-if="existingBoxes.length > 0 || addedBoxes.length > 0 || removedBoxes.length > 0"
+      >
+        <h1
+          class="mb-4 mt-4 text-4xl leading-8 md:mt-0 md:leading-10"
+        >
+          Boxes:
+        </h1>
+        <div
+          class="grid grid-cols-2 md:grid-cols-3 text-center font-bold px-2"
+        >
+          <p>Box Tag</p>
+          <p class="md:block hidden">Building</p>
+          <p>Location</p>
+        </div>
+        <PalletEventBoxComponent v-for="item of existingBoxes" :box="item" />
+        <PalletEventBoxComponent
+          v-for="item of addedBoxes"
+          :box="item"
+          :plus="true"
+        />
+        <del>
+          <PalletEventBoxComponent
+            v-for="item of removedBoxes"
+            :box="item"
             :minus="true"
           />
         </del>

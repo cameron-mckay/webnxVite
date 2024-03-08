@@ -1,8 +1,8 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import type {
   apiResponse,
+  BoxSchema,
   CartItem,
-  PalletSchema
 } from '../interfaces';
 
 /**
@@ -13,7 +13,7 @@ import type {
  * @param pageNum
  * @param callback
  */
-export function getPalletsByTextSearch(
+export function getBoxesByTextSearch(
   http: AxiosInstance,
   searchString: string,
   pageNum: number,
@@ -21,7 +21,7 @@ export function getPalletsByTextSearch(
 ) {
   // Send string query to API
   http
-    .get('/api/pallet/search', {
+    .get('/api/box/search', {
       params: {
         searchString,
         pageNum,
@@ -30,7 +30,7 @@ export function getPalletsByTextSearch(
     })
     .then((res: AxiosResponse) => {
       // Success and send back results
-      callback(res.data as { pages: number, total: number, items: PalletSchema[]}, null);
+      callback(res.data as { pages: number, total: number, items: BoxSchema[]}, null);
     })
     .catch((err: AxiosError) => {
       // Send error to callback
@@ -45,14 +45,14 @@ export function getPalletsByTextSearch(
  * @param id
  * @param callback
  */
-export function getPalletByID(
+export function getBoxByID(
   http: AxiosInstance,
   id: string,
   callback: apiResponse
 ) {
   // Request part using ID in query string
   http
-    .get('/api/pallet/id', {
+    .get('/api/box/id', {
       params: {
         id,
       },
@@ -74,13 +74,13 @@ export function getPalletByID(
  * @param asset
  * @param callback
  */
-export function getPalletsByData(
+export function getBoxesByData(
   http: AxiosInstance,
-  pallet: PalletSchema,
+  box: BoxSchema,
   callback: apiResponse
 ) {
   http
-    .get('/api/pallet', { params: pallet })
+    .get('/api/box', { params: box })
     .then((res: AxiosResponse) => {
       // Success - send results to callback
       callback(res.data, null);
@@ -99,17 +99,15 @@ export function getPalletsByData(
  * @param parts
  * @param callback
  */
-export function createPallet(
+export function createBox(
   http: AxiosInstance,
-  pallet: PalletSchema,
+  box: BoxSchema,
   parts: Array<CartItem>,
-  assets: string,
-  boxes: string,
   callback: apiResponse
 ) {
   // Send new part to API
   http
-    .post('/api/pallet', { pallet, parts, assets, boxes })
+    .post('/api/box', { box, parts })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);
@@ -127,17 +125,15 @@ export function createPallet(
  * @param asset
  * @param callback
  */
-export function updatePallet(
+export function updateBox(
   http: AxiosInstance,
-  pallet: PalletSchema,
+  box: BoxSchema,
   parts: Array<CartItem>,
-  assets: string,
-  boxes: string,
   correction: boolean,
   callback: apiResponse
 ) {
   http
-    .put('/api/pallet', { pallet, parts, correction, assets, boxes })
+    .put('/api/box', { box, parts, correction })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);
@@ -155,13 +151,13 @@ export function updatePallet(
  * @param asset_tag
  * @param callback
  */
-export function getPartsOnPallet(
+export function getPartsOnBox(
   http: AxiosInstance,
-  pallet_tag: string,
+  box_tag: string,
   callback: apiResponse
 ) {
   http
-    .get('/api/pallet/parts', { params: { pallet_tag } })
+    .get('/api/box/parts', { params: { box_tag } })
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);
@@ -179,17 +175,17 @@ export function getPartsOnPallet(
  * @param asset_tag
  * @param callback
  */
-export function getPalletHistory(
+export function getBoxHistory(
   http: AxiosInstance,
-  pallet_tag: string,
+  box_tag: string,
   pageNum: number,
   pageSize: number,
   callback: apiResponse
 ) {
   http
-    .get('/api/pallet/history', { 
+    .get('/api/box/history', { 
       params: { 
-        id: pallet_tag,
+        id: box_tag,
         pageNum,
         pageSize
       } 
