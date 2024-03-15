@@ -27,9 +27,9 @@ const { pallet, edit, add, view } = defineProps<Props>();
         <RouterLink :to="'/pallets/edit?pallet_tag='+pallet.pallet_tag"
             class="button-icon hover:button-icon-hover active:button-icon-active"
             title="Edit pallet"
+            v-if="edit === true"
         >
           <SVGPencil
-            v-if="edit === true"
             v-on:click="$emit('editAction')"
           />
         </RouterLink>
@@ -42,9 +42,9 @@ const { pallet, edit, add, view } = defineProps<Props>();
         <RouterLink :to="'/pallets/view?pallet_tag='+pallet.pallet_tag"
             title="View Pallet"
             class="button-icon hover:button-icon-hover active:button-icon-active"
+            v-if="view === true"
         >
           <SVGEye
-            v-if="view === true"
             v-on:click="$emit('viewAction')"
           />
         </RouterLink>

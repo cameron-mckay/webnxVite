@@ -17,13 +17,13 @@ let emit = defineEmits(["submit", "approve", "deny"])
 let user = Cacher.getUser(request.requested_by)
 let kiosk = {} as User
 let quantities = [] as KioskQuantity[][]
-let serials = [] as string[][]
+// let serials = [] as string[][]
 let notes = ref("")
 
 onBeforeMount(()=>{
   for(let p of request.parts) {
     quantities.push([])
-    serials.push([])
+    // serials.push([])
   }
   if(kit)
     kiosk = Cacher.getUser(kit.kiosk)
@@ -36,7 +36,7 @@ function approve() {
     return {
       nxid: v.nxid,
       kiosk_quantities: quantities[i].map((q)=>{return{kiosk: q.kiosk, quantity: q.quantity}}).filter((q)=>q.quantity>0),
-      serials: serials[i].filter((v)=>v!=""),
+      //serials: serials[i].filter((v)=>v!=""),
     }
   })
   emit("submit", request._id, submission, notes.value)
@@ -79,9 +79,9 @@ function deny() {
       :part="part"
       :kiosk_quantities="kiosk_quantities"
       :view_only="kit?true:false"
-      @update="(q: KioskQuantity[], s: string[])=>{
+      @update="(q: KioskQuantity[])=>{
         quantities[index] = JSON.parse(JSON.stringify(q))
-        serials[index] = JSON.parse(JSON.stringify(s))
+        //serials[index] = JSON.parse(JSON.stringify(s))
       }"
     />
     <div class="my-4">

@@ -346,7 +346,10 @@ export interface PartRequestSchema {
 
 export interface KioskQuantity {
   kiosk: string,
+  box_tag?: string,
   quantity: number,
+  serials: string[],
+  selectedSerials?: string[],
   max: number
 }
 

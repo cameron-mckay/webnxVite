@@ -3,6 +3,7 @@ import { CartItem, KioskQuantity, PartSchema } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
 import { onMounted, readonly, ref, watch } from 'vue';
 import { clamp } from '../../plugins/CommonMethods';
+import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponent.vue';
 
 interface Props {
   part: CartItem,
@@ -13,7 +14,6 @@ interface Props {
 let { part, kiosk_quantities, view_only } = defineProps<Props>()
 let loaded = ref(false)
 let quantities = ref([] as KioskQuantity[])
-let serials = ref([] as string[])
 let info = {} as PartSchema
 let updating = false
 let emit = defineEmits(['update'])
@@ -30,7 +30,7 @@ onMounted(async ()=>{
   }
   // Get the inital values
   quantities.value = kiosk_quantities.get(part.nxid)!.sort((a, b) => b.quantity - a.quantity).map((q)=>{
-    return { kiosk: q.kiosk, max: q.quantity, quantity: q.quantity}
+    return { kiosk: q.kiosk, max: q.quantity, quantity: q.quantity, serials: q.serials, selectedSerials: padOrClampArray([], q.quantity) }
   })
   // Call the slider update
   updateSliders()
@@ -56,16 +56,21 @@ function updateSliders() {
     // Calculate the new quantity
     let quantity = clamp(parseInt(q.quantity as any as string), 0, part.quantity! - total)
     // Push to array
-    arrayCopy.push({kiosk: q.kiosk, max: q.max, quantity})
+    arrayCopy.push({
+      kiosk: q.kiosk,
+      max: q.max,
+      quantity,
+      serials: q.serials,
+      selectedSerials: padOrClampArray(q.selectedSerials!, quantity) })
     // Update running total
     total += quantity
   }
   // Update the serial array
-  updateSerialArray(total)
+  // updateSerialArray(total)
   // Check for remaining parts
   if(part.quantity! - total > 0)
     // Push remaining as rejected
-    arrayCopy.push({kiosk: "Rejected", max: part.quantity!, quantity: part.quantity! - total})
+    arrayCopy.push({kiosk: "Rejected", max: part.quantity!, quantity: part.quantity! - total, serials: []})
   // Set array to copy
   quantities.value = arrayCopy
   // Emit update to parent
@@ -76,20 +81,30 @@ function updateSliders() {
   updating = false
 }
 
-function emitUpdate() {
-  emit("update", quantities.value, serials.value)
+function padOrClampArray(arr: string[], size: number) {
+  if(arr.length>size) {
+    return arr.splice(0, size)
+  }
+  while(arr.length < size) {
+    arr.push("")
+  }
+  return arr
 }
 
-function updateSerialArray(newTotal: number) {
-  // If serials array is too large
-  while(newTotal<serials.value.length)
-    // Pop until correct size
-    serials.value.pop()
-  // While serials array is too small
-  while(newTotal>serials.value.length)
-    // Push new items
-    serials.value.push("")
+function emitUpdate() {
+  emit("update", quantities.value)
 }
+
+// function updateSerialArray(newTotal: number) {
+//   // If serials array is too large
+//   while(newTotal<serials.value.length)
+//     // Pop until correct size
+//     serials.value.pop()
+//   // While serials array is too small
+//   while(newTotal>serials.value.length)
+//     // Push new items
+//     serials.value.push("")
+// }
 
 </script>
 <template>
@@ -106,9 +121,37 @@ function updateSerialArray(newTotal: number) {
       <div v-for="q of quantities">
         <div>
           <p class="leading-6">{{q.kiosk}}: {{ q.quantity }}</p>
-          <input class="w-full h-2 rounded-md accent-green-400 cursor-pointer text-gray-200 dark:text-gray-700" type="range" min="0" :max="part.quantity! < q.max! ? part.quantity : q.max" v-model="q.quantity" :disabled="q.kiosk=='Rejected'"/>
+          <input
+            class="w-full h-2 rounded-md accent-green-400 cursor-pointer text-gray-200 dark:text-gray-700"
+            type="range"
+            min="0"
+            :max="part.quantity! < q.max! ? part.quantity : q.max" v-model="q.quantity"
+            :disabled="q.kiosk=='Rejected'"
+          />
+        </div>
+
+        <div v-if="info.serialized">
+          <CustomDropdownComponent
+            :required="true"
+            placeholder="serial"
+            :custom-name="'Manual Entry'"
+            :custom-at-top="true"
+            :clear-prev-on-close="true"
+            @update-value="(v)=>{
+              q.selectedSerials![index] = v
+            }"
+            v-for="(serial, index) of q.selectedSerials"
+          >
+            <option v-for="s of q.serials"
+              :disabled="q.selectedSerials!.indexOf(s)!=-1"
+              :value="s"
+            >
+              {{s}}
+            </option>
+          </CustomDropdownComponent>
         </div>
       </div>
+      <!--
       <div v-if="info.serialized">
         <input
           v-for="(serial, index) of serials"
@@ -120,6 +163,7 @@ function updateSerialArray(newTotal: number) {
           @focusout="emitUpdate"
         />
       </div>
+      -->
     </div>
     <div v-else>
       <p class="w-full md:w-auto" v-if="part.serial">{{ part.serial }}</p>
