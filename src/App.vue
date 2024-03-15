@@ -265,6 +265,10 @@ function displayMessage(message: string, type?: NotificationTypes, link?: string
       }
     })
   }
+  if(type==NotificationTypes.Alert) {
+    let notificationSound = new Audio("/notif.wav")
+    notificationSound.play()
+  }
 }
 
 function revokeLogin() {
