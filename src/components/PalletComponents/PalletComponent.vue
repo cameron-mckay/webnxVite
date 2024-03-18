@@ -57,7 +57,7 @@ const { pallet, edit, add, view } = defineProps<Props>();
           new Date(pallet.date_created).toLocaleString()
         }}
       </p>
-      <pre class="font-extrabold" v-if="pallet.notes">Notes:<br><span class="font-normal">{{ pallet.notes }}</span></pre>
+      <pre class="font-extrabold whitespace-pre-wrap" v-if="pallet.notes">Notes:<br><span class="font-normal">{{ pallet.notes }}</span></pre>
     </div>
   </div>
 </template>

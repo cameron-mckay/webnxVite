@@ -140,7 +140,7 @@ function viewAsset(asset: AssetSchema) {
         </p>
         <div class="col-span-2 my-4" v-if="pallet.notes">
           <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
-          <pre>{{ pallet.notes }}</pre>
+          <pre class="whitespace-pre-wrap">{{ pallet.notes }}</pre>
         </div>
       </div>
     </div>

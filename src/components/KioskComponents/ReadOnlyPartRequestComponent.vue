@@ -66,7 +66,7 @@ onBeforeMount(async ()=>{
     </div>
     <div class="my-4" v-if="request.tech_notes">
       <h1 class="mb-4 text-4xl">Tech Notes:</h1>
-      <pre>{{ request.tech_notes }}</pre>
+      <pre class="whitespace-pre-wrap">{{ request.tech_notes }}</pre>
     </div>
     <div
       class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
@@ -115,7 +115,7 @@ onBeforeMount(async ()=>{
       </div>
       <div class="my-4" v-if="request.clerk_notes">
         <h1 class="mb-4 text-4xl">Inventory Notes:</h1>
-        <pre>{{ request.clerk_notes }}</pre>
+        <pre class="whitespace-pre-wrap">{{ request.clerk_notes }}</pre>
       </div>
     </div>
     <div v-else class="flex justify-center">

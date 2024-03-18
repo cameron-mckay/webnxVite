@@ -56,7 +56,7 @@ function palletSubmit(updatedPallet: PalletSchema) {
         return Cacher.errorHandler(err);
     }
     if(updatedPallet.pallet_tag) {
-      router.push({ name: 'View Pallet', query: { pallet_tag: updatedPallet.value.pallet_tag } });
+      router.push({ name: 'View Pallet', query: { pallet_tag: updatedPallet.pallet_tag } });
     }
     else {
       router.back();

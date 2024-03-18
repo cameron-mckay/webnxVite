@@ -205,7 +205,7 @@ function prev() {
         </p>
         <div class="col-span-2 my-4" v-if="asset.notes">
           <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
-          <pre>{{ asset.notes }}</pre>
+          <pre class="whitespace-pre-wrap">{{ asset.notes }}</pre>
         </div>
       </div>
     </div>

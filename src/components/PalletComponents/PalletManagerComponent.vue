@@ -85,8 +85,8 @@ onMounted(()=>{
         :disabled="strict&&!untracked&&!correction"
         v-model="palletRef.pallet_tag"
         type="text"
-        pattern="PAL([0-9]{7})"
-        placeholder="PAL0000000"
+        pattern="PAL([0-9]{5})"
+        placeholder="PAL00000"
       />
       <label>Building:</label>
       <CustomDropdownComponent

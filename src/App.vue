@@ -44,6 +44,7 @@ const store = useStore();
 const NOTIFICATION_TIME = 5000
 
 let routeConfigured = ref(false)
+let url = import.meta.env.VITE_API_URL;
 
 // Global list of messages for the MessageComponent to render
 var notifications: Ref<NotificationSchema[]> = ref([]);
@@ -264,6 +265,10 @@ function displayMessage(message: string, type?: NotificationTypes, link?: string
         })
       }
     })
+  }
+  if(type==NotificationTypes.Alert) {
+    let notificationSound = new Audio(`/notif.wav`)
+    notificationSound.play()
   }
 }
 
