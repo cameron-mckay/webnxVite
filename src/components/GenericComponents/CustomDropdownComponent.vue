@@ -13,10 +13,8 @@ interface Props {
   customAtTop?: boolean
   clearPrevOnClose?: boolean
 }
-// Define props, default value is copied by value when destructured
-const props = defineProps<Props>();
 // Destructure props
-let { required, options, defaultValue, regex, customName, disabled, placeholder, customAtTop, clearPrevOnClose } = props;
+let { required, options, defaultValue, regex, customName, disabled, placeholder, customAtTop, clearPrevOnClose } = defineProps<Props>();
 // Define emitter events
 const emit = defineEmits(['updateValue']);
 
@@ -95,23 +93,6 @@ onMounted(async () => {
     }
     // Emit value update when textValue changes
     emit('updateValue', textValue.value);
-  });
-  // Enable watcher on props, since they can change after
-  // mount depending on loading conditions
-  watch(props, () => {
-    console.log("TEST2")
-    // If default value is now present
-    if (props.defaultValue) {
-      getDefaultValue()
-    }
-    // Not sure why, but this fixes props issues
-    placeholder = props.placeholder
-    disabled = props.disabled
-    customName = props.customName
-    regex = props.regex
-    required = props.required
-    customAtTop = props.customAtTop
-    clearPrevOnClose = props.clearPrevOnClose
   });
 });
 </script>

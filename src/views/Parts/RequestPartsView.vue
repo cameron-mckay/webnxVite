@@ -42,13 +42,15 @@ async function loadCart() {
     users.value = u.filter((f)=>f.roles?.includes('request_parts'))
   })
   parts.value = [];
-  for (let item of store.state.parts.keys()) {
-    let p = await Cacher.getPartInfo(item)
-    parts.value.push({
+  let loaded = await Promise.all(Array.from(store.state.parts.keys()).map((nxid)=>{
+    return Cacher.getPartInfo(nxid)
+  }))
+  parts.value = loaded.map((p)=>{
+    return {
       part: p,
-      quantity: store.getters.getQuantity(item),
-    });
-  }
+      quantity: store.getters.getQuantity(p.nxid),
+    }
+  })
 }
 
 async function deletePart(item: LoadedCartItem) {
