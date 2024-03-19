@@ -164,7 +164,8 @@ watch(loading, () => {
         <slot name="searchHeader" v-if="!loading&&showHeader">
 
         </slot>
-        <SearchNavButtons 
+        <SearchNavButtons
+          v-if="!loading"
           :num-pages="totalPages"
           :page-num="pageNumRef"
           @load-page="loadPage"
