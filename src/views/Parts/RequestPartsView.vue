@@ -12,7 +12,6 @@ import type {
   CartItem,
   LoadedCartItem,
   PartSchema,
-  User,
   UserState,
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
@@ -30,7 +29,6 @@ const { http, store, errorHandler, displayMessage } =
 // END OF PROPS
 
 let parts: Ref<Array<LoadedCartItem>> = ref([]);
-let users = ref([] as User[]);
 let processingCheckout = false
 let notes = ref("")
 let loading = ref(true)
@@ -41,17 +39,16 @@ onBeforeMount(() => {
 
 async function loadCart() {
   loading.value = true
-  Cacher.loadAllUsersFromAPISync().then((u)=>{
-    users.value = u.filter((f)=>f.roles?.includes('request_parts'))
-  })
   parts.value = [];
-  for (let item of store.state.parts.keys()) {
-    let p = await Cacher.getPartInfo(item)
-    parts.value.push({
+  let loaded = await Promise.all(Array.from(store.state.parts.keys()).map((nxid)=>{
+    return Cacher.getPartInfo(nxid)
+  }))
+  parts.value = loaded.map((p)=>{
+    return {
       part: p,
-      quantity: store.getters.getQuantity(item),
-    });
-  }
+      quantity: store.getters.getQuantity(p.nxid),
+    }
+  })
   loading.value = false
 }
 
