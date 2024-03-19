@@ -4,6 +4,7 @@ import { onBeforeMount, ref, Ref } from 'vue';
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
+import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import {
   getPartByID, requestParts,
 } from '../../plugins/dbCommands/partManager';
@@ -32,12 +33,14 @@ let parts: Ref<Array<LoadedCartItem>> = ref([]);
 let users = ref([] as User[]);
 let processingCheckout = false
 let notes = ref("")
+let loading = ref(true)
 
 onBeforeMount(() => {
   loadCart();
 });
 
 async function loadCart() {
+  loading.value = true
   Cacher.loadAllUsersFromAPISync().then((u)=>{
     users.value = u.filter((f)=>f.roles?.includes('request_parts'))
   })
@@ -49,6 +52,7 @@ async function loadCart() {
       quantity: store.getters.getQuantity(item),
     });
   }
+  loading.value = false
 }
 
 async function deletePart(item: LoadedCartItem) {
@@ -119,7 +123,7 @@ function updateQuantity(q: number, id: string) {
 </script>
 <template>
   <form @submit.prevent="localCheckout">
-    <div v-if="parts.length != 0">
+    <div>
       <div class="mb-4 flex flex-wrap justify-between">
         <h1 class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit">
           Request Parts:
@@ -139,61 +143,49 @@ function updateQuantity(q: number, id: string) {
           </RouterLink>
         </div>
       </div>
-      <div
-        class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
-      >
-        <p class="hidden md:block">NXID</p>
-        <p>Manufacturer</p>
-        <p>Name</p>
-        <p class="hidden md:block">Location</p>
-        <p>Quantity/SN</p>
-        <p></p>
-      </div>
-      <CartItemComponent
-        v-for="item in parts"
-        v-bind:key="item.part.nxid!+item.serial"
-        :item="item"
-        :serialize="false"
-        @plus="addOne(item.part.nxid!)"
-        @minus="subOne(item.part.nxid!)"
-        @delete="deletePart(item)"
-        @updateQuantity="updateQuantity"
+      <LoaderComponent
+        v-if="loading"
       />
-      <div class="col-span-2 my-4">
-        <!-- -->
-        <h1 class="inline-block text-4xl leading-8 md:leading-10">Notes:</h1>
-        <textarea
-          class="textbox m-1 h-40"
-          v-model="notes"
-          placeholder="Drag to resize"
+      <div 
+        v-else-if="parts.length != 0"
+      >
+        <div
+          class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
+        >
+          <p class="hidden md:block">NXID</p>
+          <p>Manufacturer</p>
+          <p>Name</p>
+          <p class="hidden md:block">Location</p>
+          <p>Quantity/SN</p>
+          <p></p>
+        </div>
+        <CartItemComponent
+          v-for="item in parts"
+          v-bind:key="item.part.nxid!+item.serial"
+          :item="item"
+          :serialize="false"
+          @plus="addOne(item.part.nxid!)"
+          @minus="subOne(item.part.nxid!)"
+          @delete="deletePart(item)"
+          @updateQuantity="updateQuantity"
         />
-        <!-- -->
-      </div>
-      <div class="flex justify-center">
-        <input type="submit" class="submit mx-1" value="Submit" />
-      </div>
-    </div>
-    <div v-else>
-      <div class="mb-4 flex flex-wrap justify-between">
-        <h1 class="my-2 inline-block w-full text-4xl md:my-0 md:w-fit">
-          Request Parts:
-        </h1>
-        <div class="flex">
-          <RouterLink
-            class="cursor-pointer text-sm my-auto rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none mx-2"
-            :to="`/partRequests/active`"
-          >
-            Active Part Requests
-          </RouterLink>
-          <RouterLink
-            class="cursor-pointer text-sm my-auto rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none mx-2"
-            :to="`/partRequests/fulfilled`"
-          >
-            Fulfilled Part Requests
-          </RouterLink>
+        <div class="col-span-2 my-4">
+          <!-- -->
+          <h1 class="inline-block text-4xl leading-8 md:leading-10">Notes:</h1>
+          <textarea
+            class="textbox m-1 h-40"
+            v-model="notes"
+            placeholder="Drag to resize"
+          />
+          <!-- -->
+        </div>
+        <div class="flex justify-center">
+          <input type="submit" class="submit mx-1" value="Submit" />
         </div>
       </div>
-      <p>List is empty...</p>
+      <div v-else>
+        <p>List is empty...</p>
+      </div>
     </div>
   </form>
 </template>
