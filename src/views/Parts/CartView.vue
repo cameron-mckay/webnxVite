@@ -143,17 +143,19 @@ function localCheckout() {
   });
 }
 
-function updateQuantity(q: number, id: string) {
+function updateQuantity(q: number, item: LoadedCartItem) {
+  console.log("TEST")
   getPartByID(
     http,
-    id,
+    item.part.nxid!,
     store.state.user.building!,
     (data, err) => {
       let part = data as PartSchema;
       if (part.quantity! >= q) {
-        store.commit('setQuantity', {id, quantity: q});
+        store.commit('setQuantity', {id: item.part.nxid!, quantity: q});
         if(q<1)
-          parts.value = parts.value.filter((p)=>p.part.nxid! != id)
+          parts.value = parts.value.filter((p)=>p.part.nxid! != item.part.nxid!)
+        item.quantity = q
       } else {
         errorHandler('Not enough stock');
       }
