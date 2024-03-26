@@ -144,7 +144,6 @@ function localCheckout() {
 }
 
 function updateQuantity(q: number, item: LoadedCartItem) {
-  console.log("TEST")
   getPartByID(
     http,
     item.part.nxid!,
