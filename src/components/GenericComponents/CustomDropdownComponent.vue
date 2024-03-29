@@ -12,9 +12,10 @@ interface Props {
   placeholder?: string
   customAtTop?: boolean
   clearPrevOnClose?: boolean
+  hideCustom?: boolean
 }
 // Destructure props
-let { required, options, defaultValue, regex, customName, disabled, placeholder, customAtTop, clearPrevOnClose } = defineProps<Props>();
+let { required, options, defaultValue, regex, customName, disabled, placeholder, customAtTop, clearPrevOnClose, hideCustom } = defineProps<Props>();
 // Define emitter events
 const emit = defineEmits(['updateValue']);
 
@@ -64,14 +65,17 @@ function getDefaultValue() {
       }
     }
     console.log(values)
+    let defaultIsCustom = false
     // Check if default value exists in options
     if (values.indexOf(defaultValue) == -1) {
       // Enable custom value
       custom.value = true;
+      if(defaultValue=="Custom")
+        defaultIsCustom = true
     }
     // Text value is used as model for drop down regardless
     // of if custom value is present
-    textValue.value = defaultValue!;
+    textValue.value = defaultIsCustom ? "" :  defaultValue!;
   })
 }
 
@@ -83,7 +87,7 @@ onMounted(async () => {
   watch(textValue, (_, oldValue) => {
     console.log("TEST")
     // If drop down is set to custom
-    if (textValue.value === 'Custom' && !custom.value) {
+    if (textValue.value === 'Custom' && !custom.value && !hideCustom) {
       // Save previous value for if custom gets cleared
       prevValue = oldValue;
       // Set text value to blank string
@@ -106,10 +110,10 @@ onMounted(async () => {
     :disabled="disabled"
   >
     <option disabled value="">Select</option>
-    <option value="Custom" v-if="customAtTop">{{ customName ? customName : "Custom" }}</option>
+    <option value="Custom" v-if="customAtTop&&!hideCustom">{{ customName ? customName : "Custom" }}</option>
     <option v-for="option in options" :value="option">{{ option }}</option>
     <slot></slot>
-    <option value="Custom" v-if="!customAtTop">{{ customName ? customName : "Custom" }}</option>
+    <option value="Custom" v-if="!customAtTop&&!hideCustom">{{ customName ? customName : "Custom" }}</option>
   </select>
   <div class="flex" v-else>
     <input

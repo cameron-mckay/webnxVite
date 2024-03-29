@@ -33,18 +33,28 @@ onMounted(async ()=>{
     return
   }
   // Get the inital values
-  quantities.value = kiosk_quantities.get(part.nxid)!.sort((a, b) => b.quantity - a.quantity).map((q)=>{
-    return { kiosk: q.kiosk, box_tag: q.box_tag, max: q.quantity, quantity: q.quantity, serials: q.serials, selectedSerials: padOrClampArray([], q.quantity) }
+  quantities.value = kiosk_quantities.get(part.nxid)!.sort((a, b) => b.quantity - a.quantity).map((q: any)=>{
+    return {
+      kiosk: q.kiosk,
+      box_tag: q.box_tag,
+      max: q.quantity,
+      quantity: q.quantity,
+      serials: q.serials,
+      selectedSerials: padOrClampArray([], q.quantity)
+    }
   })
-
+  // Max quantity for boxes
   let maxQboxes = 0
+  // Filter and map boxes
   quantities.value.filter((q)=>q.kiosk=="Box").map((q)=>{
+    // Set quantity and serials for this part in box map
     boxMap.value.set(q.box_tag, {serials: q.serials, quantity: q.quantity})
+    // Add this quantity to the max
     maxQboxes += q.quantity
   })
-
+  // Filter out boxes
   quantities.value = quantities.value.filter((q)=>q.kiosk!="Box")
-
+  // Push new box object
   quantities.value.push({kiosk: "Box", max: maxQboxes, quantity: maxQboxes, serials: [], selectedSerials: []})
   // Call the slider update
   updateMainSliders()
@@ -82,63 +92,93 @@ function updateSliders(total_quantity: number, array: KioskQuantity[], catch_all
   // Check for remaining parts
   if(total_quantity - running_total > 0) {
 
-    console.log(catch_all_name)
     // Push remaining as rejected
     arrayCopy.push({kiosk: catch_all_name, max: part.quantity!, quantity: total_quantity - running_total, serials: []})
   }
   // Emit update to parent
-  emitUpdate()
   updating = false
   return arrayCopy
 }
 
 function updateBoxSliders() {
+  // Find the box in the main sliders
   let index = quantities.value.findIndex((v)=>v.kiosk=="Box")
+  // If found
   if(index!=-1) {
-    console.log("FUCK 2")
-    console.log(quantities.value[index].quantity)
-    console.log(box_sliders.value)
+    // Update the box sliders
     box_sliders.value = updateSliders(quantities.value[index].quantity, box_sliders.value, "Unassigned").filter((v)=>v.quantity>0)
   }
   else {
+    // Not found in main sliders, clear box sliders
     box_sliders.value = []
   }
+  // Emit update to parent component
+  emitUpdate()
 }
 
 function updateMainSliders() {
+  // Update the main sliders
   quantities.value = updateSliders(part.quantity!, quantities.value, "Rejected")
-  if(box_sliders.value.length>0&&quantities.value.findIndex((v)=>v.kiosk=="Box")==-1)
-    updateBoxSliders()
+  // Call box slider update - this will also emit the update
+  updateBoxSliders()
 }
 
-function padOrClampArray(arr: string[], size: number) {
+
+function padOrClampArray(og_arr: string[], size: number) {
+  // Copy the original array to prevent editing in place
+  let arr = JSON.parse(JSON.stringify(og_arr))
+  // If array is greater than desired size
   if(arr.length>size) {
+    // Splice to length
     return arr.splice(0, size)
   }
+  // While the array is smaller than desired size
   while(arr.length < size) {
+    // Push empty string
     arr.push("")
   }
+  // Return the new array
   return arr
 }
 
 function emitUpdate() {
-  emit("update", quantities.value)
+  emit("update", quantities.value, box_sliders.value)
 }
 
 function addBox() {
-  console.log(activeBoxTag.value)
-  if(activeBoxTag.value=="")
+  // If the active box tag isn't valid - return
+  if(!/BOX([0-9]{7})+/.test(activeBoxTag.value)||!boxMap.value.has(activeBoxTag.value))
     return
+  // Get the box from map
   let box = boxMap.value.get(activeBoxTag.value)
+  // Find the unassigned quantity
   let unassignedQuantity = box_sliders.value[box_sliders.value.findIndex((v)=>v.kiosk=="Unassigned")].quantity
-  let quantity = clamp(box!.quantity!, 0, unassignedQuantity)
+  // Clamp the unassigned quantity to box quantity
+  let quantity = clamp(unassignedQuantity, 0, box?.quantity!)
+  // Boolean expression to check if serials can be autofilled
+  let autofillSerials = box!.serials.length <= box!.quantity && box!.quantity == quantity
+  // Pad array with autofill or empty strings
+  let selectedSerials = padOrClampArray(autofillSerials ? JSON.parse(JSON.stringify(box!.serials)) : [], quantity)
+  // if autofilled
+  if(autofillSerials) {
+    // Replace empty strings with "Custom" to trigger custom mode on drop down
+    selectedSerials = selectedSerials.map((s: string)=>{
+      if(s=="")
+        return "Custom"
+      return s
+    })
+  }
+  // Push the new box to the sliders
   box_sliders.value.push({
     kiosk: activeBoxTag.value,
     max: box?.quantity,
     quantity,
     serials: box?.serials,
-    selectedSerials: padOrClampArray([], quantity) })
+    selectedSerials
+  })
+  // Empty the active box tag
   activeBoxTag.value = ""
+  // Force update the box sliders
   updateBoxSliders()
 }
 
@@ -165,9 +205,6 @@ function addBox() {
             :disabled="q.kiosk=='Rejected'"
             @change="()=>{
               updateMainSliders()
-              if(q.kiosk=='Box') {
-                updateBoxSliders()
-              }
             }"
           />
         </div>
@@ -220,13 +257,16 @@ function addBox() {
                   :custom-name="'Manual Entry'"
                   :custom-at-top="true"
                   :clear-prev-on-close="true"
+                  :hide-custom="!(b.serials.length<b.max)"
+                  :default-value="b.selectedSerials![index]"
                   @update-value="(v)=>{
-                    q.selectedSerials![index] = v
+                    b.selectedSerials![index] = v
+                    emitUpdate()
                   }"
                   v-for="(serial, index) of b.selectedSerials"
                 >
                   <option v-for="s of b.serials"
-                    :disabled="b.selectedSerials!.indexOf(s)!=-1"
+                    :disabled="b.selectedSerials.indexOf(s)!=-1"
                     :value="s"
                   >
                     {{s}}
@@ -239,7 +279,7 @@ function addBox() {
           <!-- End for -->
         </div>
         <!-- End box -->
-        <div v-else-if="info.serialized&&q.quantity>0">
+        <div v-else-if="info.serialized&&q.quantity>0&&q.kiosk!='Rejected'">
           <p class="leading-6 text-left">Serials:</p>
           <CustomDropdownComponent
             :required="true"
@@ -249,6 +289,7 @@ function addBox() {
             :clear-prev-on-close="true"
             @update-value="(v)=>{
               q.selectedSerials![index] = v
+              updateMainSliders()
             }"
             v-for="(serial, index) of q.selectedSerials"
           >

@@ -231,6 +231,7 @@ export interface InventoryEntry {
   unserialized: number,
   serials: string[],
   newSerials?: string[]
+  boxes?: BoxQuantity[]
 }
 
 export interface CheckInQueuePart extends CartItem {
@@ -346,16 +347,22 @@ export interface PartRequestSchema {
 
 export interface KioskQuantity {
   kiosk: string,
-  box_tag?: string,
   quantity: number,
   serials: string[],
   selectedSerials?: string[],
   max: number
 }
 
+export interface BoxQuantity {
+  box_tag: string,
+  quantity: number,
+  serials: string[],
+}
+
 export interface KioskQuantities {
   nxid: string,
   kiosk_quantities: KioskQuantity[],
+  boxes: BoxQuantity[]
   serials?: string[]
 }
 

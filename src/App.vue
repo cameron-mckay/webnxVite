@@ -122,7 +122,6 @@ onBeforeMount(()=>{
       // Success - update global user component
       let user = data as User
       store.commit("updateUserData", user)
-      displayMessage('Successfully logged in.');
       configureRouter()
       if(Notification.permission === "granted" && 'serviceWorker' in navigator)
         // Get the registration from service worker

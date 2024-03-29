@@ -735,7 +735,8 @@ export function cancelPartRequest(
 export function fulfillPartRequest(
   http: AxiosInstance,
   request_id: string,
-  parts: Array<{kiosk: string, parts: InventoryEntry[]}>,
+  kiosk_list: Array<{kiosk: string, parts: InventoryEntry[]}>,
+  boxes: Array<{box_tag: string, parts: InventoryEntry[]}>,
   notes: string,
   approved: boolean,
   callback: apiResponse
@@ -743,7 +744,8 @@ export function fulfillPartRequest(
   http
     .post('/api/part/request/fulfill', {
       request_id,
-      list: parts,
+      list: kiosk_list,
+      boxes,
       notes,
       approved
     })

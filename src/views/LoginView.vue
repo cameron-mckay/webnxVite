@@ -93,7 +93,6 @@ async function login() {
             // Success - update global user component
             let user = data as User
             store.commit("updateUserData", user)
-            displayMessage('Successfully logged in.');
             router.push('/parts');
             if(Notification.permission === "granted" && 'serviceWorker' in navigator)
               // Get the registration from service worker
