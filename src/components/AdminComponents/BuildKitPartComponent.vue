@@ -51,7 +51,7 @@ onMounted(async ()=>{
   // Get the inital values
   if(!item.serial)
     quantities.value = kiosk_quantities.get(item.part.nxid!)!.sort((a, b) => b.quantity - a.quantity).map((q)=>{
-      return { kiosk: q.kiosk, max: q.quantity, quantity: q.quantity}
+      return { kiosk: q.kiosk, max: q.quantity, quantity: q.quantity, serials: []}
     })
   // Call the slider update
   updateSliders()
@@ -77,7 +77,7 @@ function updateSliders() {
     // Calculate the new quantity
     let quantity = clamp(parseInt(q.quantity as any as string), 0, quantityVisible.value - total)
     // Push to array
-    arrayCopy.push({kiosk: q.kiosk, max: q.max, quantity})
+    arrayCopy.push({kiosk: q.kiosk, max: q.max, quantity, serials: []})
     // Update running total
     total += quantity
   }
@@ -86,7 +86,7 @@ function updateSliders() {
   // Check for remaining parts
   if(quantityVisible.value - total > 0)
     // Push remaining as rejected
-    arrayCopy.push({kiosk: "Unsorted", max: quantityVisible.value, quantity: quantityVisible.value - total})
+    arrayCopy.push({kiosk: "Unsorted", max: quantityVisible.value, quantity: quantityVisible.value - total, serials: []})
   // Set array to copy
   quantities.value = arrayCopy
   // Emit update to parent

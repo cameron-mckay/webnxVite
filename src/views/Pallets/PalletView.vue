@@ -18,7 +18,8 @@ PalletSchema,
 LoadedCartItem,
 UserState,
 AssetSchema,
-CartItem
+CartItem,
+BoxSchema
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
 
@@ -40,7 +41,7 @@ let pallet = ref({
 } as PalletSchema);
 let parts = ref([] as LoadedCartItem[]);
 let assets = ref([] as AssetSchema[]);
-let boxes = ref([] as AssetSchema[]);
+let boxes = ref([] as BoxSchema[]);
 let palletLoading = ref(false)
 let partsLoading = ref(false)
 

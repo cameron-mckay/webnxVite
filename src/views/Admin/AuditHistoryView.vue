@@ -92,7 +92,7 @@ function showLoader() {
     <AuditEventComponent v-for="event of auditHistory" 
       :event="event"
       :user="allUsers.get(event.by)!"
-      :part="partMap.get(event.nxid)"
+      :part="partMap.get(event.nxid)!"
     />
     </AnalyticsSearchComponent>
   </div>

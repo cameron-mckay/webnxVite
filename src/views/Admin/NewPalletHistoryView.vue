@@ -76,6 +76,15 @@ async function displayResults(page: PalletEvent[])
       })),
       Promise.all(e.existingAssets.map((p)=>{
         return Cacher.getAsset(p)
+      })),
+      Promise.all(e.addedBoxes.map((p)=>{
+        return Cacher.getBox(p)
+      })),
+      Promise.all(e.removedBoxes.map((p)=>{
+        return Cacher.getBox(p)
+      })),
+      Promise.all(e.existingBoxes.map((p)=>{
+        return Cacher.getBox(p)
       }))
     ])
     await Cacher.getPallet(e.pallet_id)
@@ -108,6 +117,7 @@ function showLoader() {
         :user="Cacher.getUser(event.by)!"
         :parts="Cacher.getPartCache()"
         :pallets="Cacher.getPalletCache()"
+        :boxes="Cacher.getBoxCache()"
         :event="event"
         v-for="event in palletEvents"
       />
