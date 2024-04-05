@@ -35,7 +35,7 @@ function minus() {
 function updateQuantity() {
   if(item.part.quantity&&item_quantity.value>item.part.quantity)
     item_quantity.value = item.part.quantity
-  emit("updateQuantity", item_quantity.value, item.part.nxid!)
+  emit("updateQuantity", item_quantity.value, item)
 }
 
 function updateSerial() {
