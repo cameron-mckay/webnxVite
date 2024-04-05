@@ -231,6 +231,7 @@ export interface InventoryEntry {
   unserialized: number,
   serials: string[],
   newSerials?: string[]
+  boxes?: BoxQuantity[]
 }
 
 export interface CheckInQueuePart extends CartItem {
@@ -291,11 +292,26 @@ export interface PalletEvent {
   removedParts: CartItem[],
   existingAssets: string[],
   addedAssets: string[],
-  removedAssets: string[]
+  removedAssets: string[],
+  existingBoxes: string[],
+  addedBoxes: string[],
+  removedBoxes: string[]
 }
 
 
 export type PalletHistory = PalletEvent[]
+
+export interface BoxEvent {
+    date_begin: Date,
+    box_id: string,
+    by: string,
+    info_updated: boolean,
+    existingParts: CartItem[],
+    addedParts: CartItem[],
+    removedParts: CartItem[],
+}
+
+export type BoxHistory = BoxEvent[]
 
 export interface AllTechsEvent {
   by: string,
@@ -332,12 +348,21 @@ export interface PartRequestSchema {
 export interface KioskQuantity {
   kiosk: string,
   quantity: number,
+  serials: string[],
+  selectedSerials?: string[],
   max: number
+}
+
+export interface BoxQuantity {
+  box_tag: string,
+  quantity: number,
+  serials: string[],
 }
 
 export interface KioskQuantities {
   nxid: string,
   kiosk_quantities: KioskQuantity[],
+  boxes: BoxQuantity[]
   serials?: string[]
 }
 
@@ -356,4 +381,35 @@ export interface BuildKitSchema {
   notes: string,
   parts?: CartItem[],
   kiosk: string
+}
+
+export interface BoxSchema {
+  [index: string]: any;
+  _id?: string,
+  box_tag: string,
+  building: number,
+  by: string,
+  date_created: Date,
+  date_replaced: Date,
+  notes: string,
+  prev?: string,
+  next?: string,
+  location: string,
+  prev_location?: string,
+  next_location?: string,
+}
+
+export interface AuditRecordSchema {
+    // NXID of the associated part
+    nxid: string,
+    building: number,
+    // Quantity in the kiosk
+    kiosk_quantities: Array<any>,
+    // All of the parts in the building?
+    total_quantity: number,
+    notes: string,
+    // ID of the user who's request created the part record
+    by: string,
+    // Date the part was created
+    date: Date,
 }

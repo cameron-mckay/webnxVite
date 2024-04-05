@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { PalletSchema } from '../../plugins/interfaces';
+import { BoxSchema } from '../../plugins/interfaces';
 import SVGEye from '../GenericComponents/SVG/SVGEye.vue';
 import SVGPencil from '../GenericComponents/SVG/SVGPencil.vue';
 import PlusButton from '../GenericComponents/Buttons/PlusButton.vue';
 
 interface Props {
-  pallet: PalletSchema;
+  box: BoxSchema;
   edit?: boolean;
   add?: boolean;
   view?: boolean;
 }
 
-const { pallet, edit, add, view } = defineProps<Props>();
+const { box, edit, add, view } = defineProps<Props>();
 </script>
 
 <template>
@@ -19,15 +19,15 @@ const { pallet, edit, add, view } = defineProps<Props>();
     <div
       class="background-and-border group-hover:bab-hover grid grid-cols-4 p-1 text-center leading-8 group-hover:rounded-bl-none md:p-2 md:leading-10"
     >
-      <p>{{ pallet.pallet_tag }}</p>
-      <p class="break-words">{{ pallet.building }}</p>
-      <p class="break-words">{{ pallet.location }}</p>
+      <p>{{ box.box_tag }}</p>
+      <p class="break-words">{{ box.building }}</p>
+      <p class="break-words">{{ box.location }}</p>
       <div class="my-auto flex justify-end">
         <!-- Pencil -->
-        <RouterLink :to="'/pallets/edit?pallet_tag='+pallet.pallet_tag"
-            class="button-icon hover:button-icon-hover active:button-icon-active"
-            title="Edit pallet"
-            v-if="edit === true"
+        <RouterLink :to="'/boxes/edit?box_tag='+box.box_tag"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
+          title="Edit box"
+          v-if="edit === true"
         >
           <SVGPencil
             v-on:click="$emit('editAction')"
@@ -39,10 +39,10 @@ const { pallet, edit, add, view } = defineProps<Props>();
           v-on:click="$emit('addAction')"
         />
         <!-- Eyeball -->
-        <RouterLink :to="'/pallets/view?pallet_tag='+pallet.pallet_tag"
-            title="View Pallet"
-            class="button-icon hover:button-icon-hover active:button-icon-active"
-            v-if="view === true"
+        <RouterLink :to="'/boxes/view?box_tag='+box.box_tag"
+          v-if="view === true"
+          title="View Box"
+          class="button-icon hover:button-icon-hover active:button-icon-active"
         >
           <SVGEye
             v-on:click="$emit('viewAction')"
@@ -54,10 +54,10 @@ const { pallet, edit, add, view } = defineProps<Props>();
       <p>
         {{
           'Date Updated: ' +
-          new Date(pallet.date_created).toLocaleString()
+          new Date(box.date_created).toLocaleString()
         }}
       </p>
-      <pre class="font-extrabold whitespace-pre-wrap" v-if="pallet.notes">Notes:<br><span class="font-normal">{{ pallet.notes }}</span></pre>
+      <pre class="font-extrabold" v-if="box.notes">Notes:<br><span class="font-normal">{{ box.notes }}</span></pre>
     </div>
   </div>
 </template>

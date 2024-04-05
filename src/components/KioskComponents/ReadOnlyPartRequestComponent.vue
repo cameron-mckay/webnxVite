@@ -33,7 +33,7 @@ onBeforeMount(async ()=>{
         let cartItems = [] as CartItem[]
         for(let ie of p.parts) {
           let q = ie.unserialized
-          for(let s of ie.newSerials!) {
+          for(let s of ie.serials!) {
             cartItems.push({nxid: ie.nxid!, serial: s})
             q--
           }

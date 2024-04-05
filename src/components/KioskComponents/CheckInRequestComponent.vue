@@ -3,6 +3,7 @@ import { CheckInRequest, User, PartSchema, CheckInQueuePart } from '../../plugin
 import XToggleButton from '../GenericComponents/Buttons/XToggleButton.vue';
 import CheckToggleButton from '../GenericComponents/Buttons/CheckToggleButton.vue';
 import { onMounted, ref } from 'vue';
+import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponent.vue';
 
 interface Props {
   request: CheckInRequest
@@ -15,7 +16,6 @@ let { request, user, kiosks, parts } = defineProps<Props>()
 
 let requestCopy = ref(JSON.parse(JSON.stringify(request)) as CheckInRequest)
 let emit = defineEmits(["submit"])
-let partInfo = {} as PartSchema
 
 onMounted(()=>{
 })
@@ -38,8 +38,7 @@ function submit() {
 
 </script>
 <template>
-  <div class="background-and-border my-4 p-4">
-
+  <form class="background-and-border my-4 p-4" @submit.prevent="submit">
     <div class="flex justify-between">
       <h1 class="text-2xl leading-8 md:leading-10">
         {{ new Date(requestCopy.date).toLocaleString() }}
@@ -79,13 +78,19 @@ function submit() {
             <input class="w-full h-2 rounded-md accent-green-400 cursor-pointer text-gray-200 dark:text-gray-700" type="range" min="1" :max="p.quantity" v-model="p.approvedCount"/>
           </div>
         </div>
-        <select class="textbox my-auto" v-model="p.newLocation" :disabled="!(p.approved === true)">
+        <CustomDropdownComponent
+          :required="p.approved ? true : false"
+          :disabled="!p.approved ? true : false"
+          custom-name="Box"
+          placeholder="BOX0000000"
+          @updateValue="(value: string) => { p.newLocation = value }"
+        >
           <option v-for="kiosk of kiosks" :value="kiosk.first_name + ' ' + kiosk.last_name">{{ kiosk.first_name + " " + kiosk.last_name }}</option>
-        </select>
+        </CustomDropdownComponent>
       </div>
     </div>
     <div class="flex justify-center">
-      <input type="submit" @click="submit" class="submit mb-0" value="Submit"/>
+      <input type="submit" class="submit mb-0" value="Submit"/>
     </div>
-  </div>
+  </form>
 </template>

@@ -257,8 +257,8 @@ function changeKiosk(part: PartSchema, kiosk: string) {
   }, kiosk)
 }
 
-function audit() {
-  auditPart(http, currentPart.value.nxid!, (data, err) => {
+function audit(notes: string) {
+  auditPart(http, currentPart.value.nxid!, notes, (data, err) => {
     if(err) {
       return errorHandler(err)
     }

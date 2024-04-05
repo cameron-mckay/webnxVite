@@ -1,9 +1,10 @@
 import { AxiosInstance } from "axios";
 import Cacher from "./Cacher";
-import { AssetSchema, CartItem, LoadedCartItem, PartSchema, User } from "./interfaces";
+import { AssetSchema, BoxSchema, CartItem, LoadedCartItem, PartSchema, User } from "./interfaces";
 import { getUserInventoryByID } from "./dbCommands/userManager";
 import { getPartsOnAsset } from "./dbCommands/assetManager";
 import { getPartsOnPallet } from "./dbCommands/palletManager";
+import { getPartsOnBox } from "./dbCommands/boxManager";
 
 export default class Inventory {
   maxQuantites: Map<string, number>
@@ -62,19 +63,30 @@ export default class Inventory {
     })
   }
 
-  static getAssetsOnPallet(http: AxiosInstance, pallet_tag: string) {
-    return new Promise<AssetSchema[]>((res)=>{
-      getPartsOnPallet(http, pallet_tag, (data, err)=>{
+  static getPartsOnBox(http: AxiosInstance, box_tag: string) {
+    return new Promise<CartItem[]>((res)=>{
+      getPartsOnBox(http, box_tag, (data,err)=>{
         if (err) {
             res([])
         }
-        res((data as any).assets! as CartItem[])
+        res(data as CartItem[])
       })
     })
   }
 
-  getAssetsOnPallet(pallet_tag: string) {
-    return Inventory.getAssetsOnPallet(Cacher.getHttp(), pallet_tag)
+  static getItemsOnPallet(http: AxiosInstance, pallet_tag: string) {
+    return new Promise<{parts: CartItem[], assets: AssetSchema[], boxes: BoxSchema[]}>((res)=>{
+      getPartsOnPallet(http, pallet_tag, (data, err)=>{
+        if (err) {
+            res({parts: [], assets: [], boxes: []})
+        }
+        res(data as {parts: CartItem[], assets: AssetSchema[], boxes: BoxSchema[]})
+      })
+    })
+  }
+
+  getItemsOnPallet(pallet_tag: string) {
+    return Inventory.getItemsOnPallet(Cacher.getHttp(), pallet_tag)
   }
 
   loadSourceInv(id: string) {
@@ -159,6 +171,32 @@ export default class Inventory {
           }
         }
         this.destList = await Cacher.loadCartItems(palletParts)
+        res()
+        this.refreshComponentsCallback()
+      }
+      catch {
+        rej()
+      }
+    })
+  }
+
+  loadDestFromBox(box_tag: string) {
+    return new Promise<void>(async (res, rej)=>{
+      try {
+        let boxParts = await Inventory.getPartsOnBox(Cacher.getHttp(), box_tag)
+        for (let p of boxParts) {
+          if(!p.quantity)
+            continue
+          // If a max quantity exists
+          if(this.maxQuantites.has(p.nxid)) {
+            // Add this quantity to the max
+            this.maxQuantites.set(p.nxid, this.maxQuantites.get(p.nxid)! + p.quantity)
+          } else {
+            // Set the initial max quantity
+            this.maxQuantites.set(p.nxid, p.quantity)
+          }
+        }
+        this.destList = await Cacher.loadCartItems(boxParts)
         res()
         this.refreshComponentsCallback()
       }

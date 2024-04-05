@@ -607,9 +607,18 @@ async function getNXID() {
           <option :value="true">Yes</option>
           <option :value="false">No</option>
         </select>
-
       </div>
-
+      <div v-if="strict" class="col-span-2 grid grid-cols-2">
+        <label>Threshold Stock:</label>
+        <input
+          class="textbox m-1"
+          :required="strict"
+          v-model="part.threshold"
+          type="number"
+          min="0"
+          placeholder="Manufacturer"
+        />
+      </div>
       <div v-if="strict" class="col-span-2 my-4">
         <h1 class="inline-block text-4xl leading-8 md:leading-10">Notes:</h1>
         <textarea

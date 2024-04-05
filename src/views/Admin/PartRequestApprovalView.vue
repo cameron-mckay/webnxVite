@@ -12,7 +12,8 @@ import type {
   KioskQuantities,
   KioskQuantity,
   InventoryEntry,
-  BuildKitSchema
+  BuildKitSchema,
+BoxQuantity
 } from '../../plugins/interfaces';
 import { getKioskQuantities, getActivePartRequests, fulfillPartRequest, getBuildKitByID, processBuildKitRequest } from '../../plugins/dbCommands/partManager';
 import Cacher from '../../plugins/Cacher';
@@ -24,8 +25,14 @@ interface Props {
   errorHandler: (err: Error | AxiosError | string) => void;
   displayMessage: (message: string) => void;
 }
-const { http, store, router, errorHandler, displayMessage } =
-  defineProps<Props>();
+
+const {
+  http,
+  store,
+  router,
+  errorHandler,
+  displayMessage
+} = defineProps<Props>();
 
 let loading = ref(false)
 let processing = false
@@ -106,19 +113,46 @@ function loadQueue() {
   })
 }
 
-function submit(request_id: string, req: KioskQuantities[], notes: string) {
+function submit(request_id: string, req: {nxid: string, kiosk_quantities: KioskQuantity[], boxes: BoxQuantity[]}[], notes: string) {
   if(processing)
     return
   processing = true
   let locationsMap = new Map<string, InventoryEntry[]>()
+  let boxMap = new Map<string, InventoryEntry[]>()
   // Loop trhough all the parts
   for(let part of req) {
-    // Filter out blank serials
-    part.serials = part.serials ? part.serials.filter((s)=>s!="") : []
-    // Index for the serial array
-    let i = 0
+    // Destructure to declare boxes
+    let { boxes } = part
     // Loop through all the kiosk quantities
     for(let kq of part.kiosk_quantities) {
+      // There should only be one of these per part of req
+      if(kq.kiosk == "Box") {
+        let boxArr = [] as InventoryEntry[]
+        console.log(boxes)
+        // Loop through boxes
+        for(let box of boxes) {
+          // If already in map
+          if(boxMap.has(box.box_tag))
+            // Get it 
+            boxArr = boxMap.get(box.box_tag)!
+          else
+            boxArr = []
+
+          let serials = box.serials.filter((v)=>v!=""&&v!="Custom")
+            .filter((v, i, arr)=>arr.indexOf(v)==i)
+          // If quantity, push serials
+          if(box.quantity>0)
+            kq.serials = kq.serials.concat(serials)
+          // Push to array
+          boxArr.push({
+            nxid: part.nxid,
+            unserialized: box.quantity > serials.length ? box.quantity - serials.length : 0,
+            serials
+          })
+          // Upate map
+          boxMap.set(box.box_tag, boxArr)
+        }
+      }
       // Array for the cart items
       let arr = [] as InventoryEntry[]
       // If the map already has location
@@ -126,22 +160,15 @@ function submit(request_id: string, req: KioskQuantities[], notes: string) {
         // Fetch existing array
         arr = locationsMap.get(kq.kiosk)!
       }
-      // Number of parts pushed to array
-      let q = 0
-      let serials = [] as string []
-      // If the serial index is still less than the length
-      if(i<part.serials.length) {
-        // While index less than serial length and quantity is less than total
-        while(i<part.serials.length&&q<kq.quantity) {
-          // Push serial at index
-          serials.push(part.serials[i])
-          // Increment vars
-          i++
-          q++
-        }
-      }
+      // Remove empty strings and dupes
+      let serials = kq.serials.filter((v)=>v!="")
+        .filter((v, i, arr)=>arr.indexOf(v)==i)
       // Push them as cart items
-      arr.push({nxid: part.nxid, unserialized: kq.quantity, serials: [], newSerials: serials})
+      arr.push({
+        nxid: part.nxid,
+        unserialized: kq.quantity > serials.length ? kq.quantity - serials.length : 0,
+        serials,
+      })
       // Save the array to map
       locationsMap.set(kq.kiosk, arr)
     }
@@ -152,15 +179,20 @@ function submit(request_id: string, req: KioskQuantities[], notes: string) {
   locationsMap.forEach((v, k) => {
     finalReq.push({kiosk: k, parts: v})
   })
-  // Send to API here
-  fulfillPartRequest(http, request_id, finalReq, notes, true, (data, err)=>{
+  // Create final request array
+  let finalBoxes = [] as any[]
+  // Convert map entries to objects
+  boxMap.forEach((v, k) => {
+    finalBoxes.push({box_tag: k, parts: v})
+  })
+  // Send to API
+  fulfillPartRequest(http, request_id, finalReq, finalBoxes, notes, true, (data, err)=>{
     processing = false
     if(err)
       return errorHandler(err)
     displayMessage(data as string)
     loadQueue()
   })
-
 }
 
 function approve(req: PartRequestSchema, notes: string) {
@@ -181,7 +213,7 @@ function deny(req: PartRequestSchema, notes: string) {
       loadQueue()
     })
   else
-    fulfillPartRequest(http, req._id!, [], notes, false, (data, err)=>{
+    fulfillPartRequest(http, req._id!, [], [], notes, false, (data, err)=>{
       processing = false
       if(err)
         return errorHandler(err)

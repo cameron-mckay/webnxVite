@@ -4,13 +4,18 @@ import SVGX from './SVG/SVGX.vue';
 
 interface Props {
   required: boolean;
-  options: Array<string>;
+  options?: Array<string>;
   defaultValue?: string;
+  customName?: string;
+  regex?: string;
+  disabled?: boolean
+  placeholder?: string
+  customAtTop?: boolean
+  clearPrevOnClose?: boolean
+  hideCustom?: boolean
 }
-// Define props, default value is copied by value when destructured
-const props = defineProps<Props>();
 // Destructure props
-const { required, options, defaultValue } = props;
+let { required, options, defaultValue, regex, customName, disabled, placeholder, customAtTop, clearPrevOnClose, hideCustom } = defineProps<Props>();
 // Define emitter events
 const emit = defineEmits(['updateValue']);
 
@@ -20,31 +25,69 @@ let custom = ref(false);
 let textValue = ref('');
 // Temp variable
 let prevValue = '';
+let id = ref("")
+
+function getRandomInt(max: number) {
+  return Math.floor(Math.random() * max);
+}
 
 // Leave custom mode
 function closeCustom() {
+  if(disabled)
+    return
   // Set value to the first option
-  textValue.value = prevValue;
+  textValue.value = clearPrevOnClose ? "" : prevValue;
   // Disable custom value
   custom.value = false;
 }
 
-onMounted(async () => {
-  // Check if default value is present
-  if (defaultValue) {
+function getDefaultValue() {
+  // This is dumb.  Vue doesn't have the methods I need so I'm going vanilla
+  // Creating an absurdly large random number so there is 0 change of dupes
+  // Duplicates would cause getElementById to fail
+  id.value = "customDrop"+getRandomInt(Date.now())
+  // This is even dumber.  Using timeouts to wait for the component refresh
+  setTimeout(()=>{
+    // List of all the options
+    let values = [];
+    // Mmmmmm vanilla....
+    let el = document.getElementById(id.value)
+    if(el&&el.children) {
+      let { children } = el
+      // Check for children of drop down
+      if(children&&children.length) {
+        // Add all of the values to the array
+        for(let i = 0; i < children.length; i++) {
+          values.push((children.item(i) as any).value)
+        }
+        // Filter out non options
+        values = values.filter((v)=>v!=""&&v!="Custom"&&v!=customName)
+      }
+    }
+    console.log(values)
+    let defaultIsCustom = false
     // Check if default value exists in options
-    if (options.indexOf(defaultValue) == -1) {
+    if (values.indexOf(defaultValue) == -1) {
       // Enable custom value
       custom.value = true;
+      if(defaultValue=="Custom")
+        defaultIsCustom = true
     }
     // Text value is used as model for drop down regardless
     // of if custom value is present
-    textValue.value = defaultValue;
+    textValue.value = defaultIsCustom ? "" :  defaultValue!;
+  })
+}
+
+onMounted(async () => {
+  if (defaultValue) {
+    getDefaultValue()
   }
   // Enable watcher on text value
-  watch(textValue, (value, oldValue) => {
+  watch(textValue, (_, oldValue) => {
+    console.log("TEST")
     // If drop down is set to custom
-    if (textValue.value === 'Custom' && !custom.value) {
+    if (textValue.value === 'Custom' && !custom.value && !hideCustom) {
       // Save previous value for if custom gets cleared
       prevValue = oldValue;
       // Set text value to blank string
@@ -55,15 +98,6 @@ onMounted(async () => {
     // Emit value update when textValue changes
     emit('updateValue', textValue.value);
   });
-  // Enable watcher on props, since they can change after
-  // mount depending on loading conditions
-  watch(props, () => {
-    // If default value is now present
-    if (props.defaultValue) {
-      // Set value to default
-      textValue.value = props.defaultValue;
-    }
-  });
 });
 </script>
 <template>
@@ -72,17 +106,24 @@ onMounted(async () => {
     :required="required"
     v-model="textValue"
     class="textbox m-1"
+    :id="id"
+    :disabled="disabled"
   >
     <option disabled value="">Select</option>
+    <option value="Custom" v-if="customAtTop&&!hideCustom">{{ customName ? customName : "Custom" }}</option>
     <option v-for="option in options" :value="option">{{ option }}</option>
-    <option value="Custom">Custom</option>
+    <slot></slot>
+    <option value="Custom" v-if="!customAtTop&&!hideCustom">{{ customName ? customName : "Custom" }}</option>
   </select>
   <div class="flex" v-else>
     <input
-      :required="true"
+      :required="required"
       type="text"
       v-model="textValue"
       class="textbox m-1"
+      :pattern="regex"
+      :disabled="disabled"
+      :placeholder="placeholder"
     />
     <!-- X icon -->
     <SVGX

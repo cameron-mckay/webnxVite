@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
-import { AxiosResponse } from 'axios';
 import { onMounted } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
@@ -14,7 +13,7 @@ interface Props {
   displayMessage: (message: string) => void;
 }
 
-let { http, store, router, errorHandler, displayMessage } =
+let { http, router, errorHandler, displayMessage } =
   defineProps<Props>();
 // END OF PROPS
 
@@ -42,7 +41,7 @@ function register() {
     // Send username and password to API
     http
       .post('/api/register', form)
-      .then((res: AxiosResponse) => {
+      .then(() => {
         displayMessage(
           'Your account must be enabled by an admin before you can log in.'
         );
@@ -62,7 +61,7 @@ async function redirectIfLoggedIn() {
       // Go to home
       router.push('/');
     })
-    .catch((err: Error | AxiosError) => {
+    .catch(() => {
       // Go to login
     });
 }

@@ -23,6 +23,7 @@ let request = ref({
 // Owner
 let owner = ref({} as User);
 let quantity = ref(part.quantity?part.quantity:0);
+let notes = ref("")
 // let serials = ref('');
 let emit = defineEmits(['submitRequest', 'audit', 'kioskChange']);
 let currentKiosk = ref("")
@@ -210,7 +211,17 @@ onMounted(() => {
         <p v-if="part.audited">Last Audited:</p>
         <p v-if="part.audited">{{new Date(Date.parse(part.audited!)).toLocaleString()}}</p>
       </div>
-      <input class="submit col-span-2" type="button" value="Mark As Audited" @click="$emit('audit')"/>
+      <div
+        class="col-span-2"
+      >
+        <h1 class="inline-block text-2xl leading-8 md:leading-10">Notes:</h1>
+        <textarea
+          class="textbox m-1 h-40"
+          v-model="notes"
+          placeholder="Drag to resize"
+        />
+      </div>
+      <input class="submit col-span-2" type="button" value="Mark As Audited" @click="$emit('audit', notes)"/>
     </form>
   </FullScreenPopupComponent>
 </template>

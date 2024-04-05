@@ -3,20 +3,18 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import PalletEventComponent from '../../components/PalletComponents/PalletEventComponent.vue';
 import SearchNavButtons from '../../components/GenericComponents/Search/SearchNavButtons.vue';
 import SearchFooterComponent from '../../components/GenericComponents/Search/SearchFooterComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import {
-  getPalletHistory,
-} from '../../plugins/dbCommands/palletManager';
-import {
-  PalletHistory,
-  PalletEvent,
   UserState,
+  BoxHistory,
+  BoxEvent,
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
+import { getBoxHistory } from '../../plugins/dbCommands/boxManager';
+import BoxEventComponent from '../../components/BoxComponents/BoxEventComponent.vue';
 
 interface Props {
   http: AxiosInstance;
@@ -28,45 +26,33 @@ interface Props {
 
 const { http, router, errorHandler } =
   defineProps<Props>();
-let pallet_tag = ref('');
-let history = ref([] as PalletHistory);
+let box_tag = ref('');
+let history = ref([] as BoxHistory);
 let pageSize = 10;
 let pageNum = ref(1);
 let totalPages = ref(1)
-let pageCache = new Map<number, PalletHistory>();
+let pageCache = new Map<number, BoxHistory>();
 let loading = ref(true)
 let totalEvents = ref(0)
 
 // Check if asset in in map and add it if it isn't
-function checkPallets(historyEvent: PalletEvent) {
+function checkBoxes(historyEvent: BoxEvent) {
   return Promise.all([
-    Cacher.getPallet(historyEvent.pallet_id),
+    Cacher.getBox(historyEvent.box_id),
     // Map all existing parts
     Promise.all(historyEvent.existingParts.map(Cacher.getPartInfo)),
     // Map all added parts
     Promise.all(historyEvent.addedParts.map(Cacher.getPartInfo)),
     // Map all removed parts
     Promise.all(historyEvent.removedParts.map(Cacher.getPartInfo)),
-    // Map all existing assets
-    Promise.all(historyEvent.existingAssets.map(Cacher.getAsset)),
-    // Map all added assets
-    Promise.all(historyEvent.addedAssets.map(Cacher.getAsset)),
-    // Map all removed assets
-    Promise.all(historyEvent.removedAssets.map(Cacher.getAsset)),
-    // Map all existing boxes
-    Promise.all(historyEvent.existingBoxes.map(Cacher.getBox)),
-    // Map all added boxes
-    Promise.all(historyEvent.addedBoxes.map(Cacher.getBox)),
-    // Map all removed boxes
-    Promise.all(historyEvent.removedBoxes.map(Cacher.getBox)),
   ])
 }
 
 onBeforeMount(() => {
-  pallet_tag.value = router.currentRoute.value.query.pallet_tag as string;
+  box_tag.value = router.currentRoute.value.query.box_tag as string;
   pageNum.value = router.currentRoute.value.query.pageNum ? parseInt(router.currentRoute.value.query.pageNum as string) : 1
   router.replace({
-    query: { pallet_tag: pallet_tag.value, pageNum: pageNum.value.toString() },
+    query: { box_tag: box_tag.value, pageNum: pageNum.value.toString() },
   });
   loadPage(pageNum.value)
 });
@@ -83,14 +69,14 @@ async function loadPage(page: number) {
 }
 
 function getPage(page: number) {
-  return new Promise<{ total: number, pages: number, events: PalletHistory}>((res, rej)=>{
+  return new Promise<{ total: number, pages: number, events: BoxHistory}>((res, rej)=>{
     if(pageCache.has(page))
       return res({total: totalEvents.value, pages: totalPages.value, events: pageCache.get(page)!})
-    getPalletHistory(http, pallet_tag.value, page, pageSize, async (data, err) => {
+    getBoxHistory(http, box_tag.value, page, pageSize, async (data, err) => {
       if(err)
         return rej([])
-      let p = data as { total: number, pages: number, events: PalletHistory}
-      await Promise.all(p.events.map(checkPallets));
+      let p = data as { total: number, pages: number, events: BoxHistory}
+      await Promise.all(p.events.map(checkBoxes));
       pageCache.set(page, p.events)
       res(p)
     })
@@ -138,8 +124,8 @@ function checkCache() {
 <template>
   <div>
     <div class="mb-4 flex justify-between">
-      <PageHeaderWithBackButton :router="router" :prevPath="'/pallets'">
-        Pallet History
+      <PageHeaderWithBackButton :router="router" :prevPath="'/boxes'">
+        Box History
       </PageHeaderWithBackButton>
       <SearchNavButtons
         :num-pages="totalPages"
@@ -148,12 +134,11 @@ function checkCache() {
       />
     </div>
     <LoaderComponent v-if="loading"/>
-    <PalletEventComponent
+    <BoxEventComponent
       v-else
-      :pallets="Cacher.getPalletCache()"
+      :boxes="Cacher.getBoxCache()"
       :assets="Cacher.getAssetCache()"
       :parts="Cacher.getPartCache()"
-      :boxes="Cacher.getBoxCache()"
       :user="Cacher.getUser(event.by)"
       :event="event"
       v-for="event in history"

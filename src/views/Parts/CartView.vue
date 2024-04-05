@@ -127,8 +127,7 @@ function localCheckout() {
     invEntries.push({
       nxid: k,
       unserialized: v,
-      serials: [],
-      newSerials: serialMap.has(k) ? serialMap.get(k)! : []
+      serials: serialMap.has(k) ? serialMap.get(k)! : []
     })
   })
   checkout(http, invEntries, currentUser.value._id!, (data, err) => {

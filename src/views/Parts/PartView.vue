@@ -180,6 +180,13 @@ function loadAllTechs() {
       query: { parts: [part.value.nxid], hideOtherParts: "true" },
     });
 }
+
+function loadAudit() {
+    router.push({
+      name: 'Part Audit History',
+      query: { parts: [part.value.nxid] },
+    });
+}
 </script>
 <template>
   <LoaderComponent v-if="loadingPart" class="mt-16"/>
@@ -199,6 +206,7 @@ function loadAllTechs() {
       @loadNewPallets="loadNewPallets"
       @loadPalletUpdates="loadPalletUpdates"
       @loadAllTechs="loadAllTechs"
+      @loadAudit="loadAudit"
     />
     <!-- PART RECORDS GO HERE -->
     <LoaderComponent v-if="loadingGroups"/>

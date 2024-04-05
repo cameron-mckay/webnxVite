@@ -2,7 +2,7 @@
 import type { AxiosError, AxiosInstance } from 'axios';
 import type { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import CheckInRequestComponent from '../../components/KioskComponents/CheckInRequestComponent.vue';
 import RefreshButton from '../../components/GenericComponents/Buttons/RefreshButton.vue';
 import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';

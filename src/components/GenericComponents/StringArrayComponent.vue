@@ -2,6 +2,8 @@
 import { onMounted, ref, watch } from 'vue';
 import SVGX from './SVG/SVGX.vue';
 import SVGPlus from './SVG/SVGPlus.vue';
+import PlusButton from './Buttons/PlusButton.vue';
+import XButton from './Buttons/XButton.vue';
 
 interface Props {
   required: boolean;
@@ -46,12 +48,12 @@ onMounted(()=>{
         :placeholder="placeholder"
       />
       <!-- Plus -->
-      <SVGPlus
+      <PlusButton
         v-if="index == 0"
         v-on:click='textValues.push("")'
       />
       <!-- X icon -->
-      <SVGX
+      <XButton
         v-else
         v-on:click="textValues.splice(index, 1)"
       />

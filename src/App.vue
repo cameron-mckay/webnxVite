@@ -44,7 +44,6 @@ const store = useStore();
 const NOTIFICATION_TIME = 5000
 
 let routeConfigured = ref(false)
-let url = import.meta.env.VITE_API_URL;
 
 // Global list of messages for the MessageComponent to render
 var notifications: Ref<NotificationSchema[]> = ref([]);
@@ -122,7 +121,6 @@ onBeforeMount(()=>{
       // Success - update global user component
       let user = data as User
       store.commit("updateUserData", user)
-      displayMessage('Successfully logged in.');
       configureRouter()
       if(Notification.permission === "granted" && 'serviceWorker' in navigator)
         // Get the registration from service worker

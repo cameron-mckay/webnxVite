@@ -9,10 +9,14 @@ import { AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
 // Define props
 interface Props {
-  notifications: Array<NotificationSchema>;
+  notifications: Array<Notif>;
   store: Store<UserState>;
   http: AxiosInstance;
   router: Router
+}
+
+interface Notif extends NotificationSchema{
+  hover?: boolean
 }
 // Get messages from app
 const { notifications, store, http, router } = defineProps<Props>();
@@ -40,7 +44,8 @@ watch(notifications, ()=>{
       // Loop through all notifs
       for(let notif of notifications) {
         // Decrement the time left
-        notif.ms_left! -= UPDATE_INTERVAL
+        if(!notif.hover)
+          notif.ms_left! -= UPDATE_INTERVAL
         // If they are out of time, delete
         if(notif.ms_left!<=0) {
           notifications.splice(notifications.indexOf(notif),1)
@@ -108,6 +113,14 @@ function navigateToLink(e: Event, notif: NotificationSchema) {
       })
   }
 }
+
+function hover(n: Notif){
+  n.hover = true
+}
+
+function unHover(n: Notif){
+  n.hover = false
+}
 </script>
 <template>
   <div
@@ -142,6 +155,8 @@ function navigateToLink(e: Event, notif: NotificationSchema) {
       :notification="notification"
       @delete="deleteNotification(notification)"
       @click="(e)=>navigateToLink(e, notification)"
+      @mouseover="hover(notification)"
+      @mouseleave="unHover(notification)"
     />
   </div>
 </template>

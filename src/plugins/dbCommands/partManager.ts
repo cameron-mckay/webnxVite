@@ -521,14 +521,20 @@ export function deleteFromPartsRoom(
 export function auditPart(
   http: AxiosInstance,
   nxid: string,
+  notes: string,
   callback: apiResponse
 ) {
   http
-    .get('/api/part/audit', {
-      params: {
-        nxid
+    .post('/api/part/audit', 
+      {
+        notes
+      },
+      {
+        params: {
+          nxid
+        }
       }
-    })
+    )
     .then((res: AxiosResponse) => {
       // Success - send results to callback
       callback(res.data, null);
@@ -735,7 +741,8 @@ export function cancelPartRequest(
 export function fulfillPartRequest(
   http: AxiosInstance,
   request_id: string,
-  parts: Array<{kiosk: string, parts: InventoryEntry[]}>,
+  kiosk_list: Array<{kiosk: string, parts: InventoryEntry[]}>,
+  boxes: Array<{box_tag: string, parts: InventoryEntry[]}>,
   notes: string,
   approved: boolean,
   callback: apiResponse
@@ -743,7 +750,8 @@ export function fulfillPartRequest(
   http
     .post('/api/part/request/fulfill', {
       request_id,
-      list: parts,
+      list: kiosk_list,
+      boxes,
       notes,
       approved
     })
@@ -913,6 +921,37 @@ export function processBuildKitRequest(
     })
     .catch((err: AxiosError) => {
       // Unauthenticated - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getPartAuditHistory(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  nxids?: string[],
+  users?: string[],
+) {
+  http
+    .get('/api/part/audit', {
+      params: {
+        nxids,
+        users,
+        startDate,
+        endDate,
+        pageNum,
+        pageSize,
+      }
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
       callback({}, err);
     });
 }

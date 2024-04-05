@@ -63,6 +63,13 @@
             Pallets
           </RouterLink>
           <RouterLink
+            v-if="store.state.user.roles?.includes('view_boxes')"
+            class="header-button-colors w-24 text-center leading-10 transition"
+            to="/boxes"
+          >
+            Boxes
+          </RouterLink>
+          <RouterLink
             v-if="store.state.user.roles?.includes('request_parts')||store.state.user.roles?.includes('fulfill_part_requests')"
             v-show="store.state.parts.size > 0"
             class="header-button-colors w-36 text-center leading-10 transition"
@@ -244,6 +251,13 @@
         to="/pallets"
       >
         Pallets
+      </RouterLink>
+      <RouterLink
+        v-if="store.state.user.roles?.includes('view_boxes')"
+        class="mobile-nav-button"
+        to="/boxes"
+      >
+        Boxes
       </RouterLink>
       <RouterLink
         v-if="store.state.user.roles?.includes('request_parts')||store.state.user.roles?.includes('fulfill_part_requests')"

@@ -54,9 +54,9 @@ const { part, showAudit } = defineProps<Props>();
         <RouterLink :to="'/parts/view?nxid='+part.nxid" title="View part"
             class="button-icon hover:button-icon-hover active:button-icon-active hover:button-icon-hover active:button-icon-active"
             :class="{ hideViewOnMobile: edit }"
+            v-if="view === true"
         >
           <SVGEye
-            v-if="view === true"
             v-on:click="$emit('viewPartAction')"
           />
         </RouterLink>
