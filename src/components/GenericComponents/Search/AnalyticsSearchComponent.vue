@@ -19,9 +19,10 @@ interface Props {
   showUserFilters?: boolean
   showPartFilters?: boolean
   showAssetFilters?: boolean
+  hideHidePartButton?: boolean
 }
 // Deref the search helper
-let { searchComponent, resultsLoading, showUserFilters, showPartFilters, showAssetFilters } = defineProps<Props>()
+let { searchComponent, resultsLoading, showUserFilters, showPartFilters, showAssetFilters, hideHidePartButton } = defineProps<Props>()
 // Filter maps
 let userFilterMap = ref(new Map<string, User>())
 let partFilterMap = ref(new Map<string, PartSchema>())
@@ -106,7 +107,7 @@ async function loadPage(pageNum: number) {
       <FilterTag v-for="part of Array.from(partFilterMap.keys())" :name="part" @remove="partFilterMap.delete(part)" class="background-and-border mt-2"/>
       <FilterTag v-for="asset of Array.from(assetFilterMap.keys())" :name="asset" @remove="assetFilterMap.delete(asset)" class="background-and-border mt-2"/>
       <!-- Hide other parts toggle -->
-      <div v-if="partFilterMap.size>0" class="mt-4">
+      <div v-if="partFilterMap.size>0&&!hideHidePartButton" class="mt-4">
         <label>Hide Other Parts: </label>
         <input type="checkbox" v-model="hideOtherPartsRef">
       </div>

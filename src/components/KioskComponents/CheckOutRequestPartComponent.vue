@@ -157,16 +157,19 @@ function addBox() {
   let quantity = clamp(unassignedQuantity, 0, box?.quantity!)
   // Boolean expression to check if serials can be autofilled
   let autofillSerials = box!.serials.length <= box!.quantity && box!.quantity == quantity
-  // Pad array with autofill or empty strings
-  let selectedSerials = padOrClampArray(autofillSerials ? JSON.parse(JSON.stringify(box!.serials)) : [], quantity)
-  // if autofilled
-  if(autofillSerials) {
-    // Replace empty strings with "Custom" to trigger custom mode on drop down
-    selectedSerials = selectedSerials.map((s: string)=>{
-      if(s=="")
-        return "Custom"
-      return s
-    })
+  let selectedSerials = []
+  if(info.serialized) {
+    // Pad array with autofill or empty strings
+    selectedSerials = padOrClampArray(autofillSerials ? JSON.parse(JSON.stringify(box!.serials)) : [], quantity)
+    // if autofilled
+    if(autofillSerials) {
+      // Replace empty strings with "Custom" to trigger custom mode on drop down
+      selectedSerials = selectedSerials.map((s: string)=>{
+        if(s=="")
+          return "Custom"
+        return s
+      })
+    }
   }
   // Push the new box to the sliders
   box_sliders.value.push({
@@ -246,7 +249,6 @@ function addBox() {
                 />
               </div>
             </div>
-
             <!-- Assign serials here -->
             <div v-else-if="info.serialized&&b.quantity>0" class="p-2">
               <div>

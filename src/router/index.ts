@@ -320,6 +320,14 @@ const routes = [
     component: () => import('../views/Admin/PartHistoryView.vue'),
   },
   {
+    path: '/manage/part/auditHistory',
+    name: 'Part Audit History',
+    meta: {
+      allowedRoles: ["view_analytics", "manage_parts"]
+    },
+    component: () => import('../views/Admin/AuditHistoryView.vue'),
+  },
+  {
     path: '/inventory',
     name: 'Inventory',
     meta: {

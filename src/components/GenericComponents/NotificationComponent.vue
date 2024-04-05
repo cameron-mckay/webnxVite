@@ -46,7 +46,7 @@ const NOTIFICATION_TIME = 5000
       </div>
       <div class="mx-4">
         <p class="text-2xl font-bold">{{ notification.type }}</p>
-        <p class="break-words">{{ notification.text }}</p>
+        <pre class="whitespace-pre-wrap break-words">{{ notification.text }}</pre>
       </div>
       <div
         class="ml-auto"

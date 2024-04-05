@@ -399,3 +399,17 @@ export interface BoxSchema {
   next_location?: string,
 }
 
+export interface AuditRecordSchema {
+    // NXID of the associated part
+    nxid: string,
+    building: number,
+    // Quantity in the kiosk
+    kiosk_quantities: Array<any>,
+    // All of the parts in the building?
+    total_quantity: number,
+    notes: string,
+    // ID of the user who's request created the part record
+    by: string,
+    // Date the part was created
+    date: Date,
+}

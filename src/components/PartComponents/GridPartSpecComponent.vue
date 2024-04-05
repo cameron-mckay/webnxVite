@@ -28,6 +28,12 @@ let url = import.meta.env.VITE_API_URL;
       >
         <a
           class="cursor-pointer text-sm my-auto mt-4 mr-2 rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none"
+          @click="$emit('loadAudit')"
+        >
+          Audit History
+        </a>
+        <a
+          class="cursor-pointer text-sm my-auto mt-4 mr-2 rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none"
           @click="$emit('loadHistory')"
         >
           Add/Remove History

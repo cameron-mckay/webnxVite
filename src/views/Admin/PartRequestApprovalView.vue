@@ -128,20 +128,26 @@ function submit(request_id: string, req: {nxid: string, kiosk_quantities: KioskQ
       // There should only be one of these per part of req
       if(kq.kiosk == "Box") {
         let boxArr = [] as InventoryEntry[]
+        console.log(boxes)
         // Loop through boxes
         for(let box of boxes) {
           // If already in map
           if(boxMap.has(box.box_tag))
             // Get it 
             boxArr = boxMap.get(box.box_tag)!
+          else
+            boxArr = []
+
+          let serials = box.serials.filter((v)=>v!=""&&v!="Custom")
+            .filter((v, i, arr)=>arr.indexOf(v)==i)
           // If quantity, push serials
           if(box.quantity>0)
-            kq.serials = kq.serials.concat(box.serials)
+            kq.serials = kq.serials.concat(serials)
           // Push to array
           boxArr.push({
             nxid: part.nxid,
-            unserialized: box.quantity,
-            serials: box.serials
+            unserialized: box.quantity > serials.length ? box.quantity - serials.length : 0,
+            serials
           })
           // Upate map
           boxMap.set(box.box_tag, boxArr)
@@ -154,11 +160,14 @@ function submit(request_id: string, req: {nxid: string, kiosk_quantities: KioskQ
         // Fetch existing array
         arr = locationsMap.get(kq.kiosk)!
       }
+      // Remove empty strings and dupes
+      let serials = kq.serials.filter((v)=>v!="")
+        .filter((v, i, arr)=>arr.indexOf(v)==i)
       // Push them as cart items
       arr.push({
         nxid: part.nxid,
-        unserialized: kq.quantity,
-        serials: kq.serials.filter((v)=>v!=""),
+        unserialized: kq.quantity > serials.length ? kq.quantity - serials.length : 0,
+        serials,
       })
       // Save the array to map
       locationsMap.set(kq.kiosk, arr)
@@ -204,7 +213,7 @@ function deny(req: PartRequestSchema, notes: string) {
       loadQueue()
     })
   else
-    fulfillPartRequest(http, req._id!, [], notes, false, (data, err)=>{
+    fulfillPartRequest(http, req._id!, [], [], notes, false, (data, err)=>{
       processing = false
       if(err)
         return errorHandler(err)
