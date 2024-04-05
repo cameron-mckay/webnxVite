@@ -13,6 +13,12 @@ export default defineConfig({
       // https://rollupjs.org/guide/en/#outputmanualchunks
       output: {
         manualChunks: {
+          depends: [
+            'axios',
+            'vuex',
+            'vue-router',
+            'vue-barcode-reader',
+          ],
           login: [
             './src/views/LoginView.vue',
             './src/views/RegisterView.vue',
