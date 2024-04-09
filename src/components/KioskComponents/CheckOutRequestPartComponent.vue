@@ -55,7 +55,8 @@ onMounted(async ()=>{
   // Filter out boxes
   quantities.value = quantities.value.filter((q)=>q.kiosk!="Box")
   // Push new box object
-  quantities.value.push({kiosk: "Box", max: maxQboxes, quantity: maxQboxes, serials: [], selectedSerials: []})
+  if(maxQboxes>0)
+    quantities.value.push({kiosk: "Box", max: maxQboxes, quantity: maxQboxes, serials: [], selectedSerials: []})
   // Call the slider update
   updateMainSliders()
   loaded.value = true

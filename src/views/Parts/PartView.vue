@@ -63,7 +63,9 @@ onBeforeMount(() => {
               e.record.nxid == record.nxid &&
               e.record.location == record.location &&
               e.record.owner == record.owner &&
-              e.record.asset_tag == record.asset_tag
+              e.record.asset_tag == record.asset_tag &&
+              e.record.pallet_tag == record.pallet_tag &&
+              e.record.box_tag == record.box_tag
           );
           // Increment if exists and continue
           if (existingGroup) {
@@ -104,7 +106,8 @@ function viewHistory(record: PartRecord, quantity: number) {
         location: record.location,
         building: record.building?.toString(),
         asset_tag: record.asset_tag,
-        pallet_tag: record.pallet_tag
+        pallet_tag: record.pallet_tag,
+        box_tag: record.box_tag
       },
     });
 }
