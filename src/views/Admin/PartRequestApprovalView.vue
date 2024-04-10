@@ -17,6 +17,7 @@ BoxQuantity
 } from '../../plugins/interfaces';
 import { getKioskQuantities, getActivePartRequests, fulfillPartRequest, getBuildKitByID, processBuildKitRequest } from '../../plugins/dbCommands/partManager';
 import Cacher from '../../plugins/Cacher';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -109,6 +110,8 @@ function loadQueue() {
       }
       // Page is loaded
       loading.value = false
+      // Defer
+      setTimeout(()=>replaceLinksWithAnchors(document,  "notes-with-links"),0)
     })
   })
 }

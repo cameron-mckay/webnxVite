@@ -22,6 +22,7 @@ CartItem,
 BoxSchema
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -56,6 +57,8 @@ onBeforeMount(() => {
       }
       pallet.value = res as PalletSchema;
       palletLoading.value = false
+      // Defer
+      setTimeout(()=>replaceLinksWithAnchors(document, "notes-with-links"),0)
       getPartsOnPallet(http, pallet.value.pallet_tag!, async (res, err) => {
         if (err) {
           errorHandler(err);
@@ -141,7 +144,7 @@ function viewAsset(asset: AssetSchema) {
         </p>
         <div class="col-span-2 my-4" v-if="pallet.notes">
           <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
-          <pre class="whitespace-pre-wrap">{{ pallet.notes }}</pre>
+          <pre class="whitespace-pre-wrap notes-with-links">{{ pallet.notes }}</pre>
         </div>
       </div>
     </div>

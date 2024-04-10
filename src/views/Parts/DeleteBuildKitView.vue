@@ -7,17 +7,17 @@ import PageHeaderWithBackButton from '../../components/GenericComponents/PageHea
 import type {
   BuildKitSchema,
   CartItem,
-  InventoryEntry,
   KioskQuantity,
   LoadedCartItem,
   User,
   UserState,
 } from '../../plugins/interfaces';
 import Inventory from '../../plugins/InventoryClass';
-import { createBuildKit, deleteBuildKit, getBuildKitByID } from '../../plugins/dbCommands/partManager';
+import { deleteBuildKit, getBuildKitByID } from '../../plugins/dbCommands/partManager';
 import Cacher from '../../plugins/Cacher';
 import BuildKitPartComponent from '../../components/AdminComponents/BuildKitPartComponent.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -31,7 +31,6 @@ const { http, router, store, errorHandler, displayMessage } =
   defineProps<Props>();
 
 let processingSubmission = false
-let inventory = new Inventory(store.state.user)
 let quantityMap = new Map<string, KioskQuantity[]>()
 let serialMap = new Map<string, string[]>()
 // FUCK YOU IM NOT NAMING THIS
@@ -74,79 +73,10 @@ onBeforeMount(async () => {
         }
       }
       loading.value = false
+      setTimeout(()=>replaceLinksWithAnchors(document, "notes-with-links"),0)
     })
   }
 });
-
-function submit(kit: BuildKitSchema) {
-  // Check if already processing
-  if(processingSubmission)
-    return
-  // Set flag
-  processingSubmission = true
-  // Create flag for errors
-  let error = false
-  let locationsMap = new Map<string, InventoryEntry[]>()
-  // Map inventory to a usable list
-  inventory.getDestInv().map((p)=>{
-    // Get serials array
-    let allSerials = (serialMap.has(p.part.nxid!) ? serialMap.get(p.part.nxid!) : [])?.filter((s)=>s!="")!
-    // Get quantities array
-    let quantities = (quantityMap.has(p.part.nxid!) ? quantityMap.get(p.part.nxid!)! : []).filter((q)=>q.quantity>0)
-    // Index of the serial array
-    let i = 0
-    // Loop through all the kiosk quantities
-    for(let kq of quantities) {
-      if(kq.kiosk=="Unsorted") {
-        error = true
-        errorHandler(p.part.nxid + " has unsorted parts.")
-      }
-      // Array for the cart items
-      let arr = [] as InventoryEntry[]
-      // If the map already has location
-      if(locationsMap.has(kq.kiosk)) {
-        // Fetch existing array
-        arr = locationsMap.get(kq.kiosk)!
-      }
-      // Number of parts pushed to array
-      let q = 0
-      let serials = [] as string []
-      // If the serial index is still less than the length
-      if(i<allSerials.length) {
-        // While index less than serial length and quantity is less than total
-        while(i<allSerials.length&&q<kq.quantity) {
-          // Push serial at index
-          serials.push(allSerials[i])
-          // Increment vars
-          i++
-          q++
-        }
-      }
-      // Push them as cart items
-      arr.push({nxid: p.part.nxid, unserialized: kq.quantity, serials: [], newSerials: serials})
-      // Save the array to map
-      locationsMap.set(kq.kiosk, arr)
-    }
-  })
-  // Unsorted parts - cancel submission
-  if(error) {
-    processingSubmission = false
-    return
-  }
-  // Create final request array
-  let finalReq = [] as any[]
-  // Convert map entries to object
-  locationsMap.forEach((v, k) => {
-    finalReq.push({kiosk: k, parts: v})
-  })
-  // Send to API here
-  createBuildKit(http, kit.kit_name, finalReq, kit.kiosk, kit.notes, (data, err) => {
-    processingSubmission = false
-    if(err)
-      return errorHandler(err)
-    displayMessage(data as string)
-  })
-}
 
 function updateSliders(nxid: string, quantities: KioskQuantity[], serials: string[]) {
   quantityMap.set(nxid, quantities)
@@ -235,7 +165,7 @@ function deleteKit() {
       <p class="detail-data ml-2">{{ buildKit.kiosk }}</p>
     </div>
       <h1 class="my-4 text-xl font-bold">Notes:</h1>
-      <p>{{ buildKit.notes }}</p>
+      <pre class="whitespace-pre-wrap notes-with-links">{{ buildKit.notes }}</pre>
     <div>
       <div
         class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-5 md:leading-10"
