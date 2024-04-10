@@ -13,6 +13,7 @@ import TextSearchComponent from '../../components/GenericComponents/Search/TextS
 import TextSearch from '../../plugins/TextSearchClass';
 import { getBoxesByData, getBoxesByTextSearch } from '../../plugins/dbCommands/boxManager';
 import BoxComponent from '../../components/BoxComponents/BoxComponent.vue';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -89,6 +90,7 @@ function viewBox(box: BoxSchema) {
 
 function displayResults(page: BoxSchema[]) {
   boxes.value = page
+  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
 
 </script>

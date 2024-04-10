@@ -31,6 +31,7 @@ import type {
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
 import TextSearch from '../../plugins/TextSearchClass';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -113,6 +114,7 @@ async function advancedSearchButtonPressed(part: PartSchema) {
 
 function displayResults(page: PartSchema[]) {
   parts.value = page
+  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
 
 // Wait for store to init

@@ -13,6 +13,7 @@ import PalletComponent from '../../components/PalletComponents/PalletComponent.v
 import TextSearchComponent from '../../components/GenericComponents/Search/TextSearchComponent.vue';
 import TextSearch from '../../plugins/TextSearchClass';
 import { getPalletsByData, getPalletsByTextSearch } from '../../plugins/dbCommands/palletManager';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -89,6 +90,7 @@ function viewPallet(pallet: PalletSchema) {
 
 function displayResults(page: PalletSchema[]) {
   pallets.value = page
+  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
 
 </script>

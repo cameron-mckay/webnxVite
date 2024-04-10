@@ -11,6 +11,7 @@ import TextSearchComponent from '../../components/GenericComponents/Search/TextS
 import TextSearch from '../../plugins/TextSearchClass';
 import PageHeaderComponent from '../../components/GenericComponents/PageHeaderComponent.vue';
 import PartComponent from '../../components/PartComponents/PartComponent.vue';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -73,6 +74,7 @@ async function advancedSearchButtonPressed(part: PartSchema) {
 
 function displayResults(page: PartSchema[]) {
   parts.value = page
+  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
 
 function viewPart(part: PartSchema) {
