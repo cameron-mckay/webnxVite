@@ -62,7 +62,7 @@ onBeforeMount(async ()=>{
     <div class="col-span-2 my-4" v-if="kit">
       <p><span class="font-bold">Kit Name:</span> {{kit.kit_name}}</p>
       <p><span class="font-bold">Kiosk:</span> {{kiosk.first_name}} {{kiosk.last_name}}</p>
-      <p><span class="font-bold">Kit Notes:</span> {{kit.notes}}</p>
+      <pre class="notes-with-links whitespace-pre-wrap"><span class="font-bold">Kit Notes:</span> {{kit.notes}}</pre>
     </div>
     <div class="my-4" v-if="request.tech_notes">
       <h1 class="mb-4 text-4xl">Tech Notes:</h1>

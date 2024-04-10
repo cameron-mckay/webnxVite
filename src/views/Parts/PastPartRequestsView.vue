@@ -18,6 +18,7 @@ BuildKitSchema,
 import { getBuildKitByID, getFulfilledPartRequests } from '../../plugins/dbCommands/partManager';
 import Cacher from '../../plugins/Cacher';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -100,6 +101,7 @@ async function displayResults(page: PartRequestSchema[])
   }
   requests.value = page
   resultsLoading.value = false
+  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
 
 function showLoader() {

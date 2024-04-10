@@ -14,6 +14,7 @@ BuildKitSchema,
 } from '../../plugins/interfaces';
 import { getActivePartRequests, cancelPartRequest, getBuildKitByID } from '../../plugins/dbCommands/partManager';
 import Cacher from '../../plugins/Cacher';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -68,6 +69,7 @@ function loadQueue() {
       }))
     }
     loading.value = false
+    setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
   }, store.state.user._id)
 }
 

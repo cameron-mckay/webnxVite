@@ -75,7 +75,7 @@ const { asset, edit, add, view } = defineProps<Props>();
         <p v-if="asset.date_replaced">Date removed: {{ new Date(Date.parse(asset.date_replaced!)).toLocaleString() }}</p>
         <div class="my-4" v-if="asset.notes">
           <h1 class="mb-2 text-2xl">Notes:</h1>
-          <pre class="whitespace-pre-wrap">{{ asset.notes }}</pre>
+          <pre class="whitespace-pre-wrap notes-with-links">{{ asset.notes }}</pre>
         </div>
     </div>
   </div>

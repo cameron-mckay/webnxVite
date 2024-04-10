@@ -73,6 +73,7 @@ async function displayResults(page: AssetEvent[])
   }
   assetEvents.value = page
   resultsLoading.value = false
+  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
 
 function showLoader() {

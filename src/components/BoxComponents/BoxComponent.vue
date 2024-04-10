@@ -57,7 +57,7 @@ const { box, edit, add, view } = defineProps<Props>();
           new Date(box.date_created).toLocaleString()
         }}
       </p>
-      <pre class="font-extrabold" v-if="box.notes">Notes:<br><span class="font-normal">{{ box.notes }}</span></pre>
+      <pre class="font-extrabold notes-with-links whitespace-pre-wrap" v-if="box.notes">Notes:<br><span class="font-normal">{{ box.notes }}</span></pre>
     </div>
   </div>
 </template>

@@ -57,8 +57,6 @@ onBeforeMount(() => {
       }
       pallet.value = res as PalletSchema;
       palletLoading.value = false
-      // Defer
-      setTimeout(()=>replaceLinksWithAnchors(document, "notes-with-links"),0)
       getPartsOnPallet(http, pallet.value.pallet_tag!, async (res, err) => {
         if (err) {
           errorHandler(err);
@@ -89,6 +87,7 @@ onBeforeMount(() => {
         parts.value = sortedList
         assets.value = res2.assets as AssetSchema[]
         partsLoading.value = false
+        setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
       });
     });
   }

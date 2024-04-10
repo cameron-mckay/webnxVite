@@ -18,6 +18,7 @@ import {
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import Cacher from '../../plugins/Cacher';
 import { getPartAuditHistory } from '../../plugins/dbCommands/partManager';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -67,6 +68,7 @@ async function displayResults(page: AuditRecordSchema[])
   // Load all the required info into the caches
   auditHistory.value = page as AuditRecordSchema[]
   resultsLoading.value = false
+  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
 
 function showLoader() {
