@@ -4,6 +4,9 @@ import { User } from '../../plugins/interfaces';
 import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
 
 interface Props {
+  title: string;
+  submitText: string;
+  passwordRequired: boolean;
   user: User;
 }
 const emit = defineEmits(['update']);
@@ -47,6 +50,8 @@ let user: Ref<User> = ref({});
 user.value = props.user;
 
 function toggleRole(role: string) {
+  if(!user.value.roles)
+    user.value.roles = []
   if(user.value.roles?.includes(role)) {
     return user.value.roles.splice(user.value.roles.indexOf(role), 1)
   }
@@ -61,7 +66,7 @@ function submit() {
 </script>
 <template>
   <FullScreenPopupComponent>
-    <h1 class="mb-4 text-4xl leading-8 md:leading-10">Edit User:</h1>
+    <h1 class="mb-4 text-4xl leading-8 md:leading-10">{{props.title}}</h1>
     <form @submit.prevent="submit" class="grid grid-cols-2">
       <label>Email:</label>
       <input class="textbox my-1" type="email" v-model="user.email" />
@@ -87,12 +92,20 @@ function submit() {
         <option :value="true">Yes</option>
         <option :value="false">No</option>
       </select>
+      <label>Password:</label>
+      <input
+        class="textbox my-1"
+        type="password"
+        v-model="user.password"
+        :required="props.passwordRequired"
+        :placeholder="props.passwordRequired == true ? 'Password' : 'Leave blank for unchanged...'"
+      />
       <input
         class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
         type="reset"
         value="Reset"
       />
-      <input class="submit col-span-2" type="submit" value="Update" />
+      <input class="submit col-span-2" type="submit" :value="props.submitText" />
     </form>
   </FullScreenPopupComponent>
 </template>

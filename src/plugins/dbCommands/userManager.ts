@@ -119,6 +119,23 @@ export function updateUser(
     });
 }
 
+export function createUser(
+  http: AxiosInstance,
+  user: User,
+  callback: apiResponse
+) {
+  http
+    .post('/api/user', { user })
+    .then((res: AxiosResponse) => {
+      // Success - send response to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
 /**
  * @brief Get inventory of current user
  *

@@ -200,6 +200,7 @@ export interface User {
   _v?: number;
   _id?: string;
   default?: boolean;
+  password?: string;
 }
 
 export type AssetHistory = AssetEvent[];

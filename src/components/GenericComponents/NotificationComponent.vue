@@ -64,7 +64,7 @@ const NOTIFICATION_TIME = 5000
           {{ notification.quantity }}
         </p>
         <p
-          class="text-center w-full hover-color rounded-md mt-1 p-1"
+          class="text-center w-full hover-color rounded-md mt-1 p-1 whitespace-nowrap"
           v-if="notification.date"
         >
           {{ new Date(Date.parse(notification.date!.toString())).toLocaleString() }}
