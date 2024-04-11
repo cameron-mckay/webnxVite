@@ -186,6 +186,7 @@ onMounted(() => {
           />
         </del>
       </div>
+      <div class="hidden md:block md:col-span1 md:h-full"></div>
       <div class="col-span-2"
           v-if="existingBoxes.length > 0 || addedBoxes.length > 0 || removedBoxes.length > 0"
       >

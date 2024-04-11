@@ -340,6 +340,7 @@ export interface PartRequestSchema {
   date_fulfilled?: Date,
   fulfilled_by?: string,
   fulfilled_list?: {kiosk: string, parts: InventoryEntry[]}[]
+  boxes?: {box_tag: string, parts: CartItem[]}[]
   build_kit_id?: string,
   cancelled?: boolean,
   tech_notes?: string,

@@ -111,7 +111,7 @@ function toggleEdit(ass: AssetSchema) {
 
 function viewAsset(ass: AssetSchema) {
   router.push({ name: 'View Asset', query: { asset_tag: ass.asset_tag } }).then(()=>{
-    reload();
+    setTimeout(reload,50);
   });
 }
 
