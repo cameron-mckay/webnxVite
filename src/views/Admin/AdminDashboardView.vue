@@ -74,6 +74,13 @@ let {store} = defineProps<Props>()
         >
           Ebay Sales History
         </RouterLink>
+        <RouterLink
+          to="/clerk/parts/merge"
+          class="manager-button"
+          v-if="store.state.user.roles?.includes('manage_parts')"
+        >
+          Merge Parts
+        </RouterLink>
       </div>
     </div>
     <div>

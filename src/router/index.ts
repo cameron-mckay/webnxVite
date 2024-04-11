@@ -128,6 +128,14 @@ const routes = [
     component: () => import('../views/Admin/AdminPartSearchView.vue'),
   },
   {
+    path: '/clerk/parts/merge',
+    name: 'Merge Parts',
+    meta: {
+      allowedRoles: ["manage_parts"]
+    },
+    component: () => import('../views/Admin/MergePartsView.vue'),
+  },
+  {
     path: '/ebay/sell',
     name: 'Sell On eBay',
     meta: {
