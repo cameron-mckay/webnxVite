@@ -65,6 +65,7 @@ export default defineConfig({
             './src/views/Admin/AdminUserView.vue',
             './src/views/Admin/CreatePartView.vue',
             './src/views/Admin/EbaySaleHistoryView.vue',
+            './src/views/Admin/MergePartsView.vue',
             './src/views/Parts/SellOnEbay.vue',
             './src/views/Parts/CreateBuildKitView.vue',
             './src/views/Parts/DeleteBuildKitView.vue',
