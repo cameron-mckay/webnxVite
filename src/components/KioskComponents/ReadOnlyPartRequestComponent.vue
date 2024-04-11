@@ -52,7 +52,7 @@ onBeforeMount(async ()=>{
         res({kiosk: p.kiosk, parts})
       })
     }))
-    boxParts.value = await Promise.all(request.boxes.map((box) => {
+    boxParts.value = await Promise.all((request.boxes ? request.boxes : []).map((box) => {
       return new Promise<{box_tag: string, parts: LoadedCartItem[]}>(async (res)=>{
         let parts = await Cacher.loadCartItems(box.parts)
         res({box_tag: box.box_tag, parts})
