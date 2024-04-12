@@ -163,6 +163,30 @@ let {store} = defineProps<Props>()
         </RouterLink>
       </div>
     </div>
+    <div>
+      <h1
+        class="mt-4 text-xl ml-2"
+        v-if="store.state.user.roles?.includes('view_analytics')"
+      >
+        Boxes
+      </h1>
+      <div class="grid grid-cols-2 md:grid-cols-3">
+        <RouterLink
+          v-if="store.state.user.roles?.includes('view_analytics')"
+          to="/manage/user/boxesUpdated"
+          class="manager-button"
+        >
+          Box Update History
+        </RouterLink>
+        <RouterLink
+          v-if="store.state.user.roles?.includes('view_analytics')"
+          to="/manage/user/newBoxes"
+          class="manager-button"
+        >
+          New Box History
+        </RouterLink>
+      </div>
+    </div>
     <div v-if="store.state.user.roles?.includes('debug')">
       <h1
         class="mt-4 text-xl ml-2"

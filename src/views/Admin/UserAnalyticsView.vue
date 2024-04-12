@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
-import { getAllUsers, getCheckinHistory, getCheckoutHistory, getAssetUpdatesNoDetails, getNewAssetsNoDetails, getNewPalletsNoDetails, getPalletUpdatesNoDetails } from '../../plugins/dbCommands/userManager';
+import { getAllUsers, getCheckinHistory, getCheckoutHistory, getAssetUpdatesNoDetails, getNewAssetsNoDetails, getNewPalletsNoDetails, getPalletUpdatesNoDetails, getNewBoxesNoDetails, getBoxUpdatesNoDetails } from '../../plugins/dbCommands/userManager';
 import { User } from '../../plugins/interfaces';
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
@@ -10,7 +10,6 @@ import UserAnalyticsComponent from '../../components/AdminComponents/UserAnalyti
 import DateRangeComponent from '../../components/GenericComponents/DateRangeComponent.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue';
-import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
 import { getTodaysDate, getLastMonth } from '../../plugins/dateFunctions';
 interface Props {
   http: AxiosInstance;
@@ -29,6 +28,8 @@ let newAssets = new Map<string, number>()
 let assetsUpdated = new Map<string, number>()
 let newPallets = new Map<string, number>()
 let palletsUpdated = new Map<string, number>()
+let newBoxes = new Map<string, number>()
+let boxesUpdated = new Map<string, number>()
 let startDateCache = getLastMonth();
 let endDateCache = getTodaysDate();
 let loading = ref(false);
@@ -111,7 +112,29 @@ function getUsers(startDate: Date, endDate: Date) {
               res("")
             },[u._id!])
           })
-        }))
+        })),
+        Promise.all(temp.map((u)=>{
+          return new Promise<string>((res, rej)=>{
+            getBoxUpdatesNoDetails(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
+              if(err)
+                return rej("")
+              let response = data as any
+              boxesUpdated.set(u._id!, response.total)
+              res("")
+            },[u._id!])
+          })
+        })),
+        Promise.all(temp.map((u)=>{
+          return new Promise<string>((res, rej)=>{
+            getNewBoxesNoDetails(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
+              if(err)
+                return rej("")
+              let response = data as any
+              newBoxes.set(u._id!, response.total)
+              res("")
+            },[u._id!])
+          })
+        })),
       ]
     )
     users.value = temp;
@@ -188,6 +211,28 @@ function openPalletsUpdated(user_id: string) {
     }
   })
 }
+
+function openNewBoxes(user_id: string) {
+  router.push({
+    name: 'New Box History',
+    query: {
+      startDate: startDateCache.getTime(),
+      endDate: endDateCache.getTime(),
+      users: [user_id] as string[]
+    }
+  })
+}
+
+function openBoxesUpdated(user_id: string) {
+  router.push({
+    name: 'Box Update History',
+    query: {
+      startDate: startDateCache.getTime(),
+      endDate: endDateCache.getTime(),
+      users: [user_id] as string[]
+    }
+  })
+}
 </script>
 <template>
   <div>
@@ -206,12 +251,16 @@ function openPalletsUpdated(user_id: string) {
         :newAssets="newAssets.get(user._id!)!"
         :palletsUpdated="palletsUpdated.get(user._id!)!"
         :newPallets="newPallets.get(user._id!)!"
+        :boxes-updated="boxesUpdated.get(user._id!)!"
+        :new-boxes="newBoxes.get(user._id!)!"
         @checkouts="openCheckouts(user._id!)"
         @checkins="openCheckins(user._id!)"
         @assetsUpdated="openAssetsUpdated(user._id!)"
         @newAssets="openNewAssets(user._id!)"
         @palletsUpdated="openPalletsUpdated(user._id!)"
         @newPallets="openNewPallets(user._id!)"
+        @boxesUpdated="openBoxesUpdated(user._id!)"
+        @newBoxes="openNewBoxes(user._id!)"
       />
     </div>
   </div>

@@ -320,6 +320,22 @@ const routes = [
     component: () => import('../views/Admin/PalletUpdateHistoryView.vue'),
   },
   {
+    path: '/manage/user/newBoxes',
+    name: 'New Box History',
+    meta: {
+      allowedRoles: ["view_analytics"]
+    },
+    component: () => import('../views/Admin/NewBoxHistoryView.vue'),
+  },
+  {
+    path: '/manage/user/boxesUpdated',
+    name: 'Box Update History',
+    meta: {
+      allowedRoles: ["view_analytics"]
+    },
+    component: () => import('../views/Admin/BoxUpdateHistoryView.vue'),
+  },
+  {
     path: '/manage/part/history',
     name: 'Part Action History',
     meta: {

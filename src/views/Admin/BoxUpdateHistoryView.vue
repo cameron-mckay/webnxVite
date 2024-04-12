@@ -4,17 +4,17 @@ import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
-import PalletEventComponent from '../../components/PalletComponents/PalletEventComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
-import { getPalletUpdates } from '../../plugins/dbCommands/userManager';
+import { getBoxUpdates, getNewBoxes } from '../../plugins/dbCommands/userManager';
 import {
   AnalyticsSearchPage,
-  PalletEvent,
+  BoxEvent,
   UserState,
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import Cacher from '../../plugins/Cacher';
+import BoxEventComponent from '../../components/BoxComponents/BoxEventComponent.vue';
 import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
@@ -27,18 +27,18 @@ interface Props {
 
 let loaded = ref(false)
 let resultsLoading = ref(false)
-let palletEvents = ref([] as PalletEvent[])
+let boxEvents = ref([] as BoxEvent[])
 
 const { http, router } =
   defineProps<Props>();
-let analyticsSearchObject:AnalyticsSearch<PalletEvent>;
+let analyticsSearchObject:AnalyticsSearch<BoxEvent>;
 
 
 onBeforeMount(async ()=>{
   analyticsSearchObject = new AnalyticsSearch(
-    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts, palletFilters)=>{
+    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts, box_tags)=>{
       return new Promise<AnalyticsSearchPage>((res, rej)=>{
-        getPalletUpdates(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
+        getBoxUpdates(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
           if(err)
             return res({total: 0, pages: 0, events: []})
           let p = data as AnalyticsSearchPage
@@ -47,7 +47,7 @@ onBeforeMount(async ()=>{
         userFilters,
         partFilters,
         hideOtherParts,
-        palletFilters
+        box_tags
         )
       })
     }
@@ -55,7 +55,7 @@ onBeforeMount(async ()=>{
   loaded.value = true
 })
 
-async function displayResults(page: PalletEvent[])
+async function displayResults(page: BoxEvent[])
 {
   // Load all the required info into the caches
   for(let e of page) {
@@ -70,28 +70,10 @@ async function displayResults(page: PalletEvent[])
       Promise.all(e.existingParts.map((p)=>{
         return Cacher.getPartInfo(p)
       })),
-      Promise.all(e.addedAssets.map((p)=>{
-        return Cacher.getAsset(p)
-      })),
-      Promise.all(e.removedAssets.map((p)=>{
-        return Cacher.getAsset(p)
-      })),
-      Promise.all(e.existingAssets.map((p)=>{
-        return Cacher.getAsset(p)
-      })),
-      Promise.all(e.addedBoxes.map((p)=>{
-        return Cacher.getBox(p)
-      })),
-      Promise.all(e.removedBoxes.map((p)=>{
-        return Cacher.getBox(p)
-      })),
-      Promise.all(e.existingBoxes.map((p)=>{
-        return Cacher.getBox(p)
-      }))
     ])
-    await Cacher.getPallet(e.pallet_id)
+    await Cacher.getBox(e.box_id)
   }
-  palletEvents.value = page
+  boxEvents.value = page
   resultsLoading.value = false
   setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
@@ -104,7 +86,7 @@ function showLoader() {
 <template>
   <div>
     <PageHeaderWithBackButton :prev-path="'/manage'" :router="router">
-      Pallet Update History
+      Box Update History
     </PageHeaderWithBackButton>
     <LoaderComponent v-if="!loaded"/>
     <AnalyticsSearchComponent v-else 
@@ -115,14 +97,13 @@ function showLoader() {
       @displayResults="displayResults"
       @showLoader="showLoader"
     >
-      <PalletEventComponent
-        :assets="Cacher.getAssetCache()"
-        :user="Cacher.getUser(event.by)!"
-        :parts="Cacher.getPartCache()"
-        :pallets="Cacher.getPalletCache()"
+      <BoxEventComponent
         :boxes="Cacher.getBoxCache()"
+        :assets="Cacher.getAssetCache()"
+        :parts="Cacher.getPartCache()"
+        :user="Cacher.getUser(event.by)"
         :event="event"
-        v-for="event in palletEvents"
+        v-for="event in boxEvents"
       />
     </AnalyticsSearchComponent>
   </div>

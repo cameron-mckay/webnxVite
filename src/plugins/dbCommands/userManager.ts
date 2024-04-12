@@ -574,6 +574,7 @@ export function getPalletUpdates(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
+  pallet_tags?: string[]
 ) {
   // Send request to API
   http
@@ -585,7 +586,8 @@ export function getPalletUpdates(
       pageNum,
       pageSize,
       nxids,
-      hideOthers
+      hideOthers,
+      pallet_tags
     }
   })
     .then((res: AxiosResponse) => {
@@ -652,6 +654,146 @@ export function getEbayHistory(
       pageNum,
       pageSize,
       users,
+      nxids,
+      hideOthers
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getBoxUpdates(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
+  box_tags?: string[]
+) {
+  // Send request to API
+  http
+    .get('/api/history/boxesUpdated', {
+    params: {
+      users,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize,
+      nxids,
+      hideOthers,
+      box_tags
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getBoxUpdatesNoDetails(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
+  box_tags?: string[]
+) {
+  // Send request to API
+  http
+    .get('/api/history/boxesUpdated/noDetails', {
+    params: {
+      users,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize,
+      nxids,
+      hideOthers,
+      box_tags
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getNewBoxes(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
+) {
+  // Send request to API
+  http
+    .get('/api/history/newBoxes', {
+    params: {
+      users,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize,
+      nxids,
+      hideOthers
+    }
+  })
+    .then((res: AxiosResponse) => {
+      // Success - send response data to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getNewBoxesNoDetails(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+  nxids?: string[],
+  hideOthers?: boolean,
+) {
+  // Send request to API
+  http
+    .get('/api/history/newBoxes/noDetails', {
+    params: {
+      users,
+      startDate,
+      endDate,
+      pageNum,
+      pageSize,
       nxids,
       hideOthers
     }

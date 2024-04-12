@@ -1,5 +1,5 @@
 import { Router } from "vue-router"
-import { User, PartSchema, loadPageCallback, AssetSchema } from "./interfaces"
+import { User, PartSchema, loadPageCallback, AssetSchema, BoxSchema, PalletSchema } from "./interfaces"
 import { getLastMonth, getTodaysDate } from "./dateFunctions"
 import Cacher from "./Cacher"
 
@@ -13,6 +13,8 @@ export default class AnalyticsSearch<Type> {
   private lastUserFilters: string[]
   private lastPartFilters: string[]
   private lastAssetFilters: string[]
+  private lastPalletFilters: string[]
+  private lastBoxFilters: string[]
   private lastHideOtherParts: boolean
   // Store dates from last search
   private lastStartDate: number
@@ -33,6 +35,8 @@ export default class AnalyticsSearch<Type> {
     this.lastUserFilters = []
     this.lastPartFilters = []
     this.lastAssetFilters = []
+    this.lastPalletFilters = []
+    this.lastBoxFilters = []
     this.lastStartDate = -1
     this.lastEndDate = -1
     this.lastHideOtherParts = false
@@ -50,6 +54,12 @@ export default class AnalyticsSearch<Type> {
   
   static getAssetFiltersFromRouter(router: Router) {
     return router.currentRoute.value.query.assets ? (Array.isArray(router.currentRoute.value.query.assets) ? router.currentRoute.value.query.assets : [router.currentRoute.value.query.assets]) : []
+  }
+  static getPalletFiltersFromRouter(router: Router) {
+    return router.currentRoute.value.query.pallets ? (Array.isArray(router.currentRoute.value.query.pallets) ? router.currentRoute.value.query.pallets : [router.currentRoute.value.query.pallets]) : []
+  }
+  static getBoxFiltersFromRouter(router: Router) {
+    return router.currentRoute.value.query.boxes ? (Array.isArray(router.currentRoute.value.query.boxes) ? router.currentRoute.value.query.boxes : [router.currentRoute.value.query.boxes]) : []
   }
   getPartFilterMapFromRouter() {
     return new Promise<Map<string, PartSchema>>(async (res)=>{
@@ -70,7 +80,7 @@ export default class AnalyticsSearch<Type> {
   }
 
   getAssetFilterMapFromRouter() {
-    return new Promise<Map<string, PartSchema>>(async (res)=>{
+    return new Promise<Map<string, AssetSchema>>(async (res)=>{
       // Get nxids from router
       let asset_tags = AnalyticsSearch.getAssetFiltersFromRouter(this.router) as string[]
       // Get info array from this object, will use cache or save newly loaded parts to cache
@@ -80,10 +90,46 @@ export default class AnalyticsSearch<Type> {
       // Loop through loaded parts
       for (let p of infoArray) {
         // Add to map
-        assetFilterMap.set(p.nxid!, p)
+        assetFilterMap.set(p.asset_tag!, p)
       }
       // Resolve promse
       res(assetFilterMap)
+    })
+  }
+
+  getPalletFilterMapFromRouter() {
+    return new Promise<Map<string, PalletSchema>>(async (res)=>{
+      // Get nxids from router
+      let pallet_tags = AnalyticsSearch.getPalletFiltersFromRouter(this.router) as string[]
+      // Get info array from this object, will use cache or save newly loaded parts to cache
+      let infoArray = await Promise.all(pallet_tags.map((p)=>Cacher.getPallet(p)))
+      // Create a map
+      let palletFilterMap = new Map<string, PalletSchema>()
+      // Loop through loaded parts
+      for (let p of infoArray) {
+        // Add to map
+        palletFilterMap.set(p.pallet_tag!, p)
+      }
+      // Resolve promse
+      res(palletFilterMap)
+    })
+  }
+
+  getBoxFilterMapFromRouter() {
+    return new Promise<Map<string, BoxSchema>>(async (res)=>{
+      // Get nxids from router
+      let box_tags = AnalyticsSearch.getBoxFiltersFromRouter(this.router) as string[]
+      // Get info array from this object, will use cache or save newly loaded parts to cache
+      let infoArray = await Promise.all(box_tags.map((b)=>Cacher.getBox(b)))
+      // Create a map
+      let boxFilterMap = new Map<string, BoxSchema>()
+      // Loop through loaded parts
+      for (let p of infoArray) {
+        // Add to map
+        boxFilterMap.set(p.box_tag!, p)
+      }
+      // Resolve promse
+      res(boxFilterMap)
     })
   }
 
@@ -167,7 +213,7 @@ export default class AnalyticsSearch<Type> {
         // Set temp value
         this.pageCache.set(localPage, []);
         // Get page from api
-        this.loadPageCallback(localPage, new Date(this.lastStartDate), new Date(this.lastEndDate), this.lastUserFilters, this.lastPartFilters, this.lastHideOtherParts)
+        this.loadPageCallback(localPage, new Date(this.lastStartDate), new Date(this.lastEndDate), this.lastUserFilters, this.lastPartFilters, this.lastHideOtherParts, this.lastPalletFilters, this.lastBoxFilters)
           .then((page) => {
             // Set new value
             this.numPages = page.pages
@@ -184,21 +230,23 @@ export default class AnalyticsSearch<Type> {
     }
   }
 
-  hasPage(pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean, assetFilters?: string[]) {
+  hasPage(pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean, assetFilters?: string[], palletFilters?: string[], boxFilters?: string[]) {
       if(
         startDate.getTime()!=this.lastStartDate||
         endDate.getTime()!=this.lastEndDate ||
         (userFilters?JSON.stringify(userFilters):JSON.stringify([]))!=JSON.stringify(this.lastUserFilters) ||
         (partFilters?JSON.stringify(partFilters):JSON.stringify([]))!=JSON.stringify(this.lastPartFilters) ||
         (assetFilters?JSON.stringify(assetFilters):JSON.stringify([]))!=JSON.stringify(this.lastAssetFilters) ||
-        hideOtherParts != this.lastHideOtherParts
+        hideOtherParts != this.lastHideOtherParts ||
+        (palletFilters?JSON.stringify(palletFilters):JSON.stringify([]))!=JSON.stringify(this.lastPalletFilters) ||
+        (boxFilters?JSON.stringify(boxFilters):JSON.stringify([]))!=JSON.stringify(this.lastBoxFilters)
       ) {
         return false
       }
       return this.pageCache.has(pageNum)
   }
 
-  async loadPage(pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean, assetFilters?: string[]) {
+  async loadPage(pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean, assetFilters?: string[], palletFilters?: string[], boxFilters?: string[]) {
     return new Promise<Type[]>(async (res)=>{
       let searchParamChanged = false
       // Check for change in search params
@@ -208,7 +256,9 @@ export default class AnalyticsSearch<Type> {
         (userFilters?JSON.stringify(userFilters):JSON.stringify([]))!=JSON.stringify(this.lastUserFilters) ||
         (partFilters?JSON.stringify(partFilters):JSON.stringify([]))!=JSON.stringify(this.lastPartFilters) ||
         (assetFilters?JSON.stringify(assetFilters):JSON.stringify([]))!=JSON.stringify(this.lastAssetFilters) ||
-        hideOtherParts != this.lastHideOtherParts
+        hideOtherParts != this.lastHideOtherParts ||
+        (palletFilters?JSON.stringify(palletFilters):JSON.stringify([]))!=JSON.stringify(this.lastPalletFilters) ||
+        (boxFilters?JSON.stringify(boxFilters):JSON.stringify([]))!=JSON.stringify(this.lastBoxFilters)
       ) {
         // Clear the page cache
         this.pageCache.clear()
@@ -222,6 +272,8 @@ export default class AnalyticsSearch<Type> {
       this.lastPartFilters = partFilters ? JSON.parse(JSON.stringify(partFilters)) : []
       this.lastAssetFilters = assetFilters ? JSON.parse(JSON.stringify(assetFilters)) : []
       this.lastHideOtherParts = hideOtherParts == true ? true : false
+      this.lastPalletFilters = partFilters ? JSON.parse(JSON.stringify(palletFilters)) : []
+      this.lastBoxFilters = assetFilters ? JSON.parse(JSON.stringify(boxFilters)) : []
       // Local variable for fetching page
       let thisPage = [] as Type[]
       // Update the router
@@ -233,7 +285,9 @@ export default class AnalyticsSearch<Type> {
           users: userFilters,
           parts: partFilters,
           hideOtherParts: this.lastHideOtherParts ? "true" : "false",
-          assets: assetFilters
+          assets: assetFilters,
+          pallets: palletFilters,
+          boxes: boxFilters
         }
       });
       // Early return if the request doesn't make sense
@@ -243,7 +297,7 @@ export default class AnalyticsSearch<Type> {
       // If the cache doesn't have the page
       if(!this.pageCache.has(pageNum)) {
         // Load page from callback
-        let page = await this.loadPageCallback(pageNum, startDate, endDate, this.lastUserFilters, this.lastPartFilters, this.lastHideOtherParts, this.lastAssetFilters)
+        let page = await this.loadPageCallback(pageNum, startDate, endDate, this.lastUserFilters, this.lastPartFilters, this.lastHideOtherParts, this.lastAssetFilters, this.lastPalletFilters, this.lastBoxFilters)
         // Update local info
         this.numPages = page.pages
         this.numItems = page.total
