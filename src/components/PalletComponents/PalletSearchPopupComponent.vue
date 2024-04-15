@@ -1,34 +1,22 @@
 <script setup lang="ts">
-import type { AxiosError, AxiosInstance } from 'axios';
-import { ref, Ref } from 'vue';
-import { Router } from 'vue-router';
-import type { Store } from 'vuex';
-import { AssetSchema, PalletSchema, TextSearchPage, UserState } from '../../plugins/interfaces';
-import PageHeaderComponent from '../../components/GenericComponents/PageHeaderComponent.vue';
-
+import { onBeforeMount, ref, Ref } from 'vue';
+import { AssetSchema, PalletSchema, PartSchema, TextSearchPage } from '../../plugins/interfaces';
 import SlidersButton from '../../components/GenericComponents/Buttons/SlidersButton.vue'
-import PlusButton from '../../components/GenericComponents/Buttons/PlusButton.vue'
-import AdvancedSearchComponent from '../../components/PalletComponents/PalletAdvancedSearchComponent.vue';
-import PalletComponent from '../../components/PalletComponents/PalletComponent.vue';
+import AdvancedSearchComponent from '../../components/AssetComponents/AssetAdvancedSearchComponent.vue';
 import TextSearchComponent from '../../components/GenericComponents/Search/TextSearchComponent.vue';
 import TextSearch from '../../plugins/TextSearchClass';
+import Cacher from '../../plugins/Cacher';
+import PalletComponent from './PalletComponent.vue';
 import { getPalletsByData, getPalletsByTextSearch } from '../../plugins/dbCommands/palletManager';
-import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
-
-interface Props {
-  http: AxiosInstance;
-  store: Store<UserState>;
-  router: Router;
-  errorHandler: (err: Error | AxiosError | string) => void;
-  displayMessage: (message: string) => void;
-}
-// Get global objects from props
-const { http, store, router } = defineProps<Props>();
 
 // Default building is Ogden - 3
 let pallets: Ref<PalletSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
+let http = Cacher.getHttp()
+onBeforeMount(()=>{
+  searchObject.disableRouter()
+})
 
 function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
   return new Promise<TextSearchPage>((res)=>{
@@ -69,34 +57,18 @@ function toggleAdvanced() {
   showAdvanced.value = !showAdvanced.value;
 }
 
-async function advancedSearchButtonPressed(asset: AssetSchema) {
-  searchObject.newAdvancedSearch(store.state.user.building!, 1, asset)
+async function advancedSearchButtonPressed(part: PartSchema) {
+  searchObject.newAdvancedSearch(3, 1, part)
   toggleAdvanced()
-}
-
-function addUntrackedPallet() {
-  // Redirect
-  router.push({ name: 'Create Pallet' });
-}
-
-// Toggle editing menu
-function toggleEdit(pallet: PalletSchema) {
-  router.push({ name: 'Edit Pallet', query: { pallet_tag: pallet.pallet_tag } });
-}
-
-function viewPallet(pallet: PalletSchema) {
-  router.push({ name: 'View Pallet', query: { pallet_tag: pallet.pallet_tag } });
 }
 
 function displayResults(page: PalletSchema[]) {
   pallets.value = page
-  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
 
 </script>
 <template>
   <div>
-    <PageHeaderComponent class="mb-4">Pallet Search</PageHeaderComponent>
     <TextSearchComponent
       :search-object="searchObject"
       @display-results="displayResults"
@@ -105,26 +77,22 @@ function displayResults(page: PalletSchema[]) {
         <SlidersButton @click="toggleAdvanced"/>
         <AdvancedSearchComponent
           v-if="showAdvanced"
-          :startPallet="searchObject.getAdvancedSearchObjectFromRouter() as PalletSchema"
-          @palletSearch="advancedSearchButtonPressed"
+          :start-asset="searchObject.getAdvancedSearchObjectFromRouter() as AssetSchema"
+          @assetSearch="advancedSearchButtonPressed"
           @toggle="toggleAdvanced"
         />
-        <PlusButton @click="addUntrackedPallet" v-if="store.state.user.roles?.includes('edit_pallets')"/>
       </template>
       <template v-slot:searchHeader>
-        <p>Pallet Tag</p>
-        <p>Building</p>
-        <p>Location</p>
+        <p class="mt-auto">Pallet Tag</p>
+        <p class="mt-auto">Building</p>
+        <p class="mt-auto">Location</p>
       </template>
       <template v-slot:searchResults>
         <PalletComponent
-          :add="false"
-          :edit="store.state.user.roles?.includes('edit_pallets')"
-          :view="true"
+          :add="true"
+          @addAction="$emit('addAction', pallet)"
           v-for="pallet in pallets"
           v-bind:key="pallet._id"
-          @editAction="toggleEdit(pallet)"
-          @viewAction="viewPallet(pallet)"
           :pallet="pallet"
         />
       </template>

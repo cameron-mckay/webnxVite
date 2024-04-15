@@ -955,3 +955,26 @@ export function getPartAuditHistory(
       callback({}, err);
     });
 }
+
+export function mergeParts(
+  http: AxiosInstance,
+  keep: string,
+  deleted: string,
+  callback: apiResponse
+) {
+  http
+    .post('/api/part/merge', {}, {
+      params: {
+        keep,
+        deleted
+      }
+    })
+    .then((res: AxiosResponse) => {
+      // Authenticated - send null error to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Unauthenticated - send error to callback
+      callback({}, err);
+    });
+}

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
 import UserComponent from '../../components/AdminComponents/UserComponent.vue';
-import { getAllUsers, updateUser } from '../../plugins/dbCommands/userManager';
+import { getAllUsers, updateUser, createUser } from '../../plugins/dbCommands/userManager';
 import { User } from '../../plugins/interfaces';
 // PROPS SINCE THEY CANT BE IMPORTED FROM A FILE IN VUE 3?????
 import type { AxiosError, AxiosInstance } from 'axios';
@@ -10,6 +10,7 @@ import type { Store } from 'vuex';
 import UserManagerComponent from '../../components/AdminComponents/UserManagerComponent.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue';
+import PlusButton from '../../components/GenericComponents/Buttons/PlusButton.vue';
 import type { UserState } from '../../plugins/interfaces';
 
 interface Props {
@@ -25,6 +26,7 @@ const { http, errorHandler, displayMessage } = defineProps<Props>();
 
 let users: Ref<Array<User>> = ref([]);
 let editUser = ref(false);
+let showCreateUser = ref(false);
 let currentUser: Ref<User> = ref({});
 let loading = ref(false);
 
@@ -49,6 +51,10 @@ function toggleEdit(user: User) {
   }
 }
 
+function toggleCreate() {
+  showCreateUser.value = !showCreateUser.value 
+}
+
 function localUpdateUser(user: User) {
   updateUser(http, user, (data, err) => {
     if (err) {
@@ -57,6 +63,18 @@ function localUpdateUser(user: User) {
     currentUser.value = {};
     toggleEdit({});
     displayMessage('Updated user.');
+    getUsers()
+  });
+}
+
+function localCreateUser(user: User) {
+  createUser(http, user, (data, err) => {
+    if (err) {
+      return errorHandler(err);
+    }
+    toggleCreate();
+    displayMessage(data as string);
+    getUsers()
   });
 }
 
@@ -66,9 +84,12 @@ onMounted(() => {
 </script>
 <template>
   <div>
+    <div class="flex">
     <PageHeaderWithBackButton :router="router" prevPath="'/manage'">
       User Manager
     </PageHeaderWithBackButton>
+      <PlusButton class="mt-auto mb-0" @click="toggleCreate"/>
+    </div>
     <div
       class="relative grid grid-cols-3 p-2 text-center text-sm font-bold leading-8 transition md:grid-cols-5 md:leading-10"
     >
@@ -91,10 +112,24 @@ onMounted(() => {
     <UserManagerComponent
       v-if="editUser"
       class="pointer-events-auto"
+      title="Edit User:"
+      submit-text="Update"
+      :password-required="false"
       :user="currentUser"
       :show="editUser"
       @toggle="toggleEdit"
       @update="localUpdateUser"
+    />
+    <UserManagerComponent
+      v-if="showCreateUser"
+      class="pointer-events-auto"
+      title="Create User:"
+      submit-text="Create"
+      :password-required="true"
+      :user="{}"
+      :show="showCreateUser"
+      @toggle="toggleCreate"
+      @update="localCreateUser"
     />
   </div>
 </template>

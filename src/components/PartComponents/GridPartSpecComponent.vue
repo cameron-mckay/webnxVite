@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { onMounted } from 'vue';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 import { PartSchema } from '../../plugins/interfaces';
 import PlusButton from '../GenericComponents/Buttons/PlusButton.vue';
 interface Props {
@@ -12,6 +14,9 @@ interface Props {
 
 let { part, serial, quantity, showPlus, showAudit } = defineProps<Props>();
 let url = import.meta.env.VITE_API_URL;
+onMounted(()=>{
+  replaceLinksWithAnchors(document,  "notes-with-links")
+})
 </script>
 <template>
   <div class="detail-table">
@@ -84,8 +89,8 @@ let url = import.meta.env.VITE_API_URL;
     </div>
     <p class="detail-label">NXID:</p>
     <p class="detail-data">{{ part.nxid }}</p>
-    <p class="detail-label">Rack Number:</p>
-    <p class="detail-data">{{ part.rack_num }}</p>
+    <p v-if="part.rack_num" class="detail-label">Rack Number:</p>
+    <p v-if="part.rack_num" class="detail-data">{{ part.rack_num }}</p>
     <p class="detail-label">Shelf Location:</p>
     <p class="detail-data">{{ part.shelf_location }}</p>
     <div class="detail-row" v-if="part.quantity">
@@ -109,10 +114,10 @@ let url = import.meta.env.VITE_API_URL;
     <div class="detail-row" v-if="part.type == 'Motherboard'">
       <p v-if="part.chipset">Chipset:</p>
       <p v-if="part.chipset">{{ part.chipset }}</p>
-      <p>Socket:</p>
-      <p>{{ Array.isArray(part.socket)?(part.socket as string[]).join(', '):part.socket }}</p>
-      <p>Memory Generation:</p>
-      <p>{{ part.memory_gen }}</p>
+      <p v-if="part.socket&&part.socket.length>0">Socket:</p>
+      <p v-if="part.socket&&part.socket.length>0">{{ Array.isArray(part.socket)?(part.socket as string[]).join(', '):part.socket }}</p>
+      <p v-if="part.memory_gen">Memory Generation:</p>
+      <p v-if="part.memory_gen">{{ part.memory_gen }}</p>
     </div>
     <div v-if="part.type == 'CPU'" class="detail-row">
       <p>Socket:</p>
@@ -182,7 +187,7 @@ let url = import.meta.env.VITE_API_URL;
     <p v-if="part.consumable">{{ part.consumable?"Yes":"No" }}</p>
     <div class="md:col-span-4 my-4" v-if="part.notes">
       <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
-      <pre class="whitespace-pre-wrap">{{ part.notes }}</pre>
+      <pre class="whitespace-pre-wrap notes-with-links">{{ part.notes }}</pre>
     </div>
     <div class="detail-image-container">
       <img :src="`${url}/images/parts/${part.nxid}`" />

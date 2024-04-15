@@ -71,6 +71,9 @@ onBeforeMount(() => {
     else if (query.pallet_tag) {
       pageTitle.value = pageTitle.value + query.pallet_tag + ':';
     }
+    else if (query.box_tag) {
+      pageTitle.value = pageTitle.value + query.box_tag + ':';
+    }
     else {
       pageTitle.value = pageTitle.value + query.location + ':';
     }
@@ -203,7 +206,6 @@ function loadAudit() {
       <h1 class="detail-title mt-4">
         {{ pageTitle }}
       </h1>
-      <!--
       <div
         v-if="partRecords.length > 0 && part.serialized"
         class="relative my-2 grid grid-cols-3 rounded-xl p-2 text-center font-bold leading-8 transition md:leading-10"
@@ -212,9 +214,9 @@ function loadAudit() {
         <p class="hidden md:block">Date Updated</p>
         <p></p>
       </div>
-      -->
       <div
         class="relative my-2 grid grid-cols-5 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
+        v-else-if="partRecords.length>0"
       >
         <p>Building</p>
         <p>Location</p>
@@ -222,7 +224,6 @@ function loadAudit() {
         <p class="hidden md:block">Date Updated</p>
         <p></p>
       </div>
-      <!--
       <SerializedPartRecordComponent
         v-if="part.serialized"
         v-for="record in partRecords"
@@ -232,8 +233,8 @@ function loadAudit() {
         :showSerial="true"
         @viewPartAction="viewHistory"
       />
-      -->
       <PartRecordComponent
+        v-else
         v-for="record in partRecords"
         :users="Cacher.getAllUsers()"
         :record="record"

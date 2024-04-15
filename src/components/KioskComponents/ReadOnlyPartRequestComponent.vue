@@ -16,6 +16,7 @@ let requestedBy = Cacher.getUser(request.requested_by)
 let fulfilledBy = request.fulfilled_by ? Cacher.getUser(request.fulfilled_by): {}
 let requestedParts = ref([] as LoadedCartItem[])
 let fulfilledParts = ref([] as {kiosk: string, parts: LoadedCartItem[]}[])
+let boxParts = ref([] as {box_tag: string, parts: LoadedCartItem[]}[])
 let kiosk = {} as User
 
 onBeforeMount(async ()=>{
@@ -32,17 +33,30 @@ onBeforeMount(async ()=>{
       return new Promise<{kiosk: string, parts: LoadedCartItem[]}>(async (res)=>{
         let cartItems = [] as CartItem[]
         for(let ie of p.parts) {
-          let q = ie.unserialized
-          for(let s of ie.serials!) {
-            cartItems.push({nxid: ie.nxid!, serial: s})
-            q--
+          if(ie.unserialized||ie.newSerials||ie.serials) {
+            let q = ie.unserialized
+            if(ie.serials) {
+              for(let s of ie.serials!) {
+                cartItems.push({nxid: ie.nxid!, serial: s})
+                q--
+              }
+            }
+            if(q>0)
+              cartItems.push({nxid: ie.nxid!, quantity: q})
           }
-          if(q>0)
-            cartItems.push({nxid: ie.nxid!, quantity: q})
-
+          else {
+            cartItems.push(ie as CartItem)
+          }
         }
         let parts = await Cacher.loadCartItems(cartItems)
         res({kiosk: p.kiosk, parts})
+      })
+    }))
+    boxParts.value = await Promise.all((request.boxes ? request.boxes : []).map((box) => {
+      return new Promise<{box_tag: string, parts: LoadedCartItem[]}>(async (res)=>{
+        let parts = await Cacher.loadCartItems(box.parts)
+        res({box_tag: box.box_tag, parts})
+
       })
     }))
   }
@@ -62,11 +76,11 @@ onBeforeMount(async ()=>{
     <div class="col-span-2 my-4" v-if="kit">
       <p><span class="font-bold">Kit Name:</span> {{kit.kit_name}}</p>
       <p><span class="font-bold">Kiosk:</span> {{kiosk.first_name}} {{kiosk.last_name}}</p>
-      <p><span class="font-bold">Kit Notes:</span> {{kit.notes}}</p>
+      <pre class="notes-with-links whitespace-pre-wrap"><span class="font-bold">Kit Notes:</span> {{kit.notes}}</pre>
     </div>
     <div class="my-4" v-if="request.tech_notes">
       <h1 class="mb-4 text-4xl">Tech Notes:</h1>
-      <pre class="whitespace-pre-wrap">{{ request.tech_notes }}</pre>
+      <pre class="whitespace-pre-wrap notes-with-links">{{ request.tech_notes }}</pre>
     </div>
     <div
       class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 transition md:grid-cols-6 md:leading-10"
@@ -112,6 +126,10 @@ onBeforeMount(async ()=>{
       <div v-for="k of fulfilledParts">
         <h1 class="text-xl">{{ k.kiosk }}</h1>
         <CartItemComponent v-for="p of k.parts" :item="p" :hide-buttons="true"/>
+      </div>
+      <div v-for="b of boxParts">
+        <h1 class="text-xl">{{ b.box_tag }}</h1>
+        <CartItemComponent v-for="p of b.parts" :item="p" :hide-buttons="true"/>
       </div>
       <div class="my-4" v-if="request.clerk_notes">
         <h1 class="mb-4 text-4xl">Inventory Notes:</h1>

@@ -13,6 +13,12 @@ export default defineConfig({
       // https://rollupjs.org/guide/en/#outputmanualchunks
       output: {
         manualChunks: {
+          depends: [
+            'axios',
+            'vuex',
+            'vue-router',
+            'vue-barcode-reader',
+          ],
           login: [
             './src/views/LoginView.vue',
             './src/views/RegisterView.vue',
@@ -25,6 +31,15 @@ export default defineConfig({
             './src/views/Parts/FindPartView.vue',
             './src/views/Parts/InventoryView.vue',
             './src/views/NotFound.vue',
+            './src/views/NotificationView.vue',
+          ],
+          parts: [
+            './src/views/Parts/ActivePartRequestsView.vue',
+            './src/views/Parts/PastPartRequestsView.vue',
+            './src/views/Parts/RequestPartsView.vue',
+            './src/views/Parts/FindBuildKitsView.vue',
+            './src/views/Boxes/BoxSearchView.vue',
+            './src/views/Boxes/BoxView.vue',
           ],
           extras: [
             './src/views/Assets/AssetView.vue',
@@ -50,7 +65,14 @@ export default defineConfig({
             './src/views/Admin/AdminUserView.vue',
             './src/views/Admin/CreatePartView.vue',
             './src/views/Admin/EbaySaleHistoryView.vue',
+            './src/views/Admin/MergePartsView.vue',
             './src/views/Parts/SellOnEbay.vue',
+            './src/views/Parts/CreateBuildKitView.vue',
+            './src/views/Parts/DeleteBuildKitView.vue',
+            './src/views/Admin/PartRequestApprovalView.vue',
+            './src/views/Boxes/CreateBoxView.vue',
+            './src/views/Boxes/EditBoxView.vue',
+            './src/views/Boxes/BoxHistoryView.vue',
           ],
           analytics: [
             './src/views/Admin/PartHistoryView.vue',
@@ -62,6 +84,10 @@ export default defineConfig({
             './src/views/Admin/NewAssetsHistoryView.vue',
             './src/views/Admin/PalletUpdateHistoryView.vue',
             './src/views/Admin/NewPalletHistoryView.vue',
+            './src/views/Admin/AuditHistoryView.vue',
+          ],
+          debug: [
+            './src/views/Debug/NotificationTest.vue',
           ]
         },
       },

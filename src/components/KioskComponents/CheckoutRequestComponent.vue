@@ -74,11 +74,11 @@ function deny() {
     <div class="col-span-2 my-4" v-if="kit">
       <p>{{kit.kit_name}}</p>
       <p>{{kiosk.first_name}} {{kiosk.last_name}}</p>
-      <p>{{kit.notes}}</p>
+      <pre class="notes-with-links whitespace-pre-wrap">{{kit.notes}}</pre>
     </div>
     <div class="col-span-2 my-4" v-if="request.tech_notes">
       <h1 class="col-span-2 mb-4 text-4xl">Tech Notes:</h1>
-      <pre class="whitespace-pre-wrap">{{ request.tech_notes }}</pre>
+      <pre class="whitespace-pre-wrap notes-with-links">{{ request.tech_notes }}</pre>
     </div>
     <div
       class="grid grid-cols-4 text-center font-bold"

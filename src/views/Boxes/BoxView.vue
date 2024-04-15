@@ -15,6 +15,7 @@ import type {
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
 import { getBoxByID, getPartsOnBox } from '../../plugins/dbCommands/boxManager';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -47,6 +48,8 @@ onBeforeMount(() => {
       }
       box.value = res as BoxSchema;
       boxLoading.value = false
+      // defer
+      setTimeout(()=>replaceLinksWithAnchors(document, "notes-with-links"),0)
       getPartsOnBox(http, box.value.box_tag!, async (res, err) => {
         if (err) {
           errorHandler(err);
@@ -119,7 +122,7 @@ function edit() {
         </p>
         <div class="col-span-2 my-4" v-if="box.notes">
           <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
-          <pre>{{ box.notes }}</pre>
+          <pre class="whitespace-pre-wrap notes-with-links">{{ box.notes }}</pre>
         </div>
       </div>
     </div>

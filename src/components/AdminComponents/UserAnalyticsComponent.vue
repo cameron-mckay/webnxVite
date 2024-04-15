@@ -9,8 +9,10 @@ interface Props {
   newPallets: number;
   checkins: number;
   checkouts: number;
+  newBoxes: number;
+  boxesUpdated: number
 }
-const { newPallets, palletsUpdated, user, assetsUpdated, newAssets, checkins, checkouts } = defineProps<Props>();
+const { newPallets, palletsUpdated, user, assetsUpdated, newAssets, checkins, checkouts, newBoxes, boxesUpdated } = defineProps<Props>();
 </script>
 <template>
   <div class="group relative p-0">
@@ -43,6 +45,14 @@ const { newPallets, palletsUpdated, user, assetsUpdated, newAssets, checkins, ch
       <div class="flex justify-between my-2 rounded-md hover:shadow-md hover:bg-gray-200 dark:hover:bg-zinc-800 transition p-2 md:delay-300">
         <p>{{ newPallets }} new pallets tracked</p>
         <RightCaretButton @click="$emit('newPallets')"/>
+      </div>
+      <div class="flex justify-between my-2 rounded-md hover:shadow-md hover:bg-gray-200 dark:hover:bg-zinc-800 transition p-2 md:delay-300">
+        <p>{{ boxesUpdated }} boxes updated</p>
+        <RightCaretButton @click="$emit('boxesUpdated')"/>
+      </div>
+      <div class="flex justify-between my-2 rounded-md hover:shadow-md hover:bg-gray-200 dark:hover:bg-zinc-800 transition p-2 md:delay-300">
+        <p>{{ newBoxes }} new boxes tracked</p>
+        <RightCaretButton @click="$emit('newBoxes')"/>
       </div>
     </div>
   </div>

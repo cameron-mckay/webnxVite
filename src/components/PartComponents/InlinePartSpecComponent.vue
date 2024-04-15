@@ -69,6 +69,6 @@ let { part, showAudit } = defineProps<Props>();
     <p v-if="part.consumable">{{ `Consumable: ${part.consumable?"Yes":"No"}` }}</p>
     <p v-if="part.audited&&showAudit">{{ `Last Audited: ${new Date(Date.parse(part.audited!)).toLocaleString()}` }}</p>
     <br v-if="part.notes">
-    <pre class="font-extrabold" v-if="part.notes">Notes:<br><span class="font-normal">{{ part.notes }}</span></pre>
+    <pre class="font-extrabold whitespace-pre-wrap notes-with-links" v-if="part.notes">Notes:<br><span class="font-normal">{{ part.notes }}</span></pre>
   </div>
 </template>

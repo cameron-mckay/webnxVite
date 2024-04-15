@@ -1,34 +1,22 @@
 <script setup lang="ts">
-import type { AxiosError, AxiosInstance } from 'axios';
-import { ref, Ref } from 'vue';
-import { Router } from 'vue-router';
-import type { Store } from 'vuex';
-import { AssetSchema, BoxSchema, TextSearchPage, UserState } from '../../plugins/interfaces';
-import PageHeaderComponent from '../../components/GenericComponents/PageHeaderComponent.vue';
-
+import { onBeforeMount, ref, Ref } from 'vue';
+import { AssetSchema, BoxSchema, PalletSchema, PartSchema, TextSearchPage } from '../../plugins/interfaces';
 import SlidersButton from '../../components/GenericComponents/Buttons/SlidersButton.vue'
-import PlusButton from '../../components/GenericComponents/Buttons/PlusButton.vue'
-import AdvancedSearchComponent from '../../components/BoxComponents/BoxAdvancedSearchComponent.vue';
+import AdvancedSearchComponent from '../../components/AssetComponents/AssetAdvancedSearchComponent.vue';
 import TextSearchComponent from '../../components/GenericComponents/Search/TextSearchComponent.vue';
 import TextSearch from '../../plugins/TextSearchClass';
+import Cacher from '../../plugins/Cacher';
+import BoxComponent from './BoxComponent.vue'
 import { getBoxesByData, getBoxesByTextSearch } from '../../plugins/dbCommands/boxManager';
-import BoxComponent from '../../components/BoxComponents/BoxComponent.vue';
-import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
-
-interface Props {
-  http: AxiosInstance;
-  store: Store<UserState>;
-  router: Router;
-  errorHandler: (err: Error | AxiosError | string) => void;
-  displayMessage: (message: string) => void;
-}
-// Get global objects from props
-const { http, store, router } = defineProps<Props>();
 
 // Default building is Ogden - 3
 let boxes: Ref<BoxSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
+let http = Cacher.getHttp()
+onBeforeMount(()=>{
+  searchObject.disableRouter()
+})
 
 function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
   return new Promise<TextSearchPage>((res)=>{
@@ -69,34 +57,18 @@ function toggleAdvanced() {
   showAdvanced.value = !showAdvanced.value;
 }
 
-async function advancedSearchButtonPressed(asset: AssetSchema) {
-  searchObject.newAdvancedSearch(store.state.user.building!, 1, asset)
+async function advancedSearchButtonPressed(part: PartSchema) {
+  searchObject.newAdvancedSearch(3, 1, part)
   toggleAdvanced()
-}
-
-function addUntrackedBox() {
-  // Redirect
-  router.push({ name: 'Create Box' });
-}
-
-// Toggle editing menu
-function toggleEdit(box: BoxSchema) {
-  router.push({ name: 'Edit Box', query: { box_tag: box.box_tag } });
-}
-
-function viewBox(box: BoxSchema) {
-  router.push({ name: 'View Box', query: { box_tag: box.box_tag } });
 }
 
 function displayResults(page: BoxSchema[]) {
   boxes.value = page
-  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
 
 </script>
 <template>
   <div>
-    <PageHeaderComponent class="mb-4">Box Search</PageHeaderComponent>
     <TextSearchComponent
       :search-object="searchObject"
       @display-results="displayResults"
@@ -105,26 +77,22 @@ function displayResults(page: BoxSchema[]) {
         <SlidersButton @click="toggleAdvanced"/>
         <AdvancedSearchComponent
           v-if="showAdvanced"
-          :startBox="searchObject.getAdvancedSearchObjectFromRouter() as BoxSchema"
-          @boxSearch="advancedSearchButtonPressed"
+          :start-asset="searchObject.getAdvancedSearchObjectFromRouter() as AssetSchema"
+          @assetSearch="advancedSearchButtonPressed"
           @toggle="toggleAdvanced"
         />
-        <PlusButton @click="addUntrackedBox" v-if="store.state.user.roles?.includes('edit_boxes')"/>
       </template>
       <template v-slot:searchHeader>
-        <p>Box Tag</p>
-        <p>Building</p>
-        <p>Location</p>
+        <p class="mt-auto">Box Tag</p>
+        <p class="mt-auto">Building</p>
+        <p class="mt-auto">Location</p>
       </template>
       <template v-slot:searchResults>
         <BoxComponent
-          :add="false"
-          :edit="store.state.user.roles?.includes('edit_boxes')"
-          :view="true"
+          :add="true"
+          @addAction="$emit('addAction', box)"
           v-for="box in boxes"
           v-bind:key="box._id"
-          @editAction="toggleEdit(box)"
-          @viewAction="viewBox(box)"
           :box="box"
         />
       </template>

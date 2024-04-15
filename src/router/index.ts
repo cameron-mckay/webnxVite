@@ -128,6 +128,14 @@ const routes = [
     component: () => import('../views/Admin/AdminPartSearchView.vue'),
   },
   {
+    path: '/clerk/parts/merge',
+    name: 'Merge Parts',
+    meta: {
+      allowedRoles: ["manage_parts"]
+    },
+    component: () => import('../views/Admin/MergePartsView.vue'),
+  },
+  {
     path: '/ebay/sell',
     name: 'Sell On eBay',
     meta: {
@@ -310,6 +318,22 @@ const routes = [
       allowedRoles: ["view_analytics"]
     },
     component: () => import('../views/Admin/PalletUpdateHistoryView.vue'),
+  },
+  {
+    path: '/manage/user/newBoxes',
+    name: 'New Box History',
+    meta: {
+      allowedRoles: ["view_analytics"]
+    },
+    component: () => import('../views/Admin/NewBoxHistoryView.vue'),
+  },
+  {
+    path: '/manage/user/boxesUpdated',
+    name: 'Box Update History',
+    meta: {
+      allowedRoles: ["view_analytics"]
+    },
+    component: () => import('../views/Admin/BoxUpdateHistoryView.vue'),
   },
   {
     path: '/manage/part/history',

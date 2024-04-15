@@ -15,6 +15,7 @@ import {
 import Cacher from '../../plugins/Cacher';
 import { getBoxHistory } from '../../plugins/dbCommands/boxManager';
 import BoxEventComponent from '../../components/BoxComponents/BoxEventComponent.vue';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -65,6 +66,7 @@ async function loadPage(page: number) {
   history.value = p.events
   loading.value = false
   totalEvents.value = p.total
+  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
   checkCache()
 }
 

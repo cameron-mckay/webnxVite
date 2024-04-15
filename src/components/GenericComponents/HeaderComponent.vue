@@ -33,6 +33,7 @@
         />
         <!-- Desktop nav -->
         <div class="justify-center flex"
+          :class="{ 'opacity-0': hide_text }"
           v-if="!overflow"
         >
           <RouterLink
@@ -163,7 +164,7 @@
           class="header-button-colors flex justify-center"
           v-on:click="toggleProfile"
         >
-          <p class="mr-2 pl-2 leading-10 block"
+          <p class="mr-2 pl-2 leading-10 block text-nowrap whitespace-nowrap"
             v-if="!overflow"
           >
             {{ store.state.user.first_name + ' ' + store.state.user.last_name }}
@@ -347,19 +348,31 @@ let showMenu = ref(false);
 let dark = ref(false);
 let showProfile = ref(false);
 let overflow = ref(false)
+let hide_text = ref(false)
+let last_update = Date.now()
 
 function handleResize() {
-  overflow.value = false
+  let local_update = Date.now()
+  last_update = local_update
+  overflow.value = true
   setTimeout(()=>{
-    let header = document.getElementById("header")!
-    let headerWidth = header.offsetWidth
-    let childWidth = 0;
-    for (let i = 0; i < header.children?.length; i++) {
-      childWidth += header.children.item(i)!.getBoundingClientRect().width
-    }
-    if(childWidth > headerWidth)
-      overflow.value = true
-  },0)
+    if(local_update<last_update)
+      return
+    hide_text.value = true
+    overflow.value = false
+    setTimeout(()=>{
+      let header = document.getElementById("header")!
+      let headerWidth = header.offsetWidth
+      let childWidth = 0;
+      for (let i = 0; i < header.children?.length; i++) {
+        childWidth += header.children.item(i)!.getBoundingClientRect().width
+      }
+      if(childWidth > headerWidth) {
+        overflow.value = true
+      }
+      hide_text.value = false
+    },0)
+  },100)
 }
 
 onMounted(() => {
@@ -383,7 +396,7 @@ onMounted(() => {
   }
   // Enable watcher
   window.addEventListener('resize', handleResize)
-  setTimeout(handleResize,0)
+  setTimeout(handleResize,100)
   watch(dark, () => {
     updateTheme();
   });

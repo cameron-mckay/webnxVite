@@ -4,17 +4,17 @@ import { onBeforeMount, ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
 import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
-import AssetEventComponent from '../../components/AssetComponents/AssetEventComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
-import { getAssetUpdates } from '../../plugins/dbCommands/userManager';
+import { getBoxUpdates, getNewBoxes } from '../../plugins/dbCommands/userManager';
 import {
-  AssetEvent,
   AnalyticsSearchPage,
+  BoxEvent,
   UserState,
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import Cacher from '../../plugins/Cacher';
+import BoxEventComponent from '../../components/BoxComponents/BoxEventComponent.vue';
 import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
@@ -27,17 +27,18 @@ interface Props {
 
 let loaded = ref(false)
 let resultsLoading = ref(false)
-let assetEvents = ref([] as AssetEvent[])
+let boxEvents = ref([] as BoxEvent[])
 
 const { http, router } =
   defineProps<Props>();
-let analyticsSearchObject:AnalyticsSearch<AssetEvent>;
+let analyticsSearchObject:AnalyticsSearch<BoxEvent>;
+
 
 onBeforeMount(async ()=>{
   analyticsSearchObject = new AnalyticsSearch(
-    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts, assetFilters)=>{
+    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts, box_tags)=>{
       return new Promise<AnalyticsSearchPage>((res, rej)=>{
-        getAssetUpdates(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
+        getBoxUpdates(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
           if(err)
             return res({total: 0, pages: 0, events: []})
           let p = data as AnalyticsSearchPage
@@ -46,7 +47,7 @@ onBeforeMount(async ()=>{
         userFilters,
         partFilters,
         hideOtherParts,
-        assetFilters
+        box_tags
         )
       })
     }
@@ -54,25 +55,25 @@ onBeforeMount(async ()=>{
   loaded.value = true
 })
 
-async function displayResults(page: AssetEvent[])
+async function displayResults(page: BoxEvent[])
 {
   // Load all the required info into the caches
   for(let e of page) {
     // Evil ass promise code
     await Promise.all([
-      Cacher.getAsset(e.asset_id),
-      Promise.all(e.added.map((p)=>{
+      Promise.all(e.addedParts.map((p)=>{
         return Cacher.getPartInfo(p)
       })),
-      Promise.all(e.removed.map((p)=>{
+      Promise.all(e.removedParts.map((p)=>{
         return Cacher.getPartInfo(p)
       })),
-      Promise.all(e.existing.map((p)=>{
+      Promise.all(e.existingParts.map((p)=>{
         return Cacher.getPartInfo(p)
-      }))
+      })),
     ])
+    await Cacher.getBox(e.box_id)
   }
-  assetEvents.value = page
+  boxEvents.value = page
   resultsLoading.value = false
   setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
@@ -85,7 +86,7 @@ function showLoader() {
 <template>
   <div>
     <PageHeaderWithBackButton :prev-path="'/manage'" :router="router">
-      Asset Update History
+      Box Update History
     </PageHeaderWithBackButton>
     <LoaderComponent v-if="!loaded"/>
     <AnalyticsSearchComponent v-else 
@@ -93,16 +94,16 @@ function showLoader() {
       :searchComponent="analyticsSearchObject"
       :show-user-filters="true"
       :show-part-filters="true"
-      :show-asset-filters="true"
       @displayResults="displayResults"
       @showLoader="showLoader"
     >
-      <AssetEventComponent
+      <BoxEventComponent
+        :boxes="Cacher.getBoxCache()"
         :assets="Cacher.getAssetCache()"
-        :user="Cacher.getUser(event.by)!"
         :parts="Cacher.getPartCache()"
+        :user="Cacher.getUser(event.by)"
         :event="event"
-        v-for="event in assetEvents"
+        v-for="event in boxEvents"
       />
     </AnalyticsSearchComponent>
   </div>

@@ -6,7 +6,17 @@ export interface apiResponse {
 }
 
 export interface loadPageCallback {
-  (pageNum: number, startDate: Date, endDate: Date, userFilters?: string[], partFilters?: string[], hideOtherParts?: boolean, assetFilters?: string[]): Promise<AnalyticsSearchPage>;
+  (
+    pageNum: number,
+    startDate: Date,
+    endDate: Date,
+    userFilters?: string[],
+    partFilters?: string[],
+    hideOtherParts?: boolean,
+    assetFilters?: string[],
+    palletFilters?: string[],
+    boxFilters?: string[],
+  ): Promise<AnalyticsSearchPage>;
 }
 
 export interface textSearchCallback {
@@ -154,6 +164,7 @@ export interface PartRecord {
   building?: Number;
   location?: string;
   asset_tag?: string;
+  box_tag?: string;
   pallet_tag?: string;
   serial?: string;
   owner?: string;
@@ -199,6 +210,7 @@ export interface User {
   _v?: number;
   _id?: string;
   default?: boolean;
+  password?: string;
 }
 
 export type AssetHistory = AssetEvent[];
@@ -338,6 +350,7 @@ export interface PartRequestSchema {
   date_fulfilled?: Date,
   fulfilled_by?: string,
   fulfilled_list?: {kiosk: string, parts: InventoryEntry[]}[]
+  boxes?: {box_tag: string, parts: CartItem[]}[]
   build_kit_id?: string,
   cancelled?: boolean,
   tech_notes?: string,

@@ -74,6 +74,13 @@ let {store} = defineProps<Props>()
         >
           Ebay Sales History
         </RouterLink>
+        <RouterLink
+          to="/clerk/parts/merge"
+          class="manager-button"
+          v-if="store.state.user.roles?.includes('manage_parts')"
+        >
+          Merge Parts
+        </RouterLink>
       </div>
     </div>
     <div>
@@ -153,6 +160,30 @@ let {store} = defineProps<Props>()
           class="manager-button"
         >
           New Pallet History
+        </RouterLink>
+      </div>
+    </div>
+    <div>
+      <h1
+        class="mt-4 text-xl ml-2"
+        v-if="store.state.user.roles?.includes('view_analytics')"
+      >
+        Boxes
+      </h1>
+      <div class="grid grid-cols-2 md:grid-cols-3">
+        <RouterLink
+          v-if="store.state.user.roles?.includes('view_analytics')"
+          to="/manage/user/boxesUpdated"
+          class="manager-button"
+        >
+          Box Update History
+        </RouterLink>
+        <RouterLink
+          v-if="store.state.user.roles?.includes('view_analytics')"
+          to="/manage/user/newBoxes"
+          class="manager-button"
+        >
+          New Box History
         </RouterLink>
       </div>
     </div>

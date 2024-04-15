@@ -15,6 +15,7 @@ import {
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import Cacher from '../../plugins/Cacher';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -35,7 +36,7 @@ let analyticsSearchObject:AnalyticsSearch<PalletEvent>;
 
 onBeforeMount(async ()=>{
   analyticsSearchObject = new AnalyticsSearch(
-    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts)=>{
+    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts, palletFilters)=>{
       return new Promise<AnalyticsSearchPage>((res, rej)=>{
         getPalletUpdates(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
           if(err)
@@ -45,7 +46,8 @@ onBeforeMount(async ()=>{
         },
         userFilters,
         partFilters,
-        hideOtherParts
+        hideOtherParts,
+        palletFilters
         )
       })
     }
@@ -76,12 +78,22 @@ async function displayResults(page: PalletEvent[])
       })),
       Promise.all(e.existingAssets.map((p)=>{
         return Cacher.getAsset(p)
+      })),
+      Promise.all(e.addedBoxes.map((p)=>{
+        return Cacher.getBox(p)
+      })),
+      Promise.all(e.removedBoxes.map((p)=>{
+        return Cacher.getBox(p)
+      })),
+      Promise.all(e.existingBoxes.map((p)=>{
+        return Cacher.getBox(p)
       }))
     ])
     await Cacher.getPallet(e.pallet_id)
   }
   palletEvents.value = page
   resultsLoading.value = false
+  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
 
 function showLoader() {
@@ -108,6 +120,7 @@ function showLoader() {
         :user="Cacher.getUser(event.by)!"
         :parts="Cacher.getPartCache()"
         :pallets="Cacher.getPalletCache()"
+        :boxes="Cacher.getBoxCache()"
         :event="event"
         v-for="event in palletEvents"
       />

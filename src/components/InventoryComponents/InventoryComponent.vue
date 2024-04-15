@@ -211,7 +211,7 @@ function submit() {
             :part="item.part"
             :quantity="item.quantity"
             :serial="item.serial"
-            :untracked="!item.part.serialized&&serializeDestList"
+            :untracked="!(item.part.serialized&&item.serial)&&serializeDestList"
             :serialOptional="serializeDestList"
             :key="item.part.nxid!+item.serial+Date.now()+destInv.indexOf(item)"
             :maxQuantity="inventory.getMaxQuantity(item.part.nxid!)"

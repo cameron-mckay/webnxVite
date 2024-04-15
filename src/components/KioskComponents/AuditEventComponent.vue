@@ -26,7 +26,7 @@ let { event, user, part } = defineProps<Props>()
         <p class="detail-data">{{ part.manufacturer }} {{ part.name }}</p>
         <div class="col-span-2" v-if="event.notes">
           <h1 class="text-2xl leading-8 md:leading-10">Notes:</h1>
-          <p>{{event.notes}}</p>
+          <pre class="notes-with-links whitespace-pre-wrap">{{event.notes}}</pre>
         </div>
       </div>
       <div>

@@ -16,6 +16,7 @@ import AdvancedSearchComponent from '../../components/AssetComponents/AssetAdvan
 import AssetComponent from '../../components/AssetComponents/AssetComponent.vue';
 import TextSearchComponent from '../../components/GenericComponents/Search/TextSearchComponent.vue';
 import TextSearch from '../../plugins/TextSearchClass';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -92,6 +93,7 @@ function viewAsset(asset: AssetSchema) {
 
 function displayResults(page: AssetSchema[]) {
   assets.value = page
+  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
 
 </script>

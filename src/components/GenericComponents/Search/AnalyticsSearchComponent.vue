@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
-import { AssetSchema, PartSchema, User } from '../../../plugins/interfaces';
+import { AssetSchema, BoxSchema, PalletSchema, PartSchema, User } from '../../../plugins/interfaces';
 import DateRangeComponent from '../DateRangeComponent.vue';
 import SearchNavButtons from './SearchNavButtons.vue';
 import SearchFooterComponent from './SearchFooterComponent.vue';
@@ -9,6 +9,8 @@ import AnalyticsSearch from '../../../plugins/AnalyticsSearchClass';
 import UserFilterComponent from '../../AdminComponents/UserFilterComponent.vue';
 import PartFilterComponent from '../../PartComponents/PartFilterComponent.vue';
 import AssetFilterComponent from '../../AssetComponents/AssetFilterComponent.vue';
+import PalletFilterComponent from '../../PalletComponents/PalletFilterComponent.vue';
+import BoxFilterComponent from '../../BoxComponents/BoxFilterComponent.vue';
 import FilterTag from '../FilterTag.vue';
 import Cacher from '../../../plugins/Cacher';
 
@@ -19,6 +21,8 @@ interface Props {
   showUserFilters?: boolean
   showPartFilters?: boolean
   showAssetFilters?: boolean
+  showPalletFilters?: boolean
+  showBoxFilters?: boolean
   hideHidePartButton?: boolean
 }
 // Deref the search helper
@@ -27,9 +31,13 @@ let { searchComponent, resultsLoading, showUserFilters, showPartFilters, showAss
 let userFilterMap = ref(new Map<string, User>())
 let partFilterMap = ref(new Map<string, PartSchema>())
 let assetFilterMap = ref(new Map<string, AssetSchema>())
+let palletFilterMap = ref(new Map<string, PalletSchema>())
+let boxFilterMap = ref(new Map<string, BoxSchema>())
 let userFilterArray = [] as string[]
 let partFilterArray = [] as string[]
 let assetFilterArray = [] as string[]
+let palletFilterArray = [] as string[]
+let boxFilterArray = [] as string[]
 // Cache the dates inbetween searches
 let startDateCache = new Date()
 let endDateCache = new Date()
@@ -48,9 +56,14 @@ onBeforeMount(async ()=>{
   partFilterMap.value = await searchComponent.getPartFilterMapFromRouter()
   userFilterMap.value = searchComponent.getUserFilterMapFromRouter()
   assetFilterMap.value = await searchComponent.getAssetFilterMapFromRouter()
+  palletFilterMap.value = await searchComponent.getPalletFilterMapFromRouter()
+  boxFilterMap.value = await searchComponent.getBoxFilterMapFromRouter()
   // Update filters
   partFilterArray = Array.from(partFilterMap.value.keys())
   userFilterArray = Array.from(userFilterMap.value.keys())
+  assetFilterArray = Array.from(assetFilterMap.value.keys())
+  palletFilterArray = Array.from(palletFilterMap.value.keys())
+  boxFilterArray = Array.from(boxFilterMap.value.keys())
   // Load dates from search helper
   startDateCache = searchComponent.getStartDateFromRouter()
   endDateCache = searchComponent.getEndDateFromRouter()
@@ -70,6 +83,8 @@ function updateDates(startDate: Date, endDate: Date) {
   partFilterArray = Array.from(partFilterMap.value.keys())
   userFilterArray = Array.from(userFilterMap.value.keys())
   assetFilterArray = Array.from(assetFilterMap.value.keys())
+  palletFilterArray = Array.from(palletFilterMap.value.keys())
+  boxFilterArray = Array.from(boxFilterMap.value.keys())
   // Load the first page
   loadPage(1)
 }
@@ -81,7 +96,7 @@ async function loadPage(pageNum: number) {
   // Set page num
   pageNumRef.value = pageNum
   // Load page from search helper
-  let page = await searchComponent.loadPage(pageNum, startDateCache, endDateCache, userFilterArray, partFilterArray, hideOtherPartsCache, assetFilterArray)
+  let page = await searchComponent.loadPage(pageNum, startDateCache, endDateCache, userFilterArray, partFilterArray, hideOtherPartsCache, assetFilterArray, palletFilterArray, boxFilterArray)
   numPages.value = searchComponent.getNumPages()
   // CALL TO PARENT HERE
   emit("displayResults", page)
@@ -97,6 +112,8 @@ async function loadPage(pageNum: number) {
           <PartFilterComponent v-if="showPartFilters" :http="Cacher.getHttp()" :filterMap="partFilterMap" class="mb-auto ml-1"/>
           <UserFilterComponent v-if="showUserFilters" :users="Cacher.getAllUserMap()" :filterMap="userFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}" class="mb-auto ml-1"/>
           <AssetFilterComponent v-if="showAssetFilters" :http="Cacher.getHttp()" :filterMap="assetFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}" class="mb-auto ml-1"/>
+          <PalletFilterComponent v-if="showPalletFilters" :http="Cacher.getHttp()" :filterMap="palletFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}" class="mb-auto ml-1"/>
+          <BoxFilterComponent v-if="showBoxFilters" :http="Cacher.getHttp()" :filterMap="boxFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}" class="mb-auto ml-1"/>
         </DateRangeComponent>
         <!-- Navigation buttons -->
         <SearchNavButtons :numPages="numPages" :pageNum="pageNumRef" @loadPage="loadPage"/>
@@ -106,6 +123,8 @@ async function loadPage(pageNum: number) {
       <!-- Part Filter tags -->
       <FilterTag v-for="part of Array.from(partFilterMap.keys())" :name="part" @remove="partFilterMap.delete(part)" class="background-and-border mt-2"/>
       <FilterTag v-for="asset of Array.from(assetFilterMap.keys())" :name="asset" @remove="assetFilterMap.delete(asset)" class="background-and-border mt-2"/>
+      <FilterTag v-for="pallet of Array.from(palletFilterMap.keys())" :name="pallet" @remove="palletFilterMap.delete(pallet)" class="background-and-border mt-2"/>
+      <FilterTag v-for="box of Array.from(boxFilterMap.keys())" :name="box" @remove="boxFilterMap.delete(box)" class="background-and-border mt-2"/>
       <!-- Hide other parts toggle -->
       <div v-if="partFilterMap.size>0&&!hideHidePartButton" class="mt-4">
         <label>Hide Other Parts: </label>

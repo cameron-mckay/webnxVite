@@ -26,7 +26,7 @@ onMounted(() => {
     <div
       class="background-and-border group-hover:bab-hover grid grid-cols-3 p-1 text-center leading-8 md:p-2 md:leading-10"
     >
-      <p class="break-words">{{ record.serial }}</p>
+      <p class="break-words">{{ record.serial ? record.serial : "*** NO SERIAL ***" }}</p>
       <p class="hidden break-words md:block">
         {{ `${date.toLocaleString()}` }}
       </p>

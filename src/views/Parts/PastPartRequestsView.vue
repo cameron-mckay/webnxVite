@@ -18,6 +18,7 @@ BuildKitSchema,
 import { getBuildKitByID, getFulfilledPartRequests } from '../../plugins/dbCommands/partManager';
 import Cacher from '../../plugins/Cacher';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -85,13 +86,20 @@ async function displayResults(page: PartRequestSchema[])
       return new Promise<{kiosk: string, parts: LoadedCartItem[]}>(async (res)=>{
         let cartItems = [] as CartItem[]
         for(let ie of p.parts) {
-          let q = ie.unserialized
-          for(let s of ie.serials!) {
-            cartItems.push({nxid: ie.nxid!, serial: s})
-            q--
+          if(ie.unserialized||ie.newSerials||ie.serials) {
+            let q = ie.unserialized
+            if(ie.serials) {
+              for(let s of ie.serials!) {
+                cartItems.push({nxid: ie.nxid!, serial: s})
+                q--
+              }
+            }
+            if(q>0)
+              cartItems.push({nxid: ie.nxid!, quantity: q})
           }
-          if(q>0)
-            cartItems.push({nxid: ie.nxid!, quantity: q})
+          else {
+            cartItems.push(ie as CartItem)
+          }
         }
         let parts = await Cacher.loadCartItems(cartItems)
         res({kiosk: p.kiosk, parts})
@@ -100,6 +108,7 @@ async function displayResults(page: PartRequestSchema[])
   }
   requests.value = page
   resultsLoading.value = false
+  setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
 }
 
 function showLoader() {

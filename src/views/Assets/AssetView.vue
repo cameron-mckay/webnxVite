@@ -8,6 +8,7 @@ import AssetCartItemComponent from '../../components/AssetComponents/AssetCartIt
 import PencilButton from '../../components/GenericComponents/Buttons/PencilButton.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import AssetComponent from '../../components/AssetComponents/AssetComponent.vue';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods'
 import {
   getAssetByID,
   getNodesOnAsset,
@@ -57,6 +58,8 @@ function reload() {
       }
       asset.value = res as AssetSchema;
       assetLoading.value = false
+      // Defer
+      setTimeout(()=>replaceLinksWithAnchors(document,  "notes-with-links"),0)
       getPartsOnAsset(http, asset.value.asset_tag!, async (res, err) => {
         if (err) {
           errorHandler(err);
@@ -108,7 +111,7 @@ function toggleEdit(ass: AssetSchema) {
 
 function viewAsset(ass: AssetSchema) {
   router.push({ name: 'View Asset', query: { asset_tag: ass.asset_tag } }).then(()=>{
-    reload();
+    setTimeout(reload,50);
   });
 }
 
@@ -120,6 +123,7 @@ function prev() {
   }
   router.push('/assets')
 }
+
 </script>
 
 <template>
@@ -205,7 +209,7 @@ function prev() {
         </p>
         <div class="col-span-2 my-4" v-if="asset.notes">
           <h1 class="col-span-2 mb-4 text-4xl">Notes:</h1>
-          <pre class="whitespace-pre-wrap">{{ asset.notes }}</pre>
+          <pre class="whitespace-pre-wrap notes-with-links">{{ asset.notes }}</pre>
         </div>
       </div>
     </div>

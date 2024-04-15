@@ -120,10 +120,10 @@ onMounted(() => {
         </p>
         <div v-if="pallet.notes || prevPallet.notes" class="detail-row col-span-2">
           <p class="col-span-2">Notes:</p>
-          <p class="col-span-2">
+          <pre class="col-span-2 whitespace-pre-wrap notes-with-links">
             <del v-if="prevPallet.notes && (prevPallet.notes != pallet.notes)">{{ prevPallet.notes }}</del>
             {{ pallet.notes }}
-          </p>
+          </pre>
         </div>
       </div>
       <div class="col-span-2">
@@ -186,6 +186,7 @@ onMounted(() => {
           />
         </del>
       </div>
+      <div class="hidden md:block md:col-span1 md:h-full"></div>
       <div class="col-span-2"
           v-if="existingBoxes.length > 0 || addedBoxes.length > 0 || removedBoxes.length > 0"
       >

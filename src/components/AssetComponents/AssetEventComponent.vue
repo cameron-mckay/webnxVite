@@ -287,10 +287,10 @@ onMounted(() => {
 
         <div v-if="asset.notes || prevAsset.notes" class="detail-row col-span-2">
           <p class="col-span-2">Notes:</p>
-          <p class="col-span-2">
+          <pre class="col-span-2 notes-with-links whitespace-pre-wrap">
             <del v-if="prevAsset.notes && (prevAsset.notes != asset.notes)">{{ prevAsset.notes }}</del>
             {{ asset.notes }}
-          </p>
+          </pre>
         </div>
 
       </div>

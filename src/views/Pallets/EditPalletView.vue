@@ -19,6 +19,7 @@ import type {
 } from '../../plugins/interfaces';
 import Inventory from '../../plugins/InventoryClass';
 import { updatePallet } from '../../plugins/dbCommands/palletManager';
+import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -55,6 +56,7 @@ onBeforeMount(async () => {
     boxes.value = items.boxes
     // Save a copy for reset value
     loading.value = false
+    setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
     // Get user inventory from api
   }
 });
