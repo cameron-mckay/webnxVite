@@ -60,17 +60,13 @@ async function displayResults(page: BoxEvent[])
   // Load all the required info into the caches
   for(let e of page) {
     // Evil ass promise code
-    await Promise.all([
-      Promise.all(e.addedParts.map((p)=>{
+    let nxids = e.addedParts.map((v)=>v.nxid).filter((v,i,arr)=>arr.indexOf(v)==i)
+    nxids = nxids.concat(e.removedParts.map((v)=>v.nxid).filter((v,i,arr)=>arr.indexOf(v)==i))
+    nxids = nxids.concat(e.existingParts.map((v)=>v.nxid).filter((v,i,arr)=>arr.indexOf(v)==i))
+    // Evil ass promise code
+    await Promise.all(nxids.map((p)=>{
         return Cacher.getPartInfo(p)
-      })),
-      Promise.all(e.removedParts.map((p)=>{
-        return Cacher.getPartInfo(p)
-      })),
-      Promise.all(e.existingParts.map((p)=>{
-        return Cacher.getPartInfo(p)
-      })),
-    ])
+    }))
     await Cacher.getBox(e.box_id)
   }
   boxEvents.value = page

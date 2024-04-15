@@ -330,7 +330,9 @@ export default class Cacher {
     })
   }
 
-  static loadCartItems(items: CartItem[]) {
+  static async loadCartItems(items: CartItem[]) {
+    let nxids = items.map((v)=>v.nxid).filter((v,i,arr)=>arr.indexOf(v)==i)
+    await this.getPartInfoArray(nxids)
     return Promise.all(items.map((p)=>{
       return new Promise<LoadedCartItem>(async (res)=>{
         let info = await Cacher.getPartInfo(p)
