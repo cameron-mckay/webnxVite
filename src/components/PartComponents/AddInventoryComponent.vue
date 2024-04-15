@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from 'vue';
 import { CartItem, PartSchema, User } from '../../plugins/interfaces';
 import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
+import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponent.vue';
 
 // Start props
 interface Props {
@@ -76,6 +77,12 @@ onMounted(() => {
           building: request.value.building,
         };
         break;
+      case 'Box':
+        owner.value = {
+          _id: owner.value._id,
+          building: request.value.building,
+        };
+        break;
       // If tech inventory, set current building to current user
       case 'Tech Inventory':
         request.value.building = owner.value.building;
@@ -142,6 +149,7 @@ onMounted(() => {
           <option>Tech Inventory</option>
           <option>All Techs</option>
           <option>Asset</option>
+          <option>Box</option>
           <option>{{currentKiosk}}</option>
         </select>
         <div
@@ -168,6 +176,18 @@ onMounted(() => {
           <input
             type="text"
             placeholder="Asset Tag"
+            v-model="owner._id"
+            class="textbox m-1"
+          />
+        </div>
+        <div
+          class="col-span-2 grid grid-cols-2"
+          v-if="request.location == 'Box'"
+        >
+          <label>Box Tag:</label>
+          <input
+            type="text"
+            placeholder="Box Tag"
             v-model="owner._id"
             class="textbox m-1"
           />
