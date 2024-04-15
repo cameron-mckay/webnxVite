@@ -1,6 +1,6 @@
 {
   "name": "webnx-vite",
-  "version": "1.4pre",
+  "version": "1.4",
   "private": true,
   "scripts": {
     "build": "vue-tsc --noEmit  && vite build",
