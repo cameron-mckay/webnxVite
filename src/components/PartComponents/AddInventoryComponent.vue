@@ -53,7 +53,9 @@ onMounted(() => {
   watch(currentKiosk, ()=>{
     emit("kioskChange", part, currentKiosk.value)
     request.value.location = currentKiosk.value
-    setTimeout(()=>{quantity.value = part.quantity?part.quantity:0},250)
+    setTimeout(()=>{
+      quantity.value = part.quantity ? part.quantity : 0
+    },500)
   })
   watch(request, () => {
     switch (request.value.location) {
