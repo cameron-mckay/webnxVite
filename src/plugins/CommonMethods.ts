@@ -32,31 +32,26 @@ export function urlBase64ToUint8Array(base64String: string) {
 
 export function replaceLinksWithAnchors(doc: Document, className: string) {
   // Get the text boxes
-  let boxes = doc.getElementsByClassName(className)
-  // Create and index
-  let i = 0
-  // While index less than length
-  while(i<boxes.length) {
+  let boxes = doc.getElementsByClassName(className);
+  // Loop through each box
+  for (let i = 0; i < boxes.length; i++) {
     // Get current box
-    let noteBox = boxes.item(i)
+    let noteBox = boxes.item(i);
     // If it exists and has inner html
-    if(noteBox&&noteBox.innerHTML) {
+    if (noteBox && noteBox.innerHTML) {
+      // Replace html shit
+      let text = noteBox.innerHTML.replace(/&amp;/g, "&")
       // Search for regex matches
-      let matches = noteBox.innerHTML.match(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g)
+      let matches = text.match(/(https?:\/\/(?:www\.)?[a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/ig);
       // If there are matches
-      if(matches&&matches.length>0) {
-        // Copy the text to new var
-        let new_text = noteBox.innerHTML
-        // For each of the matches
-        for(let match of matches) {
-          // Replace the match with a link
-          new_text = new_text.replace(match, `<a href="${match}" target="_blank" class="link">${match}</a>`)
+      if (matches && matches.length > 0) {
+        // Loop through each match
+        for (let match of matches) {
+          console.log(match)
+          text = text.replace(match, `<a href="${match}" target="_blank" class="link">${match}</a>`);
         }
-        // Update the html
-        noteBox.innerHTML = new_text
+        noteBox.innerHTML = text
       }
     }
-    // Increment the index
-    i++
   }
 }
