@@ -65,7 +65,7 @@ function submit() {
           <p class="w-full md:w-auto">{{ parts.has(p.nxid) ? parts.get(p.nxid)!.manufacturer + " " + parts.get(p.nxid)!.name : "DELETED PART" }}</p>
         </div>
         <div>
-          <p class="mt-0 mb-auto">{{ parts.has(p.nxid) ? (parts.get(p.nxid)!.rack_num ? parts.get(p.nxid)!.rack_num : "" + parts.get(p.nxid)!.shelf_location!) : "DELETED PART" }}</p>
+          <p class="mt-0 mb-auto">{{ parts.has(p.nxid) ? (parts.get(p.nxid)!.rack_num ? parts.get(p.nxid)!.rack_num : "") + (parts.get(p.nxid)!.shelf_location ? parts.get(p.nxid)!.shelf_location! : "") : "DELETED PART" }}</p>
         </div>
         <div class="my-auto">
           <p>{{ p.serial ? p.serial : p.quantity }}</p>
