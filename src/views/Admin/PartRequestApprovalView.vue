@@ -131,7 +131,6 @@ function submit(request_id: string, req: {nxid: string, kiosk_quantities: KioskQ
       // There should only be one of these per part of req
       if(kq.kiosk == "Box") {
         let boxArr = [] as InventoryEntry[]
-        console.log(boxes)
         // Loop through boxes
         for(let box of boxes) {
           // If already in map

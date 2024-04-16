@@ -64,7 +64,6 @@ function getDefaultValue() {
         values = values.filter((v)=>v!=""&&v!="Custom"&&v!=customName)
       }
     }
-    console.log(values)
     let defaultIsCustom = false
     // Check if default value exists in options
     if (values.indexOf(defaultValue) == -1) {
@@ -85,7 +84,6 @@ onMounted(async () => {
   }
   // Enable watcher on text value
   watch(textValue, (_, oldValue) => {
-    console.log("TEST")
     // If drop down is set to custom
     if (textValue.value === 'Custom' && !custom.value && !hideCustom) {
       // Save previous value for if custom gets cleared

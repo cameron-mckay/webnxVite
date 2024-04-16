@@ -52,7 +52,6 @@ function approve() {
       }),
     }
   }) as { nxid: string, kiosk_quantities: any[], boxes: any[] }[]
-  console.log(submission)
   emit("submit", request._id, submission, notes.value)
 }
 

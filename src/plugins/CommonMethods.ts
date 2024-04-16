@@ -47,7 +47,6 @@ export function replaceLinksWithAnchors(doc: Document, className: string) {
       if (matches && matches.length > 0) {
         // Loop through each match
         for (let match of matches) {
-          console.log(match)
           text = text.replace(match, `<a href="${match}" target="_blank" class="link">${match}</a>`);
         }
         noteBox.innerHTML = text
