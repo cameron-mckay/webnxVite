@@ -48,7 +48,7 @@ function submit() {
   // } else {
     request.value.quantity = quantity.value;
   //}
-  emit('submitRequest', request.value, owner.value, part);
+  emit('submitRequest', request.value, owner.value, part, kioskQuantity.value);
 }
 
 function changeKiosk() {

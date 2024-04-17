@@ -186,7 +186,8 @@ async function deleteClicked(nxid: string) {
 function submitAddToInventory(
   request: CartItem,
   owner: User,
-  part: PartSchema
+  part: PartSchema,
+  kq: number
 ) {
   request.building = store.state.user.building
   // Send creation details to API
@@ -206,12 +207,13 @@ function submitAddToInventory(
   //   });
   // }
   // else 
+  console.log(kq)
   if (
     request.quantity != undefined &&
-    part.quantity != undefined &&
-    request.quantity > part.quantity
+    kq != undefined &&
+    request.quantity > kq 
   ) {
-    request.quantity = request.quantity - part.quantity;
+    request.quantity = request.quantity - kq;
     createNewPartRecords(http, request, owner, async (records, err) => {
       if (err) {
         return errorHandler(err);
@@ -227,10 +229,10 @@ function submitAddToInventory(
     });
   } else if (
     request.quantity != undefined &&
-    part.quantity != undefined &&
-    request.quantity < part.quantity
+    kq != undefined &&
+    request.quantity < kq
   ) {
-    deleteFromPartsRoom(http, part.nxid!, part.quantity! - request.quantity, store.state.user.building!, request.location!, async (data, err)=>{
+    deleteFromPartsRoom(http, part.nxid!, kq - request.quantity, store.state.user.building!, request.location!, async (data, err)=>{
       if (err) {
             // Handle errors
           return errorHandler(err);
