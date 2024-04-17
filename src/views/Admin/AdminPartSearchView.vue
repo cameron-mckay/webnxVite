@@ -18,7 +18,6 @@ import {
   updatePartImage,
   deleteFromPartsRoom,
   auditPart,
-  getPartByID,
   getPartsByTextSearch,
   getPartsByData
 } from '../../plugins/dbCommands/partManager';
@@ -249,16 +248,6 @@ function submitAddToInventory(
   }
 }
 
-function changeKiosk(part: PartSchema, kiosk: string) {
-  getPartByID(http, part.nxid!, store.state.user.building!, (data, err)=>{
-    if(err) {
-      return errorHandler(err)
-    }
-    let resPart = data as PartSchema
-    part.quantity = resPart.quantity
-  }, kiosk)
-}
-
 function audit(notes: string) {
   auditPart(http, currentPart.value.nxid!, notes, (data, err) => {
     if(err) {
@@ -323,12 +312,12 @@ function audit(notes: string) {
       @toggle="toggleAdd"
       @submitRequest="submitAddToInventory"
       @audit="audit"
-      @kioskChange="changeKiosk"
       :key="currentPart.nxid!+currentPart.audited?currentPart.audited:Date.now()"
       :users="users"
       :kiosks="kiosks.map((u)=>u.first_name + ' ' + u.last_name)"
       :buildings="buildings"
       :part="currentPart"
+      :http="http"
     />
   </div>
 </template>

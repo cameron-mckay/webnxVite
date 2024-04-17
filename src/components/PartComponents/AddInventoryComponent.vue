@@ -3,15 +3,19 @@ import { onMounted, ref, watch } from 'vue';
 import { CartItem, PartSchema, User } from '../../plugins/interfaces';
 import FullScreenPopupComponent from '../GenericComponents/FullScreenPopupComponent.vue';
 import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponent.vue';
+import { getPartByID } from '../../plugins/dbCommands/partManager';
+import LoaderComponent from '../GenericComponents/LoaderComponent.vue';
+import { AxiosInstance } from 'axios';
 
 // Start props
 interface Props {
+  http: AxiosInstance;
   users: User[];
   kiosks: string[];
   part: PartSchema;
 }
 
-const { users, kiosks, part } = defineProps<Props>();
+const { users, kiosks, part, http } = defineProps<Props>();
 // End props
 
 // Request as cart item
@@ -24,10 +28,12 @@ let request = ref({
 // Owner
 let owner = ref({} as User);
 let quantity = ref(part.quantity?part.quantity:0);
+let kioskQuantity = ref(part.quantity?part.quantity:0);
 let notes = ref("")
 // let serials = ref('');
 let emit = defineEmits(['submitRequest', 'audit', 'kioskChange']);
 let currentKiosk = ref("")
+let loading = ref(false)
 let kioskNames = [] as string[]
 // Reset form
 function resetForm() {
@@ -45,18 +51,26 @@ function submit() {
   emit('submitRequest', request.value, owner.value, part);
 }
 
+function changeKiosk() {
+  loading.value = true
+  getPartByID(http, part.nxid!, 3, (data, err)=>{
+    if(err) {
+      return
+    }
+    let resPart = data as PartSchema
+    request.value.location = currentKiosk.value
+    quantity.value = resPart.quantity!
+    kioskQuantity.value = resPart.quantity!
+    loading.value = false
+  }, currentKiosk.value)
+}
+
 // When component mounted
 onMounted(() => {
   // Set value of request to props
   request.value.nxid = part.nxid!;
   // Register watch on the request object
-  watch(currentKiosk, ()=>{
-    emit("kioskChange", part, currentKiosk.value)
-    request.value.location = currentKiosk.value
-    setTimeout(()=>{
-      quantity.value = part.quantity ? part.quantity : 0
-    },500)
-  })
+  watch(currentKiosk, changeKiosk)
   watch(request, () => {
     switch (request.value.location) {
       // If all techs, set owner to arbitrary data
@@ -112,138 +126,144 @@ onMounted(() => {
       <select required v-model="currentKiosk" class="textbox m-1">
         <option v-for="kiosk of kiosks">{{kiosk}}</option>
       </select>
-      <p class="col-span-2 mb-4 text-xl">
-        Current {{currentKiosk}} Quantity: {{ part.quantity }}
-      </p>
-      <label v-if="currentKiosk">New Quantity:</label>
-      <input
-        v-if="currentKiosk"
-        class="textbox m-1"
-        required
-        v-model="quantity"
-        type="number"
-        min="0"
-        placeholder="Quantity"
-      />
-      <!--
-      <label v-if="part.serialized&&currentKiosk">Serial numbers:</label>
-      <textarea
-        class="textbox m-1"
-        v-if="part.serialized&&currentKiosk"
-        v-model="serials"
-        placeholder="One per line.  Drag to resize"
-      />
-      -->
+      <LoaderComponent v-if="loading" class="col-span-2"/>
       <div
-        v-if="
-          (quantity > part.quantity!)&&!part.consumable
-        "
-        class="col-span-2 grid grid-cols-2"
+        v-else
+        class="grid grid-cols-2 col-span-2"
       >
-        <label>Building:</label>
-        <select required v-model="request.building" class="textbox m-1">
-          <option>3</option>
-          <option>1</option>
-          <option>4</option>
-        </select>
-        <label>Location:</label>
-        <select required v-model="request.location" class="textbox m-1">
-          <option>Tech Inventory</option>
-          <option>All Techs</option>
-          <option>Asset</option>
-          <option>Box</option>
-          <option>{{currentKiosk}}</option>
-        </select>
-        <div
-          class="col-span-2 grid grid-cols-2"
-          v-if="request.location == 'Tech Inventory'"
-        >
-          <label>Owner:</label>
-          <select v-model="owner">
-            <option
-              v-for="user in users"
-              v-bind:key="user._id"
-              :value="user"
-              class="textbox m-1"
-            >
-              {{ user.first_name + ' ' + user.last_name }}
-            </option>
-          </select>
-        </div>
-        <div
-          class="col-span-2 grid grid-cols-2"
-          v-if="request.location == 'Asset'"
-        >
-          <label>Asset Tag:</label>
-          <input
-            type="text"
-            placeholder="Asset Tag"
-            v-model="owner._id"
-            class="textbox m-1"
-          />
-        </div>
-        <div
-          class="col-span-2 grid grid-cols-2"
-          v-if="request.location == 'Box'"
-        >
-          <label>Box Tag:</label>
-          <input
-            type="text"
-            placeholder="Box Tag"
-            v-model="owner._id"
-            class="textbox m-1"
-          />
-        </div>
-      </div>
-      <p
-        v-if="
-          part.quantity != undefined &&
-          quantity > part.quantity
-        "
-        class="col-span-2 mb-4 text-xl"
-      >
-        Adding {{ quantity - part.quantity }} to {{ request.location }}
-        {{ request.location == 'Asset' ? owner._id : '' }}
-      </p>
-      <p
-        v-else-if="
-          part.quantity != undefined &&
-          quantity < part.quantity
-        "
-        class="col-span-2 mb-4 text-xl"
-      >
-        Removing {{ part.quantity - quantity }} from {{currentKiosk}}
-      </p>
-      <p
-        v-else-if="part.quantity != undefined"
-        class="col-span-2 mb-4 text-xl"
-      >
-        No change.
-      </p>
-      <input
-        class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
-        type="reset"
-        value="Reset"
-      />
-      <input class="submit col-span-2" type="submit" value="Update" />
-      <h1 class="my-4 text-4xl">Audit:</h1>
-      <div
-        class="col-span-2 grid grid-cols-2"
-      >
-        <p v-if="part.audited">Last Audited:</p>
-        <p v-if="part.audited">{{new Date(Date.parse(part.audited!)).toLocaleString()}}</p>
-      </div>
-      <div
-        class="col-span-2"
-      >
-        <h1 class="inline-block text-2xl leading-8 md:leading-10">Notes:</h1>
-        <textarea
-          class="textbox m-1 h-40"
-          v-model="notes"
-          placeholder="Drag to resize"
+        <p class="col-span-2 mb-4 text-xl">
+          Current {{currentKiosk}} Quantity: {{ kioskQuantity }}
+        </p>
+        <label v-if="currentKiosk">New Quantity:</label>
+        <input
+          v-if="currentKiosk"
+          class="textbox m-1"
+          required
+          v-model="quantity"
+          type="number"
+          min="0"
+          placeholder="Quantity"
         />
+        <!--
+        <label v-if="part.serialized&&currentKiosk">Serial numbers:</label>
+        <textarea
+          class="textbox m-1"
+          v-if="part.serialized&&currentKiosk"
+          v-model="serials"
+          placeholder="One per line.  Drag to resize"
+        />
+        -->
+        <div
+          v-if="
+            (quantity > kioskQuantity!)&&!part.consumable
+          "
+          class="col-span-2 grid grid-cols-2"
+        >
+          <label>Building:</label>
+          <select required v-model="request.building" class="textbox m-1">
+            <option>3</option>
+            <option>1</option>
+            <option>4</option>
+          </select>
+          <label>Location:</label>
+          <select required v-model="request.location" class="textbox m-1">
+            <option>Tech Inventory</option>
+            <option>All Techs</option>
+            <option>Asset</option>
+            <option>Box</option>
+            <option>{{currentKiosk}}</option>
+          </select>
+          <div
+            class="col-span-2 grid grid-cols-2"
+            v-if="request.location == 'Tech Inventory'"
+          >
+            <label>Owner:</label>
+            <select v-model="owner">
+              <option
+                v-for="user in users"
+                v-bind:key="user._id"
+                :value="user"
+                class="textbox m-1"
+              >
+                {{ user.first_name + ' ' + user.last_name }}
+              </option>
+            </select>
+          </div>
+          <div
+            class="col-span-2 grid grid-cols-2"
+            v-if="request.location == 'Asset'"
+          >
+            <label>Asset Tag:</label>
+            <input
+              type="text"
+              placeholder="Asset Tag"
+              v-model="owner._id"
+              class="textbox m-1"
+            />
+          </div>
+          <div
+            class="col-span-2 grid grid-cols-2"
+            v-if="request.location == 'Box'"
+          >
+            <label>Box Tag:</label>
+            <input
+              type="text"
+              placeholder="Box Tag"
+              v-model="owner._id"
+              class="textbox m-1"
+            />
+          </div>
+        </div>
+        <p
+          v-if="
+            kioskQuantity != undefined &&
+            quantity > kioskQuantity 
+          "
+          class="col-span-2 mb-4 text-xl"
+        >
+          Adding {{ quantity - kioskQuantity }} to {{ request.location }}
+          {{ request.location == 'Asset' ? owner._id : '' }}
+        </p>
+        <p
+          v-else-if="
+            kioskQuantity != undefined &&
+            quantity < kioskQuantity 
+          "
+          class="col-span-2 mb-4 text-xl"
+        >
+          Removing {{ kioskQuantity - quantity }} from {{currentKiosk}}
+        </p>
+        <p
+          v-else-if="part.quantity != undefined"
+          class="col-span-2 mb-4 text-xl"
+        >
+          No change.
+        </p>
+        <input
+          class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
+          type="reset"
+          value="Reset"
+        />
+        <input class="submit col-span-2" type="submit" value="Update" />
+        <h1 class="my-4 text-4xl">Audit:</h1>
+        <div
+          class="col-span-2 grid grid-cols-2"
+        >
+          <p v-if="part.audited">Last Audited:</p>
+          <p v-if="part.audited">{{new Date(Date.parse(part.audited!)).toLocaleString()}}</p>
+        </div>
+        <div
+          class="col-span-2"
+        >
+          <h1 class="inline-block text-2xl leading-8 md:leading-10">Notes:</h1>
+          <textarea
+            class="textbox m-1 h-40"
+            v-model="notes"
+            placeholder="Drag to resize"
+          />
+        </div>
+        <input class="submit col-span-2" type="button" value="Mark As Audited" @click="$emit('audit', notes)"/>
       </div>
-      <input class="submit col-span-2" type="button" value="Mark As Audited" @click="$emit('audit', notes)"/>
     </form>
   </FullScreenPopupComponent>
 </template>
