@@ -16,6 +16,7 @@ import type {
 import Cacher from '../../plugins/Cacher';
 import { getBoxByID, getPartsOnBox } from '../../plugins/dbCommands/boxManager';
 import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { DEFAULT_BUILDING } from '../../plugins/Constants';
 
 interface Props {
   http: AxiosInstance;
@@ -29,7 +30,7 @@ const { http, store, router, errorHandler, displayMessage } =
 
 let box = ref({
   box_tag: '',
-  building: 3,
+  building: DEFAULT_BUILDING,
   location: '',
   notes: ''
 } as BoxSchema);

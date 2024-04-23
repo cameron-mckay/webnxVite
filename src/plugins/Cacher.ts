@@ -8,6 +8,7 @@ import { getAssetByID } from "./dbCommands/assetManager";
 import { Store } from "vuex";
 import { ref } from "vue";
 import { getBoxByID } from "./dbCommands/boxManager";
+import { DEFAULT_BUILDING } from "./Constants";
 
 export default class Cacher {
   private static http: AxiosInstance;
@@ -250,7 +251,7 @@ export default class Cacher {
       else {
         nxid = part.nxid
       }
-      getPartByID(Cacher.http, nxid, 3, (data, err)=>{
+      getPartByID(Cacher.http, nxid, DEFAULT_BUILDING, (data, err)=>{
         if (err) {
           Cacher.errorHandler(err)
           res({})

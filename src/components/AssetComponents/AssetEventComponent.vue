@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { DEFAULT_BUILDING } from '../../plugins/Constants';
 import {
   AssetEvent,
   AssetSchema,
@@ -24,7 +25,7 @@ let asset = ref({
   asset_tag: '',
   prev: '',
   next: '',
-  building: 3,
+  building: DEFAULT_BUILDING,
   asset_type: '',
   chassis_type: '',
   manufacturer: '',

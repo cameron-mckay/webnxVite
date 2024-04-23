@@ -23,6 +23,7 @@ BoxSchema
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
 import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { DEFAULT_BUILDING } from '../../plugins/Constants';
 
 interface Props {
   http: AxiosInstance;
@@ -36,7 +37,7 @@ const { http, store, router, errorHandler, displayMessage } =
 
 let pallet = ref({
   pallet_tag: '',
-  building: 3,
+  building: DEFAULT_BUILDING,
   location: '',
   notes: ''
 } as PalletSchema);

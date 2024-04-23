@@ -1,6 +1,7 @@
 import { advancedSearchCallback, textSearchCallback } from "./interfaces"
 import { Router } from "vue-router"
 import Cacher from "./Cacher"
+import { DEFAULT_BUILDING } from "./Constants"
 
 export default class TextSearch<Type> {
   // Vue shit
@@ -33,7 +34,7 @@ export default class TextSearch<Type> {
     this.lastSearchString = "asldkfhasdnvcaie"
     this.lastAdvancedSearchObject = {} as Type
     this.lastSearchAdvanced = false
-    this.lastSearchBuilding = 3
+    this.lastSearchBuilding = DEFAULT_BUILDING
     this.lastPageNum = 1
     // Register callback
     this.textSearchCallback = textSearchCallback

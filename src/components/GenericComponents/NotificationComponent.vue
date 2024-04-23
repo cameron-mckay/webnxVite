@@ -6,6 +6,7 @@ import SVGInfo from './SVG/SVGInfo.vue';
 import SVGBullhorn from './SVG/SVGBullhorn.vue';
 import SVGQuestion from './SVG/SVGQuestion.vue'
 import SVGX from './SVG/SVGX.vue';
+import { NOTIFICATION_TIME } from '../../plugins/Constants'
 
 interface Props {
   notification: NotificationSchema
@@ -14,7 +15,6 @@ interface Props {
 }
 
 let { notification, hide_timer, hide_x } = defineProps<Props>()
-const NOTIFICATION_TIME = 5000
 </script>
 <template>
   <div

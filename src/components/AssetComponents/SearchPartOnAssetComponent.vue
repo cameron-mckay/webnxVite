@@ -10,6 +10,7 @@ import TextSearch from '../../plugins/TextSearchClass';
 import PageHeaderComponent from '../../components/GenericComponents/PageHeaderComponent.vue';
 import Cacher from '../../plugins/Cacher';
 import AssetPartComponent from './PartOnAssetComponent.vue';
+import { DEFAULT_BUILDING, TEXT_SEARCH_PAGE_SIZE } from '../../plugins/Constants';
 
 interface Props {
   hideHeader?: boolean
@@ -28,7 +29,7 @@ onBeforeMount(()=>{
 
 function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
   return new Promise<TextSearchPage>((res)=>{
-    getPartsByTextSearch(http, searchString, pageNum, 3, (data: any, err) => {
+    getPartsByTextSearch(http, searchString, pageNum, DEFAULT_BUILDING, (data: any, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})
@@ -45,7 +46,7 @@ function advancedSearchCallback(buildingNum: number, pageNum: number, searchObje
   return new Promise<TextSearchPage>((res)=>{
     searchObject['advanced'] = 'true';
     searchObject['pageNum'] = pageNum;
-    searchObject['pageSize'] = 50;
+    searchObject['pageSize'] = TEXT_SEARCH_PAGE_SIZE;
     // Send request to api
     getPartsByData(http, searchObject, (data, err) => {
       if (err) {
@@ -66,7 +67,7 @@ function toggleAdvanced() {
 }
 
 async function advancedSearchButtonPressed(part: PartSchema) {
-  searchObject.newAdvancedSearch(3, 1, part)
+  searchObject.newAdvancedSearch(DEFAULT_BUILDING, 1, part)
   toggleAdvanced()
 }
 

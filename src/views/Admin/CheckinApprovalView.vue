@@ -15,6 +15,7 @@ PartSchema
 } from '../../plugins/interfaces';
 import { getCheckInQueue, getPartByID, processCheckInRequest } from '../../plugins/dbCommands/partManager';
 import { getAllUsers } from '../../plugins/dbCommands/userManager';
+import { DEFAULT_BUILDING } from '../../plugins/Constants';
 
 interface Props {
   http: AxiosInstance;
@@ -72,7 +73,7 @@ function loadQueue() {
         return new Promise((res)=>{
           if(partsMap.has(p.nxid))
             res("")
-          getPartByID(http, p.nxid, 3, (data, err) => {
+          getPartByID(http, p.nxid, DEFAULT_BUILDING, (data, err) => {
             if(err)
               partsMap.delete(p.nxid)
             partsMap.set(p.nxid, data as PartSchema)

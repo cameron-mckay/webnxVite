@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { DEFAULT_BUILDING } from '../../plugins/Constants';
 import {
   PalletEvent,
   PalletSchema,
@@ -30,7 +31,7 @@ let pallet = ref({
   pallet_tag: '',
   prev: '',
   next: '',
-  building: 3,
+  building: DEFAULT_BUILDING,
   location: "",
   notes: "",
   by: "",

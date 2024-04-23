@@ -1,4 +1,5 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import { TEXT_SEARCH_PAGE_SIZE } from '../Constants';
 import type {
   apiResponse,
   BoxSchema,
@@ -25,7 +26,7 @@ export function getBoxesByTextSearch(
       params: {
         searchString,
         pageNum,
-        pageSize: 50,
+        pageSize: TEXT_SEARCH_PAGE_SIZE,
       },
     })
     .then((res: AxiosResponse) => {

@@ -21,6 +21,7 @@ LoadedCartItem,
 UserState,
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
+import { DEFAULT_BUILDING } from '../../plugins/Constants';
 
 interface Props {
   http: AxiosInstance;
@@ -38,7 +39,7 @@ let nodes = ref([] as AssetSchema[])
 
 let asset = ref({
   asset_tag: '',
-  building: 3,
+  building: DEFAULT_BUILDING,
   asset_type: '',
 } as AssetSchema);
 let parts = ref([] as LoadedCartItem[]);

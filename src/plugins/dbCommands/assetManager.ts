@@ -1,11 +1,9 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import { TEXT_SEARCH_PAGE_SIZE } from '../Constants';
 import type {
   apiResponse,
   AssetSchema,
   CartItem,
-  LoadedCartItem,
-  PartCache,
-  PartSchema,
 } from '../interfaces';
 
 /**
@@ -28,7 +26,7 @@ export function getAssetsByTextSearch(
       params: {
         searchString,
         pageNum,
-        pageSize: 50,
+        pageSize: TEXT_SEARCH_PAGE_SIZE,
       },
     })
     .then((res: AxiosResponse) => {
