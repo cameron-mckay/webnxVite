@@ -119,6 +119,26 @@ export function createAsset(
     });
 }
 
+export function createAssetTemplate(
+  http: AxiosInstance,
+  asset: AssetSchema,
+  parts: Array<CartItem>,
+  name: string,
+  callback: apiResponse
+) {
+  // Send new part to API
+  http
+    .post('/api/asset/template', { asset, parts, name })
+    .then((res: AxiosResponse) => {
+      // Success - send response to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
 /**
  * @brief Update an asset with a new full asset schema
  *

@@ -82,6 +82,7 @@ async function loadPage(page: number) {
   loading.value = false
   totalEvents.value = p.total
   setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
+  setTimeout(()=>document.body.scrollTo({top: 0, behavior: "smooth"}),0)
   checkCache()
 }
 

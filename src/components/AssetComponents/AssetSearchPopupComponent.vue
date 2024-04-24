@@ -72,6 +72,7 @@ function displayResults(page: AssetSchema[]) {
   <div>
     <TextSearchComponent
       :search-object="searchObject"
+      :scroll-popup="true"
       @display-results="displayResults"
     >
       <template v-slot:searchIcons>

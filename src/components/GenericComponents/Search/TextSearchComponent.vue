@@ -12,11 +12,13 @@ import { DEFAULT_BUILDING } from '../../../plugins/Constants';
 interface Props {
   searchObject: TextSearch<any>
   hideQR?: boolean
+  scrollPopup?: boolean
 }
 
 let {
   searchObject,
-  hideQR
+  hideQR,
+  scrollPopup
 } = defineProps<Props>();
 
 let pageNumRef = ref(1)
@@ -122,6 +124,15 @@ async function loadPage(pageNum: number) {
   // CALL TO PARENT HERE
   emit("displayResults", page)
   loading.value = false
+  setTimeout(()=>{
+    if(scrollPopup) {
+      let elements = document.getElementsByClassName("scrollPopup")
+      for (let i = 0; i < elements.length; i++) {
+        elements.item(i)?.scrollTo({top: 0, behavior: "smooth"})
+      }
+    }
+    document.body.scrollTo({top: 0, behavior: "smooth"})
+  },0)
 }
 
 watch(loading, () => {

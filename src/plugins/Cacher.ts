@@ -6,7 +6,6 @@ import { getPartByID } from "./dbCommands/partManager";
 import { getPalletByID } from "./dbCommands/palletManager";
 import { getAssetByID } from "./dbCommands/assetManager";
 import { Store } from "vuex";
-import { ref } from "vue";
 import { getBoxByID } from "./dbCommands/boxManager";
 import { DEFAULT_BUILDING } from "./Constants";
 

@@ -8,8 +8,9 @@ import BackButton from '../../components/GenericComponents/Buttons/BackButton.vu
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import Cacher from '../../plugins/Cacher';
 import AssetPartInventoryComponent from '../../components/AssetComponents/AssetPartInventoryComponent.vue';
+import GetStringPopupComponent from '../../components/GenericComponents/GetStringPopupComponent.vue';
 import {
-  createAsset,
+  createAsset, createAssetTemplate,
 } from '../../plugins/dbCommands/assetManager';
 import type {
   AssetSchema,
@@ -31,6 +32,8 @@ let oldAsset = {} as AssetSchema;
 let loading = ref(false)
 let processingSubmission = false
 let inventory = new Inventory(store.state.user)
+let showNamePopup = ref(false)
+let templateAsset = {} as AssetSchema
 
 onBeforeMount(async () => {
   inventory.setCorrection(true)
@@ -59,12 +62,57 @@ async function reset() {
   inventory.clearDestInv()
 }
 
+function loadTemplateClicked() {
+  console.log('load')
+}
+
+function saveTemplateClicked(assetTemplate: AssetSchema) {
+  showNamePopup.value = true
+  templateAsset = JSON.parse(JSON.stringify(assetTemplate))
+}
+
+function toggleTemplateName() {
+  showNamePopup.value = !showNamePopup.value
+}
+
+function submitTemplate(name: string) {
+  if(processingSubmission)
+    return
+  processingSubmission = true
+  let unloadedParts = [] as CartItem[]
+  // Only fetch the parts if this is a server
+  if(templateAsset.asset_type=="Server") {
+    unloadedParts = Cacher.unloadParts(inventory.getDestInv())
+  }
+  // createAssetTemplate(http, templateAsset, unloadedParts, name, (data, err)=>{
+  //   processingSubmission = false
+  //   if(err) {
+  //     Cacher.errorHandler(err)
+  //   }
+  //   Cacher.messageHandler(data as string)
+  // })
+  console.log("submit")
+  console.log(unloadedParts)
+  console.log(templateAsset)
+  console.log(name)
+  processingSubmission = false
+}
+
 </script>
 <template>
   <div
     class="background-and-border p-4"
   >
     <BackButton @click="router.options.history.state.back ? router.back() : router.push('/assets')" class="mr-2 mb-2"/>
+    <GetStringPopupComponent
+      v-if="showNamePopup"
+      title="Enter Template Name:"
+      label=""
+      placeholder="Template Name"
+      submit-text="Save"
+      @toggle="toggleTemplateName"
+      @submit="submitTemplate"
+    />
     <LoaderComponent v-if="loading"/>
     <AssetManagerComponent
       v-else
@@ -73,8 +121,11 @@ async function reset() {
       :strict="true"
       :oldAsset="oldAsset"
       :untracked="true"
+      :show-templates="true"
       @assetSubmit="assetSubmit"
       @assetReset="reset"
+      @load-template="loadTemplateClicked"
+      @save-template="saveTemplateClicked"
     >
       <AssetPartInventoryComponent 
         :inventory="inventory"

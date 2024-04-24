@@ -80,6 +80,7 @@ function displayResults(page: PartSchema[]) {
   <div>
     <PageHeaderComponent class="mb-4" v-if="hideHeader!=true">Part Search</PageHeaderComponent>
     <TextSearchComponent
+      :scroll-popup="true"
       :search-object="searchObject"
       @display-results="displayResults"
     >

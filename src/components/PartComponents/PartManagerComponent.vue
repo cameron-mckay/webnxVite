@@ -616,7 +616,7 @@ async function getNXID() {
           v-model="part.threshold"
           type="number"
           min="0"
-          placeholder="Manufacturer"
+          placeholder="Threshold"
         />
       </div>
       <div v-if="strict" class="col-span-2 my-4">

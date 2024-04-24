@@ -72,6 +72,7 @@ async function displayResults(page: AllTechsEvent[])
   }
   allTechsHistory.value = page
   resultsLoading.value = false
+  setTimeout(()=>document.body.scrollTo({top: 0, behavior: "smooth"}),0)
 }
 
 function showLoader() {
