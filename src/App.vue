@@ -106,6 +106,7 @@ onBeforeMount(()=>{
   Cacher.assignStore(store)
   Cacher.validateCache()
   Cacher.assignErrorHandler(errorHandler)
+  Cacher.assignMessageHandler(displayMessage)
 
   checkAuth(http, async (data, err) => {
     // If not authenticated

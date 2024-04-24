@@ -9,6 +9,7 @@ import LoaderComponent from '../../components/GenericComponents/LoaderComponent.
 import Cacher from '../../plugins/Cacher';
 import AssetPartInventoryComponent from '../../components/AssetComponents/AssetPartInventoryComponent.vue';
 import GetStringPopupComponent from '../../components/GenericComponents/GetStringPopupComponent.vue';
+import AssetTemplatesPopupComponent from '../../components/AssetComponents/AssetTemplatesPopupComponent.vue';
 import {
   createAsset, createAssetTemplate,
 } from '../../plugins/dbCommands/assetManager';
@@ -24,15 +25,17 @@ interface Props {
   http: AxiosInstance;
   store: Store<UserState>;
   router: Router;
+  displayMessage: (message: string) => void;
 }
 
-const { http, store, router } = defineProps<Props>();
+const { http, store, router, displayMessage } = defineProps<Props>();
 
 let oldAsset = {} as AssetSchema;
 let loading = ref(false)
 let processingSubmission = false
 let inventory = new Inventory(store.state.user)
 let showNamePopup = ref(false)
+let showTemplatesPopup = ref(false)
 let templateAsset = {} as AssetSchema
 
 onBeforeMount(async () => {
@@ -57,13 +60,8 @@ function assetSubmit(updatedAsset: AssetSchema) {
   });
 }
 
-
 async function reset() {
   inventory.clearDestInv()
-}
-
-function loadTemplateClicked() {
-  console.log('load')
 }
 
 function saveTemplateClicked(assetTemplate: AssetSchema) {
@@ -75,6 +73,10 @@ function toggleTemplateName() {
   showNamePopup.value = !showNamePopup.value
 }
 
+function toggleTemplates() {
+  showTemplatesPopup.value = !showTemplatesPopup.value
+}
+
 function submitTemplate(name: string) {
   if(processingSubmission)
     return
@@ -84,18 +86,23 @@ function submitTemplate(name: string) {
   if(templateAsset.asset_type=="Server") {
     unloadedParts = Cacher.unloadParts(inventory.getDestInv())
   }
-  // createAssetTemplate(http, templateAsset, unloadedParts, name, (data, err)=>{
-  //   processingSubmission = false
-  //   if(err) {
-  //     Cacher.errorHandler(err)
-  //   }
-  //   Cacher.messageHandler(data as string)
-  // })
-  console.log("submit")
-  console.log(unloadedParts)
-  console.log(templateAsset)
-  console.log(name)
-  processingSubmission = false
+  createAssetTemplate(http, templateAsset, unloadedParts, name, (data, err)=>{
+    processingSubmission = false
+    if(err) {
+      Cacher.errorHandler(err)
+    }
+    displayMessage(data as string)
+    showNamePopup.value = false
+  })
+}
+
+function loadTemplate(template: AssetSchema) {
+  showTemplatesPopup.value = false
+  loading.value = true
+  oldAsset = template
+  inventory.setDestInventory(template.parts)
+  // must be deferred
+  setTimeout(()=>loading.value = false)
 }
 
 </script>
@@ -113,6 +120,11 @@ function submitTemplate(name: string) {
       @toggle="toggleTemplateName"
       @submit="submitTemplate"
     />
+    <AssetTemplatesPopupComponent
+      v-if="showTemplatesPopup"
+      @toggle="toggleTemplates"
+      @load="loadTemplate"
+    />
     <LoaderComponent v-if="loading"/>
     <AssetManagerComponent
       v-else
@@ -124,7 +136,7 @@ function submitTemplate(name: string) {
       :show-templates="true"
       @assetSubmit="assetSubmit"
       @assetReset="reset"
-      @load-template="loadTemplateClicked"
+      @load-template="toggleTemplates"
       @save-template="saveTemplateClicked"
     >
       <AssetPartInventoryComponent 

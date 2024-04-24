@@ -139,6 +139,41 @@ export function createAssetTemplate(
     });
 }
 
+export function getAssetTemplates(
+  http: AxiosInstance,
+  callback: apiResponse
+) {
+  // Send new part to API
+  http
+    .get('/api/asset/template')
+    .then((res: AxiosResponse) => {
+      // Success - send response to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function deleteAssetTemplate(
+  http: AxiosInstance,
+  id: string,
+  callback: apiResponse
+) {
+  // Send new part to API
+  http
+    .delete('/api/asset/template',{params:{id}})
+    .then((res: AxiosResponse) => {
+      // Success - send response to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
 /**
  * @brief Update an asset with a new full asset schema
  *
