@@ -18,6 +18,7 @@ import type {
   UserState,
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
+import { DEFAULT_BUILDING } from '../../plugins/Constants';
 
 interface Props {
   http: AxiosInstance;
@@ -78,7 +79,7 @@ onBeforeMount(() => {
       pageTitle.value = pageTitle.value + query.location + ':';
     }
 
-    getPartByID(http, nxid, store.state.user.building ? store.state.user.building : 3, (res, err) => {
+    getPartByID(http, nxid, store.state.user.building ? store.state.user.building : DEFAULT_BUILDING, (res, err) => {
       if (err) {
         errorHandler(err);
       }

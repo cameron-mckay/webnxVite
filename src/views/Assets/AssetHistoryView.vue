@@ -18,6 +18,7 @@ import {
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
 import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { ANALYTICS_PAGE_SIZE } from '../../plugins/Constants';
 
 interface Props {
   http: AxiosInstance;
@@ -31,7 +32,7 @@ const { http, router, errorHandler } =
   defineProps<Props>();
 let asset_tag = ref('');
 let history = ref([] as AssetHistory);
-let pageSize = 10;
+let pageSize = ANALYTICS_PAGE_SIZE;
 let pageNum = ref(1);
 let totalPages = ref(1)
 let pageCache = new Map<number, AssetHistory>();
@@ -66,6 +67,7 @@ async function loadPage(page: number) {
   loading.value = false
   totalEvents.value = p.total
   setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
+  setTimeout(()=>document.body.scrollTo({top: 0, behavior: "smooth"}),0)
   checkCache()
 }
 

@@ -4,6 +4,7 @@ import type {
   AxiosRequestConfig,
   AxiosResponse,
 } from 'axios';
+import { BUILD_KIT_PAGE_SIZE, TEXT_SEARCH_PAGE_SIZE } from '../Constants';
 
 import type {
   apiResponse,
@@ -39,7 +40,7 @@ export function getPartsByTextSearch(
       params: {
         searchString,
         pageNum,
-        pageSize: 50,
+        pageSize: TEXT_SEARCH_PAGE_SIZE,
         building,
         location,
       },
@@ -804,7 +805,7 @@ export function getBuildKitsByTextSearch(
       params: {
         searchString,
         pageNum,
-        pageSize: 10,
+        pageSize: BUILD_KIT_PAGE_SIZE,
         building,
         location,
       },

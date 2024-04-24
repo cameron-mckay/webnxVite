@@ -31,6 +31,7 @@ import type {
 import Cacher from '../../plugins/Cacher';
 import TextSearch from '../../plugins/TextSearchClass';
 import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { DEFAULT_BUILDING, TEXT_SEARCH_PAGE_SIZE } from '../../plugins/Constants';
 
 interface Props {
   http: AxiosInstance;
@@ -47,7 +48,7 @@ let buildings: Ref<Array<number>> = ref([]);
 let editPart = ref(false);
 let addPart = ref(false);
 let currentPart: Ref<PartSchema> = ref({});
-let currentBuilding = ref(3);
+let currentBuilding = ref(DEFAULT_BUILDING);
 let users:User[]
 let kiosks:User[]
 let loading = ref(false)
@@ -69,7 +70,7 @@ onBeforeMount(async ()=>{
 
 function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
   return new Promise<TextSearchPage>((res)=>{
-    getPartsByTextSearch(http, searchString, pageNum, 3, (data: any, err) => {
+    getPartsByTextSearch(http, searchString, pageNum, DEFAULT_BUILDING, (data: any, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})
@@ -86,7 +87,7 @@ function advancedSearchCallback(buildingNum: number, pageNum: number, searchObje
   return new Promise<TextSearchPage>((res)=>{
     searchObject['advanced'] = 'true';
     searchObject['pageNum'] = pageNum;
-    searchObject['pageSize'] = 50;
+    searchObject['pageSize'] = TEXT_SEARCH_PAGE_SIZE;
     // Send request to api
     getPartsByData(http, searchObject, (data, err) => {
       if (err) {

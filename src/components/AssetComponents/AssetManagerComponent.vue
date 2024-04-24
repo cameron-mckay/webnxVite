@@ -13,6 +13,7 @@ interface Props {
   untracked?: boolean;
   isAdmin?: boolean;
   clearOnReset?: boolean;
+  showTemplates?: boolean;
 }
 
 // Begin props
@@ -23,13 +24,14 @@ const {
   oldAsset,
   untracked,
   isAdmin,
-  clearOnReset
+  clearOnReset,
+  showTemplates
 } = defineProps<Props>();
 // End props
 let correction = ref(false)
 let assetRef = ref({} as AssetSchema)
 let assetCopy = {} as AssetSchema
-let emit = defineEmits(['assetSubmit', 'assetReset', 'correctionChanged']);
+let emit = defineEmits(['assetSubmit', 'assetReset', 'correctionChanged', 'saveTemplate', 'loadTemplate']);
 let key = 0;
 
 onBeforeMount(()=>{
@@ -71,7 +73,16 @@ onMounted(()=>{
       This asset was automatically migrated from the old asset tracking system
       and is incomplete. Please edit and update the information if you can.
     </p>
-    <h1 class="mb-4 text-4xl leading-8 md:leading-10">{{ title }}</h1>
+    <div class="flex">
+      <h1 class="mb-4 text-4xl leading-8 md:leading-10">{{ title }}</h1>
+      <input 
+        class="submit col-span-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 mt-0 ml-2 mb-4"
+        type="button"
+        value="Load Template"
+        v-if="showTemplates"
+        @click="$emit('loadTemplate')"
+      />
+    </div>
     <div class="flex" v-if="isAdmin&&!assetRef.migrated">
       <!-- -->
       <label class="mr-1">Correction mode:</label>
@@ -536,6 +547,13 @@ onMounted(()=>{
         class="submit col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700"
         type="reset"
         value="Reset"
+      />
+      <input 
+        class="submit col-span-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700"
+        type="button"
+        value="Save as template"
+        v-if="showTemplates"
+        @click="$emit('saveTemplate', assetRef)"
       />
       <!-- -->
       <input 

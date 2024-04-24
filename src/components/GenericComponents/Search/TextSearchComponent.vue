@@ -7,15 +7,18 @@ import TextSearch from '../../../plugins/TextSearchClass';
 import LoaderComponent from '../LoaderComponent.vue';
 import { onBeforeMount, onMounted, ref, watch } from 'vue';
 import { isMobile } from '../../../plugins/CommonMethods';
+import { DEFAULT_BUILDING } from '../../../plugins/Constants';
 // Props interface
 interface Props {
   searchObject: TextSearch<any>
   hideQR?: boolean
+  scrollPopup?: boolean
 }
 
 let {
   searchObject,
-  hideQR
+  hideQR,
+  scrollPopup
 } = defineProps<Props>();
 
 let pageNumRef = ref(1)
@@ -35,7 +38,7 @@ onBeforeMount(()=>{
   searchObject.registerLoadPageCallback(advancedSearchCallback)
   if(searchObject.isSearchAdvanced()) {
     let temp = searchObject.getAdvancedSearchObjectFromRouter()
-    searchObject.newAdvancedSearch(3, pageNumRef.value, temp)
+    searchObject.newAdvancedSearch(DEFAULT_BUILDING, pageNumRef.value, temp)
     return
   }
   searchText.value = searchObject.getSearchTextFromRouter()
@@ -110,17 +113,26 @@ async function loadPage(pageNum: number) {
   // If search was advanced
   if(searchObject.wasLastSearchAdvanced()&&!buttonPressed) {
     searchText.value = ""
-    page = await searchObject.loadPageAdvanced(3, pageNum, searchObject.getLastAdvancedSearchObject())
+    page = await searchObject.loadPageAdvanced(DEFAULT_BUILDING, pageNum, searchObject.getLastAdvancedSearchObject())
   }
   else {
     buttonPressed = false
     // Load text search page
-    page = await searchObject.loadPage(3, pageNum, searchText.value)
+    page = await searchObject.loadPage(DEFAULT_BUILDING, pageNum, searchText.value)
   }
   totalPages.value = searchObject.getNumPages()
   // CALL TO PARENT HERE
   emit("displayResults", page)
   loading.value = false
+  setTimeout(()=>{
+    if(scrollPopup) {
+      let elements = document.getElementsByClassName("scrollPopup")
+      for (let i = 0; i < elements.length; i++) {
+        elements.item(i)?.scrollTo({top: 0, behavior: "smooth"})
+      }
+    }
+    document.body.scrollTo({top: 0, behavior: "smooth"})
+  },0)
 }
 
 watch(loading, () => {

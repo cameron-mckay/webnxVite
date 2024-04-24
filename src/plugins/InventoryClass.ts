@@ -206,6 +206,31 @@ export default class Inventory {
     })
   }
 
+  setDestInventory(cartItems: CartItem[]) {
+    return new Promise<void>(async (res, rej)=>{
+      try {
+        for (let p of cartItems) {
+          if(!p.quantity)
+            continue
+          // If a max quantity exists
+          if(this.maxQuantites.has(p.nxid)) {
+            // Add this quantity to the max
+            this.maxQuantites.set(p.nxid, this.maxQuantites.get(p.nxid)! + p.quantity)
+          } else {
+            // Set the initial max quantity
+            this.maxQuantites.set(p.nxid, p.quantity)
+          }
+        }
+        this.destList = await Cacher.loadCartItems(cartItems)
+        res()
+        this.refreshComponentsCallback()
+      }
+      catch {
+        rej()
+      }
+    })
+  }
+
   getSourceUsers() {
     // Get the extra dest users
     let returnVal = [] as User[]

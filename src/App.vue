@@ -36,12 +36,12 @@ import Cacher from './plugins/Cacher';
 import LoaderComponent from './components/GenericComponents/LoaderComponent.vue';
 import { urlBase64ToUint8Array } from './plugins/CommonMethods'
 import { getPublicKey, getUnreadNotifications, registerEndpoint } from './plugins/dbCommands/notifications';
+import { NOTIFICATION_TIME } from './plugins/Constants'
 
 // Global instances passed through props
 const http = inject<AxiosInstance>(injectionKey)!;
 const router = useRouter();
 const store = useStore();
-const NOTIFICATION_TIME = 5000
 
 let routeConfigured = ref(false)
 
@@ -106,6 +106,7 @@ onBeforeMount(()=>{
   Cacher.assignStore(store)
   Cacher.validateCache()
   Cacher.assignErrorHandler(errorHandler)
+  Cacher.assignMessageHandler(displayMessage)
 
   checkAuth(http, async (data, err) => {
     // If not authenticated

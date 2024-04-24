@@ -1,4 +1,5 @@
 import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import { NOTIFICATION_PAGE_SIZE } from "../Constants";
 import { apiResponse, NotificationTypes } from "../interfaces";
 
 export function getPublicKey(
@@ -143,7 +144,7 @@ export function getPastNotifications(
     .get('/api/notifications', {
       params: {
         skip,
-        pageSize: 10
+        pageSize: NOTIFICATION_PAGE_SIZE
       }
     })
     .then((res: AxiosResponse) => {

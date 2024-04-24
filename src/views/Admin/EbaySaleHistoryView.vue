@@ -65,6 +65,7 @@ async function displayResults(page: EbaySaleEvent[])
   }
   ebayEvents.value = page
   resultsLoading.value = false
+  setTimeout(()=>document.body.scrollTo({top: 0, behavior: "smooth"}),0)
 }
 
 function showLoader() {

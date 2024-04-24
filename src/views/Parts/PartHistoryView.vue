@@ -17,6 +17,7 @@ import type {
   UserState,
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
+import { DEFAULT_BUILDING } from '../../plugins/Constants';
 
 interface Props {
   http: AxiosInstance;
@@ -39,7 +40,7 @@ onBeforeMount(() => {
   if (router.currentRoute.value.query.id) {
     let nxid = router.currentRoute.value.query.nxid as string;
     let id = router.currentRoute.value.query.id as string;
-    getPartByID(http, nxid, store.state.user.building ? store.state.user.building : 3, (res, err) => {
+    getPartByID(http, nxid, store.state.user.building ? store.state.user.building : DEFAULT_BUILDING, (res, err) => {
       if (err) {
         errorHandler(err);
       }

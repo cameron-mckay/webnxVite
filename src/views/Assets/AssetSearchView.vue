@@ -17,6 +17,7 @@ import AssetComponent from '../../components/AssetComponents/AssetComponent.vue'
 import TextSearchComponent from '../../components/GenericComponents/Search/TextSearchComponent.vue';
 import TextSearch from '../../plugins/TextSearchClass';
 import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { TEXT_SEARCH_PAGE_SIZE } from '../../plugins/Constants';
 
 interface Props {
   http: AxiosInstance;
@@ -52,7 +53,7 @@ function advancedSearchCallback(buildingNum: number, pageNum: number, searchObje
   return new Promise<TextSearchPage>((res)=>{
     searchObject['advanced'] = 'true';
     searchObject['pageNum'] = pageNum;
-    searchObject['pageSize'] = 50;
+    searchObject['pageSize'] = TEXT_SEARCH_PAGE_SIZE;
     // Send request to api
     getAssetsByData(http, searchObject, (data, err) => {
       if (err) {

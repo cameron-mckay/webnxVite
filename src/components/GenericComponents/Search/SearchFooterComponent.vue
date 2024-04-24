@@ -14,7 +14,7 @@ function loadPage(pageNum: number) {
 <template>
   <div
     v-if="numPages > 1"
-    class="float-right select-none mb-4"
+    class="ml-auto select-none mb-4"
   >
     <SearchNavButtons :numPages="numPages" :pageNum="pageNum" @loadPage="loadPage"/>
     <SearchJumper :numPages="numPages" :pageNum="pageNum" @loadPage="loadPage"/>

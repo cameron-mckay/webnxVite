@@ -71,6 +71,7 @@ function addPartFromSearch(part: PartSchema) {
       v-if="correction || untracked"
       v-show="showPopup"
       @toggle="togglePopup"
+      id="scrollPopup"
     >
       <SearchPartOnAssetComponent
         @addPartAction="addPartFromSearch"

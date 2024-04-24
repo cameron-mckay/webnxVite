@@ -1,11 +1,9 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import { TEXT_SEARCH_PAGE_SIZE } from '../Constants';
 import type {
   apiResponse,
   AssetSchema,
   CartItem,
-  LoadedCartItem,
-  PartCache,
-  PartSchema,
 } from '../interfaces';
 
 /**
@@ -28,7 +26,7 @@ export function getAssetsByTextSearch(
       params: {
         searchString,
         pageNum,
-        pageSize: 50,
+        pageSize: TEXT_SEARCH_PAGE_SIZE,
       },
     })
     .then((res: AxiosResponse) => {
@@ -111,6 +109,61 @@ export function createAsset(
   // Send new part to API
   http
     .post('/api/asset', { asset, parts })
+    .then((res: AxiosResponse) => {
+      // Success - send response to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function createAssetTemplate(
+  http: AxiosInstance,
+  asset: AssetSchema,
+  parts: Array<CartItem>,
+  name: string,
+  callback: apiResponse
+) {
+  // Send new part to API
+  http
+    .post('/api/asset/template', { asset, parts, name })
+    .then((res: AxiosResponse) => {
+      // Success - send response to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getAssetTemplates(
+  http: AxiosInstance,
+  callback: apiResponse
+) {
+  // Send new part to API
+  http
+    .get('/api/asset/template')
+    .then((res: AxiosResponse) => {
+      // Success - send response to callback
+      callback(res.data, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function deleteAssetTemplate(
+  http: AxiosInstance,
+  id: string,
+  callback: apiResponse
+) {
+  // Send new part to API
+  http
+    .delete('/api/asset/template',{params:{id}})
     .then((res: AxiosResponse) => {
       // Success - send response to callback
       callback(res.data, null);

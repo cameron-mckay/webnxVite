@@ -12,6 +12,7 @@ import TextSearch from '../../plugins/TextSearchClass';
 import PageHeaderComponent from '../../components/GenericComponents/PageHeaderComponent.vue';
 import PartComponent from '../../components/PartComponents/PartComponent.vue';
 import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { TEXT_SEARCH_PAGE_SIZE } from '../../plugins/Constants';
 
 interface Props {
   http: AxiosInstance;
@@ -47,7 +48,7 @@ function advancedSearchCallback(_buildingNum: number, pageNum: number, searchObj
   return new Promise<TextSearchPage>((res)=>{
     searchObject['advanced'] = 'true';
     searchObject['pageNum'] = pageNum;
-    searchObject['pageSize'] = 50;
+    searchObject['pageSize'] = TEXT_SEARCH_PAGE_SIZE;
     // Send request to api
     getPartsByData(http, searchObject, (data, err) => {
       if (err) {

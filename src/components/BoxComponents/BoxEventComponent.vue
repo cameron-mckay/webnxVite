@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { DEFAULT_BUILDING } from '../../plugins/Constants';
 import {
 BoxEvent,
 BoxSchema,
@@ -24,7 +25,7 @@ let box = ref({
   box_tag: '',
   prev: '',
   next: '',
-  building: 3,
+  building: DEFAULT_BUILDING,
   location: "",
   notes: "",
   by: "",

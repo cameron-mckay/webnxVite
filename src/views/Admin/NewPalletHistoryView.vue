@@ -93,6 +93,7 @@ async function displayResults(page: PalletEvent[])
   palletEvents.value = page
   resultsLoading.value = false
   setTimeout(()=>replaceLinksWithAnchors(document, 'notes-with-links'),0)
+  setTimeout(()=>document.body.scrollTo({top: 0, behavior: "smooth"}),0)
 }
 
 function showLoader() {

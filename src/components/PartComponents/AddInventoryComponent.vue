@@ -6,6 +6,7 @@ import CustomDropdownComponent from '../GenericComponents/CustomDropdownComponen
 import { getPartByID } from '../../plugins/dbCommands/partManager';
 import LoaderComponent from '../GenericComponents/LoaderComponent.vue';
 import { AxiosInstance } from 'axios';
+import { DEFAULT_BUILDING } from '../../plugins/Constants';
 
 // Start props
 interface Props {
@@ -21,7 +22,7 @@ const { users, kiosks, part, http } = defineProps<Props>();
 // Request as cart item
 let request = ref({
   nxid: part.nxid!,
-  building: 3,
+  building: DEFAULT_BUILDING,
   location: 'Parts Room',
 } as CartItem);
 
@@ -38,7 +39,7 @@ let kioskNames = [] as string[]
 // Reset form
 function resetForm() {
   request.value.quantity = 0;
-  request.value.building = 3;
+  request.value.building = DEFAULT_BUILDING;
   request.value.location = 'Parts Room';
 }
 
@@ -53,7 +54,7 @@ function submit() {
 
 function changeKiosk() {
   loading.value = true
-  getPartByID(http, part.nxid!, 3, (data, err)=>{
+  getPartByID(http, part.nxid!, DEFAULT_BUILDING, (data, err)=>{
     if(err) {
       return
     }
