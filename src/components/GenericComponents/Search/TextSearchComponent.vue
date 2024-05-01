@@ -8,6 +8,7 @@ import LoaderComponent from '../LoaderComponent.vue';
 import { onBeforeMount, onMounted, ref, watch } from 'vue';
 import { isMobile } from '../../../plugins/CommonMethods';
 import { DEFAULT_BUILDING } from '../../../plugins/Constants';
+import { SortType } from '../../../plugins/interfaces';
 // Props interface
 interface Props {
   searchObject: TextSearch<any>
@@ -36,6 +37,7 @@ let id = Math.random()
 onBeforeMount(()=>{
   pageNumRef.value = searchObject.getPageNumFromRouter()
   searchObject.registerLoadPageCallback(advancedSearchCallback)
+  searchObject.loadSortFromRouter()
   if(searchObject.isSearchAdvanced()) {
     let temp = searchObject.getAdvancedSearchObjectFromRouter()
     searchObject.newAdvancedSearch(DEFAULT_BUILDING, pageNumRef.value, temp)
@@ -52,6 +54,42 @@ onMounted(()=>{
   // Add handle resize functin to resize event
   window.addEventListener('resize', handleResize)
 })
+
+function registerHeaderClicks() {
+  let el = document.getElementById('header'+id)
+  // If there are no children, return
+  if(!el||!el.children)
+    return
+  // Get the children
+  let {children} = el
+  let { sortDir, sortString } = searchObject.getCurrentSort()
+  // Loop through children and count if not hidden
+  for (let i = 0; i < children.length; i ++) {
+    // If paragraph
+    if(children[i].nodeName=="P") {
+      // Get the sort name
+      let sn = children[i].getAttribute("sortName")
+      // If currently sorting by that attribute
+      if(sn==sortString&&sortString!="") {
+        // Add up arrow for ascending
+        if(sortDir==SortType.Ascending)
+          children[i].innerHTML = children[i].innerHTML + "⬆️"
+        // Add down arrow for descending
+        else if(sortDir==SortType.Descending)
+          children[i].innerHTML = children[i].innerHTML + "⬇️"
+      }
+      // Add click listener
+      children[i].addEventListener("click", (e)=>{
+        let p = e.currentTarget as HTMLElement
+        let sortName = p.getAttribute("sortName")
+        if(sortName) {
+          searchObject.toggleSort(sortName)
+          loadPage(1)
+        }
+      })
+    }
+  }
+}
 
 function handleResize() {
   windowWidth.value = window.innerWidth
@@ -125,13 +163,20 @@ async function loadPage(pageNum: number) {
   emit("displayResults", page)
   loading.value = false
   setTimeout(()=>{
+    // If in popup mode
     if(scrollPopup) {
+      // Find the popups
       let elements = document.getElementsByClassName("scrollPopup")
+      // Scroll them all to the top
       for (let i = 0; i < elements.length; i++) {
         elements.item(i)?.scrollTo({top: 0, behavior: "smooth"})
       }
     }
-    document.body.scrollTo({top: 0, behavior: "smooth"})
+    else {
+      document.body.scrollTo({top: 0, behavior: "smooth"})
+    }
+    // Register the header clicks
+    registerHeaderClicks()
   },0)
 }
 
@@ -170,7 +215,7 @@ watch(loading, () => {
     <div>
       <div
         :id="'header'+id"
-        class="mt-1 relative grid py-1 text-center font-bold leading-8 transition md:py-2 md:leading-10 [&>p]:mt-auto"
+        class="mt-1 relative grid py-1 text-center font-bold leading-8 transition md:py-2 md:leading-10 [&>p]:mt-auto select-none"
         :style="{ 'grid-template-columns': 'repeat(' + numCols + ', minmax(0, 1fr))'}"
       >
         <slot name="searchHeader" v-if="!loading&&showHeader">

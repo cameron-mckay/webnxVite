@@ -13,7 +13,9 @@ import type {
   PartSchema,
   User,
   InventoryEntry,
-  CheckInRequest
+  CheckInRequest,
+  SortType,
+  AssetSchema
 } from '../interfaces';
 
 /**
@@ -31,6 +33,8 @@ export function getPartsByTextSearch(
   searchString: string,
   pageNum: number,
   building: number,
+  sortString: string,
+  sortDir: SortType,
   callback: apiResponse,
   location?: string
 ) {
@@ -42,6 +46,8 @@ export function getPartsByTextSearch(
         pageNum,
         pageSize: TEXT_SEARCH_PAGE_SIZE,
         building,
+        sortString,
+        sortDir,
         location,
       },
     })
@@ -402,12 +408,14 @@ export function movePart(
 export function sellOnEbay(
   http: AxiosInstance,
   parts: InventoryEntry[],
+  assets: AssetSchema[],
   orderID: string,
   callback: apiResponse,
 ) {
   http
     .post('/api/part/sell', {
       parts,
+      assets,
       orderID
     })
     .then((res: AxiosResponse) => {

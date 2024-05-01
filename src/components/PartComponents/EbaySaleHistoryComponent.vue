@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
-import { CheckOutEvent, User, PartSchema, LoadedCartItem, EbaySaleEvent } from '../../plugins/interfaces'
+import { User, PartSchema, LoadedCartItem, EbaySaleEvent } from '../../plugins/interfaces'
+import EbayAssetComponent from '../AssetComponents/EbayAssetComponent.vue';
 import CheckoutHistoryPartComponent from '../KioskComponents/CheckoutHistoryPartComponent.vue';
 interface Props {
   order: EbaySaleEvent
@@ -34,7 +35,18 @@ onBeforeMount(()=>{
         By: {{ user.first_name + " " + user.last_name }}
       </p>
     </div>
-    <div>
+    <div v-if="order.assets&&order.assets.length>0">
+        <h1 class="my-4 w-full text-4xl md:w-fit">
+          Assets:
+        </h1>
+        <EbayAssetComponent
+          v-for="asset of order.assets"
+          :read-only="true"
+          class="w-full"
+          :asset="asset"
+        />
+    </div>
+    <div v-if="loadedParts.length>0">
       <div
         class="relative grid grid-cols-3 md:grid-cols-4 py-1 text-center font-bold leading-8 transition md:py-2 md:leading-10 mt-auto"
       >

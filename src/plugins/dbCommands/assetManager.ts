@@ -4,6 +4,7 @@ import type {
   apiResponse,
   AssetSchema,
   CartItem,
+  SortType,
 } from '../interfaces';
 
 /**
@@ -18,6 +19,8 @@ export function getAssetsByTextSearch(
   http: AxiosInstance,
   searchString: string,
   pageNum: number,
+  sortString: string,
+  sortDir: SortType,
   callback: apiResponse
 ) {
   // Send string query to API
@@ -27,6 +30,8 @@ export function getAssetsByTextSearch(
         searchString,
         pageNum,
         pageSize: TEXT_SEARCH_PAGE_SIZE,
+        sortString,
+        sortDir
       },
     })
     .then((res: AxiosResponse) => {

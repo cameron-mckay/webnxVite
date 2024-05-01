@@ -3,7 +3,7 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { ref, Ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import { AssetSchema, TextSearchPage, UserState } from '../../plugins/interfaces';
+import { AssetSchema, SortType, TextSearchPage, UserState } from '../../plugins/interfaces';
 import PageHeaderComponent from '../../components/GenericComponents/PageHeaderComponent.vue';
 import {
   getAssetsByData,
@@ -34,9 +34,9 @@ let assets: Ref<AssetSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
 
-function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
+function textSearchCallback(buildingNum: number, pageNum: number, searchString: string, sortString: string, sortDir: SortType) {
   return new Promise<TextSearchPage>((res)=>{
-    getAssetsByTextSearch(http, searchString, pageNum, (data: any, err) => {
+    getAssetsByTextSearch(http, searchString, pageNum, sortString, sortDir, (data: any, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})
@@ -49,11 +49,13 @@ function textSearchCallback(buildingNum: number, pageNum: number, searchString: 
   })
 }
 
-function advancedSearchCallback(buildingNum: number, pageNum: number, searchObject: AssetSchema) {
+function advancedSearchCallback(buildingNum: number, pageNum: number, searchObject: AssetSchema, sortString: string, sortDir: SortType) {
   return new Promise<TextSearchPage>((res)=>{
     searchObject['advanced'] = 'true';
     searchObject['pageNum'] = pageNum;
     searchObject['pageSize'] = TEXT_SEARCH_PAGE_SIZE;
+    searchObject['sortString'] = sortString
+    searchObject['sortDir'] = sortDir
     // Send request to api
     getAssetsByData(http, searchObject, (data, err) => {
       if (err) {
@@ -116,16 +118,16 @@ function displayResults(page: AssetSchema[]) {
         <PlusButton @click="addUntrackedAsset" v-if="store.state.user.roles?.includes('edit_assets')"/>
       </template>
       <template v-slot:searchHeader>
-        <p class="mt-auto">NXID</p>
-        <p class="mt-auto md:block hidden">Building</p>
-        <p class="mt-auto">Type</p>
-        <p class="hidden md:block mt-auto">Chassis</p>
-        <p class="hidden md:block mt-auto">Status</p>
+        <p sortName="asset_tag" class="mt-auto">NXID</p>
+        <p sortName="building" class="mt-auto md:block hidden">Building</p>
+        <p sortName="asset_type" class="mt-auto">Type</p>
+        <p sortName="chassis_type" class="hidden md:block mt-auto">Chassis</p>
+        <p sortName="live" class="hidden md:block mt-auto">Status</p>
       </template>
       <template v-slot:searchResults>
         <AssetComponent
           :add="false"
-          :edit="store.state.user.roles?.includes('edit_assets')"
+          :edit="store.state.user.roles?.includes('edit_assets')&&asset.next!='sold'"
           :view="true"
           v-for="asset in assets"
           v-bind:key="asset._id"

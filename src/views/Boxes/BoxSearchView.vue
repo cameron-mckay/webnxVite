@@ -3,7 +3,7 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { ref, Ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import { AssetSchema, BoxSchema, TextSearchPage, UserState } from '../../plugins/interfaces';
+import { AssetSchema, BoxSchema, SortType, TextSearchPage, UserState } from '../../plugins/interfaces';
 import PageHeaderComponent from '../../components/GenericComponents/PageHeaderComponent.vue';
 
 import SlidersButton from '../../components/GenericComponents/Buttons/SlidersButton.vue'
@@ -31,9 +31,9 @@ let boxes: Ref<BoxSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
 
-function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
+function textSearchCallback(buildingNum: number, pageNum: number, searchString: string, sortString: string, sortDir: SortType) {
   return new Promise<TextSearchPage>((res)=>{
-    getBoxesByTextSearch(http, searchString, pageNum, (data: any, err) => {
+    getBoxesByTextSearch(http, searchString, pageNum, sortString, sortDir, (data: any, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})
@@ -46,11 +46,13 @@ function textSearchCallback(buildingNum: number, pageNum: number, searchString: 
   })
 }
 
-function advancedSearchCallback(buildingNum: number, pageNum: number, searchObject: BoxSchema) {
+function advancedSearchCallback(_buildingNum: number, pageNum: number, searchObject: BoxSchema, sortString: string, sortDir: SortType) {
   return new Promise<TextSearchPage>((res)=>{
     searchObject['advanced'] = 'true';
     searchObject['pageNum'] = pageNum;
     searchObject['pageSize'] = TEXT_SEARCH_PAGE_SIZE;
+    searchObject['sortString'] = sortString
+    searchObject['sortDir'] = sortDir
     // Send request to api
     getBoxesByData(http, searchObject, (data, err) => {
       if (err) {
@@ -113,9 +115,9 @@ function displayResults(page: BoxSchema[]) {
         <PlusButton @click="addUntrackedBox" v-if="store.state.user.roles?.includes('edit_boxes')"/>
       </template>
       <template v-slot:searchHeader>
-        <p>Box Tag</p>
-        <p>Building</p>
-        <p>Location</p>
+        <p sortName="box_tag">Box Tag</p>
+        <p sortName="building">Building</p>
+        <p sortName="location">Location</p>
       </template>
       <template v-slot:searchResults>
         <BoxComponent

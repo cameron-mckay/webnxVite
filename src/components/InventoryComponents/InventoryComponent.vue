@@ -17,9 +17,10 @@ interface Props {
   submitButtonText?: string;
   overrideSourceText?: string;
   serializeDestList?: boolean;
+  alwaysShowDest?: boolean;
 }
 
-let { inventory, forceSourceUser, forceDestUser, serializeDestList, submitButtonText } = defineProps<Props>()
+let { inventory, forceSourceUser, forceDestUser, serializeDestList, submitButtonText, alwaysShowDest } = defineProps<Props>()
 
 let sourceUser = ref({} as User)
 let destUser = ref({} as User)
@@ -144,7 +145,7 @@ function submit() {
           <p>Inventory is empty...</p>
         </div>
         <!-- Transfer list header -->
-        <div v-if="destInv.length > 0">
+        <div v-if="destInv.length > 0 || (alwaysShowDest&&!loading)">
           <div class="my-4 flex flex-wrap justify-between">
             <!-- Override transfer list title -->
             <slot>
@@ -203,7 +204,10 @@ function submit() {
               </span>
             </p>
           </div>
-          <InventoryPartHeaderComponent/>
+          <InventoryPartHeaderComponent
+            v-if="destInv.length > 0"
+          />
+          <p v-else>No parts here...</p>
           <InventoryPartComponent
             :isCurrentUser="true"
             v-for="item in destInv"

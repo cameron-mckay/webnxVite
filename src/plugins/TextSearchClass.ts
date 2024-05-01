@@ -1,4 +1,4 @@
-import { advancedSearchCallback, textSearchCallback } from "./interfaces"
+import { advancedSearchCallback, SortType, textSearchCallback } from "./interfaces"
 import { Router } from "vue-router"
 import Cacher from "./Cacher"
 import { DEFAULT_BUILDING } from "./Constants"
@@ -15,6 +15,8 @@ export default class TextSearch<Type> {
   private lastSearchBuilding: number
   private lastSearchAdvanced: boolean
   private lastPageNum: number
+  private lastSortString: string
+  private lastSortDir: SortType
   // Cache all loaded pages
   private pageCache: Map<number, Type[]>
   // Callback in case of cache miss
@@ -41,6 +43,8 @@ export default class TextSearch<Type> {
     this.advancedSearchCallback = advancedSearchCallback
     this.loadPageCallback = (pageNum)=>{}
     this.routerDisabled = false
+    this.lastSortDir = SortType.None
+    this.lastSortString = ""
   }
   // Gets the part filters from the provided instance
   static getSearchTextFromRouter(router: Router) {
@@ -64,6 +68,14 @@ export default class TextSearch<Type> {
     }
     return searchObject
   }
+
+  static getSortOptionsFromRouter(router: Router) {
+    let { query } = router.currentRoute.value
+    let sortString = query.sortString ? query.sortString as string : ""
+    let sortDir = query.sortDir ? parseInt(query.sortDir as string) as SortType : SortType.None
+    return { sortString, sortDir}
+  }
+
   isSearchAdvanced() {
     if(!this.routerDisabled)
       return TextSearch.isSearchAdvanced(this.router)
@@ -86,6 +98,12 @@ export default class TextSearch<Type> {
     if(!this.routerDisabled)
       return TextSearch.getPageNumFromRouter(this.router)
     return 1
+  }
+
+  getSortOptionsFromRouter() {
+    if(!this.routerDisabled)
+      return TextSearch.getSortOptionsFromRouter(this.router)
+    return { sortString: "", sortDir: SortType.None }
   }
 
   getNumItems() {
@@ -127,7 +145,7 @@ export default class TextSearch<Type> {
         this.pageCache.set(localPage, []);
         // Get Page from api
         // Update local info
-        (this.lastSearchAdvanced ? this.advancedSearchCallback(this.lastSearchBuilding, localPage, this.lastAdvancedSearchObject) : this.textSearchCallback(this.lastSearchBuilding, localPage, this.lastSearchString))
+        (this.lastSearchAdvanced ? this.advancedSearchCallback(this.lastSearchBuilding, localPage, this.lastAdvancedSearchObject, this.lastSortString, this.lastSortDir) : this.textSearchCallback(this.lastSearchBuilding, localPage, this.lastSearchString, this.lastSortString, this.lastSortDir))
           .then((page) => {
             // Set new value
             this.numPages = page.pages
@@ -155,7 +173,7 @@ export default class TextSearch<Type> {
         // Set temp value
         this.pageCache.set(localPage, []);
         // Get page from api
-        (this.lastSearchAdvanced ? this.advancedSearchCallback(this.lastSearchBuilding, localPage, this.lastAdvancedSearchObject) : this.textSearchCallback(this.lastSearchBuilding, localPage, this.lastSearchString))
+        (this.lastSearchAdvanced ? this.advancedSearchCallback(this.lastSearchBuilding, localPage, this.lastAdvancedSearchObject, this.lastSortString, this.lastSortDir) : this.textSearchCallback(this.lastSearchBuilding, localPage, this.lastSearchString, this.lastSortString, this.lastSortDir))
           .then((page) => {
             // Set new value
             this.numPages = page.pages
@@ -188,6 +206,10 @@ export default class TextSearch<Type> {
       let queryObject = JSON.parse(JSON.stringify(searchObject))
       queryObject["advanced"] = "true"
       queryObject["pageNum"] = pageNum.toString()
+      if(this.lastSortString!=""&&this.lastSortDir!=SortType.None) {
+        queryObject["sortString"] = this.lastSortString
+        queryObject["sortDir"] = this.lastSortDir
+      }
       // Omit page size from query string
       let pageSize = queryObject["pageSize"]
       delete queryObject.pageSize
@@ -206,7 +228,7 @@ export default class TextSearch<Type> {
         return res(thisPage)
       }
       if(!this.pageCache.has(pageNum)) {
-        let page = await this.advancedSearchCallback(building, pageNum, searchObject)
+        let page = await this.advancedSearchCallback(building, pageNum, searchObject, this.lastSortString, this.lastSortDir)
         this.numPages = page.pages
         this.numItems = page.total
         this.pageCache.set(pageNum, page.items)
@@ -259,13 +281,19 @@ export default class TextSearch<Type> {
       // Local variable for fetching page
       let thisPage = [] as Type[]
       // Update the router
-      if(!this.routerDisabled)
-        this.router.replace({
+      if(!this.routerDisabled) {
+        let routerObject = {
           query: {
             text: searchString,
             pageNum: pageNum,
           }
-        });
+        } as any
+        if(this.lastSortString!=""&&this.lastSortDir!=SortType.None) {
+          routerObject.query.sortString = this.lastSortString
+          routerObject.query.sortDir = this.lastSortDir
+        }
+        this.router.replace(routerObject);
+      }
       // Early return if the request doesn't make sense
       if((pageNum < 1) || ((pageNum > this.numPages)&&!searchParamChanged)) {
         return res(thisPage)
@@ -273,7 +301,7 @@ export default class TextSearch<Type> {
       // If the cache doesn't have the page
       if(!this.pageCache.has(pageNum)) {
         // Load page from callback
-        let page = await this.textSearchCallback(building, pageNum, searchString)
+        let page = await this.textSearchCallback(building, pageNum, searchString, this.lastSortString, this.lastSortDir)
         // Update local info
         this.numPages = page.pages
         this.numItems = page.total
@@ -285,6 +313,52 @@ export default class TextSearch<Type> {
       this.loadCache(pageNum)
       res(thisPage)
     })
+  }
+
+  toggleSort(sortName: string) {
+    // If sort string changed it will stay ascending
+    let newSortDir = SortType.Ascending
+    // If the sort string is the same
+    if(sortName==this.lastSortString) {
+      // Switch on current sort direction
+      switch(this.lastSortDir) {
+        // If ascending, set to descending
+        case SortType.Ascending:
+          newSortDir = SortType.Descending
+          break
+        // If descending, set to none
+        case SortType.Descending:
+          sortName = ""
+          newSortDir = SortType.None
+          break
+        // If none, set to ascending
+        case SortType.None:
+          newSortDir = SortType.Ascending
+          break
+        // Edge case, set to none
+        default:
+          newSortDir = SortType.None
+          break
+      }
+    }
+    this.lastSortString = sortName
+    this.lastSortDir = newSortDir
+    this.pageCache.clear()
+    // if(this.lastSearchAdvanced)
+    //   this.loadPageAdvanced(this.lastSearchBuilding, this.lastPageNum, this.lastAdvancedSearchObject)
+    // else
+    //   this.loadPage(this.lastSearchBuilding, this.lastPageNum, this.lastSearchString)
+    return { sortString: sortName, sortDir: newSortDir }
+  }
+
+  loadSortFromRouter() {
+    let sort = this.getSortOptionsFromRouter()
+    this.lastSortDir = sort.sortDir
+    this.lastSortString = sort.sortString
+  }
+
+  getCurrentSort() {
+    return { sortDir: this.lastSortDir, sortString: this.lastSortString }
   }
 
   disableRouter() {

@@ -36,7 +36,7 @@ let analyticsSearchObject:AnalyticsSearch<BoxEvent>;
 
 onBeforeMount(async ()=>{
   analyticsSearchObject = new AnalyticsSearch(
-    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts, box_tags)=>{
+    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts, assetFilters, palletFilters, boxFilters)=>{
       return new Promise<AnalyticsSearchPage>((res, rej)=>{
         getBoxUpdates(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
           if(err)
@@ -47,7 +47,7 @@ onBeforeMount(async ()=>{
         userFilters,
         partFilters,
         hideOtherParts,
-        box_tags
+        boxFilters
         )
       })
     }
@@ -91,6 +91,7 @@ function showLoader() {
       :searchComponent="analyticsSearchObject"
       :show-user-filters="true"
       :show-part-filters="true"
+      :show-box-filters="true"
       @displayResults="displayResults"
       @showLoader="showLoader"
     >

@@ -3,7 +3,7 @@ import type { AxiosError, AxiosInstance } from 'axios';
 import { ref, Ref } from 'vue';
 import { Router } from 'vue-router';
 import type { Store } from 'vuex';
-import { NotificationTypes, PartSchema, TextSearchPage, UserState } from '../../plugins/interfaces';
+import { NotificationTypes, PartSchema, SortType, TextSearchPage, UserState } from '../../plugins/interfaces';
 import { getPartsByData, getPartsByTextSearch } from '../../plugins/dbCommands/partManager';
 import SlidersButton from '../../components/GenericComponents/Buttons/SlidersButton.vue'
 import AdvancedSearchComponent from '../../components/PartComponents/PartAdvancedSearchComponent.vue';
@@ -29,9 +29,9 @@ let parts: Ref<PartSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
 
-function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
+function textSearchCallback(buildingNum: number, pageNum: number, searchString: string, sortString: string, sortDir: SortType) {
   return new Promise<TextSearchPage>((res)=>{
-    getPartsByTextSearch(http, searchString, pageNum, buildingNum, (data: any, err) => {
+    getPartsByTextSearch(http, searchString, pageNum, buildingNum, sortString, sortDir, (data: any, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})
@@ -44,11 +44,13 @@ function textSearchCallback(buildingNum: number, pageNum: number, searchString: 
   })
 }
 
-function advancedSearchCallback(_buildingNum: number, pageNum: number, searchObject: PartSchema) {
+function advancedSearchCallback(_buildingNum: number, pageNum: number, searchObject: PartSchema, sortString: string, sortDir: SortType) {
   return new Promise<TextSearchPage>((res)=>{
     searchObject['advanced'] = 'true';
     searchObject['pageNum'] = pageNum;
     searchObject['pageSize'] = TEXT_SEARCH_PAGE_SIZE;
+    searchObject['sortString'] = sortString
+    searchObject['sortDir'] = sortDir
     // Send request to api
     getPartsByData(http, searchObject, (data, err) => {
       if (err) {
@@ -116,11 +118,11 @@ function addToCart(part: PartSchema) {
         />
       </template>
       <template v-slot:searchHeader>
-        <p class="hidden md:block">NXID</p>
-        <p>Manufacturer</p>
-        <p>Name</p>
-        <p class="hidden md:block">Location</p>
-        <p>Quantity</p>
+        <p sortName="nxid" class="hidden md:block">NXID</p>
+        <p sortName="manufacturer">Manufacturer</p>
+        <p sortName="name">Name</p>
+        <p sortName="location" class="hidden md:block">Location</p>
+        <p sortName="quantity">Quantity</p>
       </template>
       <template v-slot:searchResults>
         <PartComponent

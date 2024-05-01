@@ -574,7 +574,9 @@ export function getPalletUpdates(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
-  pallet_tags?: string[]
+  pallet_tags?: string[],
+  asset_tags?: string[],
+  box_tags?: string[]
 ) {
   // Send request to API
   http
@@ -587,7 +589,9 @@ export function getPalletUpdates(
       pageSize,
       nxids,
       hideOthers,
-      pallet_tags
+      pallet_tags,
+      asset_tags,
+      box_tags
     }
   })
     .then((res: AxiosResponse) => {

@@ -27,9 +27,9 @@ onBeforeMount(()=>{
   searchObject.disableRouter()
 })
 
-function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
+function textSearchCallback(buildingNum: number, pageNum: number, searchString: string, sortString: string, sortDir: SortType) {
   return new Promise<TextSearchPage>((res)=>{
-    getPartsByTextSearch(http, searchString, pageNum, DEFAULT_BUILDING, (data: any, err) => {
+    getPartsByTextSearch(http, searchString, pageNum, buildingNum, sortString, sortDir, (data: any, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})
@@ -42,11 +42,13 @@ function textSearchCallback(buildingNum: number, pageNum: number, searchString: 
   })
 }
 
-function advancedSearchCallback(buildingNum: number, pageNum: number, searchObject: PartSchema) {
+function advancedSearchCallback(_buildingNum: number, pageNum: number, searchObject: PartSchema, sortString: string, sortDir: SortType) {
   return new Promise<TextSearchPage>((res)=>{
     searchObject['advanced'] = 'true';
     searchObject['pageNum'] = pageNum;
     searchObject['pageSize'] = TEXT_SEARCH_PAGE_SIZE;
+    searchObject['sortString'] = sortString
+    searchObject['sortDir'] = sortDir
     // Send request to api
     getPartsByData(http, searchObject, (data, err) => {
       if (err) {
@@ -94,9 +96,9 @@ function displayResults(page: PartSchema[]) {
         />
       </template>
       <template v-slot:searchHeader>
-        <p>NXID</p>
-        <p>Manufacturer</p>
-        <p>Name</p>
+        <p sortName="nxid">NXID</p>
+        <p sortName="manufacturer">Manufacturer</p>
+        <p sortName="name">Name</p>
         <p v-if="showQuantity">Quantity</p>
       </template>
       <template v-slot:searchResults>
