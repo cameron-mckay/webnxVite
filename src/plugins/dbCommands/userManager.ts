@@ -587,6 +587,8 @@ export function getPalletUpdates(
   nxids?: string[],
   hideOthers?: boolean,
   pallet_tags?: string[],
+  asset_tags?: string[],
+  box_tags?: string[],
   skipPagination?: boolean
 ) {
   // Send request to API
@@ -601,6 +603,8 @@ export function getPalletUpdates(
       nxids,
       hideOthers,
       pallet_tags,
+      asset_tags,
+      box_tags,
       skipPagination
     }
   })

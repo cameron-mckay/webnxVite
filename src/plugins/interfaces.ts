@@ -20,11 +20,11 @@ export interface loadPageCallback {
 }
 
 export interface textSearchCallback {
-  (building: number, pageNum: number, searchString: string) : Promise<TextSearchPage>
+  (building: number, pageNum: number, searchString: string, sortString: string, sortDir: SortType) : Promise<TextSearchPage>
 }
 
 export interface advancedSearchCallback {
-  (building: number, pageNum: number, searchObject: any) : Promise<TextSearchPage>
+  (building: number, pageNum: number, searchObject: any, sortString: string, sortDir: SortType) : Promise<TextSearchPage>
 }
 
 export interface AnalyticsSearchPage {
@@ -61,6 +61,12 @@ export enum NotificationTypes {
   Info = "Info",
   Alert = "Alert",
   Question = "Question",
+}
+
+export enum SortType {
+  Ascending = 1,
+  Descending = -1,
+  None = 0
 }
 
 export interface NotificationSchema {
@@ -274,6 +280,7 @@ export interface CheckOutEvent extends CheckInRequest {
 
 export interface EbaySaleEvent extends CheckInRequest {
   order: string
+  assets: any[]
 }
 
 export interface AssetPart extends LoadedCartItem {

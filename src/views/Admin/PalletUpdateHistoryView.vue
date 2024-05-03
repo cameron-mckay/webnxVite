@@ -36,7 +36,7 @@ let analyticsSearchObject:AnalyticsSearch<PalletEvent>;
 
 onBeforeMount(async ()=>{
   analyticsSearchObject = new AnalyticsSearch(
-    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts, palletFilters)=>{
+    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts, assetFilters, palletFilters, boxFilters)=>{
       return new Promise<AnalyticsSearchPage>((res, rej)=>{
         getPalletUpdates(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
           if(err)
@@ -47,7 +47,9 @@ onBeforeMount(async ()=>{
         userFilters,
         partFilters,
         hideOtherParts,
-        palletFilters
+        palletFilters,
+        assetFilters,
+        boxFilters
         )
       })
     }
@@ -113,6 +115,7 @@ function showLoader() {
       :searchComponent="analyticsSearchObject"
       :show-user-filters="true"
       :show-part-filters="true"
+      :show-pallet-filters="true"
       @displayResults="displayResults"
       @showLoader="showLoader"
     >

@@ -15,13 +15,18 @@ let assets: Ref<AssetSchema[]> = ref([]);
 let showAdvanced = ref(false);
 let searchObject = new TextSearch(textSearchCallback, advancedSearchCallback)
 let http = Cacher.getHttp()
+interface Props {
+  hideSold?: boolean
+}
+
+let { hideSold } = defineProps<Props>()
 onBeforeMount(()=>{
   searchObject.disableRouter()
 })
 
 function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
   return new Promise<TextSearchPage>((res)=>{
-    getAssetsByTextSearch(http, searchString, pageNum, (data: any, err) => {
+    getAssetsByTextSearch(http, searchString, pageNum, "", 0, (data: any, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})
@@ -93,7 +98,7 @@ function displayResults(page: AssetSchema[]) {
       </template>
       <template v-slot:searchResults>
         <AssetComponent
-          :add="true"
+          :add="hideSold?asset.next!='sold':true"
           @addPartAction="$emit('addAssetAction', asset)"
           v-for="asset in assets"
           v-bind:key="asset._id"

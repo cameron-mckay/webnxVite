@@ -6,7 +6,7 @@ import type { Store } from 'vuex';
 import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
-import { getCheckoutHistory, getEbayHistory } from '../../plugins/dbCommands/userManager';
+import { getEbayHistory } from '../../plugins/dbCommands/userManager';
 import EbaySaleHistoryComponent from '../../components/PartComponents/EbaySaleHistoryComponent.vue';
 import {
   AnalyticsSearchPage,
@@ -61,6 +61,10 @@ async function displayResults(page: EbaySaleEvent[])
     // Evil ass promise code
     await Promise.all(e.parts.map((p)=>{
       return Cacher.getPartInfo(p)
+    }))
+    e.assets = await Promise.all(e.assets.map(async(a)=>{
+      a.parts = await Cacher.loadCartItems(a.parts)
+      return a
     }))
   }
   ebayEvents.value = page

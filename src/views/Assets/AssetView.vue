@@ -138,6 +138,12 @@ function prev() {
       This asset was automatically migrated from the old asset tracking system
       and is incomplete. Please edit and update the information if you can.
     </p>
+    <p
+      class="my-2 w-full rounded-md bg-red-400 p-2"
+      v-if="asset.next=='sold'"
+    >
+      This asset was sold on ebay order {{ asset.ebay }} and is now a read only record.
+    </p>
     <div
       class="relative grid grid-cols-2 rounded-md group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-4"
     >
@@ -148,7 +154,7 @@ function prev() {
         <!-- Pencil -->
         <PencilButton
           v-on:click="edit"
-          v-if="store.state.user.roles?.includes('edit_assets')"
+          v-if="store.state.user.roles?.includes('edit_assets')&&asset.next!='sold'"
         />
         <RouterLink
           class="my-auto ml-2 rounded-md p-2 font-bold transition-colors hover:bg-gray-400 hover:dark:bg-zinc-700"
@@ -156,6 +162,7 @@ function prev() {
         >
           View History
         </RouterLink>
+
       </div>
       <div class="detail-row">
         <p>Building:</p>
