@@ -102,8 +102,7 @@ onMounted(() => {
         <div v-if="box.notes || prevBox.notes" class="detail-row col-span-2">
           <p class="col-span-2">Notes:</p>
           <pre class="col-span-2 font-extrabold notes-with-links whitespace-pre-wrap">
-            <del v-if="prevBox.notes && (prevBox.notes != box.notes)">{{ prevBox.notes }}</del>
-            {{ box.notes }}
+            <del v-if="prevBox.notes && (prevBox.notes != box.notes)">{{prevBox.notes}}</del>{{box.notes}}
           </pre>
         </div>
       </div>
