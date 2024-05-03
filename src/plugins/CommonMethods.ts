@@ -54,3 +54,31 @@ export function replaceLinksWithAnchors(doc: Document, className: string) {
     }
   }
 }
+
+export function arrayToCSV(arr: any[]) {
+  if(arr.length>0) {
+    let first = arr[0]
+    let keys = [] as string[]
+    let values = []
+    Object.keys(first).forEach((key: string)=>{
+      keys.push(key)
+    })
+    for(let obj of arr) {
+      for(let k of keys) {
+        values.push(String(obj[k]).replaceAll(",",""))
+      }
+    }
+    return keys.concat(values).join(",")
+  }
+  return ""
+}
+
+export function downloadCSV(filename: string, text: string) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename+".csv");
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+}

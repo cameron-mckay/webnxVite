@@ -6,7 +6,7 @@ import type { Store } from 'vuex';
 import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
-import { getBoxUpdates, getNewBoxes } from '../../plugins/dbCommands/userManager';
+import { getBoxUpdates } from '../../plugins/dbCommands/userManager';
 import {
   AnalyticsSearchPage,
   BoxEvent,
@@ -15,7 +15,7 @@ import {
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import Cacher from '../../plugins/Cacher';
 import BoxEventComponent from '../../components/BoxComponents/BoxEventComponent.vue';
-import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { arrayToCSV, downloadCSV, replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -79,6 +79,40 @@ function showLoader() {
   resultsLoading.value = true
 }
 
+async function exportCSV() {
+  getBoxUpdates(http, analyticsSearchObject.getStartDateFromRouter().getTime(), analyticsSearchObject.getEndDateFromRouter().getTime(), 1, 10, async (data, err) => {
+    if(err)
+      return
+    let arr = data as any[]
+
+    let summary = []
+    let parts = [] as any[]
+
+    for(let e of arr) {
+        let user = Cacher.getUser(e.by)
+        let by = user.first_name + " " + user.last_name
+        let date = (new Date(e.date_begin)).toLocaleString()
+        let asset_tag = (await Cacher.getAsset(e.asset_id)).asset_tag!
+        asset_tag = asset_tag ? asset_tag : "UNKNOWN"
+        summary.push({by, date, asset_tag, info_updated: e.info_updated, existing: e.existing.length, added: e.added.length, removed: e.removed.length})
+        parts = parts.concat(e.added.map((p: any)=>{
+          return { date, by, asset_tag, nxid: p.nxid, quantity: p.quantity ? p.quantity : 1, serial: p.serial ? p.serial : " ", action: "added" }
+        }))
+        parts = parts.concat(e.removed.map((p: any)=>{
+          return { date, by, asset_tag, nxid: p.nxid, quantity: p.quantity ? p.quantity : 1, serial: p.serial ? p.serial : " ", action: "removed" }
+        }))
+    }
+    downloadCSV("summary", arrayToCSV(summary))
+    downloadCSV("parts", arrayToCSV(parts))
+  },
+  Array.from(analyticsSearchObject.getUserFilterMapFromRouter().keys()),
+  Array.from((await analyticsSearchObject.getPartFilterMapFromRouter()).keys()),
+  analyticsSearchObject.getHideOthersFromRouter(),
+  Array.from((await analyticsSearchObject.getBoxFilterMapFromRouter()).keys()),
+  true
+  )
+}
+
 </script>
 <template>
   <div>
@@ -91,9 +125,11 @@ function showLoader() {
       :searchComponent="analyticsSearchObject"
       :show-user-filters="true"
       :show-part-filters="true"
+      :show-export="true"
       :show-box-filters="true"
       @displayResults="displayResults"
       @showLoader="showLoader"
+      @export="exportCSV"
     >
       <BoxEventComponent
         :boxes="Cacher.getBoxCache()"

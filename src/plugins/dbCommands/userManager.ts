@@ -264,7 +264,8 @@ export function getAssetUpdates(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
-  asset_tags?: string[]
+  asset_tags?: string[],
+  skipPagination?: boolean
 ) {
   // Send request to API
   http
@@ -277,7 +278,8 @@ export function getAssetUpdates(
       pageSize,
       nxids,
       hideOthers,
-      asset_tags
+      asset_tags,
+      skipPagination
     }
   })
     .then((res: AxiosResponse) => {
@@ -336,6 +338,7 @@ export function getNewAssets(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
+  skipPagination?: boolean
 ) {
   // Send request to API
   http
@@ -347,7 +350,8 @@ export function getNewAssets(
       pageNum,
       pageSize,
       nxids,
-      hideOthers
+      hideOthers,
+      skipPagination
     }
   })
     .then((res: AxiosResponse) => {
@@ -381,7 +385,7 @@ export function getNewAssetsNoDetails(
       pageNum,
       pageSize,
       nxids,
-      hideOthers
+      hideOthers,
     }
   })
     .then((res: AxiosResponse) => {
@@ -404,6 +408,7 @@ export function getCheckinHistory(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
+  skipPagination?: boolean
 ) {
   // Send request to API
   http
@@ -415,7 +420,8 @@ export function getCheckinHistory(
       pageSize,
       users,
       nxids,
-      hideOthers
+      hideOthers,
+      skipPagination
     }
   })
     .then((res: AxiosResponse) => {
@@ -438,6 +444,7 @@ export function getCheckoutHistory(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
+  skipPagination?: boolean
 ) {
   // Send request to API
   http
@@ -449,7 +456,8 @@ export function getCheckoutHistory(
       pageSize,
       users,
       nxids,
-      hideOthers
+      hideOthers,
+      skipPagination
     }
   })
     .then((res: AxiosResponse) => {
@@ -472,6 +480,7 @@ export function getAllTechsHistory(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
+  skipPagination?: boolean
 ) {
   // Send request to API
   http
@@ -483,7 +492,8 @@ export function getAllTechsHistory(
       pageSize,
       users,
       nxids,
-      hideOthers
+      hideOthers,
+      skipPagination
     }
   })
     .then((res: AxiosResponse) => {
@@ -506,6 +516,7 @@ export function getNewPallets(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
+  skipPagination?: boolean
 ) {
   // Send request to API
   http
@@ -517,7 +528,8 @@ export function getNewPallets(
       pageNum,
       pageSize,
       nxids,
-      hideOthers
+      hideOthers,
+      skipPagination
     }
   })
     .then((res: AxiosResponse) => {
@@ -576,7 +588,8 @@ export function getPalletUpdates(
   hideOthers?: boolean,
   pallet_tags?: string[],
   asset_tags?: string[],
-  box_tags?: string[]
+  box_tags?: string[],
+  skipPagination?: boolean
 ) {
   // Send request to API
   http
@@ -591,7 +604,8 @@ export function getPalletUpdates(
       hideOthers,
       pallet_tags,
       asset_tags,
-      box_tags
+      box_tags,
+      skipPagination
     }
   })
     .then((res: AxiosResponse) => {
@@ -648,6 +662,7 @@ export function getEbayHistory(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
+  skipPagination?: boolean
 ) {
   // Send request to API
   http
@@ -659,7 +674,8 @@ export function getEbayHistory(
       pageSize,
       users,
       nxids,
-      hideOthers
+      hideOthers,
+      skipPagination
     }
   })
     .then((res: AxiosResponse) => {
@@ -682,7 +698,8 @@ export function getBoxUpdates(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
-  box_tags?: string[]
+  box_tags?: string[],
+  skipPagination?: boolean
 ) {
   // Send request to API
   http
@@ -695,7 +712,8 @@ export function getBoxUpdates(
       pageSize,
       nxids,
       hideOthers,
-      box_tags
+      box_tags,
+      skipPagination
     }
   })
     .then((res: AxiosResponse) => {
@@ -754,6 +772,7 @@ export function getNewBoxes(
   users?: string[],
   nxids?: string[],
   hideOthers?: boolean,
+  skipPagination?: boolean
 ) {
   // Send request to API
   http
@@ -765,7 +784,8 @@ export function getNewBoxes(
       pageNum,
       pageSize,
       nxids,
-      hideOthers
+      hideOthers,
+      skipPagination
     }
   })
     .then((res: AxiosResponse) => {
