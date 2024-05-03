@@ -40,14 +40,14 @@ function approve() {
         return{
           kiosk: q.kiosk,
           quantity: q.quantity,
-          serials: q.selectedSerials
+          serials: q.selectedSerials ? q.selectedSerials : []
         }
       }).filter((q)=>q.quantity>0),
       boxes: boxes[i].map((b)=>{
         return {
           box_tag: b.kiosk,
           quantity: b.quantity,
-          serials: b.selectedSerials
+          serials: b.selectedSerials ? b.selectedSerials : []
         }
       }),
     }
