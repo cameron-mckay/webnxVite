@@ -157,7 +157,7 @@ function prev() {
           v-if="store.state.user.roles?.includes('edit_assets')&&asset.next!='sold'"
         />
         <RouterLink
-          class="my-auto ml-2 rounded-md p-2 font-bold transition-colors hover:bg-gray-400 hover:dark:bg-zinc-700"
+          class="cursor-pointer text-sm rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none"
           :to="`/assets/history?nxid=${asset.asset_tag}`"
         >
           View History

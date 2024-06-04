@@ -276,9 +276,9 @@ function revokeLogin() {
   store.commit('logout', http);
   // redirect
   if (!router.currentRoute.value.meta.unauthenticated) {
-    router.replace({ query: undefined }).then(()=>{
-      router.push({ name: 'Login' })
-    })
+    let query = router.currentRoute.value.query as any
+    query["next"] = router.currentRoute.value.name
+    router.push({ name: 'Login', query})
   }
 }
 
@@ -287,11 +287,12 @@ function firstLoadRevokeLogin() {
   store.commit('logout', http);
   // redirect
   if (!router.currentRoute.value.meta.unauthenticated) {
-    router.replace({ query: undefined }).then(()=>{
-      router.push({ name: 'Login' }).then(()=>{
+    let query = router.currentRoute.value.query as any
+    query["next"] = router.currentRoute.value.name
+    router.push({ name: 'Login', query})
+      .then(()=>{
         configureRouter();
       })
-    })
   } else {
     configureRouter();
   }

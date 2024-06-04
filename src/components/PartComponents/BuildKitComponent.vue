@@ -37,9 +37,7 @@ onBeforeMount(async ()=>{
         Created: {{ new Date(buildKit.date_created).toLocaleString() }}
       </p>
     </div>
-    <pre class="whitespace-pre-wrap notes-with-links">
-      {{ buildKit.notes }}
-    </pre>
+    <pre class="whitespace-pre-wrap notes-with-links">{{ buildKit.notes }}</pre>
     <div>
       <div
         class="relative grid grid-cols-3 md:grid-cols-4 py-1 text-center font-bold leading-8 transition md:py-2 md:leading-10 mt-auto"

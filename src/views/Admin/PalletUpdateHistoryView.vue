@@ -15,7 +15,7 @@ import {
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import Cacher from '../../plugins/Cacher';
-import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { arrayToCSV, downloadCSV, replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -103,6 +103,75 @@ function showLoader() {
   resultsLoading.value = true
 }
 
+async function exportCSV() {
+  getPalletUpdates(http, analyticsSearchObject.getStartDateFromRouter().getTime(), analyticsSearchObject.getEndDateFromRouter().getTime(), 1, 10, async (data, err) => {
+    if(err)
+      return
+    let arr = data as any[]
+
+    let summary = []
+    let parts = [] as any[]
+    let assets = [] as any[]
+    let boxes = [] as any[]
+
+    for(let e of arr) {
+      let user = Cacher.getUser(e.by)
+      let by = user.first_name + " " + user.last_name
+      let date = (new Date(e.date_begin)).toLocaleString()
+      let pallet_tag = (await Cacher.getPallet(e.pallet_id)).pallet_tag!
+      pallet_tag = pallet_tag ? pallet_tag : "UNKNOWN"
+      summary.push({
+        by,
+        date,
+        pallet_tag,
+        info_updated: e.info_updated,
+        existingParts: e.existingParts.length,
+        addedParts: e.addedParts.length,
+        removedParts: e.removedParts.length,
+        existingAssets: e.existingAssets.length,
+        addedAssets: e.addedAssets.length,
+        removedAssets: e.removedAssets.length,
+        existingBoxes: e.existingBoxes.length,
+        addedBoxes: e.addedBoxes.length,
+        removedBoxes: e.removedBoxes.length,
+      })
+      parts = parts.concat(e.addedParts.map((p: any)=>{
+        return { date, by, pallet_tag, nxid: p.nxid, quantity: p.quantity ? p.quantity : 1, serial: p.serial ? p.serial : " ", action: "added" }
+      }))
+      parts = parts.concat(e.removedParts.map((p: any)=>{
+        return { date, by, pallet_tag, nxid: p.nxid, quantity: p.quantity ? p.quantity : 1, serial: p.serial ? p.serial : " ", action: "removed" }
+      }))
+      assets = assets.concat(await Promise.all(e.addedAssets.map(async (a: any)=>{
+        let asset_tag = (await Cacher.getAsset(a)).asset_tag
+        return { date, by, pallet_tag, asset_tag, action: "added" }
+      })))
+      assets = assets.concat(await Promise.all(e.removedAssets.map(async (a: any)=>{
+        let asset_tag = (await Cacher.getAsset(a)).asset_tag
+        return { date, by, pallet_tag, asset_tag, action: "removed" }
+      })))
+      boxes = boxes.concat(await Promise.all(e.addedBoxes.map(async (a: any)=>{
+        let box_tag = (await Cacher.getBox(a)).box_tag
+        return { date, by, pallet_tag, box_tag, action: "added" }
+      })))
+      boxes = boxes.concat(await Promise.all(e.removedBoxes.map(async (a: any)=>{
+        let box_tag = (await Cacher.getBox(a)).box_tag
+        return { date, by, pallet_tag, box_tag, action: "removed" }
+      })))
+    }
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Summary_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(summary))
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Parts_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(parts))
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Assets_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(assets))
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Boxes_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(boxes))
+  },
+  Array.from(analyticsSearchObject.getUserFilterMapFromRouter().keys()),
+  Array.from((await analyticsSearchObject.getPartFilterMapFromRouter()).keys()),
+  analyticsSearchObject.getHideOthersFromRouter(),
+  Array.from((await analyticsSearchObject.getPalletFilterMapFromRouter()).keys()),
+  Array.from((await analyticsSearchObject.getAssetFilterMapFromRouter()).keys()),
+  Array.from((await analyticsSearchObject.getBoxFilterMapFromRouter()).keys()),
+  true
+  )
+}
 </script>
 <template>
   <div>
@@ -116,8 +185,10 @@ function showLoader() {
       :show-user-filters="true"
       :show-part-filters="true"
       :show-pallet-filters="true"
+      :show-export="true"
       @displayResults="displayResults"
       @showLoader="showLoader"
+      @export="exportCSV"
     >
       <PalletEventComponent
         :assets="Cacher.getAssetCache()"

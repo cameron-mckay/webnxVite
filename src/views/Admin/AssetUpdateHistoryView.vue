@@ -106,8 +106,8 @@ async function getCSV() {
           return { date, by, asset_tag, nxid: p.nxid, quantity: p.quantity ? p.quantity : 1, serial: p.serial ? p.serial : " ", action: "removed" }
         }))
     }
-    downloadCSV("summary", arrayToCSV(summary))
-    downloadCSV("parts", arrayToCSV(parts))
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Summary_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(summary))
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Parts_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(parts))
   },
   Array.from(analyticsSearchObject.getUserFilterMapFromRouter().keys()),
   Array.from((await analyticsSearchObject.getPartFilterMapFromRouter()).keys()),

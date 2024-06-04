@@ -40,9 +40,13 @@ export function replaceLinksWithAnchors(doc: Document, className: string) {
     // If it exists and has inner html
     if (noteBox && noteBox.innerHTML) {
       // Replace html shit
-      let text = noteBox.innerHTML.replace(/&amp;/g, "&")
+      let text = noteBox.innerHTML.replaceAll(/&amp;/g, "&")
       // Search for regex matches
-      let matches = text.match(/(https?:\/\/(?:www\.)?[a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/ig);
+      // older stricter regex:
+      // let matches = text.match(/(https?:\/\/(?:www\.)?[a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/ig);
+      // new regex:
+      let matches = text.match(/(https?:\/\/(?:www\.)?[a-zA-Z0-9@:%._\+~#=]{2,256}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/ig);
+
       // If there are matches
       if (matches && matches.length > 0) {
         // Loop through each match

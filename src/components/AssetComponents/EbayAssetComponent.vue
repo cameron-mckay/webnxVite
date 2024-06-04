@@ -185,9 +185,7 @@ let { asset, readOnly } = defineProps<Props>();
 
         <div v-if="asset.notes" class="detail-row col-span-2">
           <p class="col-span-2">Notes:</p>
-          <pre class="col-span-2 notes-with-links whitespace-pre-wrap">
-            {{ asset.notes }}
-          </pre>
+          <pre class="col-span-2 notes-with-links whitespace-pre-wrap">{{ asset.notes }}</pre>
         </div>
 
       </div>

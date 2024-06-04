@@ -31,6 +31,8 @@ watch(()=>item.quantity, ()=>{
 })
 
 function updateQuantity() {
+  if(quantityVisible.value as any=="")
+    return
   if(maxQuantity&&quantityVisible.value!>maxQuantity)
     quantityVisible.value = maxQuantity
   if(quantityVisible.value!<0)
@@ -64,7 +66,7 @@ function updateSerial() {
         v-model="serial"
         type="text"
         placeholder="Serial"
-        v-on:focusout="updateSerial"
+        v-on:mouseleave="updateSerial"
       />
       <p class="break-words" v-else-if="item.part.serialized&&item.serial">
         {{ item.serial }}
@@ -78,7 +80,7 @@ function updateSerial() {
           type="number"
           min="0"
           step="1"
-          v-on:focusout="updateQuantity"
+          v-on:mouseleave="updateQuantity"
         />
         <p class="break-words">/ {{ maxQuantity }}</p>
       </div>

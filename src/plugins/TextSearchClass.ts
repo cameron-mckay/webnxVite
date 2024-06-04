@@ -364,4 +364,12 @@ export default class TextSearch<Type> {
   disableRouter() {
     this.routerDisabled = true
   }
+
+  forceTextSearchCallback(search: textSearchCallback) {
+    search(this.lastSearchBuilding, this.lastPageNum, this.lastSearchString, this.lastSortString, this.lastSortDir)
+  }
+
+  forceAdvancedSearchCallback(search: advancedSearchCallback) {
+    search(this.lastSearchBuilding, this.lastPageNum, this.lastAdvancedSearchObject, this.lastSortString, this.lastSortDir)
+  }
 }

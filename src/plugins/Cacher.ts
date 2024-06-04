@@ -330,14 +330,18 @@ export default class Cacher {
     })
   }
 
+  static async loadCartItem(item: CartItem) {
+  return new Promise<LoadedCartItem>(async (res)=>{
+    let info = await Cacher.getPartInfo(item)
+    res({ part: info, quantity: item.quantity, serial: item.serial } as LoadedCartItem)
+  })
+}
+
   static async loadCartItems(items: CartItem[]) {
     let nxids = items.map((v)=>v.nxid).filter((v,i,arr)=>arr.indexOf(v)==i)
     await this.getPartInfoArray(nxids)
     return Promise.all(items.map((p)=>{
-      return new Promise<LoadedCartItem>(async (res)=>{
-        let info = await Cacher.getPartInfo(p)
-        res({ part: info, quantity: p.quantity, serial: p.serial } as LoadedCartItem)
-      })
+      return this.loadCartItem(p)
     }))
   }
 }

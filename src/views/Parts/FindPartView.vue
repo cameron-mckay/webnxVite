@@ -11,7 +11,7 @@ import TextSearchComponent from '../../components/GenericComponents/Search/TextS
 import TextSearch from '../../plugins/TextSearchClass';
 import PageHeaderComponent from '../../components/GenericComponents/PageHeaderComponent.vue';
 import PartComponent from '../../components/PartComponents/PartComponent.vue';
-import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { arrayToCSV, downloadCSV, replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 import { TEXT_SEARCH_PAGE_SIZE } from '../../plugins/Constants';
 
 interface Props {
@@ -64,6 +64,58 @@ function advancedSearchCallback(_buildingNum: number, pageNum: number, searchObj
   })
 }
 
+function getCSV() {
+  if(searchObject.wasLastSearchAdvanced()) {
+    searchObject.forceAdvancedSearchCallback((_buildingNum: number, pageNum: number, searchObject: PartSchema, sortString: string, sortDir: SortType)=> {
+      return new Promise<TextSearchPage>((res)=>{
+        searchObject['advanced'] = 'true';
+        searchObject['pageNum'] = pageNum;
+        searchObject['pageSize'] = TEXT_SEARCH_PAGE_SIZE;
+        searchObject['sortString'] = sortString
+        searchObject['sortDir'] = sortDir
+        searchObject['skipPagination'] = true
+        // Send request to api
+        getPartsByData(http, searchObject, (data, err) => {
+          if (err) {
+            // Send error to error handler
+            return res({pages: 0, total: 0, items: []})
+          }
+          let response = data as any[]
+          downloadCSV("advancedSearchResults", arrayToCSV(response))
+          // Resolve promise
+          return res({pages: 0, total: 0, items: []})
+        });
+      })
+    })
+  }
+  else {
+    searchObject.forceTextSearchCallback((buildingNum: number, pageNum: number, searchString: string, sortString: string, sortDir: SortType) => {
+      return new Promise<TextSearchPage>((res)=>{
+        getPartsByTextSearch(http, searchString, pageNum, buildingNum, sortString, sortDir, (data: any, err) => {
+          if (err) {
+            // Send error to error handler
+            return res({pages: 0, total: 0, items: []})
+          }
+          let response = data as PartSchema[]
+          downloadCSV("textSearchResults", arrayToCSV(response.map((p)=>{
+            return {
+              nxid: p.nxid,
+              manufacturer: p.manufacturer,
+              name: p.name,
+              rack_num: p.rack_num,
+              shelf_location: p.shelf_location,
+              available: p.quantity,
+              total: p.total_quantity
+            }
+          })))
+          // Resolve promise
+          return res({pages: 0, total: 0, items: []})
+        }, undefined, true);
+      })
+    })
+  }
+}
+
 // Toggle advanced search
 function toggleAdvanced() {
   // Negate
@@ -99,6 +151,8 @@ function addToCart(part: PartSchema) {
     errorHandler(`Not enough stock`);
   }
 }
+
+
 </script>
 <template>
   <div>
@@ -116,6 +170,8 @@ function addToCart(part: PartSchema) {
           @toggle="toggleAdvanced"
           @partSearch="advancedSearchButtonPressed"
         />
+
+
       </template>
       <template v-slot:searchHeader>
         <p sortName="nxid" class="hidden md:block">NXID</p>
@@ -134,6 +190,9 @@ function addToCart(part: PartSchema) {
           @viewPartAction="viewPart(part)"
           :part="part"
         />
+      </template>
+      <template v-slot:searchFooter>
+        <input class="search-button bg-blue-400 hover:bg-blue-500 active:bg-blue-600 ml-auto block px-4" type="button" value="Download CSV" @click="getCSV"/>
       </template>
     </TextSearchComponent>
   </div>

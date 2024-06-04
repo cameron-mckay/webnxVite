@@ -66,7 +66,7 @@ function getDefaultValue() {
     }
     let defaultIsCustom = false
     // Check if default value exists in options
-    if (values.indexOf(defaultValue) == -1) {
+    if ((defaultValue&&values.indexOf(defaultValue) == -1)||values.length==0) {
       // Enable custom value
       custom.value = true;
       if(defaultValue=="Custom")
@@ -79,9 +79,7 @@ function getDefaultValue() {
 }
 
 onMounted(async () => {
-  if (defaultValue) {
-    getDefaultValue()
-  }
+  getDefaultValue()
   // Enable watcher on text value
   watch(textValue, (_, oldValue) => {
     // If drop down is set to custom

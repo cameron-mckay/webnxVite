@@ -33,6 +33,8 @@ function minus() {
 }
 
 function updateQuantity() {
+  if(item_quantity.value as any =="")
+    return
   if(item.part.quantity&&item_quantity.value>item.part.quantity)
     item_quantity.value = item.part.quantity
   emit("updateQuantity", item_quantity.value, item)
@@ -69,7 +71,7 @@ function updateSerial() {
         v-model="serial"
         type="text"
         placeholder="Serial"
-        v-on:focusout="updateSerial"
+        v-on:mouseleave="updateSerial"
       />
       <div class="flex justify-center" v-else>
         <input
@@ -80,7 +82,7 @@ function updateSerial() {
           min="0"
           :max="item.part.quantity"
           step="1"
-          v-on:focusout="updateQuantity()"
+          v-on:mouseleave="updateQuantity()"
         />
         <p class="break-words">/ {{ item.part.quantity }}</p>
       </div>

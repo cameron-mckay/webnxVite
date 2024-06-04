@@ -181,9 +181,6 @@ async function loadPage(pageNum: number) {
 }
 
 watch(loading, () => {
-  // This doesn't work??
-  // handleResize()
-  // But this does??
   setTimeout(handleResize,0)
 })
 
@@ -240,6 +237,7 @@ watch(loading, () => {
         @load-page="loadPage"
         v-if="!loading"
       />
+      <slot name="searchFooter" v-if="!loading"></slot>
     </div>
   </div>
 </template>

@@ -281,6 +281,7 @@ export interface CheckOutEvent extends CheckInRequest {
 export interface EbaySaleEvent extends CheckInRequest {
   order: string
   assets: any[]
+  perUnitSalePrice: any[]
 }
 
 export interface AssetPart extends LoadedCartItem {
@@ -432,4 +433,21 @@ export interface AuditRecordSchema {
     by: string,
     // Date the part was created
     date: Date,
+}
+
+export interface PartOrderSchema {
+    _id: string,
+    building: number,
+    per_unit_costs: {nxid: string, cost: number}[],
+    // Order info
+    ordered_parts: CartItem[],
+    created_by: string,
+    create_notes: string,
+    date_created: Date,
+    cancelled: boolean,
+    // Received info
+    received_by: string,
+    received_notes: string,
+    date_received: Date,
+    received_parts: { kiosk?: string, box_tag?: string, parts: CartItem[]}[],
 }

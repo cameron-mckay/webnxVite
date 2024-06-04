@@ -29,7 +29,7 @@ let destInv = ref([] as LoadedCartItem[])
 let sourceUsers = ref([] as User[])
 let destUsers = ref([] as User[])
 let loading = ref(true)
-let emit = defineEmits(['submit'])
+let emit = defineEmits(['submit', 'update'])
 
 onMounted(()=>{
   inventory.registerRefreshCallback(refreshInv)
@@ -64,6 +64,7 @@ function refreshInv() {
   // Get inventories from helper class
   sourceInv.value = inventory.getSourceInv()
   destInv.value = inventory.getDestInv()
+  emit("update")
   // Unset loaer
   loading.value = false
 }

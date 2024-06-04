@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref, Ref } from 'vue';
-import { PartSchema, TextSearchPage } from '../../plugins/interfaces';
+import { PartSchema, SortType, TextSearchPage } from '../../plugins/interfaces';
 import { getPartsByData, getPartsByTextSearch } from '../../plugins/dbCommands/partManager';
 
 import SlidersButton from '../../components/GenericComponents/Buttons/SlidersButton.vue'

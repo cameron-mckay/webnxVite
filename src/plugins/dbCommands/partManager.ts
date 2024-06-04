@@ -36,7 +36,8 @@ export function getPartsByTextSearch(
   sortString: string,
   sortDir: SortType,
   callback: apiResponse,
-  location?: string
+  location?: string,
+  skipPagination?: boolean
 ) {
   // Send string query to API
   http
@@ -49,6 +50,7 @@ export function getPartsByTextSearch(
         sortString,
         sortDir,
         location,
+        skipPagination
       },
     })
     .then((res: AxiosResponse) => {
@@ -106,7 +108,7 @@ export function getPartByID(
 export function getPartsByData(
   http: AxiosInstance,
   part: PartSchema,
-  callback: apiResponse
+  callback: apiResponse,
 ) {
   http
     .get('/api/part', {
@@ -410,13 +412,15 @@ export function sellOnEbay(
   parts: InventoryEntry[],
   assets: AssetSchema[],
   orderID: string,
+  perUnitPrice: {nxid: string, cost: number}[],
   callback: apiResponse,
 ) {
   http
     .post('/api/part/sell', {
       parts,
       assets,
-      orderID
+      orderID,
+      perUnitPrice
     })
     .then((res: AxiosResponse) => {
       // Success - send results to callback
@@ -624,6 +628,33 @@ export function getPartCreateAndDeleteHistory(
         users,
         nxids,
         hideOthers
+      }
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getPartCreateAndDeleteHistoryNoDetails(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+) {
+  http
+    .get('/api/history/part/noDetails', {
+      params: {
+        startDate,
+        endDate,
+        pageNum,
+        pageSize,
       }
     })
     .then((res: AxiosResponse) => {
@@ -943,6 +974,7 @@ export function getPartAuditHistory(
   callback: apiResponse,
   nxids?: string[],
   users?: string[],
+  skipPagination?: boolean
 ) {
   http
     .get('/api/part/audit', {
@@ -953,6 +985,7 @@ export function getPartAuditHistory(
         endDate,
         pageNum,
         pageSize,
+        skipPagination
       }
     })
     .then((res: AxiosResponse) => {
@@ -984,6 +1017,143 @@ export function mergeParts(
     })
     .catch((err: AxiosError) => {
       // Unauthenticated - send error to callback
+      callback({}, err);
+    });
+}
+
+export function createPartOrder(
+  http: AxiosInstance,
+  parts: CartItem[],
+  notes: string,
+  callback: apiResponse
+) {
+  http
+    .post('/api/part/order/create', {
+      parts,
+      notes
+    })
+    .then((res: AxiosResponse) => {
+      // Authenticated - send null error to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Unauthenticated - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getActivePartOrders(
+  http: AxiosInstance,
+  callback: apiResponse,
+) {
+  http
+    .get('/api/part/orders/active')
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getFulfilledPartOrders(
+  http: AxiosInstance,
+  startDate: number,
+  endDate: number,
+  pageNum: number,
+  pageSize: number,
+  callback: apiResponse,
+  users?: string[],
+  parts?: string[]
+) {
+  http
+    .get('/api/part/orders/received', {
+      params: {
+        startDate,
+        endDate,
+        pageNum,
+        pageSize,
+        users,
+        parts
+      }
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function cancelPartOrder(
+  http: AxiosInstance,
+  id: string,
+  notes: string,
+  callback: apiResponse
+) {
+  http
+    .post('/api/part/order/cancel', {
+      id,
+      notes
+    })
+    .then((res: AxiosResponse) => {
+      // Authenticated - send null error to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Unauthenticated - send error to callback
+      callback({}, err);
+    });
+}
+
+export function getPartOrderByID(
+  http: AxiosInstance,
+  id: string,
+  callback: apiResponse,
+) {
+  http
+    .get('/api/part/order', {
+      params: {
+        id
+      }
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
+      callback({}, err);
+    });
+}
+
+export function fulfillPartOrder(
+  http: AxiosInstance,
+  order_id: string,
+  list: {kiosk: string, parts: InventoryEntry[]}[],
+  notes: string,
+  boxes: {box_tag: string, parts: InventoryEntry[]}[],
+  per_unit: {nxid: string, cost: number}[],
+  callback: apiResponse
+) {
+  http
+    .post('/api/part/order/receive', {
+      order_id,
+      list,
+      notes,
+      boxes,
+      per_unit
+    })
+    .then((res: AxiosResponse) => {
+      // Success - send results to callback
+      callback(res.data as string, null);
+    })
+    .catch((err: AxiosError) => {
+      // Error - send error to callback
       callback({}, err);
     });
 }

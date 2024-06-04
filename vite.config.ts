@@ -26,6 +26,7 @@ export default defineConfig({
             './src/views/ResetPasswordView.vue'
           ],
           essentials: [
+            './src/views/HomeView.vue',
             './src/views/Assets/AssetSearchView.vue',
             './src/views/Pallets/PalletSearchView.vue',
             './src/views/Parts/FindPartView.vue',
@@ -64,7 +65,6 @@ export default defineConfig({
             './src/views/Admin/AdminPartSearchView.vue',
             './src/views/Admin/AdminUserView.vue',
             './src/views/Admin/CreatePartView.vue',
-            './src/views/Admin/EbaySaleHistoryView.vue',
             './src/views/Admin/MergePartsView.vue',
             './src/views/Parts/SellOnEbay.vue',
             './src/views/Parts/CreateBuildKitView.vue',
@@ -73,6 +73,10 @@ export default defineConfig({
             './src/views/Boxes/CreateBoxView.vue',
             './src/views/Boxes/EditBoxView.vue',
             './src/views/Boxes/BoxHistoryView.vue',
+            './src/views/Admin/ActivePartOrdersView.vue',
+            './src/views/Admin/CreatePartOrderView.vue',
+            './src/views/Admin/PastPartOrdersView.vue',
+            './src/views/Admin/ReceivePartOrderView.vue',
           ],
           analytics: [
             './src/views/Admin/PartHistoryView.vue',
@@ -85,6 +89,9 @@ export default defineConfig({
             './src/views/Admin/PalletUpdateHistoryView.vue',
             './src/views/Admin/NewPalletHistoryView.vue',
             './src/views/Admin/AuditHistoryView.vue',
+            './src/views/Admin/NewBoxHistoryView.vue',
+            './src/views/Admin/BoxUpdateHistoryView.vue',
+            './src/views/Admin/EbaySaleHistoryView.vue',
           ],
           debug: [
             './src/views/Debug/NotificationTest.vue',
