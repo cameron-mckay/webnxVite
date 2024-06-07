@@ -71,6 +71,7 @@ onBeforeMount(async ()=>{
 })
 
 function handleUpdate() {
+  console.log("test")
   updating.value = true
   receivedParts.value = JSON.parse(JSON.stringify(inventory.getDestInv()))
   let notOnPerUnit = receivedParts.value.filter((v)=>{

@@ -94,3 +94,19 @@ export function downloadCSV(filename: string, text: string) {
   element.click();
   document.body.removeChild(element);
 }
+
+export function isValidBoxTag(id: string) {
+    return /BOX([0-9]{7})+/.test(id)
+}
+
+export function isValidAssetTag(id: string) {
+    return /WNX([0-9]{7})+/.test(id)
+}
+
+export function isValidPartID(id: string) {
+    return /PNX([0-9]{7})+/.test(id)
+}
+
+export function isValidPalletTag(id: string) {
+    return /PAL([0-9]{5})+/.test(id)
+}

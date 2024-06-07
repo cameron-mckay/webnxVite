@@ -112,7 +112,7 @@ function addPartFromSearch(part: PartSchema) {
       v-for="part in assetParts"
       :key="key+assetParts.indexOf(part)"
       :item="part"
-      :maxQuantity="correction?undefined:inventory.getMaxQuantity(part.part.nxid!)"
+      :maxQuantity="correction||untracked?undefined:inventory.getMaxQuantity(part.part.nxid!)"
       :untracked="correction||untracked"
       @move-part="moveToSourceList"
     />

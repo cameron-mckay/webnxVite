@@ -17,10 +17,15 @@ let quantityVisible = ref(item.quantity ? item.quantity : 0)
 // let serial = ref(item.serial?item.serial:"")
 
 function updateQuantity() {
-  if(quantityVisible.value as any == "")
+  if(quantityVisible.value as any == "") {
+    console.log("test")
     return
-  if(maxQuantity&&quantityVisible.value!>maxQuantity)
+  }
+  if(maxQuantity&&quantityVisible.value!>maxQuantity) {
     quantityVisible.value = maxQuantity
+    console.log("max")
+    console.log(maxQuantity)
+  }
   if(quantityVisible.value!<0)
     quantityVisible.value = 0
   emit('movePart', item.part, quantityVisible.value!-item.quantity!)

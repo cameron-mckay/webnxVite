@@ -19,6 +19,7 @@ NotificationTypes,
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
 import { DEFAULT_BUILDING } from '../../plugins/Constants';
+import { isValidAssetTag, isValidBoxTag, isValidPalletTag } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -40,6 +41,7 @@ let part = ref({} as PartSchema);
 let groupedRecords = ref([] as GroupedRecords[]);
 let loadingPart = ref(false)
 let loadingGroups = ref(false)
+
 
 onBeforeMount(() => {
   loadingPart.value = true
@@ -84,8 +86,32 @@ onBeforeMount(() => {
         tempGroups.sort((r1, r2) =>
           r1.quantity < r2.quantity ? 1 : -1
         );
-        // Advanced key switch to fix owners (hacker man)
-        groupedRecords.value = tempGroups
+        let kiosks = Cacher.getKiosks().map((u)=>u.first_name + " " + u.last_name)
+        let users = Cacher.getAllUsers().map((u)=>u._id?u._id:"error")
+        // Kiosks first
+        let sortedGroups = tempGroups.filter((v)=>v.record.location&&kiosks.includes(v.record.location))
+        // Then boxes
+        sortedGroups = sortedGroups.concat(tempGroups.filter((v)=>v.record.box_tag&&isValidBoxTag(v.record.box_tag)))
+        // Then users
+        sortedGroups = sortedGroups.concat(tempGroups.filter((v)=>v.record.owner&&users.includes(v.record.owner)))
+        // Then pallets
+        sortedGroups = sortedGroups.concat(tempGroups.filter((v)=>v.record.pallet_tag&&isValidPalletTag(v.record.pallet_tag)))
+        // Then assets
+        sortedGroups = sortedGroups.concat(tempGroups.filter((v)=>v.record.asset_tag&&isValidAssetTag(v.record.asset_tag)))
+        // Then whatever else
+        sortedGroups = sortedGroups.concat(tempGroups.filter((v)=>{
+          let existingIndex = sortedGroups.findIndex(
+            (e) =>
+              e.record.nxid == v.record.nxid &&
+              e.record.location == v.record.location &&
+              e.record.owner == v.record.owner &&
+              e.record.asset_tag == v.record.asset_tag &&
+              e.record.pallet_tag == v.record.pallet_tag &&
+              e.record.box_tag == v.record.box_tag
+          );
+          return existingIndex == -1
+        }))
+        groupedRecords.value = sortedGroups
         loadingGroups.value = false
       });
     });

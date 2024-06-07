@@ -8,7 +8,7 @@ import AssetCartItemComponent from '../../components/AssetComponents/AssetCartIt
 import PencilButton from '../../components/GenericComponents/Buttons/PencilButton.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import AssetComponent from '../../components/AssetComponents/AssetComponent.vue';
-import { replaceLinksWithAnchors } from '../../plugins/CommonMethods'
+import { isValidPalletTag, replaceLinksWithAnchors } from '../../plugins/CommonMethods'
 import {
   getAssetByID,
   getNodesOnAsset,
@@ -210,7 +210,16 @@ function prev() {
         <p v-if="asset.power_port">Power Port:</p>
         <p v-if="asset.power_port">{{ asset.power_port }}</p>
         <p v-if="asset.pallet">Pallet:</p>
-        <p v-if="asset.pallet">{{ asset.pallet }}</p>
+        <RouterLink
+          class="link"
+          :to="`/pallets/view?pallet_tag=${asset.pallet}`"
+          v-if="asset.pallet&&isValidPalletTag(asset.pallet!)"
+        >
+          {{ asset.pallet }}
+        </RouterLink>
+        <p v-else>
+          {{ asset.pallet }}
+        </p>
         <p>Last Updated:</p>
         <p>
           {{ asset.date_updated ? new Date(Date.parse(asset.date_updated!)).toLocaleString() : new Date(Date.parse(asset.date_created!)).toLocaleString() }}

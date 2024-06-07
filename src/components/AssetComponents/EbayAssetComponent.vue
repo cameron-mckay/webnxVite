@@ -217,7 +217,7 @@ let { asset, readOnly } = defineProps<Props>();
             <p class="break-words">{{ item.part.manufacturer }}</p>
             <p class="break-words">{{ item.part.name }}</p>
             <p v-if="item.alreadySerialized||readOnly" class="break-words">{{ item.serial }}</p>
-            <input v-else class="break-words search" type="text" placeholder="Serial" v-model="item.serial"/>
+            <input v-else class="break-words search" type="text" placeholder="Serial" v-model="item.serial" required/>
           </div>
           <InlinePartSpecComponent
             class="group-hover:bab-drop-hover bab-drop relative"
