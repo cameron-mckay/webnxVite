@@ -5,8 +5,7 @@ import FilterTag from '../GenericComponents/FilterTag.vue';
 import ServerButton from '../GenericComponents/Buttons/ServerButton.vue';
 import AssetSearchPopupComponent from './AssetSearchPopupComponent.vue';
 import type { AxiosError, AxiosInstance } from 'axios';
-import type { AssetSchema, PartSchema }from '../../plugins/interfaces'
-
+import type { AssetSchema }from '../../plugins/interfaces'
 
 interface Props {
   http: AxiosInstance;

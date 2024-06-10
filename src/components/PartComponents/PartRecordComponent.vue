@@ -2,6 +2,9 @@
 import { onMounted, ref } from 'vue';
 import { PartRecord, User } from '../../plugins/interfaces';
 import EyeButton from '../GenericComponents/Buttons/EyeButton.vue';
+import ServerButton from '../GenericComponents/Buttons/ServerButton.vue';
+import BoxButton from '../GenericComponents/Buttons/BoxButton.vue';
+import PalletButton from '../GenericComponents/Buttons/PalletButton.vue';
 
 interface Props {
   record: PartRecord;
@@ -32,16 +35,56 @@ onMounted(() => {
       <p class="col-span-2" v-if="owner">
         {{ `${owner?.first_name} ${owner?.last_name}` }}
       </p>
-      <p class="col-span-2" v-else-if="record.asset_tag">
-        {{ record.asset_tag }}
-      </p>
-      <p class="col-span-2" v-else-if="record.pallet_tag">
-        {{ record.pallet_tag }}
-      </p>
-      <p class="col-span-2" v-else-if="record.box_tag">
-        {{ record.box_tag }}
-      </p>
-      <p class="col-span-2 break-words" v-else></p>
+      <div
+        v-else-if="view"
+        class="col-span-2"
+      >
+        <RouterLink
+          class="link"
+          v-if="record.asset_tag"
+          :to="'/assets/view?asset_tag='+record.asset_tag"
+        >
+          {{ record.asset_tag }}
+        </RouterLink>
+        <RouterLink
+          class="link"
+          v-else-if="record.pallet_tag"
+          :to="'/pallets/view?pallet_tag='+record.pallet_tag"
+        >
+          {{ record.pallet_tag }}
+        </RouterLink>
+        <RouterLink
+          class="link"
+          v-else-if="record.box_tag"
+          :to="'/boxes/view?box_tag='+record.box_tag"
+        >
+          {{ record.box_tag }}
+        </RouterLink>
+        <p class="col-span-2 break-words" v-else></p>
+      </div>
+      <div
+        v-else
+        class="col-span-2"
+      >
+        <p
+          v-if="record.asset_tag"
+        >
+          {{ record.asset_tag }}
+        </p>
+        <p
+          v-else-if="record.pallet_tag"
+        >
+          {{ record.pallet_tag }}
+        </p>
+        <p
+          v-else-if="record.box_tag"
+        >
+          {{ record.box_tag }}
+        </p>
+        <p class="col-span-2 break-words" v-else></p>
+      </div>
+
+
       <p class="hidden break-words md:block" v-if="quantity">
         {{ quantity }}
       </p>
@@ -49,6 +92,24 @@ onMounted(() => {
         {{ `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}` }}
       </p>
       <div class="my-auto flex justify-end">
+        <RouterLink
+          v-if="view == true&&record.asset_tag"
+          :to="'/assets/view?asset_tag='+record.asset_tag"
+        >
+          <ServerButton/>
+        </RouterLink>
+        <RouterLink
+          v-if="view == true&&record.pallet_tag"
+          :to="'/pallets/view?pallet_tag='+record.pallet_tag"
+        >
+          <PalletButton/>
+        </RouterLink>
+        <RouterLink
+          v-if="view == true&&record.box_tag"
+          :to="'/boxes/view?box_tag='+record.box_tag"
+        >
+          <BoxButton/>
+        </RouterLink>
         <!-- Eyeball -->
         <EyeButton
           v-if="view === true"

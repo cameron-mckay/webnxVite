@@ -24,13 +24,14 @@ import {
 import type {
   CartItem,
   PartSchema,
+  SortType,
   TextSearchPage,
   User,
   UserState,
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
 import TextSearch from '../../plugins/TextSearchClass';
-import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { arrayToCSV, downloadCSV, replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 import { DEFAULT_BUILDING, TEXT_SEARCH_PAGE_SIZE } from '../../plugins/Constants';
 
 interface Props {
@@ -68,9 +69,9 @@ onBeforeMount(async ()=>{
   loading.value = false
 })
 
-function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
+function textSearchCallback(buildingNum: number, pageNum: number, searchString: string, sortString: string, sortDir: SortType) {
   return new Promise<TextSearchPage>((res)=>{
-    getPartsByTextSearch(http, searchString, pageNum, DEFAULT_BUILDING, (data: any, err) => {
+    getPartsByTextSearch(http, searchString, pageNum, buildingNum, sortString, sortDir, (data: any, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})
@@ -83,11 +84,13 @@ function textSearchCallback(buildingNum: number, pageNum: number, searchString: 
   })
 }
 
-function advancedSearchCallback(buildingNum: number, pageNum: number, searchObject: PartSchema) {
+function advancedSearchCallback(_buildingNum: number, pageNum: number, searchObject: PartSchema, sortString: string, sortDir: SortType) {
   return new Promise<TextSearchPage>((res)=>{
     searchObject['advanced'] = 'true';
     searchObject['pageNum'] = pageNum;
     searchObject['pageSize'] = TEXT_SEARCH_PAGE_SIZE;
+    searchObject['sortString'] = sortString
+    searchObject['sortDir'] = sortDir
     // Send request to api
     getPartsByData(http, searchObject, (data, err) => {
       if (err) {
@@ -208,7 +211,6 @@ function submitAddToInventory(
   //   });
   // }
   // else 
-  console.log(kq)
   if (
     request.quantity != undefined &&
     kq != undefined &&
@@ -261,6 +263,58 @@ function audit(notes: string) {
     displayMessage("Part audited.")
   })
 }
+
+function getCSV() {
+  if(searchObject.wasLastSearchAdvanced()) {
+    searchObject.forceAdvancedSearchCallback((_buildingNum: number, pageNum: number, searchObject: PartSchema, sortString: string, sortDir: SortType)=> {
+      return new Promise<TextSearchPage>((res)=>{
+        searchObject['advanced'] = 'true';
+        searchObject['pageNum'] = pageNum;
+        searchObject['pageSize'] = TEXT_SEARCH_PAGE_SIZE;
+        searchObject['sortString'] = sortString
+        searchObject['sortDir'] = sortDir
+        searchObject['skipPagination'] = true
+        // Send request to api
+        getPartsByData(http, searchObject, (data, err) => {
+          if (err) {
+            // Send error to error handler
+            return res({pages: 0, total: 0, items: []})
+          }
+          let response = data as any[]
+          downloadCSV("advancedSearchResults", arrayToCSV(response))
+          // Resolve promise
+          return res({pages: 0, total: 0, items: []})
+        });
+      })
+    })
+  }
+  else {
+    searchObject.forceTextSearchCallback((buildingNum: number, pageNum: number, searchString: string, sortString: string, sortDir: SortType) => {
+      return new Promise<TextSearchPage>((res)=>{
+        getPartsByTextSearch(http, searchString, pageNum, buildingNum, sortString, sortDir, (data: any, err) => {
+          if (err) {
+            // Send error to error handler
+            return res({pages: 0, total: 0, items: []})
+          }
+          let response = data as PartSchema[]
+          downloadCSV("textSearchResults", arrayToCSV(response.map((p)=>{
+            return {
+              nxid: p.nxid,
+              manufacturer: p.manufacturer,
+              name: p.name,
+              rack_num: p.rack_num,
+              shelf_location: p.shelf_location,
+              available: p.quantity,
+              total: p.total_quantity
+            }
+          })))
+          // Resolve promise
+          return res({pages: 0, total: 0, items: []})
+        }, undefined, true);
+      })
+    })
+  }
+}
 </script>
 <template>
   <LoaderComponent v-if="loading"/>
@@ -280,11 +334,11 @@ function audit(notes: string) {
         />
       </template>
       <template v-slot:searchHeader>
-        <p class="mt-auto hidden md:block">NXID</p>
-        <p class="mt-auto">Manufacturer</p>
-        <p class="mt-auto">Name</p>
-        <p class="mt-auto hidden md:block">Location</p>
-        <p class="mt-auto">Quantity</p>
+        <p sortName="nxid" class="hidden md:block">NXID</p>
+        <p sortName="manufacturer">Manufacturer</p>
+        <p sortName="name">Name</p>
+        <p sortName="location" class="hidden md:block">Location</p>
+        <p sortName="quantity">Quantity</p>
       </template>
       <template v-slot:searchResults>
         <PartComponent
@@ -299,6 +353,8 @@ function audit(notes: string) {
           :part="part"
         />
       </template>
+      <template v-slot:searchFooter>
+        <input class="search-button bg-blue-400 hover:bg-blue-500 active:bg-blue-600 ml-auto block px-4" type="button" value="Download CSV" @click="getCSV"/> </template>
     </TextSearchComponent>
 
     <EditPartComponent

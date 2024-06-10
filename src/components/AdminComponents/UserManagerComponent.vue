@@ -44,6 +44,7 @@ const roles = [
   'transfer_out_testing',
   'view_manage_menu',
   'delete_parts',
+  'manage_orders',
   'debug'
 ];
 let user: Ref<User> = ref({});

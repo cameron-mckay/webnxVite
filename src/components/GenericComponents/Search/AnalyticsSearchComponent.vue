@@ -24,9 +24,10 @@ interface Props {
   showPalletFilters?: boolean
   showBoxFilters?: boolean
   hideHidePartButton?: boolean
+  showExport?: boolean
 }
 // Deref the search helper
-let { searchComponent, resultsLoading, showUserFilters, showPartFilters, showAssetFilters, hideHidePartButton } = defineProps<Props>()
+let { searchComponent, resultsLoading, showUserFilters, showPartFilters, showAssetFilters, hideHidePartButton, showExport } = defineProps<Props>()
 // Filter maps
 let userFilterMap = ref(new Map<string, User>())
 let partFilterMap = ref(new Map<string, PartSchema>())
@@ -48,7 +49,7 @@ let hideOtherPartsCache = false
 let pageNumRef = ref(1)
 let numPages = ref(1)
 
-let emit = defineEmits(['showLoader', 'displayResults'])
+let emit = defineEmits(['showLoader', 'displayResults', 'export'])
 
 // After component mount - load necessary variables
 onBeforeMount(async ()=>{
@@ -74,7 +75,7 @@ onBeforeMount(async ()=>{
 })
 
 // Called when the go button is pressed on the date range component
-function updateDates(startDate: Date, endDate: Date) {
+async function updateDates(startDate: Date, endDate: Date) {
   // Update local dates
   startDateCache = startDate
   endDateCache = endDate
@@ -86,7 +87,7 @@ function updateDates(startDate: Date, endDate: Date) {
   palletFilterArray = Array.from(palletFilterMap.value.keys())
   boxFilterArray = Array.from(boxFilterMap.value.keys())
   // Load the first page
-  loadPage(1)
+  await loadPage(1)
 }
 
 // Called whenever next, prev, or jumper is used
@@ -101,20 +102,29 @@ async function loadPage(pageNum: number) {
   // CALL TO PARENT HERE
   emit("displayResults", page)
 }
+
+// Called when the go button is pressed on the date range component
+async function exportCSV(startDate: Date, endDate: Date) {
+  await updateDates(startDate, endDate)
+  // Update local dates
+  emit('export')
+}
 </script>
 <template>
   <div>
     <!-- Search header -->
     <div>
       <div class="flex justify-between md:mb-2">
+        <div class="flex">
         <!-- Date range component -->
-        <DateRangeComponent :startDate="startDateCache" :endDate="endDateCache" @search="updateDates" class="flex">
+        <DateRangeComponent :startDate="startDateCache" :endDate="endDateCache" @search="updateDates" class="flex" :show-export="showExport" @export="exportCSV">
           <PartFilterComponent v-if="showPartFilters" :http="Cacher.getHttp()" :filterMap="partFilterMap" class="mb-auto ml-1"/>
           <UserFilterComponent v-if="showUserFilters" :users="Cacher.getAllUserMap()" :filterMap="userFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}" class="mb-auto ml-1"/>
           <AssetFilterComponent v-if="showAssetFilters" :http="Cacher.getHttp()" :filterMap="assetFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}" class="mb-auto ml-1"/>
           <PalletFilterComponent v-if="showPalletFilters" :http="Cacher.getHttp()" :filterMap="palletFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}" class="mb-auto ml-1"/>
           <BoxFilterComponent v-if="showBoxFilters" :http="Cacher.getHttp()" :filterMap="boxFilterMap" :errorHandler="()=>{}" :showMessage="()=>{}" class="mb-auto ml-1"/>
         </DateRangeComponent>
+        </div>
         <!-- Navigation buttons -->
         <SearchNavButtons :numPages="numPages" :pageNum="pageNumRef" @loadPage="loadPage"/>
       </div>

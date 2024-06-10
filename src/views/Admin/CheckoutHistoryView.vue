@@ -15,6 +15,7 @@ import {
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import CheckoutHistoryComponent from '../../components/KioskComponents/CheckoutHistoryComponent.vue';
 import Cacher from '../../plugins/Cacher';
+import { arrayToCSV, downloadCSV } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -72,6 +73,40 @@ function showLoader() {
   resultsLoading.value = true
 }
 
+async function exportCSV() {
+  getCheckoutHistory(http, analyticsSearchObject.getStartDateFromRouter().getTime(), analyticsSearchObject.getEndDateFromRouter().getTime(), 1, 10, async (data, err)=>{
+    if(err)
+      return
+    let arr = data as any[]
+
+    let summary = []
+    let parts = [] as any[]
+
+    for(let e of arr) {
+      let user = Cacher.getUser(e.by)
+      let by = user.first_name + " " + user.last_name
+      let date = (new Date(e.date)).toLocaleString()
+      let location = e.location
+
+      let quantity = 0
+
+      e.parts.map((p: any)=>{
+        quantity += p.quantity ? p.quantity : 1
+      })
+      summary.push({by, location, date, quantity})
+      parts = parts.concat(e.parts.map((p: any)=>{
+        return { date, by, location, nxid: p.nxid, quantity: p.quantity ? p.quantity : 1, serial: p.serial ? p.serial : " ", action: p.approved ? 'approved' : 'denied' }
+      }))
+    }
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Summary_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(summary))
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Parts_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(parts))
+  },
+  Array.from(analyticsSearchObject.getUserFilterMapFromRouter().keys()),
+  Array.from((await analyticsSearchObject.getPartFilterMapFromRouter()).keys()),
+  analyticsSearchObject.getHideOthersFromRouter(),
+  true
+  )
+}
 </script>
 <template>
   <div>
@@ -84,8 +119,10 @@ function showLoader() {
       :searchComponent="analyticsSearchObject"
       :show-user-filters="true"
       :show-part-filters="true"
+      :show-export="true"
       @displayResults="displayResults"
       @showLoader="showLoader"
+      @export="exportCSV"
     >
       <CheckoutHistoryComponent
         v-for="checkout of checkoutEvents"

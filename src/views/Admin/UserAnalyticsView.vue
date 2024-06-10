@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from 'vue';
-import { getAllUsers, getCheckinHistory, getCheckoutHistory, getAssetUpdatesNoDetails, getNewAssetsNoDetails, getNewPalletsNoDetails, getPalletUpdatesNoDetails, getNewBoxesNoDetails, getBoxUpdatesNoDetails } from '../../plugins/dbCommands/userManager';
+import { getAllUsers, getCheckinHistory, getCheckoutHistory, getAssetUpdatesNoDetails, getNewAssetsNoDetails, getNewPalletsNoDetails, getPalletUpdatesNoDetails, getNewBoxesNoDetails, getBoxUpdatesNoDetails, getCheckoutHistoryNoDetails, getCheckinHistoryNoDetails } from '../../plugins/dbCommands/userManager';
 import { User } from '../../plugins/interfaces';
 import type { AxiosError, AxiosInstance } from 'axios';
 import { Router } from 'vue-router';
@@ -11,6 +11,7 @@ import DateRangeComponent from '../../components/GenericComponents/DateRangeComp
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue';
 import { getTodaysDate, getLastMonth } from '../../plugins/dateFunctions';
+import { arrayToCSV, downloadCSV } from '../../plugins/CommonMethods';
 interface Props {
   http: AxiosInstance;
   store: Store<UserState>;
@@ -33,8 +34,6 @@ let boxesUpdated = new Map<string, number>()
 let startDateCache = getLastMonth();
 let endDateCache = getTodaysDate();
 let loading = ref(false);
-let pageNum = ref(1)
-let pageSize = 20
 
 function getUsers(startDate: Date, endDate: Date) {
   loading.value = true;
@@ -49,7 +48,7 @@ function getUsers(startDate: Date, endDate: Date) {
       [
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getCheckinHistory(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
+            getCheckinHistoryNoDetails(http, startDate.getTime(), endDate.getTime(), (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
@@ -60,7 +59,7 @@ function getUsers(startDate: Date, endDate: Date) {
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getCheckoutHistory(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
+            getCheckoutHistoryNoDetails(http, startDate.getTime(), endDate.getTime(), (data, err) => {
               if(err)
                 return rej("") 
               let response = data as any
@@ -71,7 +70,7 @@ function getUsers(startDate: Date, endDate: Date) {
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getAssetUpdatesNoDetails(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
+            getAssetUpdatesNoDetails(http, startDate.getTime(), endDate.getTime(), (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
@@ -82,7 +81,7 @@ function getUsers(startDate: Date, endDate: Date) {
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getNewAssetsNoDetails(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
+            getNewAssetsNoDetails(http, startDate.getTime(), endDate.getTime(), (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
@@ -93,7 +92,7 @@ function getUsers(startDate: Date, endDate: Date) {
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getPalletUpdatesNoDetails(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
+            getPalletUpdatesNoDetails(http, startDate.getTime(), endDate.getTime(), (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
@@ -104,7 +103,7 @@ function getUsers(startDate: Date, endDate: Date) {
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getNewPalletsNoDetails(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
+            getNewPalletsNoDetails(http, startDate.getTime(), endDate.getTime(), (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
@@ -115,7 +114,7 @@ function getUsers(startDate: Date, endDate: Date) {
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getBoxUpdatesNoDetails(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
+            getBoxUpdatesNoDetails(http, startDate.getTime(), endDate.getTime(), (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
@@ -126,7 +125,7 @@ function getUsers(startDate: Date, endDate: Date) {
         })),
         Promise.all(temp.map((u)=>{
           return new Promise<string>((res, rej)=>{
-            getNewBoxesNoDetails(http, startDate.getTime(), endDate.getTime(), pageNum.value, pageSize, (data, err) => {
+            getNewBoxesNoDetails(http, startDate.getTime(), endDate.getTime(), (data, err) => {
               if(err)
                 return rej("")
               let response = data as any
@@ -233,13 +232,30 @@ function openBoxesUpdated(user_id: string) {
     }
   })
 }
+
+function exportCSV() {
+  let analytics = users.value.map((user)=>{
+    return {
+      user: `${user.first_name} ${user.last_name}`,
+      checkins: checkins.get(user._id!)!,
+      checkouts: checkouts.get(user._id!)!,
+      assetsUpdated: assetsUpdated.get(user._id!)!,
+      newAssets: newAssets.get(user._id!)!,
+      palletsUpdated: palletsUpdated.get(user._id!)!,
+      newPallets: newPallets.get(user._id!)!,
+      boxesUpdated: boxesUpdated.get(user._id!)!,
+      newBoxes: newBoxes.get(user._id!)!,
+    }
+  })
+  downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Summary_"+startDateCache.toLocaleDateString().replaceAll('/','-')+"_to_"+endDateCache.toLocaleDateString().replaceAll('/','-'), arrayToCSV(analytics))
+}
 </script>
 <template>
   <div>
     <PageHeaderWithBackButton :router="router" :prevPath="'/manage'">
       User Analytics
     </PageHeaderWithBackButton>
-    <DateRangeComponent :startDate="startDateCache" :endDate="endDateCache" @search="getUsers" class="md:mb-2"/>
+    <DateRangeComponent :show-export="true" :startDate="startDateCache" :endDate="endDateCache" @search="getUsers" @export="exportCSV" class="md:mb-2"/>
     <LoaderComponent v-if="loading"/>
     <div v-else class="md:animate-bottom grid grid-cols-1 md:grid-cols-3">
       <UserAnalyticsComponent

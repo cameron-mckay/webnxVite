@@ -21,7 +21,7 @@ onBeforeMount(()=>{
 
 function textSearchCallback(buildingNum: number, pageNum: number, searchString: string) {
   return new Promise<TextSearchPage>((res)=>{
-    getPalletsByTextSearch(http, searchString, pageNum, (data: any, err) => {
+    getPalletsByTextSearch(http, searchString, pageNum, "", 0, (data: any, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})

@@ -20,11 +20,11 @@ export interface loadPageCallback {
 }
 
 export interface textSearchCallback {
-  (building: number, pageNum: number, searchString: string) : Promise<TextSearchPage>
+  (building: number, pageNum: number, searchString: string, sortString: string, sortDir: SortType) : Promise<TextSearchPage>
 }
 
 export interface advancedSearchCallback {
-  (building: number, pageNum: number, searchObject: any) : Promise<TextSearchPage>
+  (building: number, pageNum: number, searchObject: any, sortString: string, sortDir: SortType) : Promise<TextSearchPage>
 }
 
 export interface AnalyticsSearchPage {
@@ -61,6 +61,12 @@ export enum NotificationTypes {
   Info = "Info",
   Alert = "Alert",
   Question = "Question",
+}
+
+export enum SortType {
+  Ascending = 1,
+  Descending = -1,
+  None = 0
 }
 
 export interface NotificationSchema {
@@ -274,6 +280,8 @@ export interface CheckOutEvent extends CheckInRequest {
 
 export interface EbaySaleEvent extends CheckInRequest {
   order: string
+  assets: any[]
+  perUnitSalePrice: any[]
 }
 
 export interface AssetPart extends LoadedCartItem {
@@ -425,4 +433,21 @@ export interface AuditRecordSchema {
     by: string,
     // Date the part was created
     date: Date,
+}
+
+export interface PartOrderSchema {
+    _id: string,
+    building: number,
+    per_unit_costs: {nxid: string, cost: number}[],
+    // Order info
+    ordered_parts: CartItem[],
+    created_by: string,
+    create_notes: string,
+    date_created: Date,
+    cancelled: boolean,
+    // Received info
+    received_by: string,
+    received_notes: string,
+    date_received: Date,
+    received_parts: { kiosk?: string, box_tag?: string, parts: CartItem[]}[],
 }

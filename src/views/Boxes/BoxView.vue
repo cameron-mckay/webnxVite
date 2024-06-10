@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AxiosError, AxiosInstance } from 'axios';
 import { onBeforeMount, ref } from 'vue';
-import type { Router } from 'vue-router';
+import { Router, RouterLink } from 'vue-router';
 import type { Store } from 'vuex';
 import BackButton from '../../components/GenericComponents/Buttons/BackButton.vue';
 import AssetCartItemComponent from '../../components/AssetComponents/AssetCartItemComponent.vue';
@@ -15,7 +15,7 @@ import type {
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
 import { getBoxByID, getPartsOnBox } from '../../plugins/dbCommands/boxManager';
-import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { isValidPalletTag, replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 import { DEFAULT_BUILDING } from '../../plugins/Constants';
 
 interface Props {
@@ -116,7 +116,14 @@ function edit() {
         <p>Building:</p>
         <p>{{ box.building }}</p>
         <p>Location:</p>
-        <p>{{ box.location }}</p>
+        <RouterLink
+          class="link"
+          :to="`/pallets/view?pallet_tag=${box.location}`"
+          v-if="isValidPalletTag(box.location)"
+        >
+          {{ box.location }}
+        </RouterLink>
+        <p v-else>{{ box.location }}</p>
         <p>Last Updated:</p>
         <p>
           {{ new Date(box.date_created).toLocaleString() }}

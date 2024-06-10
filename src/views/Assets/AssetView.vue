@@ -8,7 +8,7 @@ import AssetCartItemComponent from '../../components/AssetComponents/AssetCartIt
 import PencilButton from '../../components/GenericComponents/Buttons/PencilButton.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
 import AssetComponent from '../../components/AssetComponents/AssetComponent.vue';
-import { replaceLinksWithAnchors } from '../../plugins/CommonMethods'
+import { isValidPalletTag, replaceLinksWithAnchors } from '../../plugins/CommonMethods'
 import {
   getAssetByID,
   getNodesOnAsset,
@@ -138,6 +138,12 @@ function prev() {
       This asset was automatically migrated from the old asset tracking system
       and is incomplete. Please edit and update the information if you can.
     </p>
+    <p
+      class="my-2 w-full rounded-md bg-red-400 p-2"
+      v-if="asset.next=='sold'"
+    >
+      This asset was sold on ebay order {{ asset.ebay }} and is now a read only record.
+    </p>
     <div
       class="relative grid grid-cols-2 rounded-md group-hover:rounded-bl-none group-hover:bg-zinc-400 md:grid-cols-4"
     >
@@ -148,14 +154,15 @@ function prev() {
         <!-- Pencil -->
         <PencilButton
           v-on:click="edit"
-          v-if="store.state.user.roles?.includes('edit_assets')"
+          v-if="store.state.user.roles?.includes('edit_assets')&&asset.next!='sold'"
         />
         <RouterLink
-          class="my-auto ml-2 rounded-md p-2 font-bold transition-colors hover:bg-gray-400 hover:dark:bg-zinc-700"
+          class="cursor-pointer text-sm rounded-md p-2 font-bold hover:bg-gray-400 hover:dark:bg-zinc-700 background-and-border hover:bab-hover hover:rounded-bl-md hover:transition-none"
           :to="`/assets/history?nxid=${asset.asset_tag}`"
         >
           View History
         </RouterLink>
+
       </div>
       <div class="detail-row">
         <p>Building:</p>
@@ -203,7 +210,16 @@ function prev() {
         <p v-if="asset.power_port">Power Port:</p>
         <p v-if="asset.power_port">{{ asset.power_port }}</p>
         <p v-if="asset.pallet">Pallet:</p>
-        <p v-if="asset.pallet">{{ asset.pallet }}</p>
+        <RouterLink
+          class="link"
+          :to="`/pallets/view?pallet_tag=${asset.pallet}`"
+          v-if="asset.pallet&&isValidPalletTag(asset.pallet!)"
+        >
+          {{ asset.pallet }}
+        </RouterLink>
+        <p v-else>
+          {{ asset.pallet }}
+        </p>
         <p>Last Updated:</p>
         <p>
           {{ asset.date_updated ? new Date(Date.parse(asset.date_updated!)).toLocaleString() : new Date(Date.parse(asset.date_created!)).toLocaleString() }}

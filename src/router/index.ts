@@ -4,7 +4,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('../views/Parts/FindPartView.vue'),
+    component: () => import('../views/HomeView.vue'),
   },
   {
     path: '/register',
@@ -446,6 +446,38 @@ const routes = [
       allowedRoles: ["debug"]
     },
     component: () => import('../views/Debug/NotificationTest.vue'),
+  },
+  {
+    path: '/orders',
+    name: 'Orders',
+    meta: {
+      allowedRoles: ["manage_orders"]
+    },
+    component: () => import('../views/Admin/ActivePartOrdersView.vue')
+  },
+  {
+    path: '/orders/create',
+    name: 'Create Part Order',
+    meta: {
+      allowedRoles: ["manage_orders"]
+    },
+    component: () => import('../views/Admin/CreatePartOrderView.vue')
+  },
+  {
+    path: '/orders/receive',
+    name: 'Receive Part Order',
+    meta: {
+      allowedRoles: ["manage_orders"]
+    },
+    component: () => import('../views/Admin/ReceivePartOrderView.vue')
+  },
+  {
+    path: '/orders/received',
+    name: 'Past Part Orders',
+    meta: {
+      allowedRoles: ["manage_orders"]
+    },
+    component: () => import('../views/Admin/PastPartOrdersView.vue')
   },
   {
     path: '/:catchall(.*)',

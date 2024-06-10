@@ -154,7 +154,7 @@
   }
 
   #link, .link {
-    @apply underline text-green-400 hover:text-green-500 active:text-green-600 !important
+    @apply underline text-green-400 hover:text-green-500 active:text-green-600 cursor-pointer !important
   }
   .manager-button {
     @apply m-2 block rounded-md p-4 text-center nx-border-color border-2 hover:hover-color active:active-color

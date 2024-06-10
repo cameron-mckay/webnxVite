@@ -4,6 +4,7 @@ import type {
   apiResponse,
   BoxSchema,
   CartItem,
+  SortType,
 } from '../interfaces';
 
 /**
@@ -18,6 +19,8 @@ export function getBoxesByTextSearch(
   http: AxiosInstance,
   searchString: string,
   pageNum: number,
+  sortString: string,
+  sortDir: SortType,
   callback: apiResponse
 ) {
   // Send string query to API
@@ -26,6 +29,8 @@ export function getBoxesByTextSearch(
       params: {
         searchString,
         pageNum,
+        sortString,
+        sortDir,
         pageSize: TEXT_SEARCH_PAGE_SIZE,
       },
     })

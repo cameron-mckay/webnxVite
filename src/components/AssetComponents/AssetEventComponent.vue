@@ -103,6 +103,10 @@ onMounted(() => {
           v-if="asset.migrated"
           class="col-span-2 mb-4 rounded-md bg-green-400 p-2 text-center text-4xl leading-8 md:leading-10"
         >MIGRATED</h1>
+        <h1
+          v-if="asset.next=='sold'"
+          class="col-span-2 mb-4 rounded-md bg-red-400 p-2 text-center text-4xl leading-8 md:leading-10"
+        >SOLD</h1>
         <h1 class="col-span-2 mb-4 text-4xl leading-8 md:leading-10">
           {{ asset.asset_tag }}
         </h1>
@@ -288,10 +292,7 @@ onMounted(() => {
 
         <div v-if="asset.notes || prevAsset.notes" class="detail-row col-span-2">
           <p class="col-span-2">Notes:</p>
-          <pre class="col-span-2 notes-with-links whitespace-pre-wrap">
-            <del v-if="prevAsset.notes && (prevAsset.notes != asset.notes)">{{ prevAsset.notes }}</del>
-            {{ asset.notes }}
-          </pre>
+          <pre class="col-span-2 notes-with-links whitespace-pre-wrap"><del v-if="prevAsset.notes && (prevAsset.notes != asset.notes)">{{ prevAsset.notes }}</del>{{ asset.notes }}</pre>
         </div>
 
       </div>

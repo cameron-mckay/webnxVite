@@ -18,7 +18,7 @@ import {
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import Cacher from '../../plugins/Cacher';
 import { getPartAuditHistory } from '../../plugins/dbCommands/partManager';
-import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { arrayToCSV, downloadCSV, replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -76,6 +76,28 @@ function showLoader() {
   resultsLoading.value = true
 }
 
+async function getCSV() {
+  getPartAuditHistory(http, analyticsSearchObject.getStartDateFromRouter().getTime(), analyticsSearchObject.getEndDateFromRouter().getTime(), 1, 10, async (data, err) => {
+    if(err)
+      return
+    let arr = data as any[]
+    let summary = []
+    for(let e of arr) {
+      let user = Cacher.getUser(e.by)
+      let by = user.first_name + " " + user.last_name
+      let date = (new Date(e.date)).toLocaleString()
+      let {building, nxid, total_quantity} = e
+      for(let kq of e.kiosk_quantities) {
+        summary.push({nxid, by, date, building, kiosk: kq.kiosk, kiosk_quantity: kq.quantity, total_quantity})
+      }
+    }
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Summary_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(summary))
+  },
+  Array.from((await analyticsSearchObject.getPartFilterMapFromRouter()).keys()),
+  Array.from(analyticsSearchObject.getUserFilterMapFromRouter().keys()),
+  true
+  )
+}
 </script>
 <template>
   <div>
@@ -89,8 +111,10 @@ function showLoader() {
       :show-user-filters="true"
       :show-part-filters="true"
       :hide-hide-part-button="true"
+      :show-export="true"
       @displayResults="displayResults"
       @showLoader="showLoader"
+      @export="getCSV"
     >
     <AuditEventComponent v-for="event of auditHistory" 
       :event="event"

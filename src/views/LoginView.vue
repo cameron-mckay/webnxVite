@@ -27,7 +27,6 @@
     </form>
   </div>
 </template>
-
 <script setup lang="ts">
 import { onMounted } from 'vue';
 
@@ -93,7 +92,14 @@ async function login() {
             // Success - update global user component
             let user = data as User
             store.commit("updateUserData", user)
-            router.push('/parts');
+            if(router.currentRoute.value.query.next&&router.currentRoute.value.query.next!="") {
+              let query = router.currentRoute.value.query as any
+              let next = query.next
+              delete query.next
+              router.push({name: next, query})
+            }
+            else
+              router.push('/');
             if(Notification.permission === "granted" && 'serviceWorker' in navigator)
               // Get the registration from service worker
               navigator.serviceWorker.ready
@@ -144,7 +150,14 @@ async function redirectIfLoggedIn() {
     .then(() => {
       // Go to home
       store.state.isAuth = true;
-      router.push('/parts');
+      if(router.currentRoute.value.query.next&&router.currentRoute.value.query.next!="") {
+        let query = router.currentRoute.value.query as any
+        let next = query.next
+        delete query.next
+        router.push({name: next, query})
+      }
+      else
+        router.push('/');
     })
     .catch((err: Error | AxiosError) => {
       // Go to login

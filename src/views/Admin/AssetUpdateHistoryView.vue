@@ -15,7 +15,8 @@ import {
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import Cacher from '../../plugins/Cacher';
-import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { arrayToCSV, downloadCSV, replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import PlusButton from '../../components/GenericComponents/Buttons/PlusButton.vue';
 
 interface Props {
   http: AxiosInstance;
@@ -82,6 +83,40 @@ function showLoader() {
   resultsLoading.value = true
 }
 
+async function getCSV() {
+  getAssetUpdates(http, analyticsSearchObject.getStartDateFromRouter().getTime(), analyticsSearchObject.getEndDateFromRouter().getTime(), 1, 10, async (data, err) => {
+    if(err)
+      return
+    let arr = data as any[]
+
+    let summary = []
+    let parts = [] as any[]
+
+    for(let e of arr) {
+        let user = Cacher.getUser(e.by)
+        let by = user.first_name + " " + user.last_name
+        let date = (new Date(e.date_begin)).toLocaleString()
+        let asset_tag = (await Cacher.getAsset(e.asset_id)).asset_tag!
+        asset_tag = asset_tag ? asset_tag : "UNKNOWN"
+        summary.push({by, date, asset_tag, info_updated: e.info_updated, existing: e.existing.length, added: e.added.length, removed: e.removed.length})
+        parts = parts.concat(e.added.map((p: any)=>{
+          return { date, by, asset_tag, nxid: p.nxid, quantity: p.quantity ? p.quantity : 1, serial: p.serial ? p.serial : " ", action: "added" }
+        }))
+        parts = parts.concat(e.removed.map((p: any)=>{
+          return { date, by, asset_tag, nxid: p.nxid, quantity: p.quantity ? p.quantity : 1, serial: p.serial ? p.serial : " ", action: "removed" }
+        }))
+    }
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Summary_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(summary))
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Parts_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(parts))
+  },
+  Array.from(analyticsSearchObject.getUserFilterMapFromRouter().keys()),
+  Array.from((await analyticsSearchObject.getPartFilterMapFromRouter()).keys()),
+  analyticsSearchObject.getHideOthersFromRouter(),
+  Array.from((await analyticsSearchObject.getAssetFilterMapFromRouter()).keys()),
+  true
+  )
+}
+
 </script>
 <template>
   <div>
@@ -95,8 +130,10 @@ function showLoader() {
       :show-user-filters="true"
       :show-part-filters="true"
       :show-asset-filters="true"
+      :show-export="true"
       @displayResults="displayResults"
       @showLoader="showLoader"
+      @export="getCSV"
     >
       <AssetEventComponent
         :assets="Cacher.getAssetCache()"

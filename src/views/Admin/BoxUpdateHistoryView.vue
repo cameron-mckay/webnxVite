@@ -6,7 +6,7 @@ import type { Store } from 'vuex';
 import AnalyticsSearchComponent from '../../components/GenericComponents/Search/AnalyticsSearchComponent.vue';
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
-import { getBoxUpdates, getNewBoxes } from '../../plugins/dbCommands/userManager';
+import { getBoxUpdates } from '../../plugins/dbCommands/userManager';
 import {
   AnalyticsSearchPage,
   BoxEvent,
@@ -15,7 +15,7 @@ import {
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import Cacher from '../../plugins/Cacher';
 import BoxEventComponent from '../../components/BoxComponents/BoxEventComponent.vue';
-import { replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { arrayToCSV, downloadCSV, replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -36,7 +36,7 @@ let analyticsSearchObject:AnalyticsSearch<BoxEvent>;
 
 onBeforeMount(async ()=>{
   analyticsSearchObject = new AnalyticsSearch(
-    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts, box_tags)=>{
+    (pageNum, startDate, endDate, userFilters, partFilters, hideOtherParts, assetFilters, palletFilters, boxFilters)=>{
       return new Promise<AnalyticsSearchPage>((res, rej)=>{
         getBoxUpdates(http, startDate.getTime(), endDate.getTime(), pageNum, 10, async (data, err) => {
           if(err)
@@ -47,7 +47,7 @@ onBeforeMount(async ()=>{
         userFilters,
         partFilters,
         hideOtherParts,
-        box_tags
+        boxFilters
         )
       })
     }
@@ -79,6 +79,40 @@ function showLoader() {
   resultsLoading.value = true
 }
 
+async function exportCSV() {
+  getBoxUpdates(http, analyticsSearchObject.getStartDateFromRouter().getTime(), analyticsSearchObject.getEndDateFromRouter().getTime(), 1, 10, async (data, err) => {
+    if(err)
+      return
+    let arr = data as any[]
+
+    let summary = []
+    let parts = [] as any[]
+
+    for(let e of arr) {
+      let user = Cacher.getUser(e.by)
+      let by = user.first_name + " " + user.last_name
+      let date = (new Date(e.date_begin)).toLocaleString()
+      let box_tag = (await Cacher.getBox(e.box_id)).box_tag!
+      box_tag = box_tag ? box_tag : "UNKNOWN"
+      summary.push({by, date, box_tag, info_updated: e.info_updated, existing: e.existingParts.length, added: e.addedParts.length, removed: e.removedParts.length})
+      parts = parts.concat(e.addedParts.map((p: any)=>{
+        return { date, by, box_tag, nxid: p.nxid, quantity: p.quantity ? p.quantity : 1, serial: p.serial ? p.serial : " ", action: "added" }
+      }))
+      parts = parts.concat(e.removedParts.map((p: any)=>{
+        return { date, by, box_tag, nxid: p.nxid, quantity: p.quantity ? p.quantity : 1, serial: p.serial ? p.serial : " ", action: "removed" }
+      }))
+    }
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Summary_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(summary))
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Parts_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(parts))
+  },
+  Array.from(analyticsSearchObject.getUserFilterMapFromRouter().keys()),
+  Array.from((await analyticsSearchObject.getPartFilterMapFromRouter()).keys()),
+  analyticsSearchObject.getHideOthersFromRouter(),
+  Array.from((await analyticsSearchObject.getBoxFilterMapFromRouter()).keys()),
+  true
+  )
+}
+
 </script>
 <template>
   <div>
@@ -91,8 +125,11 @@ function showLoader() {
       :searchComponent="analyticsSearchObject"
       :show-user-filters="true"
       :show-part-filters="true"
+      :show-export="true"
+      :show-box-filters="true"
       @displayResults="displayResults"
       @showLoader="showLoader"
+      @export="exportCSV"
     >
       <BoxEventComponent
         :boxes="Cacher.getBoxCache()"

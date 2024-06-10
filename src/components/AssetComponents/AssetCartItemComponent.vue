@@ -17,8 +17,15 @@ let quantityVisible = ref(item.quantity ? item.quantity : 0)
 // let serial = ref(item.serial?item.serial:"")
 
 function updateQuantity() {
-  if(maxQuantity&&quantityVisible.value!>maxQuantity)
+  if(quantityVisible.value as any == "") {
+    console.log("test")
+    return
+  }
+  if(maxQuantity&&quantityVisible.value!>maxQuantity) {
     quantityVisible.value = maxQuantity
+    console.log("max")
+    console.log(maxQuantity)
+  }
   if(quantityVisible.value!<0)
     quantityVisible.value = 0
   emit('movePart', item.part, quantityVisible.value!-item.quantity!)
@@ -53,7 +60,7 @@ watch(()=>item.quantity, ()=>{
           type="number"
           min="0"
           step="1"
-          v-on:focusout="updateQuantity"
+          v-on:mouseleave="updateQuantity"
         />
         <p class="break-words" v-if="!untracked">/ {{ maxQuantity }}</p>
       </div>

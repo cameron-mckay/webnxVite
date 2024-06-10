@@ -115,9 +115,11 @@ export default class EbayInventory extends Inventory {
         invEntry.serials.push(item.serial)
       // Increment unserialized
       else {
-        invEntry.unserialized+=1
         if(item.serial&&item.serial!='') {
-          invEntry.newSerials!.push(item.serial)
+          invEntry.serials!.push(item.serial)
+        }
+        else {
+          invEntry.unserialized+=1
         }
       }
       //invEntry.unserialized+=item.quantity!

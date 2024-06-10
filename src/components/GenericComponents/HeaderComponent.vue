@@ -4,7 +4,7 @@
       id="header"
       class="header-color fixed top-0 z-20 flex w-full justify-between shadow-md"
     >
-      <div class="flex justify-center">
+      <div class="flex justify-center shrink-0">
         <!-- Hamburger nav -->
         <svg
           class="header-button-colors h-10 w-10 shrink-0 p-2"
@@ -26,11 +26,16 @@
           />
         </svg>
         <!-- Header logo -->
-        <img
-          class="h-10 w-fit p-2"
-          alt="WebNX Logo"
-          src="../../assets/logo.webp"
-        />
+        <RouterLink
+          to="/"
+          class="shrink-0"
+        >
+          <img
+            class="h-10 w-full p-2"
+            alt="WebNX Logo"
+            src="../../assets/logo.webp"
+          />
+        </RouterLink>
         <!-- Desktop nav -->
         <div class="justify-center flex"
           :class="{ 'opacity-0': hide_text }"
@@ -69,6 +74,13 @@
             to="/boxes"
           >
             Boxes
+          </RouterLink>
+          <RouterLink
+            v-if="store.state.user.roles?.includes('manage_orders')"
+            class="header-button-colors w-24 text-center leading-10 transition"
+            to="/orders"
+          >
+            Orders
           </RouterLink>
           <RouterLink
             v-if="store.state.user.roles?.includes('request_parts')||store.state.user.roles?.includes('fulfill_part_requests')"
@@ -259,6 +271,13 @@
         to="/boxes"
       >
         Boxes
+      </RouterLink>
+      <RouterLink
+        v-if="store.state.user.roles?.includes('manage_orders')"
+        class="mobile-nav-button"
+        to="/orders"
+      >
+        Orders
       </RouterLink>
       <RouterLink
         v-if="store.state.user.roles?.includes('request_parts')||store.state.user.roles?.includes('fulfill_part_requests')"

@@ -12,15 +12,17 @@ interface Props {
   inventory: Inventory;
   correction?: boolean;
   untracked?: boolean;
+  title?: string
 }
 
-let { inventory, correction, untracked } = defineProps<Props>()
+let { inventory, correction, untracked, title } = defineProps<Props>()
 
 let loading = ref(true)
 let invParts = ref([] as LoadedCartItem[])
 let assetParts = ref([] as LoadedCartItem[])
 let showPopup = ref(false)
 let key = ref(Date.now())
+let emit = defineEmits(["update"])
 
 onBeforeMount(()=>{
   inventory.registerRefreshCallback(refreshInv)
@@ -48,6 +50,7 @@ function refreshInv() {
   invParts.value = inventory.getSourceInv()
   assetParts.value = inventory.getDestInv()
   key.value = Date.now()
+  emit('update')
   // Unset loaer
   loading.value = false
 }
@@ -63,7 +66,7 @@ function addPartFromSearch(part: PartSchema) {
 <template>
   <div class="col-span-2">
     <div class="flex">
-      <h1 class="inline-block text-4xl leading-8 md:leading-10">Parts:</h1>
+      <h1 class="inline-block text-4xl leading-8 md:leading-10">{{ title ? title : "Parts:" }}</h1>
       <!-- Plus -->
       <PlusButton @click="togglePopup"/>
     </div>
@@ -109,7 +112,7 @@ function addPartFromSearch(part: PartSchema) {
       v-for="part in assetParts"
       :key="key+assetParts.indexOf(part)"
       :item="part"
-      :maxQuantity="correction?undefined:inventory.getMaxQuantity(part.part.nxid!)"
+      :maxQuantity="correction||untracked?undefined:inventory.getMaxQuantity(part.part.nxid!)"
       :untracked="correction||untracked"
       @move-part="moveToSourceList"
     />

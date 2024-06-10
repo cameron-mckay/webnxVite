@@ -7,6 +7,7 @@ import AnalyticsSearchComponent from '../../components/GenericComponents/Search/
 import PageHeaderWithBackButton from '../../components/GenericComponents/PageHeaderWithBackButton.vue'
 import AllTechsEventComponent from '../../components/AdminComponents/AllTechsEventComponent.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
+import PlusButton from '../../components/GenericComponents/Buttons/PlusButton.vue';
 import { getAllTechsHistory } from '../../plugins/dbCommands/userManager';
 import {
   AllTechsEvent,
@@ -15,6 +16,7 @@ import {
 } from '../../plugins/interfaces';
 import AnalyticsSearch from '../../plugins/AnalyticsSearchClass';
 import Cacher from '../../plugins/Cacher';
+import { arrayToCSV, downloadCSV } from '../../plugins/CommonMethods';
 
 interface Props {
   http: AxiosInstance;
@@ -79,6 +81,37 @@ function showLoader() {
   resultsLoading.value = true
 }
 
+async function getCSV() {
+  getAllTechsHistory(http, analyticsSearchObject.getStartDateFromRouter().getTime(), analyticsSearchObject.getEndDateFromRouter().getTime(), 1, 10, async (data, err)=>{
+    if(err) {
+      return
+    }
+    let arr = data as any[]
+
+    let summary = []
+    let parts = [] as any[]
+
+    for(let e of arr) {
+      let user = Cacher.getUser(e.by)
+      let by = user.first_name + " " + user.last_name
+      let date = (new Date(e.date)).toLocaleString()
+      summary.push({by, date, existing: e.existing.length, added: e.added.length, removed: e.removed.length})
+      parts = parts.concat(e.added.map((p: any)=>{
+        return { date, by, nxid: p.nxid, quantity: p.quantity ? p.quantity : 1, serial: p.serial ? p.serial : " ", action: "added" }
+      }))
+      parts = parts.concat(e.removed.map((p: any)=>{
+        return { date, by, nxid: p.nxid, quantity: p.quantity ? p.quantity : 1, serial: p.serial ? p.serial : " ", action: "removed" }
+      }))
+    }
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Summary_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(summary))
+    downloadCSV(router.currentRoute.value.name?.toString().replaceAll(' ','')+"Parts_"+analyticsSearchObject.getStartDateFromRouter().toLocaleDateString().replaceAll('/','-')+"_to_"+analyticsSearchObject.getEndDateFromRouter().toLocaleDateString().replaceAll('/','-'), arrayToCSV(parts))
+  },
+  Array.from(analyticsSearchObject.getUserFilterMapFromRouter().keys()),
+  Array.from((await analyticsSearchObject.getPartFilterMapFromRouter()).keys()),
+  analyticsSearchObject.getHideOthersFromRouter(),
+  true)
+}
+
 </script>
 <template>
   <div>
@@ -91,8 +124,10 @@ function showLoader() {
       :searchComponent="analyticsSearchObject"
       :show-user-filters="true"
       :show-part-filters="true"
+      :show-export="true"
       @displayResults="displayResults"
       @showLoader="showLoader"
+      @export="getCSV"
     >
       <AllTechsEventComponent v-for="event of allTechsHistory" :event="event" :kiosks="Cacher.getKiosks()" :user="Cacher.getUser(event.by)!" :parts="Cacher.getPartCache()"/>
     </AnalyticsSearchComponent>

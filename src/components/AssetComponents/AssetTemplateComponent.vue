@@ -32,7 +32,7 @@ const { asset } = defineProps<Props>();
         <p v-if="asset.serial">Serial: {{ asset.serial }}</p>
         <p v-if="asset.bay">Bay: {{ asset.bay }}</p>
         <p v-if="asset.parent">Chassis Tag: {{ asset.parent }}</p>
-        <p v-if="asset.live != undefined">Status: {{ asset.live ? "Live" : "Invactive" }}</p>
+        <p v-if="asset.live != undefined">Status: {{ asset.live ? "Live" : "Inactive" }}</p>
         <p v-if="asset.rails != undefined">Rails: {{ asset.rails ? "Yes" : "No"}}</p>
         <p v-if="asset.in_rack != undefined">In Rack: {{ asset.in_rack ? "Yes" : "No"}}</p>
         <p v-if="asset.public_port">Public Port: {{ asset.public_port }}</p>
