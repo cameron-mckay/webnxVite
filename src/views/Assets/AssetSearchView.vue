@@ -56,8 +56,15 @@ function advancedSearchCallback(buildingNum: number, pageNum: number, searchObje
     searchObject['pageSize'] = TEXT_SEARCH_PAGE_SIZE;
     searchObject['sortString'] = sortString
     searchObject['sortDir'] = sortDir
+    let final = {} as any
+    for(let k of Object.keys(searchObject)) {
+      if(searchObject[k]!=undefined&&searchObject[k]!=null)
+        final[k] = searchObject[k]
+    }
+    if(isNaN(final.building))
+      delete final.building
     // Send request to api
-    getAssetsByData(http, searchObject, (data, err) => {
+    getAssetsByData(http, final, (data, err) => {
       if (err) {
         // Send error to error handler
         return res({pages: 0, total: 0, items: []})
