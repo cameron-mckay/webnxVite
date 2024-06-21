@@ -63,18 +63,22 @@ export function arrayToCSV(arr: any[]) {
   if(arr.length>0) {
     let first = arr[0]
     let keys = [] as string[]
+    let formattedKeys = [] as string[]
     let values = []
     let csv = ""
     Object.keys(first).forEach((key: string)=>{
       keys.push(key)
+      formattedKeys.push("\""+key+"\"")
     })
-    csv = keys.join(",") + "\n"
+    csv = formattedKeys.join(",") + "\n"
     for(let obj of arr) {
       values = []
       for(let k of keys) {
         let str = String(obj[k]).replaceAll(",","").replaceAll("\"","")
-        if(!isNaN(parseInt(str)))
+        if(!isNaN(str as any)&&str.replaceAll(" ", "")!=""){
+          console.log(str)
           values.push(str)
+        }
         else
           values.push("\"" + str + "\"")
       }

@@ -15,7 +15,7 @@ import type {
 } from '../../plugins/interfaces';
 import Cacher from '../../plugins/Cacher';
 import { getBoxByID, getPartsOnBox } from '../../plugins/dbCommands/boxManager';
-import { isValidPalletTag, replaceLinksWithAnchors } from '../../plugins/CommonMethods';
+import { arrayToCSV, downloadCSV, isValidPalletTag, replaceLinksWithAnchors } from '../../plugins/CommonMethods';
 import { DEFAULT_BUILDING } from '../../plugins/Constants';
 
 interface Props {
@@ -87,6 +87,19 @@ function edit() {
     query: { box_tag: box.value.box_tag },
   });
 }
+
+function getCSV() {
+  let mapped = parts.value.map((v)=>{
+    return {
+      nxid: v.part.nxid,
+      manufacturer: v.part.manufacturer,
+      name: v.part.name,
+      quantity: v.quantity ? v.quantity : 1,
+      serial: v.serial ? v.serial : ""
+    }
+  })
+  downloadCSV(`${box.value.box_tag}_parts`, arrayToCSV(mapped))
+}
 </script>
 
 <template>
@@ -139,7 +152,6 @@ function edit() {
       <div v-if="parts.length > 0">
         <h1 class="col-span-2 my-4 text-4xl">Parts:</h1>
         <div
-          v-if="(parts!.length > 0)"
           class="relative grid grid-cols-4 rounded-xl p-2 text-center font-bold leading-8 group-hover:rounded-bl-none group-hover:bg-zinc-400 group-hover:shadow-lg md:grid-cols-5 md:leading-10"
         >
           <p class="hidden md:block">NXID</p>
@@ -158,6 +170,7 @@ function edit() {
           :hideButtons="true"
         />
       </div>
+      <input class="search-button bg-blue-400 hover:bg-blue-500 active:bg-blue-600 ml-auto block px-4" type="button" value="Download CSV" @click="getCSV"/>
     </div>
   </div>
 </template>
