@@ -82,7 +82,7 @@ function updateSerial() {
           min="0"
           step="1"
           v-on:mouseleave="updateQuantity"
-        v-on:focusout="updateQuantity"
+          v-on:focusout="updateQuantity"
         />
         <p class="break-words">/ {{ maxQuantity }}</p>
       </div>
