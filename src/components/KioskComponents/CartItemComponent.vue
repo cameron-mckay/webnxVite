@@ -38,6 +38,7 @@ function updateQuantity() {
   if(item.part.quantity&&item_quantity.value>item.part.quantity)
     item_quantity.value = item.part.quantity
   emit("updateQuantity", item_quantity.value, item)
+  console.log("Cart item: "+item_quantity.value)
 }
 
 function updateSerial() {
@@ -72,6 +73,7 @@ function updateSerial() {
         type="text"
         placeholder="Serial"
         v-on:mouseleave="updateSerial"
+        v-on:focusout="updateSerial"
       />
       <div class="flex justify-center" v-else>
         <input
@@ -83,6 +85,7 @@ function updateSerial() {
           :max="item.part.quantity"
           step="1"
           v-on:mouseleave="updateQuantity()"
+          v-on:focusout="updateQuantity()"
         />
         <p class="break-words">/ {{ item.part.quantity }}</p>
       </div>

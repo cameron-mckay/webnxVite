@@ -112,6 +112,7 @@ function updateQuantity(q: number, item: LoadedCartItem) {
         store.commit('setQuantity', {id: item.part.nxid!, quantity: q});
         if(q<1)
           parts.value = parts.value.filter((p)=>p.part.nxid! != item.part.nxid!)
+        console.log("Request view: "+q)
         item.quantity = q
       } else {
         errorHandler('Not enough stock');

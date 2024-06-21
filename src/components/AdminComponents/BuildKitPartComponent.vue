@@ -137,6 +137,7 @@ function updateSerialArray(newTotal: number) {
           min="0"
           step="1"
           v-on:mouseleave="updateQuantity"
+          v-on:focusout="updateQuantity"
         />
         <p class="break-words" v-if="!untracked">/ {{ maxQuantity }}</p>
       </div>
