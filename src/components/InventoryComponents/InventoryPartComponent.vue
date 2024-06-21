@@ -67,6 +67,7 @@ function updateSerial() {
         type="text"
         placeholder="Serial"
         v-on:mouseleave="updateSerial"
+        v-on:focusout="updateSerial"
       />
       <p class="break-words" v-else-if="item.part.serialized&&item.serial">
         {{ item.serial }}
@@ -81,6 +82,7 @@ function updateSerial() {
           min="0"
           step="1"
           v-on:mouseleave="updateQuantity"
+        v-on:focusout="updateQuantity"
         />
         <p class="break-words">/ {{ maxQuantity }}</p>
       </div>
