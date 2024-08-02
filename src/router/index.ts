@@ -60,6 +60,11 @@ const routes = [
     component: () => import('../views/Parts/CheckInView.vue'),
   },
   {
+    path: '/avail',
+    name: 'Available Servers',
+    component: () => import('../views/Admin/AvailableSeversView.vue'),
+  },
+  {
     path: '/parts',
     name: 'Parts',
     component: () => import('../views/Parts/FindPartView.vue'),
