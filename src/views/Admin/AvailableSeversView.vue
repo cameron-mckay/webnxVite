@@ -102,7 +102,7 @@ function loadServers(){
     <LoaderComponent v-if="loading"/>
     <div v-else>
       <div v-for="cpu of cpus">
-        <p class="font-extrabold text-2xl my-4">{{cpu.cpu}}</p>
+        <p class="font-extrabold text-2xl my-4">{{cpu.cpu}} - {{cpu.servers.length}}</p>
         <div class="grid grid-cols-5 text-center font-bold mb-1">
           <p>Name</p>
           <p>Mobo</p>
