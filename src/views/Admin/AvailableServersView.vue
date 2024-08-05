@@ -108,8 +108,8 @@ function loadServers(){
       <div v-for="(cpu, index) of cpus">
         <div class="hover:hover-color rounded-md flex justify-between cursor-pointer transition" @click="toggles[index]=!toggles[index]">
           <p class="font-extrabold text-2xl my-4 p-2">{{cpu.cpu}} - {{cpu.servers.length}}</p>
-          <SVGCaretDown v-if="toggles[index]" class="text-black dark:text-gray-200 w-8 h-8 my-auto p-1"/>
-          <SVGLeftCaret v-else class="text-black dark:text-gray-200 w-8 h-8 my-auto p-1"/>
+          <SVGCaretDown v-if="toggles[index]" class="text-black dark:text-gray-200 w-8 h-8 my-auto p-1 mr-2"/>
+          <SVGLeftCaret v-else class="text-black dark:text-gray-200 w-8 h-8 my-auto p-1 mr-2"/>
           
         </div>
         <div v-if="toggles[index]">

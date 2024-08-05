@@ -340,6 +340,13 @@
         Inventory
       </RouterLink>
       <RouterLink
+        v-if="!store.state.user.roles?.includes('is_kiosk')"
+        class="mobile-nav-button"
+        to="/avail"
+      >
+        Available
+      </RouterLink>
+      <RouterLink
         v-if="store.state.user.roles?.includes('sell_on_ebay')"
         class="mobile-nav-button"
         to="/ebay/sell"
