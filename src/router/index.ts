@@ -62,7 +62,7 @@ const routes = [
   {
     path: '/avail',
     name: 'Available Servers',
-    component: () => import('../views/Admin/AvailableSeversView.vue'),
+    component: () => import('../views/Admin/AvailableServersView.vue'),
   },
   {
     path: '/parts',

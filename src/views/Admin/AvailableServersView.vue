@@ -15,6 +15,8 @@ import PageHeaderComponent from '../../components/GenericComponents/PageHeaderCo
 import ArrowOutButton from '../../components/GenericComponents/Buttons/ArrowOutButton.vue';
 import ServerButton from '../../components/GenericComponents/Buttons/ServerButton.vue';
 import LoaderComponent from '../../components/GenericComponents/LoaderComponent.vue';
+import SVGCaretDown from '../../components/GenericComponents/SVG/SVGCaretDown.vue';
+import SVGLeftCaret from '../../components/GenericComponents/SVG/SVGLeftCaret.vue';
 
 interface Props {
   http: AxiosInstance;
@@ -29,6 +31,7 @@ const { http, store, router, errorHandler, displayMessage } =
 let loading = ref(false)
 let cpus = ref([] as any[])
 let filterVisible = ref(false)
+let toggles = ref([] as boolean[])
 let tagsAvailable = ["UT", "LA", "For rent", "DC1", "10gbps", "Internal", "GPU", "PCIE5"]
 
 let power_status = ref("offline")
@@ -49,6 +52,7 @@ function loadServers(){
     if(err)
       return errorHandler(err)
     cpus.value = data as any[]
+    toggles.value = cpus.value.map(()=>false)
     loading.value = false;
   })
 }
@@ -101,29 +105,36 @@ function loadServers(){
     <FilterTag class="mb-2" v-for="tag of Array.from(filterMap.keys())" :name="tag" @remove="filterMap.delete(tag)"/>
     <LoaderComponent v-if="loading"/>
     <div v-else>
-      <div v-for="cpu of cpus">
-        <p class="font-extrabold text-2xl my-4">{{cpu.cpu}} - {{cpu.servers.length}}</p>
-        <div class="grid grid-cols-5 text-center font-bold mb-1">
-          <p>Name</p>
-          <p>Mobo</p>
-          <p>RAM</p>
-          <p>Brand</p>
-          <p></p>
+      <div v-for="(cpu, index) of cpus">
+        <div class="hover:hover-color rounded-md flex justify-between cursor-pointer transition" @click="toggles[index]=!toggles[index]">
+          <p class="font-extrabold text-2xl my-4 p-2">{{cpu.cpu}} - {{cpu.servers.length}}</p>
+          <SVGCaretDown v-if="toggles[index]" class="text-black dark:text-gray-200 w-8 h-8 my-auto p-1"/>
+          <SVGLeftCaret v-else class="text-black dark:text-gray-200 w-8 h-8 my-auto p-1"/>
+          
         </div>
-        <div v-for="server of cpu.servers"
-          class="background-and-border hover:bab-hover grid p-1 text-center leading-8 grid-cols-5 md:p-2 md:leading-10 my-1"
-        >
-          <p>{{server.name}}</p>
-          <p>{{server.mobo}}</p>
-          <p>{{server.ram}}GB</p>
-          <p>{{server.brand}}</p>
-          <div class="flex justify-end">
-            <a class="mr-2" :href="`/assets/view?asset_tag=${server.name}`" target="_blank">
-              <ServerButton v-if="server.inventory"/>
-            </a>
-            <a :href="server.tenant_link" target="_blank">
-              <ArrowOutButton/>
-            </a>
+        <div v-if="toggles[index]">
+          <div class="grid grid-cols-5 text-center font-bold mb-1">
+            <p>Name</p>
+            <p>Mobo</p>
+            <p>RAM</p>
+            <p>Brand</p>
+            <p></p>
+          </div>
+          <div v-for="server of cpu.servers"
+            class="background-and-border hover:bab-hover grid p-1 text-center leading-8 grid-cols-5 md:p-2 md:leading-10 my-1"
+          >
+            <p>{{server.name}}</p>
+            <p>{{server.mobo}}</p>
+            <p>{{server.ram}}GB</p>
+            <p>{{server.brand}}</p>
+            <div class="flex justify-end">
+              <a class="mr-2" :href="`/assets/view?asset_tag=${server.name}`" target="_blank">
+                <ServerButton v-if="server.inventory"/>
+              </a>
+              <a :href="server.tenant_link" target="_blank">
+                <ArrowOutButton/>
+              </a>
+            </div>
           </div>
         </div>
       </div>
