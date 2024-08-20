@@ -18,6 +18,7 @@ interface Props {
   overrideSourceText?: string;
   serializeDestList?: boolean;
   alwaysShowDest?: boolean;
+  bypassSerialRequirement?: boolean;
 }
 
 let { inventory, forceSourceUser, forceDestUser, serializeDestList, submitButtonText, alwaysShowDest } = defineProps<Props>()
@@ -219,6 +220,7 @@ function submit() {
             :untracked="!(item.part.serialized&&item.serial)&&serializeDestList"
             :key="item.part.nxid!+item.serial+Date.now()+destInv.indexOf(item)"
             :maxQuantity="inventory.getMaxQuantity(item.part.nxid!)"
+            :serialOptional="bypassSerialRequirement"
             @movePart="moveToSourceList"
           />
           <!-- Centered submit button -->

@@ -165,8 +165,9 @@ function handleUpdate() {
       :force-source-user="store.state.user"
       :force-dest-user="{_id: 'ebay'}"
       :submitButtonText="'Mark as sold'"
-      :serialize-dest-list="!store.state.user.roles?.includes('bypass_ebay_serial')"
+      :serialize-dest-list="true"
       :always-show-dest="true"
+      :bypassSerialRequirement="store.state.user.roles?.includes('bypass_ebay_serial')"
       @update="handleUpdate"
       @submit="submit"
     >
