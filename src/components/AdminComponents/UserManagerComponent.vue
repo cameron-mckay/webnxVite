@@ -45,7 +45,8 @@ const roles = [
   'view_manage_menu',
   'delete_parts',
   'manage_orders',
-  'debug'
+  'debug',
+  'bypass_ebay_serial'
 ];
 let user: Ref<User> = ref({});
 user.value = props.user;
